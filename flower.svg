@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="400" height="600">
+  <defs>
+    <!-- Gradients for petals -->
+    <radialGradient id="petalGradient1" cx="50%" cy="50%">
+      <stop offset="0%" style="stop-color:#ff6b9d;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#c9184a;stop-opacity:1" />
+    </radialGradient>
+
+    <radialGradient id="petalGradient2" cx="50%" cy="50%">
+      <stop offset="0%" style="stop-color:#ff8fab;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e5738e;stop-opacity:1" />
+    </radialGradient>
+
+    <!-- Gradient for flower center -->
+    <radialGradient id="centerGradient" cx="50%" cy="50%">
+      <stop offset="0%" style="stop-color:#ffd60a;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#fca311;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#d68910;stop-opacity:1" />
+    </radialGradient>
+
+    <!-- Gradient for stem -->
+    <linearGradient id="stemGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#2d6a4f;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#52b788;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2d6a4f;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Gradient for leaves -->
+    <linearGradient id="leafGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#95d5b2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2d6a4f;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="600" fill="#f0f7ff"/>
+
+  <!-- Stem -->
+  <path d="M 200 280 Q 195 350, 190 420 Q 185 490, 180 560"
+        stroke="url(#stemGradient)"
+        stroke-width="8"
+        fill="none"
+        stroke-linecap="round"/>
+
+  <!-- Left leaf -->
+  <ellipse cx="150" cy="380" rx="35" ry="55"
+           fill="url(#leafGradient)"
+           transform="rotate(-30 150 380)">
+    <animateTransform
+      attributeName="transform"
+      type="rotate"
+      values="-30 150 380; -25 150 380; -30 150 380"
+      dur="4s"
+      repeatCount="indefinite"/>
+  </ellipse>
+
+  <!-- Right leaf -->
+  <ellipse cx="220" cy="450" rx="35" ry="55"
+           fill="url(#leafGradient)"
+           transform="rotate(25 220 450)">
+    <animateTransform
+      attributeName="transform"
+      type="rotate"
+      values="25 220 450; 30 220 450; 25 220 450"
+      dur="4s"
+      repeatCount="indefinite"/>
+  </ellipse>
+
+  <!-- Flower petals (8 petals arranged in a circle) -->
+  <!-- Petal 1 (top) -->
+  <ellipse cx="200" cy="150" rx="35" ry="60" fill="url(#petalGradient1)">
+    <animateTransform
+      attributeName="transform"
+      type="scale"
+      values="1 1; 1.05 1.05; 1 1"
+      dur="3s"
+      repeatCount="indefinite"/>
+  </ellipse>
+
+  <!-- Petal 2 (top-right) -->
+  <ellipse cx="200" cy="200" rx="35" ry="60"
+           fill="url(#petalGradient2)"
+           transform="rotate(45 200 200)"/>
+
+  <!-- Petal 3 (right) -->
+  <ellipse cx="250" cy="200" rx="35" ry="60"
+           fill="url(#petalGradient1)"
+           transform="rotate(90 250 200)"/>
+
+  <!-- Petal 4 (bottom-right) -->
+  <ellipse cx="235" cy="235" rx="35" ry="60"
+           fill="url(#petalGradient2)"
+           transform="rotate(135 235 235)"/>
+
+  <!-- Petal 5 (bottom) -->
+  <ellipse cx="200" cy="250" rx="35" ry="60"
+           fill="url(#petalGradient1)"
+           transform="rotate(180 200 250)"/>
+
+  <!-- Petal 6 (bottom-left) -->
+  <ellipse cx="165" cy="235" rx="35" ry="60"
+           fill="url(#petalGradient2)"
+           transform="rotate(225 165 235)"/>
+
+  <!-- Petal 7 (left) -->
+  <ellipse cx="150" cy="200" rx="35" ry="60"
+           fill="url(#petalGradient1)"
+           transform="rotate(270 150 200)"/>
+
+  <!-- Petal 8 (top-left) -->
+  <ellipse cx="165" cy="165" rx="35" ry="60"
+           fill="url(#petalGradient2)"
+           transform="rotate(315 165 165)"/>
+
+  <!-- Flower center -->
+  <circle cx="200" cy="200" r="40" fill="url(#centerGradient)"/>
+
+  <!-- Center details (small circles for texture) -->
+  <circle cx="190" cy="190" r="4" fill="#d68910" opacity="0.6"/>
+  <circle cx="210" cy="195" r="3" fill="#d68910" opacity="0.6"/>
+  <circle cx="195" cy="210" r="3.5" fill="#d68910" opacity="0.6"/>
+  <circle cx="205" cy="205" r="3" fill="#d68910" opacity="0.6"/>
+  <circle cx="188" cy="205" r="2.5" fill="#d68910" opacity="0.6"/>
+  <circle cx="212" cy="188" r="3" fill="#d68910" opacity="0.6"/>
+  <circle cx="198" cy="195" r="2" fill="#d68910" opacity="0.6"/>
+  <circle cx="207" cy="212" r="2.5" fill="#d68910" opacity="0.6"/>
+</svg>
