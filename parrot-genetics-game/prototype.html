@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChromaWing - Genetics Breeding Prototype</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .aviary {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .parrot-card {
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f9f9f9;
+        }
+
+        .parrot-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .parrot-card.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        .parrot-visual {
+            width: 100%;
+            height: 120px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .parrot-body {
+            width: 80px;
+            height: 100px;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            position: relative;
+        }
+
+        .parrot-head {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            position: absolute;
+            top: -20px;
+            left: 15px;
+        }
+
+        .parrot-beak {
+            width: 0;
+            height: 0;
+            border-left: 15px solid #333;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            position: absolute;
+            top: 15px;
+            right: -12px;
+        }
+
+        .parrot-eye {
+            width: 8px;
+            height: 8px;
+            background: #333;
+            border-radius: 50%;
+            position: absolute;
+            top: 12px;
+            right: 5px;
+        }
+
+        .parrot-crest {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .crest-small {
+            width: 20px;
+            height: 15px;
+            border-radius: 50% 50% 0 0;
+        }
+
+        .crest-large {
+            width: 30px;
+            height: 25px;
+            border-radius: 50% 50% 0 0;
+        }
+
+        .parrot-wing {
+            width: 40px;
+            height: 60px;
+            border-radius: 50% 0 50% 50%;
+            position: absolute;
+            top: 20px;
+            left: -15px;
+            opacity: 0.8;
+        }
+
+        .parrot-tail {
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 0 0 50% 50%;
+        }
+
+        .tail-short {
+            width: 30px;
+            height: 20px;
+        }
+
+        .tail-long {
+            width: 40px;
+            height: 40px;
+        }
+
+        .parrot-name {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .parrot-genes {
+            font-size: 0.85em;
+            color: #666;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 5px;
+        }
+
+        .parrot-stats {
+            font-size: 0.8em;
+            color: #888;
+        }
+
+        .stat-bar {
+            background: #e0e0e0;
+            height: 8px;
+            border-radius: 4px;
+            margin: 3px 0;
+            overflow: hidden;
+        }
+
+        .stat-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .breeding-area {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 30px;
+            border-radius: 15px;
+            color: white;
+            text-align: center;
+        }
+
+        .breeding-parents {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            margin: 20px 0;
+        }
+
+        .parent-slot {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            border-radius: 10px;
+            min-width: 150px;
+            border: 2px dashed rgba(255,255,255,0.5);
+        }
+
+        .parent-slot.filled {
+            background: rgba(255,255,255,0.3);
+            border: 2px solid white;
+        }
+
+        .heart-icon {
+            font-size: 2em;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .breed-button {
+            background: white;
+            color: #f5576c;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .breed-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .breed-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .predictions {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .predictions h3 {
+            margin-bottom: 10px;
+        }
+
+        .predictions ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .predictions li {
+            padding: 5px 0;
+        }
+
+        .rarity {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 0.75em;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .rarity-common { background: #95A3A6; color: white; }
+        .rarity-uncommon { background: #52B788; color: white; }
+        .rarity-rare { background: #4895EF; color: white; }
+        .rarity-epic { background: #B388EB; color: white; }
+        .rarity-legendary { background: #FFD60A; color: #333; }
+
+        .info-panel {
+            background: #f0f4ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .info-panel h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .gene-legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            font-size: 0.9em;
+        }
+
+        .gene-item {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+
+        .gene-item strong {
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🦜 ChromaWing</h1>
+            <p>Genetics Breeding Game - Prototype</p>
+        </header>
+
+        <div class="main-content">
+            <div class="info-panel">
+                <h3>How to Play</h3>
+                <p><strong>1.</strong> Click on two parrots to select them as parents (they will highlight in blue)</p>
+                <p><strong>2.</strong> Click "Breed Parrots" to create offspring</p>
+                <p><strong>3.</strong> New parrots inherit genes from their parents following Mendelian genetics</p>
+                <p><strong>4.</strong> Watch your collection grow with unique genetic combinations!</p>
+            </div>
+
+            <div class="info-panel">
+                <h3>Gene Legend</h3>
+                <div class="gene-legend">
+                    <div class="gene-item">
+                        <strong>R/r</strong> - Red color<br>
+                        <span style="font-size: 0.85em;">RR=Deep, Rr=Bright, rr=None</span>
+                    </div>
+                    <div class="gene-item">
+                        <strong>Y/y</strong> - Yellow color<br>
+                        <span style="font-size: 0.85em;">YY=Golden, Yy=Bright, yy=None</span>
+                    </div>
+                    <div class="gene-item">
+                        <strong>B/b</strong> - Blue color<br>
+                        <span style="font-size: 0.85em;">BB=Deep, Bb=Sky, bb=None</span>
+                    </div>
+                    <div class="gene-item">
+                        <strong>V/v</strong> - Speed<br>
+                        <span style="font-size: 0.85em;">VV=Fast, Vv=Normal, vv=Slow</span>
+                    </div>
+                    <div class="gene-item">
+                        <strong>A/a</strong> - Agility<br>
+                        <span style="font-size: 0.85em;">AA=High, Aa=Normal, aa=Low</span>
+                    </div>
+                    <div class="gene-item">
+                        <strong>C/c</strong> - Crest<br>
+                        <span style="font-size: 0.85em;">CC/Cc=Has crest, cc=None</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>🏠 Your Aviary</h2>
+                <div class="aviary" id="aviary"></div>
+            </div>
+
+            <div class="section">
+                <div class="breeding-area">
+                    <h2 style="color: white; border: none; padding: 0;">💕 Breeding Laboratory</h2>
+                    <div class="breeding-parents">
+                        <div class="parent-slot" id="parent1Slot">
+                            <div style="font-size: 0.9em;">Parent 1</div>
+                            <div id="parent1Name" style="font-weight: bold; margin-top: 10px;">Select a parrot</div>
+                        </div>
+                        <div class="heart-icon">❤️</div>
+                        <div class="parent-slot" id="parent2Slot">
+                            <div style="font-size: 0.9em;">Parent 2</div>
+                            <div id="parent2Name" style="font-weight: bold; margin-top: 10px;">Select a parrot</div>
+                        </div>
+                    </div>
+                    <button class="breed-button" id="breedButton" onclick="breedParrots()">Breed Parrots</button>
+                    <div class="predictions" id="predictions" style="display: none;">
+                        <h3>🧬 Offspring Predictions</h3>
+                        <div id="predictionContent"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Gene class
+        class Gene {
+            constructor(name, allele1, allele2) {
+                this.name = name;
+                this.alleles = [allele1, allele2];
+            }
+
+            isDominant(allele) {
+                return allele === allele.toUpperCase();
+            }
+
+            getRandomAllele() {
+                return this.alleles[Math.floor(Math.random() * 2)];
+            }
+
+            toString() {
+                return this.alleles.join('');
+            }
+        }
+
+        // Parrot class
+        class Parrot {
+            constructor(name, genes) {
+                this.id = Date.now() + Math.random();
+                this.name = name;
+                this.genes = genes;
+                this.calculatePhenotype();
+                this.calculateStats();
+                this.calculateRarity();
+            }
+
+            calculatePhenotype() {
+                const red = this.getGeneValue('red');
+                const yellow = this.getGeneValue('yellow');
+                const blue = this.getGeneValue('blue');
+
+                // Mix colors
+                let r = 0, g = 0, b = 0;
+
+                if (red === 2) { r = 200; g = 50; b = 50; }
+                else if (red === 1) { r = 255; g = 80; b = 80; }
+
+                if (yellow === 2) { r += 200; g += 200; b += 0; }
+                else if (yellow === 1) { r += 255; g += 255; b += 0; }
+
+                if (blue === 2) { r += 0; g += 100; b += 200; }
+                else if (blue === 1) { r += 0; g += 150; b += 255; }
+
+                // Normalize
+                r = Math.min(255, r);
+                g = Math.min(255, g);
+                b = Math.min(255, b);
+
+                // If no colors, make it pale
+                if (red === 0 && yellow === 0 && blue === 0) {
+                    r = g = b = 240;
+                }
+
+                this.color = `rgb(${r}, ${g}, ${b})`;
+                this.hasCrest = this.getGeneValue('crest') > 0;
+            }
+
+            getGeneValue(geneName) {
+                const gene = this.genes[geneName];
+                if (!gene) return 0;
+
+                const [a1, a2] = gene.alleles;
+                let count = 0;
+                if (a1 === a1.toUpperCase()) count++;
+                if (a2 === a2.toUpperCase()) count++;
+                return count;
+            }
+
+            calculateStats() {
+                this.stats = {
+                    speed: 30 + this.getGeneValue('speed') * 30,
+                    agility: 30 + this.getGeneValue('agility') * 30
+                };
+            }
+
+            calculateRarity() {
+                let score = 0;
+
+                // Check for rare color combinations
+                const red = this.getGeneValue('red');
+                const yellow = this.getGeneValue('yellow');
+                const blue = this.getGeneValue('blue');
+
+                if (red === 2 && yellow === 2 && blue === 2) score += 50; // Rainbow
+                if (red === 0 && yellow === 0 && blue === 0) score += 40; // Ghost
+                if (red === 2 && yellow === 0 && blue === 0) score += 20; // Pure red
+                if (yellow === 2 && blue === 2) score += 30; // Emerald
+
+                // Add for dominant genes
+                Object.values(this.genes).forEach(gene => {
+                    if (gene.alleles[0] === gene.alleles[0].toUpperCase() &&
+                        gene.alleles[1] === gene.alleles[1].toUpperCase()) {
+                        score += 10;
+                    }
+                });
+
+                if (score >= 80) this.rarity = 'legendary';
+                else if (score >= 60) this.rarity = 'epic';
+                else if (score >= 40) this.rarity = 'rare';
+                else if (score >= 20) this.rarity = 'uncommon';
+                else this.rarity = 'common';
+            }
+
+            getGenesString() {
+                return `R:${this.genes.red} Y:${this.genes.yellow} B:${this.genes.blue}`;
+            }
+
+            getStatsString() {
+                return `V:${this.genes.speed} A:${this.genes.agility} C:${this.genes.crest}`;
+            }
+        }
+
+        // Game state
+        let parrots = [];
+        let selectedParrots = [];
+
+        // Breeding function
+        function breed(parent1, parent2) {
+            const childGenes = {};
+
+            for (let geneName in parent1.genes) {
+                const allele1 = parent1.genes[geneName].getRandomAllele();
+                const allele2 = parent2.genes[geneName].getRandomAllele();
+                childGenes[geneName] = new Gene(geneName, allele1, allele2);
+            }
+
+            return childGenes;
+        }
+
+        // Create initial parrots
+        function createStarterParrots() {
+            parrots = [
+                new Parrot('Ruby', {
+                    red: new Gene('red', 'R', 'R'),
+                    yellow: new Gene('yellow', 'y', 'y'),
+                    blue: new Gene('blue', 'b', 'b'),
+                    speed: new Gene('speed', 'V', 'v'),
+                    agility: new Gene('agility', 'A', 'a'),
+                    crest: new Gene('crest', 'C', 'c')
+                }),
+                new Parrot('Sunny', {
+                    red: new Gene('red', 'r', 'r'),
+                    yellow: new Gene('yellow', 'Y', 'Y'),
+                    blue: new Gene('blue', 'b', 'b'),
+                    speed: new Gene('speed', 'v', 'v'),
+                    agility: new Gene('agility', 'A', 'A'),
+                    crest: new Gene('crest', 'c', 'c')
+                }),
+                new Parrot('Sky', {
+                    red: new Gene('red', 'r', 'r'),
+                    yellow: new Gene('yellow', 'y', 'y'),
+                    blue: new Gene('blue', 'B', 'B'),
+                    speed: new Gene('speed', 'V', 'V'),
+                    agility: new Gene('agility', 'a', 'a'),
+                    crest: new Gene('crest', 'C', 'C')
+                })
+            ];
+        }
+
+        // Render parrot visual
+        function renderParrotVisual(parrot) {
+            const lighterColor = lightenColor(parrot.color, 20);
+
+            return `
+                <div class="parrot-visual" style="background: linear-gradient(135deg, ${lighterColor}, ${parrot.color});">
+                    <div class="parrot-body" style="background: ${parrot.color};">
+                        <div class="parrot-head" style="background: ${parrot.color};">
+                            ${parrot.hasCrest ? `<div class="parrot-crest ${parrot.getGeneValue('crest') === 2 ? 'crest-large' : 'crest-small'}" style="background: ${parrot.color};"></div>` : ''}
+                            <div class="parrot-eye"></div>
+                            <div class="parrot-beak"></div>
+                        </div>
+                        <div class="parrot-wing" style="background: ${darkenColor(parrot.color, 20)};"></div>
+                        <div class="parrot-tail tail-${Math.random() > 0.5 ? 'long' : 'short'}" style="background: ${parrot.color};"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Helper color functions
+        function lightenColor(color, percent) {
+            const match = color.match(/\d+/g);
+            if (!match) return color;
+
+            const r = Math.min(255, parseInt(match[0]) + percent);
+            const g = Math.min(255, parseInt(match[1]) + percent);
+            const b = Math.min(255, parseInt(match[2]) + percent);
+
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+
+        function darkenColor(color, percent) {
+            const match = color.match(/\d+/g);
+            if (!match) return color;
+
+            const r = Math.max(0, parseInt(match[0]) - percent);
+            const g = Math.max(0, parseInt(match[1]) - percent);
+            const b = Math.max(0, parseInt(match[2]) - percent);
+
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+
+        // Render aviary
+        function renderAviary() {
+            const aviaryEl = document.getElementById('aviary');
+            aviaryEl.innerHTML = '';
+
+            parrots.forEach(parrot => {
+                const card = document.createElement('div');
+                card.className = 'parrot-card';
+                if (selectedParrots.includes(parrot.id)) {
+                    card.classList.add('selected');
+                }
+
+                card.innerHTML = `
+                    ${renderParrotVisual(parrot)}
+                    <div class="parrot-name">${parrot.name} <span class="rarity rarity-${parrot.rarity}">${parrot.rarity.toUpperCase()}</span></div>
+                    <div class="parrot-genes">${parrot.getGenesString()}</div>
+                    <div class="parrot-genes">${parrot.getStatsString()}</div>
+                    <div class="parrot-stats">
+                        <div>Speed: ${parrot.stats.speed}</div>
+                        <div class="stat-bar"><div class="stat-fill" style="width: ${parrot.stats.speed}%"></div></div>
+                        <div>Agility: ${parrot.stats.agility}</div>
+                        <div class="stat-bar"><div class="stat-fill" style="width: ${parrot.stats.agility}%"></div></div>
+                    </div>
+                `;
+
+                card.onclick = () => selectParrot(parrot.id);
+                aviaryEl.appendChild(card);
+            });
+
+            updateBreedingUI();
+        }
+
+        // Select parrot for breeding
+        function selectParrot(id) {
+            if (selectedParrots.includes(id)) {
+                selectedParrots = selectedParrots.filter(pid => pid !== id);
+            } else {
+                if (selectedParrots.length < 2) {
+                    selectedParrots.push(id);
+                } else {
+                    selectedParrots = [selectedParrots[1], id];
+                }
+            }
+            renderAviary();
+        }
+
+        // Update breeding UI
+        function updateBreedingUI() {
+            const parent1 = parrots.find(p => p.id === selectedParrots[0]);
+            const parent2 = parrots.find(p => p.id === selectedParrots[1]);
+
+            const parent1Slot = document.getElementById('parent1Slot');
+            const parent2Slot = document.getElementById('parent2Slot');
+            const parent1Name = document.getElementById('parent1Name');
+            const parent2Name = document.getElementById('parent2Name');
+            const breedButton = document.getElementById('breedButton');
+            const predictions = document.getElementById('predictions');
+
+            if (parent1) {
+                parent1Slot.classList.add('filled');
+                parent1Name.textContent = parent1.name;
+            } else {
+                parent1Slot.classList.remove('filled');
+                parent1Name.textContent = 'Select a parrot';
+            }
+
+            if (parent2) {
+                parent2Slot.classList.add('filled');
+                parent2Name.textContent = parent2.name;
+            } else {
+                parent2Slot.classList.remove('filled');
+                parent2Name.textContent = 'Select a parrot';
+            }
+
+            breedButton.disabled = !(parent1 && parent2);
+
+            if (parent1 && parent2) {
+                showPredictions(parent1, parent2);
+                predictions.style.display = 'block';
+            } else {
+                predictions.style.display = 'none';
+            }
+        }
+
+        // Show breeding predictions
+        function showPredictions(parent1, parent2) {
+            const predictionContent = document.getElementById('predictionContent');
+
+            let html = '<ul>';
+
+            // Predict colors
+            const redPrediction = predictGene(parent1.genes.red, parent2.genes.red);
+            const yellowPrediction = predictGene(parent1.genes.yellow, parent2.genes.yellow);
+            const bluePrediction = predictGene(parent1.genes.blue, parent2.genes.blue);
+
+            html += `<li><strong>Red Gene:</strong> ${redPrediction}</li>`;
+            html += `<li><strong>Yellow Gene:</strong> ${yellowPrediction}</li>`;
+            html += `<li><strong>Blue Gene:</strong> ${bluePrediction}</li>`;
+
+            html += '</ul>';
+            predictionContent.innerHTML = html;
+        }
+
+        // Predict gene outcomes
+        function predictGene(gene1, gene2) {
+            const alleles = [];
+            gene1.alleles.forEach(a1 => {
+                gene2.alleles.forEach(a2 => {
+                    alleles.push(a1 + a2);
+                });
+            });
+
+            // Count outcomes
+            const counts = {};
+            alleles.forEach(a => {
+                const sorted = a.split('').sort((x, y) => {
+                    if (x.toUpperCase() === y.toUpperCase()) {
+                        return x < y ? -1 : 1;
+                    }
+                    return x.toUpperCase() < y.toUpperCase() ? -1 : 1;
+                }).join('');
+                counts[sorted] = (counts[sorted] || 0) + 1;
+            });
+
+            const results = Object.entries(counts).map(([genotype, count]) => {
+                const percent = (count / alleles.length * 100).toFixed(0);
+                return `${genotype} (${percent}%)`;
+            });
+
+            return results.join(', ');
+        }
+
+        // Breed parrots
+        function breedParrots() {
+            const parent1 = parrots.find(p => p.id === selectedParrots[0]);
+            const parent2 = parrots.find(p => p.id === selectedParrots[1]);
+
+            if (!parent1 || !parent2) return;
+
+            const childGenes = breed(parent1, parent2);
+            const childName = generateName();
+            const child = new Parrot(childName, childGenes);
+
+            parrots.push(child);
+            selectedParrots = [];
+            renderAviary();
+
+            // Scroll to new parrot
+            setTimeout(() => {
+                const cards = document.querySelectorAll('.parrot-card');
+                cards[cards.length - 1].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        }
+
+        // Generate random name
+        function generateName() {
+            const prefixes = ['Ruby', 'Sunny', 'Sky', 'Emerald', 'Sapphire', 'Topaz', 'Pearl', 'Jade', 'Amber', 'Coral', 'Azure', 'Crimson', 'Golden', 'Indigo', 'Violet'];
+            const suffixes = ['', ' Jr', ' II', ' III'];
+            const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+            const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
+            const number = parrots.length > 10 ? ` #${parrots.length - 2}` : '';
+            return prefix + suffix + number;
+        }
+
+        // Initialize
+        createStarterParrots();
+        renderAviary();
+    </script>
+</body>
+</html>
