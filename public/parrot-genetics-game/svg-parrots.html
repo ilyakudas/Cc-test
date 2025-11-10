@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChromaWing - Detailed SVG Parrots</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            color: white;
+            text-align: center;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .parrot-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .parrot-card h2 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.8em;
+        }
+
+        .parrot-card .genetics {
+            font-family: 'Courier New', monospace;
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+
+        .parrot-card svg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .info {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .info h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .info ul {
+            line-height: 1.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🦜 ChromaWing - Detailed SVG Parrots</h1>
+        <p class="subtitle">Each feather is individually colored and can be modified</p>
+
+        <div class="gallery">
+            <!-- Scarlet Macaw -->
+            <div class="parrot-card">
+                <h2>Scarlet Macaw</h2>
+                <p class="genetics">Genotype: RR YY bb II PP</p>
+                <svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Body -->
+                    <ellipse cx="200" cy="250" rx="80" ry="110" fill="#DC143C" />
+
+                    <!-- Left Wing Feathers (gradient from dark to light red) -->
+                    <path d="M 140 220 Q 80 230 60 260" stroke="#8B0000" stroke-width="12" fill="none" stroke-linecap="round" id="left-wing-1"/>
+                    <path d="M 140 235 Q 75 245 55 280" stroke="#A52A2A" stroke-width="12" fill="none" stroke-linecap="round" id="left-wing-2"/>
+                    <path d="M 140 250 Q 70 265 50 305" stroke="#DC143C" stroke-width="12" fill="none" stroke-linecap="round" id="left-wing-3"/>
+                    <path d="M 140 265 Q 75 280 60 320" stroke="#FF4500" stroke-width="12" fill="none" stroke-linecap="round" id="left-wing-4"/>
+                    <path d="M 145 280 Q 80 295 65 335" stroke="#FF6347" stroke-width="12" fill="none" stroke-linecap="round" id="left-wing-5"/>
+                    <path d="M 150 295 Q 90 305 75 345" stroke="#FF7F50" stroke-width="10" fill="none" stroke-linecap="round" id="left-wing-6"/>
+
+                    <!-- Left Wing Secondary Feathers (yellow tips) -->
+                    <path d="M 148 235 Q 95 240 80 265" stroke="#FFD700" stroke-width="8" fill="none" stroke-linecap="round" id="left-wing-yellow-1"/>
+                    <path d="M 148 250 Q 90 255 75 285" stroke="#FFA500" stroke-width="8" fill="none" stroke-linecap="round" id="left-wing-yellow-2"/>
+                    <path d="M 150 265 Q 95 270 80 300" stroke="#FF8C00" stroke-width="8" fill="none" stroke-linecap="round" id="left-wing-yellow-3"/>
+
+                    <!-- Right Wing Feathers (mirror of left) -->
+                    <path d="M 260 220 Q 320 230 340 260" stroke="#8B0000" stroke-width="12" fill="none" stroke-linecap="round" id="right-wing-1"/>
+                    <path d="M 260 235 Q 325 245 345 280" stroke="#A52A2A" stroke-width="12" fill="none" stroke-linecap="round" id="right-wing-2"/>
+                    <path d="M 260 250 Q 330 265 350 305" stroke="#DC143C" stroke-width="12" fill="none" stroke-linecap="round" id="right-wing-3"/>
+                    <path d="M 260 265 Q 325 280 340 320" stroke="#FF4500" stroke-width="12" fill="none" stroke-linecap="round" id="right-wing-4"/>
+                    <path d="M 255 280 Q 320 295 335 335" stroke="#FF6347" stroke-width="12" fill="none" stroke-linecap="round" id="right-wing-5"/>
+                    <path d="M 250 295 Q 310 305 325 345" stroke="#FF7F50" stroke-width="10" fill="none" stroke-linecap="round" id="right-wing-6"/>
+
+                    <!-- Right Wing Secondary Feathers (yellow tips) -->
+                    <path d="M 252 235 Q 305 240 320 265" stroke="#FFD700" stroke-width="8" fill="none" stroke-linecap="round" id="right-wing-yellow-1"/>
+                    <path d="M 252 250 Q 310 255 325 285" stroke="#FFA500" stroke-width="8" fill="none" stroke-linecap="round" id="right-wing-yellow-2"/>
+                    <path d="M 250 265 Q 305 270 320 300" stroke="#FF8C00" stroke-width="8" fill="none" stroke-linecap="round" id="right-wing-yellow-3"/>
+
+                    <!-- Tail Feathers (gradient red to yellow) -->
+                    <path d="M 190 350 L 170 470" stroke="#8B0000" stroke-width="16" fill="none" stroke-linecap="round" id="tail-1"/>
+                    <path d="M 195 355 L 180 475" stroke="#DC143C" stroke-width="16" fill="none" stroke-linecap="round" id="tail-2"/>
+                    <path d="M 200 358 L 190 480" stroke="#FF4500" stroke-width="16" fill="none" stroke-linecap="round" id="tail-3"/>
+                    <path d="M 205 358 L 200 480" stroke="#FF6347" stroke-width="16" fill="none" stroke-linecap="round" id="tail-4"/>
+                    <path d="M 210 355 L 220 475" stroke="#FF8C00" stroke-width="16" fill="none" stroke-linecap="round" id="tail-5"/>
+                    <path d="M 215 350 L 230 470" stroke="#FFA500" stroke-width="16" fill="none" stroke-linecap="round" id="tail-6"/>
+
+                    <!-- Head -->
+                    <circle cx="200" cy="180" r="55" fill="#DC143C" id="head"/>
+
+                    <!-- Crest Feathers (individual feathers forming fan) -->
+                    <path d="M 170 150 Q 165 120 170 100" stroke="#DC143C" stroke-width="8" fill="none" stroke-linecap="round" id="crest-1"/>
+                    <path d="M 180 145 Q 178 115 180 95" stroke="#FF4500" stroke-width="8" fill="none" stroke-linecap="round" id="crest-2"/>
+                    <path d="M 190 143 Q 190 110 190 90" stroke="#FF6347" stroke-width="8" fill="none" stroke-linecap="round" id="crest-3"/>
+                    <path d="M 200 142 Q 200 108 200 88" stroke="#FF7F50" stroke-width="10" fill="none" stroke-linecap="round" id="crest-4"/>
+                    <path d="M 210 143 Q 210 110 210 90" stroke="#FF6347" stroke-width="8" fill="none" stroke-linecap="round" id="crest-5"/>
+                    <path d="M 220 145 Q 222 115 220 95" stroke="#FF4500" stroke-width="8" fill="none" stroke-linecap="round" id="crest-6"/>
+                    <path d="M 230 150 Q 235 120 230 100" stroke="#DC143C" stroke-width="8" fill="none" stroke-linecap="round" id="crest-7"/>
+
+                    <!-- Beak -->
+                    <path d="M 230 175 Q 260 175 270 185 Q 260 195 230 190 Z" fill="#2F2F2F" id="beak-upper"/>
+                    <path d="M 230 190 Q 255 192 260 200 Q 250 200 230 198 Z" fill="#1F1F1F" id="beak-lower"/>
+
+                    <!-- Eye -->
+                    <circle cx="215" cy="170" r="8" fill="white" id="eye-white"/>
+                    <circle cx="217" cy="170" r="5" fill="#1F1F1F" id="eye-pupil"/>
+
+                    <!-- Cheek patch (lighter) -->
+                    <ellipse cx="220" cy="190" rx="15" ry="20" fill="#FFE4E1" opacity="0.8" id="cheek"/>
+
+                    <!-- Feet -->
+                    <g id="left-foot">
+                        <path d="M 175 350 L 165 375" stroke="#4A4A4A" stroke-width="4" fill="none"/>
+                        <path d="M 165 375 L 155 380" stroke="#4A4A4A" stroke-width="3" fill="none"/>
+                        <path d="M 165 375 L 165 382" stroke="#4A4A4A" stroke-width="3" fill="none"/>
+                        <path d="M 165 375 L 175 380" stroke="#4A4A4A" stroke-width="3" fill="none"/>
+                    </g>
+                    <g id="right-foot">
+                        <path d="M 225 350 L 235 375" stroke="#4A4A4A" stroke-width="4" fill="none"/>
+                        <path d="M 235 375 L 225 380" stroke="#4A4A4A" stroke-width="3" fill="none"/>
+                        <path d="M 235 375 L 235 382" stroke="#4A4A4A" stroke-width="3" fill="none"/>
+                        <path d="M 235 375 L 245 380" stroke="#4A4A4A" stroke-width="3" fill="none"/>
+                    </g>
+                </svg>
+            </div>
+
+            <!-- Blue-and-Gold Macaw -->
+            <div class="parrot-card">
+                <h2>Blue-and-Gold Macaw</h2>
+                <p class="genetics">Genotype: rr YY BB Ii Pp</p>
+                <svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Body (golden yellow) -->
+                    <ellipse cx="200" cy="250" rx="80" ry="110" fill="#FFD700" />
+
+                    <!-- Left Wing Feathers (gradient from dark to light blue) -->
+                    <path d="M 140 220 Q 80 230 60 260" stroke="#00008B" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 140 235 Q 75 245 55 280" stroke="#0000CD" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 140 250 Q 70 265 50 305" stroke="#0000FF" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 140 265 Q 75 280 60 320" stroke="#1E90FF" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 145 280 Q 80 295 65 335" stroke="#4169E1" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 150 295 Q 90 305 75 345" stroke="#6495ED" stroke-width="10" fill="none" stroke-linecap="round"/>
+
+                    <!-- Left Wing Secondary Feathers (turquoise) -->
+                    <path d="M 148 235 Q 95 240 80 265" stroke="#00CED1" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <path d="M 148 250 Q 90 255 75 285" stroke="#40E0D0" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <path d="M 150 265 Q 95 270 80 300" stroke="#48D1CC" stroke-width="8" fill="none" stroke-linecap="round"/>
+
+                    <!-- Right Wing Feathers (mirror) -->
+                    <path d="M 260 220 Q 320 230 340 260" stroke="#00008B" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 260 235 Q 325 245 345 280" stroke="#0000CD" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 260 250 Q 330 265 350 305" stroke="#0000FF" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 260 265 Q 325 280 340 320" stroke="#1E90FF" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 255 280 Q 320 295 335 335" stroke="#4169E1" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 250 295 Q 310 305 325 345" stroke="#6495ED" stroke-width="10" fill="none" stroke-linecap="round"/>
+
+                    <!-- Right Wing Secondary Feathers (turquoise) -->
+                    <path d="M 252 235 Q 305 240 320 265" stroke="#00CED1" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <path d="M 252 250 Q 310 255 325 285" stroke="#40E0D0" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <path d="M 250 265 Q 305 270 320 300" stroke="#48D1CC" stroke-width="8" fill="none" stroke-linecap="round"/>
+
+                    <!-- Tail Feathers (gradient blue to turquoise) -->
+                    <path d="M 190 350 L 170 470" stroke="#00008B" stroke-width="16" fill="none" stroke-linecap="round"/>
+                    <path d="M 195 355 L 180 475" stroke="#0000CD" stroke-width="16" fill="none" stroke-linecap="round"/>
+                    <path d="M 200 358 L 190 480" stroke="#1E90FF" stroke-width="16" fill="none" stroke-linecap="round"/>
+                    <path d="M 205 358 L 200 480" stroke="#4169E1" stroke-width="16" fill="none" stroke-linecap="round"/>
+                    <path d="M 210 355 L 220 475" stroke="#87CEEB" stroke-width="16" fill="none" stroke-linecap="round"/>
+                    <path d="M 215 350 L 230 470" stroke="#87CEFA" stroke-width="16" fill="none" stroke-linecap="round"/>
+
+                    <!-- Head (blue-green) -->
+                    <circle cx="200" cy="180" r="55" fill="#20B2AA" />
+
+                    <!-- Crest Feathers (blue-green gradient) -->
+                    <path d="M 170 150 Q 165 120 170 100" stroke="#006400" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <path d="M 180 145 Q 178 115 180 95" stroke="#008B8B" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <path d="M 190 143 Q 190 110 190 90" stroke="#20B2AA" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <path d="M 200 142 Q 200 108 200 88" stroke="#48D1CC" stroke-width="10" fill="none" stroke-linecap="round"/>
+                    <path d="M 210 143 Q 210 110 210 90" stroke="#20B2AA" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <path d="M 220 145 Q 222 115 220 95" stroke="#008B8B" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <path d="M 230 150 Q 235 120 230 100" stroke="#006400" stroke-width="8" fill="none" stroke-linecap="round"/>
+
+                    <!-- Beak -->
+                    <path d="M 230 175 Q 260 175 270 185 Q 260 195 230 190 Z" fill="#2F2F2F"/>
+                    <path d="M 230 190 Q 255 192 260 200 Q 250 200 230 198 Z" fill="#1F1F1F"/>
+
+                    <!-- Eye -->
+                    <circle cx="215" cy="170" r="8" fill="white"/>
+                    <circle cx="217" cy="170" r="5" fill="#1F1F1F"/>
+
+                    <!-- Cheek patch (white) -->
+                    <ellipse cx="220" cy="190" rx="15" ry="20" fill="#FFFFFF" opacity="0.9"/>
+
+                    <!-- Feet -->
+                    <g>
+                        <path d="M 175 350 L 165 375" stroke="#4A4A4A" stroke-width="4" fill="none"/>
+                        <path d="M 165 375 L 155 380" stroke="#4A4A4A" stroke-width="3" fill="none"/>
+                        <path d="M 165 375 L 165 382" stroke="#4A4A4A" stroke-width="3" fill="none"/>
+                        <path d="M 165 375 L 175 380" stroke="#4A4A4A" stroke-width="3" fill="none"/>
+                    </g>
+                    <g>
+                        <path d="M 225 350 L 235 375" stroke="#4A4A4A" stroke-width="4" fill="none"/>
+                        <path d="M 235 375 L 225 380" stroke="#4A4A4A" stroke-width="3" fill="none"/>
+                        <path d="M 235 375 L 235 382" stroke="#4A4A4A" stroke-width="3" fill="none"/>
+                        <path d="M 235 375 L 245 380" stroke="#4A4A4A" stroke-width="3" fill="none"/>
+                    </g>
+                </svg>
+            </div>
+
+            <!-- Rainbow Parrot -->
+            <div class="parrot-card">
+                <h2>Rainbow Parrot</h2>
+                <p class="genetics">Genotype: RR YY BB II Pp (Multi-colored)</p>
+                <svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Body (purple-pink gradient) -->
+                    <ellipse cx="200" cy="250" rx="80" ry="110" fill="#DA70D6" />
+
+                    <!-- Left Wing Feathers (rainbow gradient) -->
+                    <path d="M 140 220 Q 80 230 60 260" stroke="#9400D3" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 140 235 Q 75 245 55 280" stroke="#4B0082" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 140 250 Q 70 265 50 305" stroke="#0000FF" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 140 265 Q 75 280 60 320" stroke="#00FF00" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 145 280 Q 80 295 65 335" stroke="#FFFF00" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 150 295 Q 90 305 75 345" stroke="#FF7F00" stroke-width="10" fill="none" stroke-linecap="round"/>
+
+                    <!-- Left Wing Secondary Feathers (bright colors) -->
+                    <path d="M 148 235 Q 95 240 80 265" stroke="#FF1493" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <path d="M 148 250 Q 90 255 75 285" stroke="#00CED1" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <path d="M 150 265 Q 95 270 80 300" stroke="#7FFF00" stroke-width="8" fill="none" stroke-linecap="round"/>
+
+                    <!-- Right Wing Feathers (rainbow mirror) -->
+                    <path d="M 260 220 Q 320 230 340 260" stroke="#9400D3" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 260 235 Q 325 245 345 280" stroke="#4B0082" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 260 250 Q 330 265 350 305" stroke="#0000FF" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 260 265 Q 325 280 340 320" stroke="#00FF00" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 255 280 Q 320 295 335 335" stroke="#FFFF00" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 250 295 Q 310 305 325 345" stroke="#FF7F00" stroke-width="10" fill="none" stroke-linecap="round"/>
+
+                    <!-- Right Wing Secondary Feathers -->
+                    <path d="M 252 235 Q 305 240 320 265" stroke="#FF1493" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <path d="M 252 250 Q 310 255 325 285" stroke="#00CED1" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <path d="M 250 265 Q 305 270 320 300" stroke="#7FFF00" stroke-width="8" fill="none" stroke-linecap="round"/>
+
+                    <!-- Tail Feathers (full rainbow) -->
+                    <path d="M 190 350 L 170 470" stroke="#FF0000" stroke-width="16" fill="none" stroke-linecap="round"/>
+                    <path d="M 195 355 L 180 475" stroke="#FF7F00" stroke-width="16" fill="none" stroke-linecap="round"/>
+                    <path d="M 200 358 L 190 480" stroke="#FFFF00" stroke-width="16" fill="none" stroke-linecap="round"/>
+                    <path d="M 205 358 L 200 480" stroke="#00FF00" stroke-width="16" fill="none" stroke-linecap="round"/>
+                    <path d="M 210 355 L 220 475" stroke="#0000FF" stroke-width="16" fill="none" stroke-linecap="round"/>
+                    <path d="M 215 350 L 230 470" stroke="#9400D3" stroke-width="16" fill="none" stroke-linecap="round"/>
+
+                    <!-- Head (pink-magenta) -->
+                    <circle cx="200" cy="180" r="55" fill="#FF1493" />
+
+                    <!-- Crest Feathers (vibrant colors) -->
+                    <path d="M 170 150 Q 165 120 170 100" stroke="#FF0000" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <path d="M 180 145 Q 178 115 180 95" stroke="#FF69B4" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <path d="M 190 143 Q 190 110 190 90" stroke="#FF1493" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <path d="M 200 142 Q 200 108 200 88" stroke="#DA70D6" stroke-width="10" fill="none" stroke-linecap="round"/>
+                    <path d="M 210 143 Q 210 110 210 90" stroke="#FF1493" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <path d="M 220 145 Q 222 115 220 95" stroke="#FF69B4" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <path d="M 230 150 Q 235 120 230 100" stroke="#FF0000" stroke-width="8" fill="none" stroke-linecap="round"/>
+
+                    <!-- Beak -->
+                    <path d="M 230 175 Q 260 175 270 185 Q 260 195 230 190 Z" fill="#2F2F2F"/>
+                    <path d="M 230 190 Q 255 192 260 200 Q 250 200 230 198 Z" fill="#1F1F1F"/>
+
+                    <!-- Eye -->
+                    <circle cx="215" cy="170" r="8" fill="white"/>
+                    <circle cx="217" cy="170" r="5" fill="#1F1F1F"/>
+
+                    <!-- Cheek patch (yellow) -->
+                    <ellipse cx="220" cy="190" rx="15" ry="20" fill="#FFFF00" opacity="0.8"/>
+
+                    <!-- Feet -->
+                    <g>
+                        <path d="M 175 350 L 165 375" stroke="#4A4A4A" stroke-width="4" fill="none"/>
+                        <path d="M 165 375 L 155 380" stroke="#4A4A4A" stroke-width="3" fill="none"/>
+                        <path d="M 165 375 L 165 382" stroke="#4A4A4A" stroke-width="3" fill="none"/>
+                        <path d="M 165 375 L 175 380" stroke="#4A4A4A" stroke-width="3" fill="none"/>
+                    </g>
+                    <g>
+                        <path d="M 225 350 L 235 375" stroke="#4A4A4A" stroke-width="4" fill="none"/>
+                        <path d="M 235 375 L 225 380" stroke="#4A4A4A" stroke-width="3" fill="none"/>
+                        <path d="M 235 375 L 235 382" stroke="#4A4A4A" stroke-width="3" fill="none"/>
+                        <path d="M 235 375 L 245 380" stroke="#4A4A4A" stroke-width="3" fill="none"/>
+                    </g>
+                </svg>
+            </div>
+
+            <!-- Emerald Parrot -->
+            <div class="parrot-card">
+                <h2>Emerald Parrot</h2>
+                <p class="genetics">Genotype: rr YY BB II PP (Green)</p>
+                <svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Body (emerald green) -->
+                    <ellipse cx="200" cy="250" rx="80" ry="110" fill="#50C878" />
+
+                    <!-- Left Wing Feathers (gradient from dark to light green) -->
+                    <path d="M 140 220 Q 80 230 60 260" stroke="#013220" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 140 235 Q 75 245 55 280" stroke="#006400" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 140 250 Q 70 265 50 305" stroke="#228B22" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 140 265 Q 75 280 60 320" stroke="#32CD32" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 145 280 Q 80 295 65 335" stroke="#7FFF00" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 150 295 Q 90 305 75 345" stroke="#ADFF2F" stroke-width="10" fill="none" stroke-linecap="round"/>
+
+                    <!-- Left Wing Secondary Feathers (yellow-green) -->
+                    <path d="M 148 235 Q 95 240 80 265" stroke="#9ACD32" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <path d="M 148 250 Q 90 255 75 285" stroke="#BDB76B" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <path d="M 150 265 Q 95 270 80 300" stroke="#F0E68C" stroke-width="8" fill="none" stroke-linecap="round"/>
+
+                    <!-- Right Wing Feathers (mirror) -->
+                    <path d="M 260 220 Q 320 230 340 260" stroke="#013220" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 260 235 Q 325 245 345 280" stroke="#006400" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 260 250 Q 330 265 350 305" stroke="#228B22" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 260 265 Q 325 280 340 320" stroke="#32CD32" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 255 280 Q 320 295 335 335" stroke="#7FFF00" stroke-width="12" fill="none" stroke-linecap="round"/>
+                    <path d="M 250 295 Q 310 305 325 345" stroke="#ADFF2F" stroke-width="10" fill="none" stroke-linecap="round"/>
+
+                    <!-- Right Wing Secondary Feathers -->
+                    <path d="M 252 235 Q 305 240 320 265" stroke="#9ACD32" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <path d="M 252 250 Q 310 255 325 285" stroke="#BDB76B" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <path d="M 250 265 Q 305 270 320 300" stroke="#F0E68C" stroke-width="8" fill="none" stroke-linecap="round"/>
+
+                    <!-- Tail Feathers (gradient green) -->
+                    <path d="M 190 350 L 170 470" stroke="#006400" stroke-width="16" fill="none" stroke-linecap="round"/>
+                    <path d="M 195 355 L 180 475" stroke="#228B22" stroke-width="16" fill="none" stroke-linecap="round"/>
+                    <path d="M 200 358 L 190 480" stroke="#32CD32" stroke-width="16" fill="none" stroke-linecap="round"/>
+                    <path d="M 205 358 L 200 480" stroke="#50C878" stroke-width="16" fill="none" stroke-linecap="round"/>
+                    <path d="M 210 355 L 220 475" stroke="#7FFF00" stroke-width="16" fill="none" stroke-linecap="round"/>
+                    <path d="M 215 350 L 230 470" stroke="#9ACD32" stroke-width="16" fill="none" stroke-linecap="round"/>
+
+                    <!-- Head (bright green) -->
+                    <circle cx="200" cy="180" r="55" fill="#50C878" />
+
+                    <!-- Crest Feathers (green gradient) -->
+                    <path d="M 170 150 Q 165 120 170 100" stroke="#006400" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <path d="M 180 145 Q 178 115 180 95" stroke="#228B22" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <path d="M 190 143 Q 190 110 190 90" stroke="#32CD32" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <path d="M 200 142 Q 200 108 200 88" stroke="#7FFF00" stroke-width="10" fill="none" stroke-linecap="round"/>
+                    <path d="M 210 143 Q 210 110 210 90" stroke="#32CD32" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <path d="M 220 145 Q 222 115 220 95" stroke="#228B22" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <path d="M 230 150 Q 235 120 230 100" stroke="#006400" stroke-width="8" fill="none" stroke-linecap="round"/>
+
+                    <!-- Beak -->
+                    <path d="M 230 175 Q 260 175 270 185 Q 260 195 230 190 Z" fill="#8B4513"/>
+                    <path d="M 230 190 Q 255 192 260 200 Q 250 200 230 198 Z" fill="#654321"/>
+
+                    <!-- Eye -->
+                    <circle cx="215" cy="170" r="8" fill="white"/>
+                    <circle cx="217" cy="170" r="5" fill="#1F1F1F"/>
+
+                    <!-- Cheek patch (yellow) -->
+                    <ellipse cx="220" cy="190" rx="15" ry="20" fill="#FFFF00" opacity="0.6"/>
+
+                    <!-- Feet -->
+                    <g>
+                        <path d="M 175 350 L 165 375" stroke="#4A4A4A" stroke-width="4" fill="none"/>
+                        <path d="M 165 375 L 155 380" stroke="#4A4A4A" stroke-width="3" fill="none"/>
+                        <path d="M 165 375 L 165 382" stroke="#4A4A4A" stroke-width="3" fill="none"/>
+                        <path d="M 165 375 L 175 380" stroke="#4A4A4A" stroke-width="3" fill="none"/>
+                    </g>
+                    <g>
+                        <path d="M 225 350 L 235 375" stroke="#4A4A4A" stroke-width="4" fill="none"/>
+                        <path d="M 235 375 L 225 380" stroke="#4A4A4A" stroke-width="3" fill="none"/>
+                        <path d="M 235 375 L 235 382" stroke="#4A4A4A" stroke-width="3" fill="none"/>
+                        <path d="M 235 375 L 245 380" stroke="#4A4A4A" stroke-width="3" fill="none"/>
+                    </g>
+                </svg>
+            </div>
+        </div>
+
+        <div class="info">
+            <h3>📋 SVG Structure Features</h3>
+            <ul>
+                <li><strong>Individual Feathers:</strong> Each feather is a separate SVG path with unique ID and color</li>
+                <li><strong>Symmetry Preserved:</strong> Left and right wings mirror each other perfectly</li>
+                <li><strong>Gradient Formation:</strong> Feathers arranged in color progression (dark to light)</li>
+                <li><strong>Easily Modifiable:</strong> Each part can be individually colored by changing stroke color</li>
+                <li><strong>Named Components:</strong> Body, head, wings, tail, crest, beak, eyes, feet all labeled</li>
+                <li><strong>Color Substitution Ready:</strong> Colors can be replaced with patterns or gradients</li>
+            </ul>
+
+            <h3>🎨 Example Color Variations</h3>
+            <ul>
+                <li><strong>Scarlet Macaw:</strong> Red to yellow gradient showing RR YY genes</li>
+                <li><strong>Blue-and-Gold:</strong> Blue wings with golden body showing YY BB genes</li>
+                <li><strong>Rainbow:</strong> Full spectrum showing RR YY BB genes combined</li>
+                <li><strong>Emerald:</strong> Green tones from YY + BB mixing (no red)</li>
+            </ul>
+
+            <h3>💡 Usage in Game</h3>
+            <ul>
+                <li>Each feather color can be calculated from gene combinations</li>
+                <li>Gradients can represent gene intensity (II vs Ii vs ii)</li>
+                <li>Patterns can be added for PP, Pp, pp genotypes</li>
+                <li>Crest size varies based on CC, Cc, cc genes</li>
+                <li>All visual traits directly map to genetic data</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
