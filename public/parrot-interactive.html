@@ -188,8 +188,10 @@
             <div id="highlightInfo" class="highlight-info"></div>
         </div>
 
-        <div class="parrot-display">
-            <object id="parrotSVG" data="Parrot-1-recolored.svg" type="image/svg+xml" width="100%" height="auto"></object>
+        <div class="parrot-display" id="parrotContainer">
+            <div style="text-align: center; padding: 40px; color: #999;">
+                Loading parrot...
+            </div>
         </div>
 
         <div class="info-grid">
@@ -271,32 +273,53 @@
 
     <script>
         let originalColors = {};
-        let svgDoc = null;
+        let svgElement = null;
 
-        // Wait for SVG to load
+        // Load SVG directly via fetch
         window.addEventListener('load', function() {
-            const objectEl = document.getElementById('parrotSVG');
-            objectEl.addEventListener('load', function() {
-                svgDoc = objectEl.contentDocument;
+            fetch('Parrot-1-recolored.svg')
+                .then(response => response.text())
+                .then(svgText => {
+                    // Insert SVG into container
+                    const container = document.getElementById('parrotContainer');
+                    container.innerHTML = svgText;
 
-                // Store original colors
-                const paths = svgDoc.querySelectorAll('path');
-                paths.forEach(path => {
-                    const id = path.getAttribute('id');
-                    originalColors[id] = path.getAttribute('fill');
+                    // Get reference to SVG element
+                    svgElement = container.querySelector('svg');
 
-                    // Add click event
-                    path.addEventListener('click', function() {
-                        showFeatherInfo(id, this.getAttribute('fill'));
-                    });
+                    if (svgElement) {
+                        // Set max width for display
+                        svgElement.style.maxWidth = '800px';
+                        svgElement.style.height = 'auto';
+                        svgElement.style.display = 'block';
+                        svgElement.style.margin = '0 auto';
+
+                        // Store original colors and add interactivity
+                        const paths = svgElement.querySelectorAll('path');
+                        paths.forEach(path => {
+                            const id = path.getAttribute('id');
+                            originalColors[id] = path.getAttribute('fill');
+
+                            // Add click event
+                            path.addEventListener('click', function() {
+                                showFeatherInfo(id, this.getAttribute('fill'));
+                            });
+                        });
+
+                        console.log(`✓ SVG loaded successfully with ${paths.length} feather paths`);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading SVG:', error);
+                    document.getElementById('parrotContainer').innerHTML =
+                        '<div style="text-align: center; padding: 40px; color: #d9534f;">Error loading parrot SVG. Please refresh the page.</div>';
                 });
-            });
         });
 
         function highlightGroup(groupName) {
-            if (!svgDoc) return;
+            if (!svgElement) return;
 
-            const paths = svgDoc.querySelectorAll('path');
+            const paths = svgElement.querySelectorAll('path');
             let count = 0;
 
             paths.forEach(path => {
@@ -319,9 +342,9 @@
         }
 
         function resetColors() {
-            if (!svgDoc) return;
+            if (!svgElement) return;
 
-            const paths = svgDoc.querySelectorAll('path');
+            const paths = svgElement.querySelectorAll('path');
             paths.forEach(path => {
                 const id = path.getAttribute('id');
                 if (originalColors[id]) {
@@ -336,7 +359,7 @@
         }
 
         function randomizeFeathers() {
-            if (!svgDoc) return;
+            if (!svgElement) return;
 
             const colorPalettes = {
                 red: ['#8B0000', '#A52A2A', '#DC143C', '#FF4500', '#FF6347', '#FF7F50'],
@@ -345,7 +368,7 @@
                 green: ['#228B22', '#32CD32', '#7FFF00', '#ADFF2F', '#50C878', '#2EC4B6']
             };
 
-            const paths = svgDoc.querySelectorAll('path');
+            const paths = svgElement.querySelectorAll('path');
             paths.forEach(path => {
                 const id = path.getAttribute('id');
 
