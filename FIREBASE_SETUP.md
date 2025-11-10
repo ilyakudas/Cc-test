@@ -1,6 +1,16 @@
 # Firebase Setup Guide
 
-This repository is configured to automatically deploy to Firebase Hosting using GitHub Actions. Follow these steps to complete the setup:
+## Status: Setup Complete! ✓
+
+Your site is live at: **https://cc-test-e3ccf.web.app**
+
+This repository is configured to automatically deploy to Firebase Hosting using GitHub Actions.
+
+---
+
+## Setup Steps (For Reference)
+
+Below are the steps that were completed to set up Firebase Hosting:
 
 ## Step 1: Create a Firebase Project
 
