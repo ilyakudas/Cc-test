@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beautiful SVG Flower</title>
+    <title>Cc-test - Project Gallery</title>
     <style>
         * {
             margin: 0;
@@ -12,91 +12,167 @@
         }
 
         body {
-            font-family: 'Georgia', serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+            padding: 40px 20px;
         }
 
-        .container {
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .gallery {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .project-card {
             background: white;
             border-radius: 20px;
-            padding: 40px;
+            padding: 30px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 500px;
-            width: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
+        }
+
+        .project-card h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .project-card .description {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .project-card .preview {
+            margin: 20px 0;
             text-align: center;
         }
 
-        h1 {
-            color: #c9184a;
-            margin-bottom: 10px;
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .subtitle {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 1.1em;
-            font-style: italic;
-        }
-
-        .flower-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 20px 0;
-        }
-
-        .flower-container svg {
+        .project-card .preview svg,
+        .project-card .preview object {
             max-width: 100%;
             height: auto;
-            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
+            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
         }
 
-        .description {
-            color: #555;
-            line-height: 1.6;
-            margin-top: 20px;
-            font-size: 1em;
+        .project-card .links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f4ff;
+            color: #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e7ff;
         }
 
         @media (max-width: 600px) {
-            .container {
-                padding: 20px;
-            }
-
-            h1 {
+            .header h1 {
                 font-size: 2em;
             }
 
-            .subtitle {
-                font-size: 1em;
+            .gallery {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Beautiful Flower</h1>
-        <p class="subtitle">Created with SVG & Love</p>
+    <div class="header">
+        <h1>🎨 Cc-test Project Gallery</h1>
+        <p>A collection of creative SVG and interactive projects</p>
+    </div>
 
-        <div class="flower-container">
-            <object data="flower.svg" type="image/svg+xml">
-                <img src="flower.svg" alt="Beautiful SVG Flower">
-            </object>
+    <div class="gallery">
+        <!-- Flower Project -->
+        <div class="project-card">
+            <h2>🌸 Beautiful Flower</h2>
+            <p class="description">
+                A beautiful flower created entirely with SVG (Scalable Vector Graphics).
+                Features vibrant pink petals with gradients, a golden center,
+                and green leaves with subtle animations.
+            </p>
+            <div class="preview">
+                <object data="flower.svg" type="image/svg+xml" width="200" height="200">
+                    <img src="flower.svg" alt="Beautiful SVG Flower">
+                </object>
+            </div>
+            <div class="links">
+                <a href="flower.svg" class="btn" target="_blank">View SVG</a>
+            </div>
         </div>
 
-        <p class="description">
-            This beautiful flower is created entirely with SVG (Scalable Vector Graphics).
-            It features vibrant pink petals with gradients, a golden center,
-            and green leaves with subtle animations.
-        </p>
+        <!-- ChromaWing Parrot Project -->
+        <div class="project-card">
+            <h2>🦜 ChromaWing - Interactive Parrot</h2>
+            <p class="description">
+                Interactive parrot with 119 individually controllable feathers for genetics-based breeding simulation.
+                Each feather can be colored based on genetic makeup (RR, YY, BB genes).
+                Features hover effects, group highlighting, and randomization.
+            </p>
+            <div class="links">
+                <a href="parrot-interactive.html" class="btn">Interactive Demo</a>
+                <a href="Parrot-1-recolored.svg" class="btn-secondary btn" target="_blank">View SVG</a>
+            </div>
+        </div>
+
+        <!-- Parrot Genetics Game Prototype -->
+        <div class="project-card">
+            <h2>🧬 ChromaWing - Breeding Game</h2>
+            <p class="description">
+                Playable prototype of a genetics breeding game. Breed parrots with different genetic traits,
+                see real Mendelian inheritance in action, and watch offspring inherit colors from their parents.
+                Each parrot displays its genotype and phenotype.
+            </p>
+            <div class="links">
+                <a href="parrot-prototype.html" class="btn">Play Prototype</a>
+            </div>
+        </div>
     </div>
 </body>
 </html>
