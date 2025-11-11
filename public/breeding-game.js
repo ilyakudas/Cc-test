@@ -2,7 +2,8 @@
 // Game State
 let parrots = [];
 let storeParrots = [];
-let selectedParrotIds = [];
+let selectedParrotId = null;  // Single selected parrot for viewing
+let breedingPair = { left: null, right: null };  // Breeding pair
 let currentTab = 'collection';
 let coins = 500;
 let parrotIdCounter = 0;
@@ -139,7 +140,8 @@ async function generateParrotSVG(parrot) {
     // Fixed colors for non-genetic elements
     const GROUND_COLOR = '#8B7355';
     const SKY_COLOR = '#87CEEB';
-    const EYE_COLOR = '#000000';
+    const EYE_BLACK = '#000000';     // body-yellow-4 (black pupil)
+    const EYE_WHITE = '#FFFFFF';     // accent-white-4 (white of eye)
     const CLAW_COLOR = '#4A4A4A';
     const FACE_COLOR = '#FFFFFF';
     const CONTOUR_COLOR = '#000000';
@@ -213,9 +215,9 @@ async function generateParrotSVG(parrot) {
         'accent-white-1': SKY_COLOR,
         'accent-white-2': SKY_COLOR,
 
-        // Eyes (non-genetic, fixed black)
-        'body-yellow-4': EYE_COLOR,
-        'accent-white-4': EYE_COLOR,
+        // Eyes (non-genetic)
+        'body-yellow-4': EYE_BLACK,      // Black pupil
+        'accent-white-4': EYE_WHITE,     // White of eye
 
         // Beak (detail-gray 1, 2, 3 - ALL beak parts, not genetic)
         'detail-gray-1': BEAK_COLOR,
@@ -461,7 +463,7 @@ function switchTab(tab) {
         document.getElementById('panelTitle').textContent = 'Store - Buy Parrots';
     }
 
-    selectedParrotIds = [];
+    selectedParrotId = null;
     updateUI();
 }
 
@@ -469,7 +471,8 @@ function switchTab(tab) {
 async function updateUI() {
     updateStats();
     await renderParrotGrid();
-    updatePreview();
+    await renderBreedingSlots();
+    await updatePreview();
 }
 
 // Update stats
@@ -502,16 +505,14 @@ async function renderParrotGrid() {
 async function createParrotCard(parrot, isStore) {
     const card = document.createElement('div');
     card.className = 'parrot-card';
-    if (selectedParrotIds.includes(parrot.id)) {
+    if (selectedParrotId === parrot.id) {
         card.classList.add('selected');
     }
 
     const svg = await generateParrotSVG(parrot);
-    const selectionNum = selectedParrotIds.indexOf(parrot.id) + 1;
     const price = parrot.isElite ? 500 : parrot.getValue();
 
     card.innerHTML = `
-        ${selectionNum > 0 ? `<div class="selection-indicator">${selectionNum}</div>` : ''}
         ${parrot.isElite ? '<div class="elite-badge">⭐ ELITE</div>' : ''}
         ${isStore ? `<div class="price">${price}💰</div>` : ''}
         <div class="parrot-mini">${svg}</div>
@@ -520,76 +521,116 @@ async function createParrotCard(parrot, isStore) {
         ${parrot.hasAnyGradients() ? '<div class="gradient-indicator">✨ Gradient</div>' : ''}
     `;
 
-    card.onclick = () => selectParrot(parrot.id, isStore);
+    card.onclick = () => selectParrot(parrot.id);
 
     return card;
 }
 
-// Select parrot
-function selectParrot(parrotId, isStore) {
-    if (isStore) {
-        selectedParrotIds = [parrotId];
+// Select parrot for viewing
+function selectParrot(parrotId) {
+    selectedParrotId = parrotId;
+    updateUI();
+}
+
+// Add parrot to breeding slot
+async function breedOnLeft(parrotId) {
+    const parrot = parrots.find(p => p.id === parrotId);
+    if (!parrot) return;
+
+    breedingPair.left = parrotId;
+    await renderBreedingSlots();
+    updateBreedButton();
+}
+
+async function breedOnRight(parrotId) {
+    const parrot = parrots.find(p => p.id === parrotId);
+    if (!parrot) return;
+
+    breedingPair.right = parrotId;
+    await renderBreedingSlots();
+    updateBreedButton();
+}
+
+// Remove from breeding slot
+async function removeFromSlot(slot) {
+    breedingPair[slot] = null;
+    await renderBreedingSlots();
+    updateBreedButton();
+}
+
+// Update breed button state
+function updateBreedButton() {
+    const btn = document.getElementById('breedButton');
+    if (breedingPair.left && breedingPair.right) {
+        btn.disabled = false;
     } else {
-        const index = selectedParrotIds.indexOf(parrotId);
-        if (index >= 0) {
-            selectedParrotIds.splice(index, 1);
-        } else {
-            if (selectedParrotIds.length < 2) {
-                selectedParrotIds.push(parrotId);
-            } else {
-                selectedParrotIds = [parrotId];
-            }
+        btn.disabled = true;
+    }
+}
+
+// Render breeding slots
+async function renderBreedingSlots() {
+    const leftSlot = document.getElementById('breedSlotLeft');
+    const rightSlot = document.getElementById('breedSlotRight');
+
+    // Render left slot
+    if (breedingPair.left) {
+        const parrot = parrots.find(p => p.id === breedingPair.left);
+        if (parrot) {
+            const svg = await generateParrotSVG(parrot);
+            leftSlot.className = 'breeding-slot filled';
+            leftSlot.innerHTML = `
+                <div class="slot-label">Left Parent</div>
+                <button class="remove-btn" onclick="removeFromSlot('left')">×</button>
+                <div class="parrot-mini-breed">${svg}</div>
+                <div class="parrot-name-small">${parrot.name}</div>
+            `;
         }
+    } else {
+        leftSlot.className = 'breeding-slot';
+        leftSlot.innerHTML = `
+            <div class="slot-label">Left Parent</div>
+            <div style="color: #ccc; font-size: 0.9em;">Empty</div>
+        `;
     }
 
-    updateUI();
+    // Render right slot
+    if (breedingPair.right) {
+        const parrot = parrots.find(p => p.id === breedingPair.right);
+        if (parrot) {
+            const svg = await generateParrotSVG(parrot);
+            rightSlot.className = 'breeding-slot filled';
+            rightSlot.innerHTML = `
+                <div class="slot-label">Right Parent</div>
+                <button class="remove-btn" onclick="removeFromSlot('right')">×</button>
+                <div class="parrot-mini-breed">${svg}</div>
+                <div class="parrot-name-small">${parrot.name}</div>
+            `;
+        }
+    } else {
+        rightSlot.className = 'breeding-slot';
+        rightSlot.innerHTML = `
+            <div class="slot-label">Right Parent</div>
+            <div style="color: #ccc; font-size: 0.9em;">Empty</div>
+        `;
+    }
 }
 
 // Update preview panel
 async function updatePreview() {
     const previewDiv = document.getElementById('selectedPreview');
-    const breedingSection = document.getElementById('breedingSection');
     const actionSection = document.getElementById('actionSection');
 
-    if (selectedParrotIds.length === 0) {
+    if (!selectedParrotId) {
         previewDiv.innerHTML = '<div class="empty-preview">Click a parrot to view details</div>';
-        breedingSection.style.display = 'none';
         actionSection.style.display = 'none';
         return;
     }
 
-    // Show breeding section if 2 parrots selected from collection
-    if (currentTab === 'collection' && selectedParrotIds.length === 2) {
-        breedingSection.style.display = 'block';
-        actionSection.style.display = 'none';
-
-        const parent1 = parrots.find(p => p.id === selectedParrotIds[0]);
-        const parent2 = parrots.find(p => p.id === selectedParrotIds[1]);
-
-        const svg1 = await generateParrotSVG(parent1);
-        const svg2 = await generateParrotSVG(parent2);
-
-        document.getElementById('breedingPreview').innerHTML = `
-            <div class="breeding-parent">
-                <div class="mini-svg">${svg1}</div>
-                <div class="name">${parent1.name}</div>
-            </div>
-            <div class="breeding-icon">💕</div>
-            <div class="breeding-parent">
-                <div class="mini-svg">${svg2}</div>
-                <div class="name">${parent2.name}</div>
-            </div>
-        `;
-
-        previewDiv.innerHTML = '<div class="empty-preview">Ready to breed!</div>';
-        return;
-    }
-
-    // Show single parrot preview
-    const selectedId = selectedParrotIds[0];
+    // Find the parrot
     const parrot = currentTab === 'collection'
-        ? parrots.find(p => p.id === selectedId)
-        : storeParrots.find(p => p.id === selectedId);
+        ? parrots.find(p => p.id === selectedParrotId)
+        : storeParrots.find(p => p.id === selectedParrotId);
 
     if (!parrot) return;
 
@@ -605,9 +646,7 @@ async function updatePreview() {
     `;
 
     // Show action buttons
-    breedingSection.style.display = 'none';
     actionSection.style.display = 'block';
-
     const actionButtons = document.getElementById('actionButtons');
 
     if (currentTab === 'store') {
@@ -620,6 +659,12 @@ async function updatePreview() {
     } else {
         const sellValue = Math.floor(parrot.getValue() * 0.7);
         actionButtons.innerHTML = `
+            <button class="btn btn-breed-left" onclick="breedOnLeft(${parrot.id})">
+                💕 Breed on Left
+            </button>
+            <button class="btn btn-breed-right" onclick="breedOnRight(${parrot.id})">
+                💕 Breed on Right
+            </button>
             <button class="btn btn-lab" onclick="openLaboratory(${parrot.id})">
                 🔬 Examine in Laboratory
             </button>
@@ -771,7 +816,7 @@ function buyParrot(parrotId) {
     }
     storeParrots.push(newParrot);
 
-    selectedParrotIds = [];
+    selectedParrotId = null;
     updateUI();
 
     alert(`${parrot.name} joined your collection!`);
@@ -786,7 +831,12 @@ function sellParrot(parrotId) {
 
     coins += Math.floor(parrot.getValue() * 0.7);
     parrots = parrots.filter(p => p.id !== parrotId);
-    selectedParrotIds = [];
+
+    // Clear from breeding pair if present
+    if (breedingPair.left === parrotId) breedingPair.left = null;
+    if (breedingPair.right === parrotId) breedingPair.right = null;
+    selectedParrotId = null;
+
     updateUI();
 }
 
@@ -798,16 +848,21 @@ function freeParrot(parrotId) {
     if (!confirm(`Release ${parrot.name} to the wild? You won't get any coins.`)) return;
 
     parrots = parrots.filter(p => p.id !== parrotId);
-    selectedParrotIds = [];
+
+    // Clear from breeding pair if present
+    if (breedingPair.left === parrotId) breedingPair.left = null;
+    if (breedingPair.right === parrotId) breedingPair.right = null;
+    selectedParrotId = null;
+
     updateUI();
 }
 
 // Breed parrots
 async function breedParrots() {
-    if (selectedParrotIds.length !== 2) return;
+    if (!breedingPair.left || !breedingPair.right) return;
 
-    const parent1 = parrots.find(p => p.id === selectedParrotIds[0]);
-    const parent2 = parrots.find(p => p.id === selectedParrotIds[1]);
+    const parent1 = parrots.find(p => p.id === breedingPair.left);
+    const parent2 = parrots.find(p => p.id === breedingPair.right);
 
     if (!parent1 || !parent2) return;
 
@@ -835,7 +890,10 @@ async function breedParrots() {
         parrots.push(chick);
     });
 
-    selectedParrotIds = [];
+    // Clear breeding pair
+    breedingPair.left = null;
+    breedingPair.right = null;
+
     await updateUI();
 
     alert(`🎉 4 chicks hatched! ${offspring.map(o => o.name).join(', ')} joined your collection!`);
