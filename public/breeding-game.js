@@ -1036,8 +1036,7 @@ async function breedOnLeft(parrotId) {
 
     // Prevent selecting the same parrot in both slots
     if (breedingPair.right === parrotId) {
-        alert('Cannot select the same parrot for both breeding slots!');
-        return;
+        return; // Silently prevent - UI already shows slots
     }
 
     breedingPair.left = parrotId;
@@ -1051,8 +1050,7 @@ async function breedOnRight(parrotId) {
 
     // Prevent selecting the same parrot in both slots
     if (breedingPair.left === parrotId) {
-        alert('Cannot select the same parrot for both breeding slots!');
-        return;
+        return; // Silently prevent - UI already shows slots
     }
 
     breedingPair.right = parrotId;
@@ -1515,8 +1513,7 @@ function buyParrot(parrotId) {
 
     const price = parrot.getValue();
     if (coins < price) {
-        alert('Not enough coins!');
-        return;
+        return; // Button should be disabled, but just in case
     }
 
     coins -= price;
@@ -1568,8 +1565,6 @@ function buyParrot(parrotId) {
     selectedParrotId = null;
     updateUI();
     saveGame();
-
-    alert(`${parrot.name} joined your collection!`);
 }
 
 // Sell parrot
