@@ -215,6 +215,7 @@ class Parrot {
         const bodyParts = ['wings', 'special_wing', 'body', 'head', 'tail', 'accents'];
         const bodyPartColors = {};
         const bodyPartRGB = {};
+        const bodyPartGradientRGB = {}; // Store start and end separately for gradients
         const beautyTraits = [];
         let beautyScore = 0;
 
@@ -240,12 +241,17 @@ class Parrot {
                         endColor,
                         displayColor: `${startColor}→${endColor}`
                     };
-                    // Store average RGB for gradient
+                    // Store average RGB for backward compatibility
                     bodyPartRGB[bodyPart] = [
                         (+startMatch[1] + +endMatch[1]) / 2,
                         (+startMatch[2] + +endMatch[2]) / 2,
                         (+startMatch[3] + +endMatch[3]) / 2
                     ];
+                    // Store start and end separately
+                    bodyPartGradientRGB[bodyPart] = {
+                        start: [+startMatch[1], +startMatch[2], +startMatch[3]],
+                        end: [+endMatch[1], +endMatch[2], +endMatch[3]]
+                    };
                 }
             } else {
                 // Extract RGB from solid color
@@ -314,52 +320,170 @@ class Parrot {
             beautyTraits.push(`Some diversity: ${uniqueBeautifulColors.size} colors (+${8})`);
         }
 
-        // Check for same-color penalty using dot product
-        const rgbParts = bodyParts.filter(bp => bodyPartRGB[bp]);
-        for (let i = 0; i < rgbParts.length; i++) {
-            for (let j = i + 1; j < rgbParts.length; j++) {
-                const rgb1 = bodyPartRGB[rgbParts[i]];
-                const rgb2 = bodyPartRGB[rgbParts[j]];
-                const dotProduct = this.colorDotProduct(rgb1, rgb2);
+        // Pairwise color comparisons with gradient support
+        for (let i = 0; i < bodyParts.length; i++) {
+            for (let j = i + 1; j < bodyParts.length; j++) {
+                const part1 = bodyParts[i];
+                const part2 = bodyParts[j];
+                const color1 = bodyPartColors[part1];
+                const color2 = bodyPartColors[part2];
 
-                // Very similar colors (dot product > 0.9): penalty
-                if (dotProduct > 0.9) {
-                    beautyScore -= 3;
-                    // Split penalty between both parts
-                    partContributions[rgbParts[i]] -= 1.5;
-                    partContributions[rgbParts[j]] -= 1.5;
-                    beautyTraits.push(`Similar: ${rgbParts[i]} & ${rgbParts[j]} (-1.5 each)`);
-                }
-                // Orthogonal colors (dot product near 0): bonus
-                else if (Math.abs(dotProduct) < 0.3) {
-                    beautyScore += 12;
-                    // Split bonus between both parts
-                    partContributions[rgbParts[i]] += 6;
-                    partContributions[rgbParts[j]] += 6;
-                    beautyTraits.push(`Contrasting: ${rgbParts[i]} & ${rgbParts[j]} (+6 each)`);
-                }
-                // Opposite colors (dot product < -0.7): big bonus
-                else if (dotProduct < -0.7) {
-                    beautyScore += 18;
-                    // Split bonus between both parts
-                    partContributions[rgbParts[i]] += 9;
-                    partContributions[rgbParts[j]] += 9;
-                    beautyTraits.push(`Complementary: ${rgbParts[i]} & ${rgbParts[j]} (+9 each)`);
-                }
-                // Somewhat different (0.3 < |dot| < 0.7): small bonus
-                else if (Math.abs(dotProduct) > 0.3 && Math.abs(dotProduct) < 0.7) {
-                    beautyScore += 5;
-                    // Split bonus between both parts
-                    partContributions[rgbParts[i]] += 2.5;
-                    partContributions[rgbParts[j]] += 2.5;
-                    beautyTraits.push(`Varied: ${rgbParts[i]} & ${rgbParts[j]} (+2.5 each)`);
+                if (!color1 || !color2) continue;
+
+                const isGradient1 = color1.type === 'gradient';
+                const isGradient2 = color2.type === 'gradient';
+
+                if (isGradient1 && isGradient2) {
+                    // Both gradients: compare all 4 colors (2 start, 2 end)
+                    const grad1 = bodyPartGradientRGB[part1];
+                    const grad2 = bodyPartGradientRGB[part2];
+
+                    const comparisons = [
+                        { rgb1: grad1.start, rgb2: grad2.start, label: 'start-start' },
+                        { rgb1: grad1.start, rgb2: grad2.end, label: 'start-end' },
+                        { rgb1: grad1.end, rgb2: grad2.start, label: 'end-start' },
+                        { rgb1: grad1.end, rgb2: grad2.end, label: 'end-end' }
+                    ];
+
+                    let totalBonus = 0;
+                    let comparisonDetails = [];
+
+                    for (const comp of comparisons) {
+                        const dotProduct = this.colorDotProduct(comp.rgb1, comp.rgb2);
+                        let bonus = 0;
+                        let label = '';
+
+                        if (dotProduct < -0.7) {
+                            bonus = 18;
+                            label = 'complementary';
+                        } else if (Math.abs(dotProduct) < 0.3) {
+                            bonus = 12;
+                            label = 'contrasting';
+                        } else if (Math.abs(dotProduct) > 0.3 && Math.abs(dotProduct) < 0.7) {
+                            bonus = 5;
+                            label = 'varied';
+                        } else if (dotProduct > 0.9) {
+                            bonus = -3;
+                            label = 'similar';
+                        }
+
+                        totalBonus += bonus;
+                        if (bonus !== 0) {
+                            comparisonDetails.push(`${comp.label}:${label}(${bonus >= 0 ? '+' : ''}${bonus})`);
+                        }
+                    }
+
+                    // Weight gradient-gradient comparisons at 0.5x
+                    const weightedBonus = totalBonus * 0.5;
+                    beautyScore += weightedBonus;
+
+                    // Split between both parts
+                    const perPart = weightedBonus / 2;
+                    partContributions[part1] += perPart;
+                    partContributions[part2] += perPart;
+
+                    if (comparisonDetails.length > 0) {
+                        beautyTraits.push(`Gradient pair: ${part1} ⟷ ${part2} (${comparisonDetails.join(', ')}) = ${perPart >= 0 ? '+' : ''}${perPart.toFixed(1)} each`);
+                    }
+
+                } else if (isGradient1 || isGradient2) {
+                    // One gradient, one solid: compare solid with both gradient colors
+                    const gradPart = isGradient1 ? part1 : part2;
+                    const solidPart = isGradient1 ? part2 : part1;
+                    const grad = bodyPartGradientRGB[gradPart];
+                    const solid = bodyPartRGB[solidPart];
+
+                    const comparisons = [
+                        { rgb1: solid, rgb2: grad.start, label: 'vs-start' },
+                        { rgb1: solid, rgb2: grad.end, label: 'vs-end' }
+                    ];
+
+                    let totalBonus = 0;
+                    let comparisonDetails = [];
+
+                    for (const comp of comparisons) {
+                        const dotProduct = this.colorDotProduct(comp.rgb1, comp.rgb2);
+                        let bonus = 0;
+                        let label = '';
+
+                        if (dotProduct < -0.7) {
+                            bonus = 18;
+                            label = 'complementary';
+                        } else if (Math.abs(dotProduct) < 0.3) {
+                            bonus = 12;
+                            label = 'contrasting';
+                        } else if (Math.abs(dotProduct) > 0.3 && Math.abs(dotProduct) < 0.7) {
+                            bonus = 5;
+                            label = 'varied';
+                        } else if (dotProduct > 0.9) {
+                            bonus = -3;
+                            label = 'similar';
+                        }
+
+                        totalBonus += bonus;
+                        if (bonus !== 0) {
+                            comparisonDetails.push(`${comp.label}:${label}(${bonus >= 0 ? '+' : ''}${bonus})`);
+                        }
+                    }
+
+                    // Weight gradient-solid comparisons at 0.75x
+                    const weightedBonus = totalBonus * 0.75;
+                    beautyScore += weightedBonus;
+
+                    // Split between both parts
+                    const perPart = weightedBonus / 2;
+                    partContributions[part1] += perPart;
+                    partContributions[part2] += perPart;
+
+                    if (comparisonDetails.length > 0) {
+                        beautyTraits.push(`Mixed pair: ${part1} ⟷ ${part2} (${comparisonDetails.join(', ')}) = ${perPart >= 0 ? '+' : ''}${perPart.toFixed(1)} each`);
+                    }
+
+                } else {
+                    // Both solid colors: standard comparison
+                    const rgb1 = bodyPartRGB[part1];
+                    const rgb2 = bodyPartRGB[part2];
+                    const dotProduct = this.colorDotProduct(rgb1, rgb2);
+
+                    let bonus = 0;
+                    let label = '';
+
+                    if (dotProduct > 0.9) {
+                        bonus = -3;
+                        label = 'Similar';
+                        beautyScore += bonus;
+                        partContributions[part1] -= 1.5;
+                        partContributions[part2] -= 1.5;
+                        beautyTraits.push(`${label}: ${part1} & ${part2} (-1.5 each)`);
+                    } else if (Math.abs(dotProduct) < 0.3) {
+                        bonus = 12;
+                        label = 'Contrasting';
+                        beautyScore += bonus;
+                        partContributions[part1] += 6;
+                        partContributions[part2] += 6;
+                        beautyTraits.push(`${label}: ${part1} & ${part2} (+6 each)`);
+                    } else if (dotProduct < -0.7) {
+                        bonus = 18;
+                        label = 'Complementary';
+                        beautyScore += bonus;
+                        partContributions[part1] += 9;
+                        partContributions[part2] += 9;
+                        beautyTraits.push(`${label}: ${part1} & ${part2} (+9 each)`);
+                    } else if (Math.abs(dotProduct) > 0.3 && Math.abs(dotProduct) < 0.7) {
+                        bonus = 5;
+                        label = 'Varied';
+                        beautyScore += bonus;
+                        partContributions[part1] += 2.5;
+                        partContributions[part2] += 2.5;
+                        beautyTraits.push(`${label}: ${part1} & ${part2} (+2.5 each)`);
+                    }
                 }
             }
         }
 
         return {
             score: Math.max(0, beautyScore),
-            maxScore: 100,
+            maxScore: 200, // Increased to reflect gradient potential
             traits: beautyTraits,
             bodyPartColors,
             partContributions
@@ -1280,7 +1404,7 @@ async function openLaboratory(parrotId) {
 
     // Calculate rarity breakdown
     let totalRareTraits = 0;
-    let maxTraits = 0;
+    const maxTraits = 60; // Absolute maximum: 6 parts × (6 color points + 4 gradient points)
     let rarityBreakdown = [];
 
     for (const bodyPart of ['wings', 'special_wing', 'body', 'head', 'tail', 'accents']) {
@@ -1298,7 +1422,6 @@ async function openLaboratory(parrotId) {
         if (hasGradient) partRarity += 4;
 
         totalRareTraits += partRarity;
-        maxTraits += hasGradient ? 10 : 6; // 6 for colors + 4 for gradient if present
 
         rarityBreakdown.push({
             name: bodyPartNames[bodyPart],
