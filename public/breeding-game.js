@@ -1986,7 +1986,9 @@ function saveGame() {
         parrotIdCounter,
         generation,
         usedNames: Array.from(usedNames),
-        examinedParrots: Array.from(examinedParrots)
+        examinedParrots: Array.from(examinedParrots),
+        contestProgress,
+        parrotTrophies
     };
 
     // Store in cookie (max 4KB, so we compress by storing only essential data)
@@ -2015,6 +2017,25 @@ function loadGame() {
                 generation = gameState.generation;
                 usedNames = new Set(gameState.usedNames || []);
                 examinedParrots = new Set(gameState.examinedParrots || []);
+                contestProgress = gameState.contestProgress || {};
+                parrotTrophies = gameState.parrotTrophies || {};
+
+                // Restore contest tier unlock status
+                if (gameState.contestProgress) {
+                    CONTEST_TIERS.forEach((tier, index) => {
+                        if (index === 0) {
+                            tier.unlocked = true;
+                        } else {
+                            // Check if any parrot has completed the previous tier
+                            const anyCompleted = Object.values(gameState.contestProgress).some(
+                                progress => progress[index - 1]
+                            );
+                            if (anyCompleted) {
+                                tier.unlocked = true;
+                            }
+                        }
+                    });
+                }
 
                 console.log('Game loaded successfully');
                 return true;
@@ -2047,6 +2068,13 @@ function newGame() {
     generation = 1;
     usedNames = new Set();
     examinedParrots = new Set();
+    contestProgress = {};
+    parrotTrophies = {};
+
+    // Reset contest tiers to locked except first
+    CONTEST_TIERS.forEach((tier, index) => {
+        tier.unlocked = (index === 0);
+    });
 
     // Reinitialize
     initGame();
@@ -2191,4 +2219,223 @@ function formatTimeAgo(timestamp) {
     if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
     if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
     return `${Math.floor(seconds / 86400)}d ago`;
+}
+
+// Contest System Functions
+
+function renderContestsTab() {
+    const contestsTab = document.getElementById('contestsTab');
+    const parrot = selectedParrotId !== null ? parrots.find(p => p.id === selectedParrotId) : null;
+
+    let html = '<div style="padding: 20px;">';
+
+    if (!parrot) {
+        html += '<div style="text-align: center; padding: 40px; color: #999;">';
+        html += '<h3>Select a parrot from your collection to enter contests!</h3>';
+        html += '<button class="btn" onclick="switchTab(\'collection\')">Go to Collection</button>';
+        html += '</div>';
+        contestsTab.innerHTML = html;
+        return;
+    }
+
+    html += `<h3>🏆 Beauty Contests for ${parrot.name}</h3>`;
+    html += '<p style="color: #666; margin-bottom: 20px;">Compete to win coins and badges. Beat each tier to unlock the next!</p>';
+
+    CONTEST_TIERS.forEach((tier, index) => {
+        const prevCompleted = index === 0 || (contestProgress[selectedParrotId] && contestProgress[selectedParrotId][index - 1]);
+        const isUnlocked = tier.unlocked && prevCompleted;
+        const hasCompleted = contestProgress[selectedParrotId] && contestProgress[selectedParrotId][index];
+
+        const bgColor = hasCompleted ? '#d4edda' : (isUnlocked ? '#f8f9fa' : '#f0f0f0');
+        const borderColor = hasCompleted ? '#28a745' : (isUnlocked ? '#667eea' : '#ccc');
+
+        html += `<div style="margin-bottom: 20px; padding: 20px; background: ${bgColor}; border-radius: 12px; border: 2px solid ${borderColor}; opacity: ${isUnlocked || hasCompleted ? 1 : 0.6};">`;
+        html += '<div style="display: flex; justify-content: space-between; align-items: start;">';
+        html += '<div style="flex: 1;">';
+        html += `<h4 style="margin: 0 0 10px 0;">${tier.name} ${!isUnlocked && !hasCompleted ? '🔒' : ''} ${hasCompleted ? '✅' : ''}</h4>`;
+        html += `<p style="color: #666; margin: 0 0 10px 0;">${tier.description}</p>`;
+
+        if (tier.specialRules) {
+            html += '<div style="background: #fff3cd; padding: 10px; border-radius: 6px; margin-bottom: 10px;">';
+            html += `<strong>Rule:</strong> ${tier.specialRules.description}`;
+            html += '</div>';
+        }
+
+        html += '<div style="display: flex; gap: 20px; font-size: 0.9em; color: #666; flex-wrap: wrap;">';
+        html += `<span>💰 Entry: ${tier.entryCost}</span>`;
+        html += `<span>🥇 ${tier.rewards[1].coins} | 🥈 ${tier.rewards[2].coins} | 🥉 ${tier.rewards[3].coins}</span>`;
+        html += '</div>';
+
+        if (hasCompleted) {
+            const result = contestProgress[selectedParrotId][index];
+            html += '<div style="margin-top: 10px; padding: 10px; background: white; border-radius: 6px;">';
+            html += `<strong>Completed:</strong> ${result.badge} ${result.placed}${result.placed === 1 ? 'st' : result.placed === 2 ? 'nd' : result.placed === 3 ? 'rd' : 'th'} place • ${result.coins} coins`;
+            html += '</div>';
+        }
+
+        html += '</div>';
+
+        html += '<div style="min-width: 150px; text-align: right;">';
+        if (!isUnlocked && !hasCompleted) {
+            html += '<button class="btn" disabled style="opacity: 0.5;">🔒 Locked</button>';
+        } else if (hasCompleted) {
+            html += '<button class="btn" disabled style="opacity: 0.5; background: #28a745; color: white;">✅ Complete</button>';
+        } else {
+            html += `<button class="btn btn-contest" onclick="enterContest(${index})" style="background: #667eea; color: white;" ${coins < tier.entryCost ? 'disabled' : ''}>`;
+            html += `${coins < tier.entryCost ? '❌ Need ' + tier.entryCost : '🎯 Enter (' + tier.entryCost + '💰)'}`;
+            html += '</button>';
+        }
+        html += '</div>';
+
+        html += '</div>';
+        html += '</div>';
+    });
+
+    html += '</div>';
+    contestsTab.innerHTML = html;
+}
+
+async function enterContest(tierIndex) {
+    const tier = CONTEST_TIERS[tierIndex];
+    const parrot = parrots.find(p => p.id === selectedParrotId);
+
+    if (!parrot) {
+        showToast('No parrot selected', 'Go to collection first', 'warning');
+        return;
+    }
+
+    if (tier.specialRules && !tier.specialRules.validator(parrot)) {
+        showToast('Does not meet requirements', tier.specialRules.description, 'error');
+        return;
+    }
+
+    if (coins < tier.entryCost) {
+        showToast('Not enough coins', `Need ${tier.entryCost} coins`, 'error');
+        return;
+    }
+
+    coins -= tier.entryCost;
+    updateStats();
+
+    const parrotBeauty = parrot.calculateBeauty();
+    const opponents = generateAIOpponents(tier, 5);
+
+    const competitors = [
+        { parrot, beauty: parrotBeauty, isPlayer: true },
+        ...opponents
+    ];
+
+    competitors.sort((a, b) => b.beauty.score - a.beauty.score);
+
+    const playerIndex = competitors.findIndex(c => c.isPlayer);
+    const placement = playerIndex + 1;
+
+    let coinsWon = 0;
+    let badge = null;
+    if (placement <= 3) {
+        const reward = tier.rewards[placement];
+        coinsWon = reward.coins;
+        badge = reward.badge;
+        coins += coinsWon;
+    }
+
+    if (!contestProgress[selectedParrotId]) {
+        contestProgress[selectedParrotId] = {};
+    }
+    contestProgress[selectedParrotId][tierIndex] = { placed: placement, coins: coinsWon, badge };
+
+    if (placement <= 3 && tierIndex < CONTEST_TIERS.length - 1) {
+        CONTEST_TIERS[tierIndex + 1].unlocked = true;
+    }
+
+    if (!parrotTrophies[selectedParrotId]) {
+        parrotTrophies[selectedParrotId] = [];
+    }
+    if (badge) {
+        parrotTrophies[selectedParrotId].push(badge);
+    }
+
+    updateStats();
+    saveGame();
+
+    showContestResults(tier, competitors, placement, coinsWon, badge, parrot);
+}
+
+function generateAIOpponents(tier, count) {
+    const opponents = [];
+    const [minBeauty, maxBeauty] = tier.minBeautyRange;
+    const aiNames = ['Luna Eclipse', 'Prismatic Wing', 'Sunset Dancer', 'Ocean Breeze', 'Forest Gem', 'Twilight Star'];
+
+    for (let i = 0; i < count; i++) {
+        const targetBeauty = minBeauty + Math.random() * (maxBeauty - minBeauty);
+        const mockBeauty = {
+            score: Math.round(targetBeauty + (Math.random() - 0.5) * 15),
+            maxScore: 200,
+            traits: [],
+            bodyPartColors: {},
+            partContributions: {}
+        };
+
+        opponents.push({
+            parrot: { name: aiNames[i] || `Competitor ${i + 1}`, id: `ai_${i}` },
+            beauty: mockBeauty,
+            isPlayer: false
+        });
+    }
+
+    return opponents;
+}
+
+function showContestResults(tier, competitors, placement, coinsWon, badge, playerParrot) {
+    const modal = document.getElementById('contestModal');
+    const display = document.getElementById('contestDisplay');
+
+    const won = placement <= 3;
+    const bgColor = won ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : '#f8f9fa';
+    const textColor = won ? 'white' : '#333';
+
+    let html = `<h2 style="text-align: center; margin-bottom: 20px;">${tier.name}</h2>`;
+
+    html += `<div style="text-align: center; padding: 30px; background: ${bgColor}; border-radius: 12px; margin-bottom: 20px; color: ${textColor};">`;
+    html += `<h1 style="margin: 0 0 10px 0; font-size: 3em;">${won ? badge : '😔'}</h1>`;
+    html += `<h3 style="margin: 0 0 5px 0;">${playerParrot.name} placed ${placement}${placement === 1 ? 'st' : placement === 2 ? 'nd' : placement === 3 ? 'rd' : 'th'}!</h3>`;
+    if (coinsWon > 0) {
+        html += `<p style="font-size: 1.5em; margin: 10px 0 0 0;">Won ${coinsWon} coins!</p>`;
+    } else {
+        html += '<p style="margin: 10px 0 0 0;">Better luck next time!</p>';
+    }
+    html += '</div>';
+
+    html += '<h4 style="margin: 20px 0 10px 0;">Final Rankings</h4>';
+    html += '<div style="background: #f8f9fa; border-radius: 12px; padding: 15px;">';
+
+    competitors.forEach((comp, index) => {
+        const isPlayer = comp.isPlayer;
+        const placeNum = index + 1;
+        const placeBadge = placeNum === 1 ? '🥇' : placeNum === 2 ? '🥈' : placeNum === 3 ? '🥉' : `${placeNum}.`;
+
+        html += `<div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; margin-bottom: 8px; background: ${isPlayer ? '#e3f2fd' : 'white'}; border-radius: 8px; border: ${isPlayer ? '2px solid #2196f3' : '1px solid #ddd'};">`;
+        html += '<div style="display: flex; align-items: center; gap: 10px;">';
+        html += `<span style="font-size: 1.2em; min-width: 40px;">${placeBadge}</span>`;
+        html += `<strong style="color: ${isPlayer ? '#2196f3' : '#333'};">${comp.parrot.name}${isPlayer ? ' (You)' : ''}</strong>`;
+        html += '</div>';
+        html += '<div style="text-align: right;">';
+        html += `<span style="font-weight: 600; color: #667eea;">${comp.beauty.score} pts</span>`;
+        html += '</div>';
+        html += '</div>';
+    });
+
+    html += '</div>';
+
+    html += '<div style="text-align: center; margin-top: 20px;">';
+    html += '<button class="btn" onclick="closeContestModal()">Close</button>';
+    html += '</div>';
+
+    display.innerHTML = html;
+    modal.classList.add('active');
+}
+
+function closeContestModal() {
+    document.getElementById('contestModal').classList.remove('active');
+    renderContestsTab();
 }
