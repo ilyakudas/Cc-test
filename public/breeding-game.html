@@ -49,6 +49,7 @@
                 <div class="tabs">
                     <button class="tab active" onclick="switchTab('collection')">📦 Collection</button>
                     <button class="tab" onclick="switchTab('store')">🏪 Store</button>
+                    <button class="tab" onclick="switchTab('contests')">🏆 Contests</button>
                 </div>
 
                 <!-- Actions Section - Moved to top -->
@@ -62,6 +63,10 @@
 
                 <div id="storeTab" class="parrot-grid" style="display: none;">
                     <!-- Store parrots will be inserted here -->
+                </div>
+
+                <div id="contestsTab" style="display: none;">
+                    <!-- Contests content will be inserted here -->
                 </div>
             </div>
 
@@ -102,6 +107,14 @@
         <div class="modal-content">
             <span class="modal-close" onclick="closeModal()">&times;</span>
             <div id="laboratoryDisplay"></div>
+        </div>
+    </div>
+
+    <!-- Contest Modal -->
+    <div class="modal" id="contestModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeContestModal()">&times;</span>
+            <div id="contestDisplay"></div>
         </div>
     </div>
 
