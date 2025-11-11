@@ -634,7 +634,7 @@
                     return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
                 };
 
-                // Wing feathers (blue gene controlled)
+                // === WINGS === (Blue gene controlled)
                 let wingColors;
                 if (blue === 2) {
                     wingColors = ['#003F7F', '#004B8D', '#00589B', '#0066AA', '#0073B8', '#0080C6'];
@@ -645,7 +645,7 @@
                 }
                 colorMap['wing-blue'] = wingColors.map(c => modifyColor(c, intensityMod, melaninDark));
 
-                // Body yellow feathers (yellow gene controlled) - excluding branches
+                // === BODY FEATHERS === (Yellow gene - excluding body-yellow-4 which is eye)
                 let bodyYellowColors;
                 if (yellow === 2) {
                     bodyYellowColors = ['#FFD700', '#FFC700', '#FFB700', '#FFA500', '#FF9500', '#FF8C00'];
@@ -656,75 +656,74 @@
                 }
                 colorMap['body-yellow'] = bodyYellowColors.map(c => modifyColor(c, intensityMod, melaninDark));
 
-                // Body gold feathers (yellow + red mix) - ONLY feathers, not branches
-                let bodyGoldColors;
-                if (yellow >= 1 && red >= 1) {
-                    const combo = yellow + red;
-                    if (combo >= 4) {
-                        bodyGoldColors = ['#B8860B', '#DAA520', '#D4AF37', '#C5A000', '#B8860B', '#CD853F'];
-                    } else if (combo >= 2) {
-                        bodyGoldColors = ['#E6D16E', '#E8D78E', '#EADDAE', '#ECE3CE', '#F0E6D0', '#F5EDD8'];
-                    } else {
-                        bodyGoldColors = ['#D8D8D8', '#E0E0E0', '#E8E8E8', '#F0F0F0', '#F5F5F5', '#FAFAFA'];
-                    }
-                } else if (yellow === 2) {
-                    bodyGoldColors = ['#C5A000', '#D4AF37', '#DAA520', '#E6C200', '#EDD000', '#F5DD00'];
-                } else {
-                    bodyGoldColors = ['#D8D8D8', '#E0E0E0', '#E8E8E8', '#F0F0F0', '#F5F5F5', '#FAFAFA'];
-                }
-                // Only apply to feather IDs (body-gold-3 and above, not body-gold-1, body-gold-2 which are branches)
-                colorMap['body-gold'] = bodyGoldColors.map(c => modifyColor(c, intensityMod, melaninDark));
-
-                // Green accents (yellow + blue mix)
-                let greenColors;
+                // === TAIL FEATHERS === (Green accents - yellow + blue mix)
+                let tailColors;
                 if (yellow > 0 && blue > 0) {
                     const greenIntensity = Math.min(yellow, blue);
                     if (greenIntensity === 2) {
-                        greenColors = ['#228B22', '#32CD32', '#3CB371', '#50C878', '#66CDAA', '#7FFF00'];
+                        tailColors = ['#228B22', '#32CD32', '#3CB371', '#50C878', '#66CDAA', '#7FFF00'];
                     } else {
-                        greenColors = ['#90EE90', '#98FB98', '#A0FFA0', '#A8FFA8', '#B4FFB4', '#C0FFC0'];
+                        tailColors = ['#90EE90', '#98FB98', '#A0FFA0', '#A8FFA8', '#B4FFB4', '#C0FFC0'];
                     }
                 } else {
-                    greenColors = ['#C0C0C0', '#C8C8C8', '#D0D0D0', '#D8D8D8', '#E0E0E0', '#E8E8E8'];
+                    tailColors = ['#C0C0C0', '#C8C8C8', '#D0D0D0', '#D8D8D8', '#E0E0E0', '#E8E8E8'];
                 }
-                colorMap['accent-green'] = greenColors.map(c => modifyColor(c, intensityMod, melaninDark));
+                colorMap['accent-green'] = tailColors.map(c => modifyColor(c, intensityMod, melaninDark));
 
-                // Red accents (red gene)
-                let redColors;
-                if (red === 2) {
-                    redColors = ['#8B0000', '#A52A2A', '#DC143C', '#FF4500', '#FF6347', '#FF7F50'];
-                } else if (red === 1) {
-                    redColors = ['#FF6B6B', '#FF7F7F', '#FF9393', '#FFA7A7', '#FFB6B6', '#FFC5C5'];
+                // === CHEST/BELLY ACCENTS === (Blue accents - blue gene variation)
+                let chestColors;
+                if (blue === 2) {
+                    chestColors = ['#1E90FF', '#4169E1', '#0000CD', '#00008B', '#191970'];
+                } else if (blue === 1) {
+                    chestColors = ['#87CEEB', '#87CEFA', '#ADD8E6', '#B0E0E6', '#AFEEEE'];
                 } else {
-                    redColors = ['#F0F0F0', '#F5F5F5', '#FAFAFA', '#FCFCFC', '#FDFDFD', '#FFFFFF'];
+                    chestColors = ['#D3D3D3', '#DCDCDC', '#E0E0E0', '#E8E8E8', '#F0F0F0'];
                 }
-                colorMap['accent-red'] = redColors.map(c => modifyColor(c, intensityMod, melaninDark));
+                colorMap['accent-blue'] = chestColors.map(c => modifyColor(c, intensityMod, melaninDark));
 
-                // Detail black feathers (melanin controlled)
-                let detailColors;
+                // === SHOULDER/BACK FEATHERS === (Brown accents - red + melanin mix)
+                let shoulderColors;
+                if (red >= 1 && melanin >= 1) {
+                    const brownIntensity = Math.min(red, melanin);
+                    if (brownIntensity === 2) {
+                        shoulderColors = ['#8B4513', '#A0522D', '#CD853F', '#D2691E', '#B8860B', '#DAA520'];
+                    } else {
+                        shoulderColors = ['#D2B48C', '#DEB887', '#F5DEB3', '#FFE4B5', '#FFDEAD', '#F5DEB3'];
+                    }
+                } else {
+                    shoulderColors = ['#E8E8E8', '#F0F0F0', '#F5F5F5', '#FAFAFA', '#FCFCFC', '#FFFFFF'];
+                }
+                colorMap['accent-brown'] = shoulderColors.map(c => modifyColor(c, intensityMod, 1.0));
+
+                // === BEAK === (detail-gray-1 and detail-gray-3 - melanin controlled)
+                let beakColors;
                 if (melanin === 2) {
-                    detailColors = ['#000000', '#0A0A0A', '#141414', '#1E1E1E', '#282828', '#323232'];
+                    beakColors = ['#2F2F2F', '#3A3A3A', '#454545'];
                 } else if (melanin === 1) {
-                    detailColors = ['#3C3C3C', '#464646', '#505050', '#5A5A5A', '#646464', '#6E6E6E'];
+                    beakColors = ['#696969', '#787878', '#808080'];
                 } else {
-                    detailColors = ['#787878', '#828282', '#8C8C8C', '#969696', '#A0A0A0', '#AAAAAA'];
+                    beakColors = ['#A9A9A9', '#B0B0B0', '#BEBEBE'];
                 }
-                colorMap['detail-black'] = detailColors;
+                colorMap['detail-gray'] = beakColors;
 
-                // Gray details (affected by melanin slightly)
-                let grayColors;
-                if (melanin >= 1) {
-                    grayColors = ['#505050', '#5A5A5A', '#646464', '#6E6E6E', '#787878', '#828282'];
+                // === FACE/HEAD MARKINGS === (accent-white-3 - intensity affects brightness)
+                let faceColors;
+                if (intensity >= 1) {
+                    faceColors = ['#FFFFFF', '#FEFEFE', '#FDFDFD'];
                 } else {
-                    grayColors = ['#A0A0A0', '#AAAAAA', '#B4B4B4', '#BEBEBE', '#C8C8C8', '#D2D2D2'];
+                    faceColors = ['#F5F5F5', '#F0F0F0', '#EBEBEB'];
                 }
-                colorMap['detail-gray'] = grayColors;
+                colorMap['accent-white'] = faceColors;
 
-                // White accents (not affected much by genes)
-                colorMap['accent-white'] = ['#FFFFFF', '#FEFEFE', '#FDFDFD', '#FCFCFC', '#FBFBFB', '#FAFAFA'];
-
-                // Note: covert-yellow-1,2,3,4 (background) and body-gold-1,2 (branches)
-                // are excluded from gene control by not being in colorMap
+                // Note: The following are EXCLUDED from gene control:
+                // - All body-gold (branches)
+                // - All covert-yellow (ground - will be set to uniform color)
+                // - detail-black (tail contour/outline)
+                // - body-yellow-4 (eye - fixed color)
+                // - accent-white-4 (eye - fixed color)
+                // - other-2, other-3, other-4 (claws - fixed color)
+                // - detail-gray-2 (beard - fixed color)
+                // - other-1 (tail feather tip - will use accent-green colors)
 
                 return colorMap;
             }
@@ -763,13 +762,76 @@
             let svg = template;
             const colorMap = parrot.getColorMap();
 
-            // Background elements to exclude (don't change these)
-            const excludedIds = [
-                'covert-yellow-1', 'covert-yellow-2', 'covert-yellow-3', 'covert-yellow-4',
-                'body-gold-1', 'body-gold-2'  // branches
-            ];
+            // Fixed colors for non-genetic elements
+            const GROUND_COLOR = '#8B7355';  // Brown ground
+            const EYE_COLOR = '#000000';     // Black eyes
+            const CLAW_COLOR = '#4A4A4A';    // Dark gray claws
+            const BEARD_COLOR = '#D2691E';   // Orange beard
+            const CONTOUR_COLOR = '#000000'; // Black contours
 
-            // Replace colors for each feather group
+            // Complete exclusion list with special handling
+            const fixedColorElements = {
+                // All branches (body-gold)
+                'body-gold-1': GROUND_COLOR,
+                'body-gold-2': GROUND_COLOR,
+                'body-gold-3': GROUND_COLOR,
+                'body-gold-4': GROUND_COLOR,
+                'body-gold-5': GROUND_COLOR,
+                'body-gold-6': GROUND_COLOR,
+                'body-gold-7': GROUND_COLOR,
+                'body-gold-8': GROUND_COLOR,
+                'body-gold-9': GROUND_COLOR,
+                'body-gold-10': GROUND_COLOR,
+                'body-gold-11': GROUND_COLOR,
+
+                // Ground (covert-yellow)
+                'covert-yellow-1': GROUND_COLOR,
+                'covert-yellow-2': GROUND_COLOR,
+                'covert-yellow-3': GROUND_COLOR,
+                'covert-yellow-4': GROUND_COLOR,
+                'covert-yellow-5': GROUND_COLOR,
+
+                // Eyes
+                'body-yellow-4': EYE_COLOR,
+                'accent-white-4': EYE_COLOR,
+
+                // Claws
+                'other-2': CLAW_COLOR,
+                'other-3': CLAW_COLOR,
+                'other-4': CLAW_COLOR,
+
+                // Beard
+                'detail-gray-2': BEARD_COLOR
+            };
+
+            // Special case: other-1 is tail feather, use accent-green colors
+            const tailTipColor = colorMap['accent-green'] ? colorMap['accent-green'][0] : '#50C878';
+
+            // Apply fixed colors first
+            Object.keys(fixedColorElements).forEach(featherId => {
+                const color = fixedColorElements[featherId];
+                const regex = new RegExp(`id="${featherId}"[^>]*fill="[^"]*"`, 'g');
+                svg = svg.replace(regex, match => {
+                    return match.replace(/fill="[^"]*"/, `fill="${color}"`);
+                });
+            });
+
+            // Apply tail tip color (other-1)
+            const tailTipRegex = new RegExp(`id="other-1"[^>]*fill="[^"]*"`, 'g');
+            svg = svg.replace(tailTipRegex, match => {
+                return match.replace(/fill="[^"]*"/, `fill="${tailTipColor}"`);
+            });
+
+            // Keep detail-black as contours (black outline)
+            for (let i = 1; i <= 30; i++) {
+                const featherId = `detail-black-${i}`;
+                const regex = new RegExp(`id="${featherId}"[^>]*fill="[^"]*"`, 'g');
+                svg = svg.replace(regex, match => {
+                    return match.replace(/fill="[^"]*"/, `fill="${CONTOUR_COLOR}"`);
+                });
+            }
+
+            // Replace colors for gene-controlled feather groups
             Object.keys(colorMap).forEach(groupPrefix => {
                 const colors = colorMap[groupPrefix];
 
@@ -777,11 +839,32 @@
                 for (let i = 1; i <= 30; i++) {
                     const featherId = `${groupPrefix}-${i}`;
 
-                    // Skip excluded elements (background and branches)
-                    if (excludedIds.includes(featherId)) {
+                    // Skip if this element has a fixed color
+                    if (fixedColorElements[featherId]) {
                         continue;
                     }
 
+                    // Skip detail-black (contours)
+                    if (groupPrefix === 'detail-black') {
+                        continue;
+                    }
+
+                    // Skip body-yellow-4 (eye)
+                    if (featherId === 'body-yellow-4') {
+                        continue;
+                    }
+
+                    // Skip accent-white-4 (eye)
+                    if (featherId === 'accent-white-4') {
+                        continue;
+                    }
+
+                    // Skip detail-gray-2 (beard)
+                    if (featherId === 'detail-gray-2') {
+                        continue;
+                    }
+
+                    // Use appropriate color
                     const colorIndex = i % colors.length;
                     const color = colors[colorIndex];
 
