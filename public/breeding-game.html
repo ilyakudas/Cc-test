@@ -61,6 +61,24 @@
 
             <!-- Right Panel - Preview & Actions -->
             <div class="panel preview-panel">
+                <!-- Breeding Pair Box - Always Visible -->
+                <div class="breeding-pair-box">
+                    <h4>🧬 Breeding Pair</h4>
+                    <div class="breeding-slots">
+                        <div class="breeding-slot" id="breedSlotLeft">
+                            <div class="slot-label">Left Parent</div>
+                            <div style="color: #ccc; font-size: 0.9em;">Empty</div>
+                        </div>
+                        <div class="breeding-slot" id="breedSlotRight">
+                            <div class="slot-label">Right Parent</div>
+                            <div style="color: #ccc; font-size: 0.9em;">Empty</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-breed" id="breedButton" onclick="breedParrots()" disabled>
+                        💕 Breed Parrots
+                    </button>
+                </div>
+
                 <div class="preview-section">
                     <h3>Selected Parrot</h3>
                     <div id="selectedPreview">
@@ -72,13 +90,6 @@
 
                 <div class="preview-section">
                     <h3>Actions</h3>
-                    <div id="breedingSection" style="display: none;">
-                        <div class="info-box">
-                            Ready to breed! Select two parrots from your collection to create offspring.
-                        </div>
-                        <div class="breeding-preview" id="breedingPreview"></div>
-                        <button class="btn btn-breed" onclick="breedParrots()">💕 Breed Selected Parrots</button>
-                    </div>
                     <div id="actionSection" style="display: none;">
                         <div class="action-buttons" id="actionButtons"></div>
                     </div>
