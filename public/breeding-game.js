@@ -88,6 +88,39 @@ class Parrot {
         return Object.values(this.genes).some(part => part.gradient === true);
     }
 
+    // Calculate rarity score based on genetic patterns
+    calculateRarity() {
+        let rareTraits = 0;
+        let totalTraits = 0;
+
+        for (const bodyPart of ['wings', 'special_wing', 'body', 'head', 'tail', 'accents']) {
+            const part = this.genes[bodyPart];
+
+            // Check each color channel for pure patterns (all dominant or all recessive)
+            const redCount = this.countDominant(part.red);
+            const greenCount = this.countDominant(part.green);
+            const blueCount = this.countDominant(part.blue);
+
+            // All recessive (0) or all dominant (4) = rare
+            if (redCount === 0 || redCount === 4) rareTraits++;
+            if (greenCount === 0 || greenCount === 4) rareTraits++;
+            if (blueCount === 0 || blueCount === 4) rareTraits++;
+
+            totalTraits += 3; // 3 color channels per body part
+
+            // Gradient is rare
+            if (part.gradient) rareTraits += 2;
+        }
+
+        // Return rarity level: common, uncommon, rare, epic, legendary
+        const rarityRatio = rareTraits / totalTraits;
+        if (rarityRatio >= 0.7 || this.hasAnyGradients()) return 'legendary';
+        if (rarityRatio >= 0.5) return 'epic';
+        if (rarityRatio >= 0.35) return 'rare';
+        if (rarityRatio >= 0.2) return 'uncommon';
+        return 'common';
+    }
+
     getValue() {
         let score = 0;
         for (const bodyPart of ['wings', 'special_wing', 'body', 'head', 'tail', 'accents']) {
@@ -97,7 +130,19 @@ class Parrot {
             score += this.countDominant(part.blue);
             if (part.gradient) score += 10;
         }
-        return 50 + Math.floor(score * 2) + (this.generation * 10);
+
+        // Factor in rarity for pricing
+        const baseValue = 50 + Math.floor(score * 2) + (this.generation * 10);
+        const rarity = this.calculateRarity();
+        const rarityMultipliers = {
+            'common': 1.0,
+            'uncommon': 1.3,
+            'rare': 1.6,
+            'epic': 2.0,
+            'legendary': 2.5
+        };
+
+        return Math.floor(baseValue * rarityMultipliers[rarity]);
     }
 }
 
@@ -304,9 +349,9 @@ async function generateParrotSVG(parrot) {
 
 // Initialize game
 async function initGame() {
-    // Create 2 predefined beautiful parrots + 1 random
+    // Create 2 predefined beautiful parrots - 1 in collection, 1 in store
     parrots = [
-        // Predefined 1: Blue gradient wings, orange body
+        // Predefined 1: Blue gradient wings, orange body - In collection
         new Parrot('Twilight', {
             wings: {
                 red: [false, false, true, true],
@@ -344,68 +389,66 @@ async function initGame() {
                 blue: [true, true, false, false],
                 gradient: false
             }
-        }, 1),
-
-        // Predefined 2: Rainbow gradient parrot
-        new Parrot('Prism', {
-            wings: {
-                red: [true, true, false, false],
-                green: [false, false, true, true],
-                blue: [true, true, true, true],
-                gradient: true
-            },
-            special_wing: {
-                red: [false, false, false, false],
-                green: [true, true, true, true],
-                blue: [true, true, true, true],
-                gradient: false
-            },
-            body: {
-                red: [true, true, true, true],
-                green: [true, true, true, false],
-                blue: [false, false, false, false],
-                gradient: false
-            },
-            head: {
-                red: [false, false, false, false],
-                green: [true, true, true, true],
-                blue: [true, true, true, true],
-                gradient: false
-            },
-            tail: {
-                red: [true, true, true, true],
-                green: [true, true, false, false],
-                blue: [false, false, true, true],
-                gradient: true
-            },
-            accents: {
-                red: [true, true, true, false],
-                green: [false, false, false, false],
-                blue: [true, true, true, true],
-                gradient: false
-            }
-        }, 1),
-
-        // Random starter
-        new Parrot(getRandomName(), {
-            wings: randomBodyPartGenes(),
-            special_wing: randomBodyPartGenes(),
-            body: randomBodyPartGenes(),
-            head: randomBodyPartGenes(),
-            tail: randomBodyPartGenes(),
-            accents: randomBodyPartGenes()
         }, 1)
     ];
 
     parrotIdCounter = parrots.length;
 
-    await generateStore();
+    // Store the second predefined parrot to move to store
+    const prismParrot = new Parrot('Prism', {
+        wings: {
+            red: [true, true, false, false],
+            green: [false, false, true, true],
+            blue: [true, true, true, true],
+            gradient: true
+        },
+        special_wing: {
+            red: [false, false, false, false],
+            green: [true, true, true, true],
+            blue: [true, true, true, true],
+            gradient: false
+        },
+        body: {
+            red: [true, true, true, true],
+            green: [true, true, true, false],
+            blue: [false, false, false, false],
+            gradient: false
+        },
+        head: {
+            red: [false, false, false, false],
+            green: [true, true, true, true],
+            blue: [true, true, true, true],
+            gradient: false
+        },
+        tail: {
+            red: [true, true, true, true],
+            green: [true, true, false, false],
+            blue: [false, false, true, true],
+            gradient: true
+        },
+        accents: {
+            red: [true, true, true, false],
+            green: [false, false, false, false],
+            blue: [true, true, true, true],
+            gradient: false
+        }
+    }, 1);
+
+    parrotIdCounter++;
+
+    await generateStore(prismParrot);
     await updateUI();
 }
 
 // Generate random parrots for store
-async function generateStore() {
+async function generateStore(prismParrot = null) {
     storeParrots = [];
+
+    // Add Prism parrot if provided
+    if (prismParrot) {
+        prismParrot.isElite = true;
+        storeParrots.push(prismParrot);
+    }
 
     // Add 2 elite parrots with gradients (500 coins each)
     for (let i = 0; i < 2; i++) {
@@ -511,13 +554,35 @@ async function createParrotCard(parrot, isStore) {
 
     const svg = await generateParrotSVG(parrot);
     const price = parrot.isElite ? 500 : parrot.getValue();
+    const rarity = parrot.calculateRarity();
+
+    // Check if parrot is in breeding slots
+    let breedingIndicator = '';
+    if (breedingPair.left === parrot.id) {
+        breedingIndicator = '<div class="breeding-indicator breeding-left">L</div>';
+    } else if (breedingPair.right === parrot.id) {
+        breedingIndicator = '<div class="breeding-indicator breeding-right">R</div>';
+    }
+
+    // Rarity colors and labels
+    const rarityConfig = {
+        'common': { color: '#9e9e9e', label: 'Common' },
+        'uncommon': { color: '#4caf50', label: 'Uncommon' },
+        'rare': { color: '#2196f3', label: 'Rare' },
+        'epic': { color: '#9c27b0', label: 'Epic' },
+        'legendary': { color: '#ff9800', label: 'Legendary' }
+    };
+
+    const rarityInfo = rarityConfig[rarity];
 
     card.innerHTML = `
         ${parrot.isElite ? '<div class="elite-badge">⭐ ELITE</div>' : ''}
         ${isStore ? `<div class="price">${price}💰</div>` : ''}
+        ${breedingIndicator}
         <div class="parrot-mini">${svg}</div>
         <div class="parrot-name">${parrot.name}</div>
         <div class="parrot-gen">Gen ${parrot.generation}</div>
+        <div class="rarity-badge" style="background: ${rarityInfo.color};">${rarityInfo.label}</div>
         ${parrot.hasAnyGradients() ? '<div class="gradient-indicator">✨ Gradient</div>' : ''}
     `;
 
@@ -631,7 +696,7 @@ async function renderBreedingSlots() {
 // Update preview panel
 async function updatePreview() {
     const previewDiv = document.getElementById('selectedPreview');
-    const actionSection = document.getElementById('actionSection');
+    const actionSection = document.getElementById('topActionSection');
 
     if (selectedParrotId === null) {
         previewDiv.innerHTML = '<div class="empty-preview">Click a parrot to view details</div>';
@@ -647,12 +712,25 @@ async function updatePreview() {
     if (!parrot) return;
 
     const svg = await generateParrotSVG(parrot);
+    const rarity = parrot.calculateRarity();
+
+    // Rarity colors and labels
+    const rarityConfig = {
+        'common': { color: '#9e9e9e', label: 'Common' },
+        'uncommon': { color: '#4caf50', label: 'Uncommon' },
+        'rare': { color: '#2196f3', label: 'Rare' },
+        'epic': { color: '#9c27b0', label: 'Epic' },
+        'legendary': { color: '#ff9800', label: 'Legendary' }
+    };
+
+    const rarityInfo = rarityConfig[rarity];
 
     previewDiv.innerHTML = `
         <div class="large-parrot-display">${svg}</div>
         <div style="text-align: center; margin-bottom: 10px;">
             <strong style="font-size: 1.3em;">${parrot.name}</strong><br>
-            <span style="color: #666;">Generation ${parrot.generation}</span>
+            <span style="color: #666;">Generation ${parrot.generation}</span><br>
+            <span class="rarity-badge" style="background: ${rarityInfo.color}; display: inline-block; margin-top: 5px;">${rarityInfo.label}</span>
             ${parrot.hasAnyGradients() ? '<br><span style="color: #9c27b0; font-weight: bold;">✨ Has Gradients</span>' : ''}
         </div>
     `;
