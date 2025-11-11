@@ -10,6 +10,7 @@ let parrotIdCounter = 0;
 let generation = 1;
 let svgCache = null;
 let gradientIdCounter = 0;
+let examinedParrots = new Set();  // Track which parrots have been examined in laboratory
 
 // Parrot name pool
 const PARROT_NAMES = [
@@ -148,6 +149,158 @@ class Parrot {
         };
 
         return Math.floor(baseValue * rarityMultipliers[rarity]);
+    }
+
+    // Classify color based on RGB values
+    classifyColor(r, g, b) {
+        // Normalize to 0-1 range
+        const rn = r / 255;
+        const gn = g / 255;
+        const bn = b / 255;
+
+        // Define thresholds
+        const high = 0.6;
+        const mid = 0.35;
+        const low = 0.25;
+
+        // Beautiful colors
+        if (rn > high && gn < low && bn < low) return 'red';
+        if (rn > high && gn > mid && gn < high && bn < low) return 'orange';
+        if (rn > high && gn > high && bn < low) return 'yellow';
+        if (rn < low && gn > high && bn < low) return 'green';
+        if (rn < low && gn > high && bn > high) return 'cyan';
+        if (rn < low && gn < low && bn > high) return 'blue';
+        if (rn > high && gn < low && bn > high) return 'magenta';
+
+        // Not a beautiful pure color
+        return 'mixed';
+    }
+
+    // Get orthogonal color pairs
+    getOrthogonalPairs() {
+        return {
+            'red': 'cyan',
+            'cyan': 'red',
+            'green': 'magenta',
+            'magenta': 'green',
+            'blue': 'yellow',
+            'yellow': 'blue'
+        };
+    }
+
+    // Calculate beauty breakdown
+    calculateBeauty() {
+        const bodyParts = ['wings', 'special_wing', 'body', 'head', 'tail', 'accents'];
+        const bodyPartColors = {};
+        const beautyTraits = [];
+        let beautyScore = 0;
+
+        // Get colors for each body part
+        for (const bodyPart of bodyParts) {
+            const colorData = this.calculateBodyPartColor(bodyPart);
+            if (colorData.isGradient) {
+                // Extract RGB from gradient colors
+                const startMatch = colorData.startColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+                const endMatch = colorData.endColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+                if (startMatch && endMatch) {
+                    const startColor = this.classifyColor(+startMatch[1], +startMatch[2], +startMatch[3]);
+                    const endColor = this.classifyColor(+endMatch[1], +endMatch[2], +endMatch[3]);
+                    bodyPartColors[bodyPart] = {
+                        type: 'gradient',
+                        startColor,
+                        endColor,
+                        displayColor: `${startColor}→${endColor}`
+                    };
+                }
+            } else {
+                // Extract RGB from solid color
+                const match = colorData.color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+                if (match) {
+                    const color = this.classifyColor(+match[1], +match[2], +match[3]);
+                    bodyPartColors[bodyPart] = {
+                        type: 'solid',
+                        color,
+                        displayColor: color
+                    };
+                }
+            }
+        }
+
+        // Check for beautiful gradients (different colors)
+        for (const bodyPart of bodyParts) {
+            const partColor = bodyPartColors[bodyPart];
+            if (partColor && partColor.type === 'gradient') {
+                if (partColor.startColor !== 'mixed' && partColor.endColor !== 'mixed') {
+                    if (partColor.startColor !== partColor.endColor) {
+                        beautyScore += 10;
+                        beautyTraits.push(`Beautiful gradient: ${bodyPart} (${partColor.startColor}→${partColor.endColor})`);
+                    } else {
+                        beautyTraits.push(`Same-color gradient: ${bodyPart} (${partColor.startColor}→${partColor.endColor}) - not beautiful`);
+                    }
+                } else {
+                    beautyTraits.push(`Mixed gradient: ${bodyPart} - not beautiful`);
+                }
+            }
+        }
+
+        // Check for beautiful solid colors
+        const solidParts = bodyParts.filter(bp => bodyPartColors[bp]?.type === 'solid');
+        const beautifulSolidColors = solidParts.filter(bp => bodyPartColors[bp].color !== 'mixed');
+
+        for (const part of beautifulSolidColors) {
+            beautyScore += 3;
+            beautyTraits.push(`Beautiful color: ${part} (${bodyPartColors[part].color})`);
+        }
+
+        // Check for diversity (different beautiful colors)
+        const uniqueBeautifulColors = new Set();
+        for (const part of beautifulSolidColors) {
+            uniqueBeautifulColors.add(bodyPartColors[part].color);
+        }
+
+        if (uniqueBeautifulColors.size >= 3) {
+            beautyScore += 15;
+            beautyTraits.push(`Color diversity: ${uniqueBeautifulColors.size} different beautiful colors`);
+        } else if (uniqueBeautifulColors.size === 2) {
+            beautyScore += 8;
+            beautyTraits.push(`Some diversity: ${uniqueBeautifulColors.size} different colors`);
+        }
+
+        // Check for same-color penalty
+        if (uniqueBeautifulColors.size === 1 && beautifulSolidColors.length > 1) {
+            beautyScore -= 5;
+            beautyTraits.push(`Same color on multiple parts - reduces beauty`);
+        }
+
+        // Check for orthogonal color pairs
+        const orthogonalPairs = this.getOrthogonalPairs();
+        let orthogonalCount = 0;
+
+        for (let i = 0; i < beautifulSolidColors.length; i++) {
+            for (let j = i + 1; j < beautifulSolidColors.length; j++) {
+                const color1 = bodyPartColors[beautifulSolidColors[i]].color;
+                const color2 = bodyPartColors[beautifulSolidColors[j]].color;
+                if (orthogonalPairs[color1] === color2) {
+                    orthogonalCount++;
+                    beautyScore += 12;
+                    beautyTraits.push(`Orthogonal pair: ${beautifulSolidColors[i]} (${color1}) & ${beautifulSolidColors[j]} (${color2})`);
+                }
+            }
+        }
+
+        // Max 3 orthogonal pairs possible with 6 parts
+        if (orthogonalCount > 3) {
+            const excess = orthogonalCount - 3;
+            beautyScore -= excess * 4;
+            beautyTraits.push(`Too many orthogonal pairs (${orthogonalCount} > 3) - slight penalty`);
+        }
+
+        return {
+            score: Math.max(0, beautyScore),
+            maxScore: 100,
+            traits: beautyTraits,
+            bodyPartColors
+        };
     }
 }
 
@@ -860,6 +1013,24 @@ async function openLaboratory(parrotId) {
     const parrot = parrots.find(p => p.id === parrotId);
     if (!parrot) return;
 
+    // Check if parrot has been examined before
+    const hasBeenExamined = examinedParrots.has(parrotId);
+    const examCost = 100;
+
+    if (!hasBeenExamined) {
+        if (coins < examCost) {
+            alert(`Laboratory examination costs ${examCost} coins. You don't have enough coins!`);
+            return;
+        }
+        if (!confirm(`Laboratory examination costs ${examCost} coins for first analysis of ${parrot.name}. Proceed?`)) {
+            return;
+        }
+        coins -= examCost;
+        examinedParrots.add(parrotId);
+        updateStats();
+        saveGame();
+    }
+
     const modal = document.getElementById('laboratoryModal');
     const display = document.getElementById('laboratoryDisplay');
 
@@ -944,6 +1115,69 @@ async function openLaboratory(parrotId) {
     html += `• Nearly Pure (1 or 3): 1 pt per color<br>`;
     html += `• Mixed (2 dominant): 0 pts<br>`;
     html += `• Gradient: +4 pts (very rare!)`;
+    html += `</div>`;
+
+    html += `</div>`;
+
+    // Beauty Analysis Section
+    const beautyData = parrot.calculateBeauty();
+    const beautyPercent = (beautyData.score / beautyData.maxScore) * 100;
+    let beautyColor = '#9e9e9e';
+    let beautyLabel = 'Plain';
+    if (beautyPercent >= 70) {
+        beautyColor = '#ff69b4';
+        beautyLabel = 'Stunning';
+    } else if (beautyPercent >= 50) {
+        beautyColor = '#ff1493';
+        beautyLabel = 'Beautiful';
+    } else if (beautyPercent >= 30) {
+        beautyColor = '#dda0dd';
+        beautyLabel = 'Pretty';
+    } else if (beautyPercent >= 15) {
+        beautyColor = '#d8bfd8';
+        beautyLabel = 'Decent';
+    }
+
+    html += `<div class="body-part-genes" style="background: linear-gradient(135deg, ${beautyColor}22, ${beautyColor}11); border-color: ${beautyColor};">`;
+    html += `<h4>🌸 Beauty Analysis <span class="rarity-badge" style="background: ${beautyColor}; margin-left: 10px;">${beautyLabel}</span></h4>`;
+    html += `<div class="gene-row">`;
+    html += `<div class="gene-label">Beauty Score</div>`;
+    html += `<div style="font-weight: bold; color: ${beautyColor};">${beautyData.score} / ${beautyData.maxScore} points (${beautyPercent.toFixed(1)}%)</div>`;
+    html += `</div>`;
+
+    // Color classifications
+    html += `<div style="margin-top: 10px; font-size: 0.9em;">`;
+    html += `<div style="font-weight: 600; margin-bottom: 5px; color: #666;">Body Part Colors:</div>`;
+    for (const bodyPart of ['wings', 'special_wing', 'body', 'head', 'tail', 'accents']) {
+        if (beautyData.bodyPartColors[bodyPart]) {
+            const partColor = beautyData.bodyPartColors[bodyPart];
+            html += `<div style="display: flex; justify-content: space-between; margin-bottom: 3px;">`;
+            html += `<span>${bodyPartNames[bodyPart]}</span>`;
+            html += `<span style="color: ${beautyColor}; font-weight: 600;">${partColor.displayColor}</span>`;
+            html += `</div>`;
+        }
+    }
+    html += `</div>`;
+
+    // Beauty traits
+    if (beautyData.traits.length > 0) {
+        html += `<div style="margin-top: 10px; font-size: 0.9em;">`;
+        html += `<div style="font-weight: 600; margin-bottom: 5px; color: #666;">Beauty Traits:</div>`;
+        for (const trait of beautyData.traits) {
+            const isPositive = trait.includes('Beautiful') || trait.includes('diversity') || trait.includes('Orthogonal');
+            const icon = isPositive ? '✨' : '⚪';
+            html += `<div style="margin-bottom: 3px;">${icon} ${trait}</div>`;
+        }
+        html += `</div>`;
+    }
+
+    html += `<div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 8px; font-size: 0.85em;">`;
+    html += `<strong>Beauty Guide:</strong><br>`;
+    html += `• Beautiful colors: red, orange, yellow, green, cyan, blue, magenta<br>`;
+    html += `• Different color gradients: +10 pts<br>`;
+    html += `• Each beautiful solid color: +3 pts<br>`;
+    html += `• Color diversity (3+ colors): +15 pts<br>`;
+    html += `• Orthogonal pairs (red/cyan, green/magenta, blue/yellow): +12 pts`;
     html += `</div>`;
 
     html += `</div>`;
@@ -1084,6 +1318,7 @@ function buyParrot(parrotId) {
 
     selectedParrotId = null;
     updateUI();
+    saveGame();
 
     alert(`${parrot.name} joined your collection!`);
 }
@@ -1104,6 +1339,7 @@ function sellParrot(parrotId) {
     selectedParrotId = null;
 
     updateUI();
+    saveGame();
 }
 
 // Free parrot
@@ -1121,6 +1357,7 @@ function freeParrot(parrotId) {
     selectedParrotId = null;
 
     updateUI();
+    saveGame();
 }
 
 // Breed parrots
@@ -1161,6 +1398,7 @@ async function breedParrots() {
     breedingPair.right = null;
 
     await updateUI();
+    saveGame();
 
     alert(`🎉 4 chicks hatched! ${offspring.map(o => o.name).join(', ')} joined your collection!`);
 }
@@ -1188,5 +1426,96 @@ function closeModal() {
     document.getElementById('laboratoryModal').classList.remove('active');
 }
 
+// Save game to cookies
+function saveGame() {
+    const gameState = {
+        parrots: parrots.map(p => ({
+            id: p.id,
+            name: p.name,
+            genes: p.genes,
+            generation: p.generation
+        })),
+        coins,
+        parrotIdCounter,
+        generation,
+        usedNames: Array.from(usedNames),
+        examinedParrots: Array.from(examinedParrots)
+    };
+
+    // Store in cookie (max 4KB, so we compress by storing only essential data)
+    try {
+        const gameData = JSON.stringify(gameState);
+        document.cookie = `chromawing_save=${encodeURIComponent(gameData)};max-age=31536000;path=/`;
+        console.log('Game saved successfully');
+    } catch (e) {
+        console.error('Failed to save game:', e);
+    }
+}
+
+// Load game from cookies
+function loadGame() {
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+        const [name, value] = cookie.trim().split('=');
+        if (name === 'chromawing_save') {
+            try {
+                const gameState = JSON.parse(decodeURIComponent(value));
+
+                // Restore game state
+                parrots = gameState.parrots.map(p => new Parrot(p.name, p.genes, p.generation, p.id));
+                coins = gameState.coins;
+                parrotIdCounter = gameState.parrotIdCounter;
+                generation = gameState.generation;
+                usedNames = new Set(gameState.usedNames || []);
+                examinedParrots = new Set(gameState.examinedParrots || []);
+
+                console.log('Game loaded successfully');
+                return true;
+            } catch (e) {
+                console.error('Failed to load game:', e);
+                return false;
+            }
+        }
+    }
+    return false;
+}
+
+// New game - reset everything
+function newGame() {
+    if (!confirm('Start a new game? This will erase your current progress!')) {
+        return;
+    }
+
+    // Clear cookie
+    document.cookie = 'chromawing_save=;max-age=0;path=/';
+
+    // Reset state
+    parrots = [];
+    storeParrots = [];
+    selectedParrotId = null;
+    breedingPair = { left: null, right: null };
+    currentTab = 'collection';
+    coins = 500;
+    parrotIdCounter = 0;
+    generation = 1;
+    usedNames = new Set();
+    examinedParrots = new Set();
+
+    // Reinitialize
+    initGame();
+}
+
 // Initialize on load
-window.addEventListener('load', initGame);
+window.addEventListener('load', async () => {
+    // Try to load saved game
+    const loaded = loadGame();
+
+    if (loaded) {
+        // Game loaded from save
+        await generateStore();
+        await updateUI();
+    } else {
+        // New game
+        await initGame();
+    }
+});
