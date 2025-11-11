@@ -112,10 +112,14 @@ class Parrot {
             const blueRarity = blueCount === 0 || blueCount === 4 ? 2 : (blueCount === 1 || blueCount === 3 ? 1 : 0);
 
             rareTraits += redRarity + greenRarity + blueRarity;
-            maxTraits += 6; // 3 color channels × 2 points max each
 
             // Gradient is very rare (worth 4 points)
-            if (part.gradient) rareTraits += 4;
+            if (part.gradient) {
+                rareTraits += 4;
+                maxTraits += 10; // 6 for colors + 4 for gradient
+            } else {
+                maxTraits += 6; // 3 color channels × 2 points max each
+            }
         }
 
         // Return rarity level: common, uncommon, rare, epic, legendary
@@ -158,19 +162,41 @@ class Parrot {
         const gn = g / 255;
         const bn = b / 255;
 
-        // Define thresholds
-        const high = 0.6;
-        const mid = 0.35;
-        const low = 0.25;
+        // Define thresholds for full, half, and low intensity
+        const full = 0.85;  // 255 or close
+        const high = 0.6;   // 150+
+        const half = 0.4;   // ~128
+        const low = 0.2;    // 50 or less
 
-        // Beautiful colors
-        if (rn > high && gn < low && bn < low) return 'red';
-        if (rn > high && gn > mid && gn < high && bn < low) return 'orange';
-        if (rn > high && gn > high && bn < low) return 'yellow';
-        if (rn < low && gn > high && bn < low) return 'green';
-        if (rn < low && gn > high && bn > high) return 'cyan';
-        if (rn < low && gn < low && bn > high) return 'blue';
-        if (rn > high && gn < low && bn > high) return 'magenta';
+        // Pure full colors
+        if (rn > full && gn < low && bn < low) return 'red';
+        if (rn < low && gn > full && bn < low) return 'green';
+        if (rn < low && gn < low && bn > full) return 'blue';
+        if (rn > full && gn > full && bn < low) return 'yellow';
+        if (rn < low && gn > full && bn > full) return 'cyan';
+        if (rn > full && gn < low && bn > full) return 'magenta';
+
+        // Half-intensity pure colors (128, 0, 0) etc
+        if (rn > half && rn < high && gn < low && bn < low) return 'dark-red';
+        if (rn < low && gn > half && gn < high && bn < low) return 'dark-green';
+        if (rn < low && gn < low && bn > half && bn < high) return 'dark-blue';
+
+        // Orange variations
+        if (rn > full && gn > half && gn < high && bn < low) return 'orange';
+        if (rn > high && gn > half && gn < high && bn < low) return 'orange';
+
+        // Two-component half colors (128, 255, 0) etc
+        if (rn > half && rn < high && gn > full && bn < low) return 'lime';
+        if (rn > full && gn > half && gn < high && bn < low) return 'amber';
+        if (rn < low && gn > half && gn < high && bn > full) return 'sky';
+        if (rn < low && gn > full && bn > half && bn < high) return 'teal';
+        if (rn > half && rn < high && gn < low && bn > full) return 'purple';
+        if (rn > full && gn < low && bn > half && bn < high) return 'rose';
+
+        // Light colors (255, 255, 128) etc
+        if (rn > full && gn > full && bn > half && bn < high) return 'light-yellow';
+        if (rn > full && bn > full && gn > half && gn < high) return 'light-magenta';
+        if (gn > full && bn > full && rn > half && rn < high) return 'light-cyan';
 
         // Not a beautiful pure color
         return 'mixed';
@@ -194,6 +220,12 @@ class Parrot {
         const bodyPartRGB = {};
         const beautyTraits = [];
         let beautyScore = 0;
+
+        // Track per-part contributions
+        const partContributions = {};
+        for (const bp of bodyParts) {
+            partContributions[bp] = 0;
+        }
 
         // Get colors for each body part
         for (const bodyPart of bodyParts) {
@@ -240,12 +272,13 @@ class Parrot {
                 if (partColor.startColor !== 'mixed' && partColor.endColor !== 'mixed') {
                     if (partColor.startColor !== partColor.endColor) {
                         beautyScore += 10;
-                        beautyTraits.push(`Beautiful gradient: ${bodyPart} (${partColor.startColor}→${partColor.endColor})`);
+                        partContributions[bodyPart] += 10;
+                        beautyTraits.push(`Beautiful gradient: ${bodyPart} (+10)`);
                     } else {
-                        beautyTraits.push(`Same-color gradient: ${bodyPart} (${partColor.startColor}→${partColor.endColor}) - not beautiful`);
+                        beautyTraits.push(`Same-color gradient: ${bodyPart} (0)`);
                     }
                 } else {
-                    beautyTraits.push(`Mixed gradient: ${bodyPart} - not beautiful`);
+                    beautyTraits.push(`Mixed gradient: ${bodyPart} (0)`);
                 }
             }
         }
@@ -256,7 +289,8 @@ class Parrot {
 
         for (const part of beautifulSolidColors) {
             beautyScore += 3;
-            beautyTraits.push(`Beautiful color: ${part} (${bodyPartColors[part].color})`);
+            partContributions[part] += 3;
+            beautyTraits.push(`Beautiful color: ${part} (+3)`);
         }
 
         // Check for diversity (different beautiful colors)
@@ -267,10 +301,20 @@ class Parrot {
 
         if (uniqueBeautifulColors.size >= 3) {
             beautyScore += 15;
-            beautyTraits.push(`Color diversity: ${uniqueBeautifulColors.size} different beautiful colors`);
+            // Split diversity bonus among all beautiful solid colors
+            const perPartBonus = 15 / beautifulSolidColors.length;
+            for (const part of beautifulSolidColors) {
+                partContributions[part] += perPartBonus;
+            }
+            beautyTraits.push(`Color diversity: ${uniqueBeautifulColors.size} different colors (+${15})`);
         } else if (uniqueBeautifulColors.size === 2) {
             beautyScore += 8;
-            beautyTraits.push(`Some diversity: ${uniqueBeautifulColors.size} different colors`);
+            // Split diversity bonus among all beautiful solid colors
+            const perPartBonus = 8 / beautifulSolidColors.length;
+            for (const part of beautifulSolidColors) {
+                partContributions[part] += perPartBonus;
+            }
+            beautyTraits.push(`Some diversity: ${uniqueBeautifulColors.size} colors (+${8})`);
         }
 
         // Check for same-color penalty using dot product
@@ -284,22 +328,34 @@ class Parrot {
                 // Very similar colors (dot product > 0.9): penalty
                 if (dotProduct > 0.9) {
                     beautyScore -= 3;
-                    beautyTraits.push(`Similar colors: ${rgbParts[i]} and ${rgbParts[j]} (too similar)`);
+                    // Split penalty between both parts
+                    partContributions[rgbParts[i]] -= 1.5;
+                    partContributions[rgbParts[j]] -= 1.5;
+                    beautyTraits.push(`Similar: ${rgbParts[i]} & ${rgbParts[j]} (-1.5 each)`);
                 }
                 // Orthogonal colors (dot product near 0): bonus
                 else if (Math.abs(dotProduct) < 0.3) {
                     beautyScore += 12;
-                    beautyTraits.push(`Contrasting colors: ${rgbParts[i]} and ${rgbParts[j]} (orthogonal)`);
+                    // Split bonus between both parts
+                    partContributions[rgbParts[i]] += 6;
+                    partContributions[rgbParts[j]] += 6;
+                    beautyTraits.push(`Contrasting: ${rgbParts[i]} & ${rgbParts[j]} (+6 each)`);
                 }
                 // Opposite colors (dot product < -0.7): big bonus
                 else if (dotProduct < -0.7) {
                     beautyScore += 18;
-                    beautyTraits.push(`Opposite colors: ${rgbParts[i]} and ${rgbParts[j]} (complementary)`);
+                    // Split bonus between both parts
+                    partContributions[rgbParts[i]] += 9;
+                    partContributions[rgbParts[j]] += 9;
+                    beautyTraits.push(`Complementary: ${rgbParts[i]} & ${rgbParts[j]} (+9 each)`);
                 }
                 // Somewhat different (0.3 < |dot| < 0.7): small bonus
                 else if (Math.abs(dotProduct) > 0.3 && Math.abs(dotProduct) < 0.7) {
                     beautyScore += 5;
-                    beautyTraits.push(`Different colors: ${rgbParts[i]} and ${rgbParts[j]} (varied)`);
+                    // Split bonus between both parts
+                    partContributions[rgbParts[i]] += 2.5;
+                    partContributions[rgbParts[j]] += 2.5;
+                    beautyTraits.push(`Varied: ${rgbParts[i]} & ${rgbParts[j]} (+2.5 each)`);
                 }
             }
         }
@@ -308,7 +364,8 @@ class Parrot {
             score: Math.max(0, beautyScore),
             maxScore: 100,
             traits: beautyTraits,
-            bodyPartColors
+            bodyPartColors,
+            partContributions
         };
     }
 }
@@ -674,6 +731,88 @@ async function generateStore(prismParrot = null) {
     if (prismParrot) {
         storeParrots.push(prismParrot);
     }
+
+    // TEST: Add max rarity parrot (all pure genes, all gradients)
+    const maxRarityParrot = new Parrot('[TEST-MAX-RARITY]', {
+        wings: {
+            red: [true, true, true, true],
+            green: [false, false, false, false],
+            blue: [true, true, true, true],
+            gradient: true
+        },
+        special_wing: {
+            red: [false, false, false, false],
+            green: [true, true, true, true],
+            blue: [true, true, true, true],
+            gradient: true
+        },
+        body: {
+            red: [true, true, true, true],
+            green: [true, true, true, true],
+            blue: [false, false, false, false],
+            gradient: true
+        },
+        head: {
+            red: [true, true, true, true],
+            green: [false, false, false, false],
+            blue: [false, false, false, false],
+            gradient: true
+        },
+        tail: {
+            red: [false, false, false, false],
+            green: [false, false, false, false],
+            blue: [true, true, true, true],
+            gradient: true
+        },
+        accents: {
+            red: [false, false, false, false],
+            green: [true, true, true, true],
+            blue: [false, false, false, false],
+            gradient: true
+        }
+    }, 1);
+    storeParrots.push(maxRarityParrot);
+
+    // TEST: Add max beauty parrot (complementary colors: red, cyan, yellow, blue, green, magenta)
+    const maxBeautyParrot = new Parrot('[TEST-MAX-BEAUTY]', {
+        wings: {
+            red: [true, true, true, true],  // Red (255, 0, 0)
+            green: [false, false, false, false],
+            blue: [false, false, false, false],
+            gradient: false
+        },
+        special_wing: {
+            red: [false, false, false, false],  // Cyan (0, 255, 255)
+            green: [true, true, true, true],
+            blue: [true, true, true, true],
+            gradient: false
+        },
+        body: {
+            red: [true, true, true, true],  // Yellow (255, 255, 0)
+            green: [true, true, true, true],
+            blue: [false, false, false, false],
+            gradient: false
+        },
+        head: {
+            red: [false, false, false, false],  // Blue (0, 0, 255)
+            green: [false, false, false, false],
+            blue: [true, true, true, true],
+            gradient: false
+        },
+        tail: {
+            red: [false, false, false, false],  // Green (0, 255, 0)
+            green: [true, true, true, true],
+            blue: [false, false, false, false],
+            gradient: false
+        },
+        accents: {
+            red: [true, true, true, true],  // Magenta (255, 0, 255)
+            green: [false, false, false, false],
+            blue: [true, true, true, true],
+            gradient: false
+        }
+    }, 1);
+    storeParrots.push(maxBeautyParrot);
 
     // Generate store parrots with diverse rarities
     // Target: 1-2 legendary, 1 epic, 1 rare, 1 uncommon, 1-2 common
@@ -1110,7 +1249,7 @@ async function openLaboratory(parrotId) {
         if (hasGradient) partRarity += 4;
 
         totalRareTraits += partRarity;
-        maxTraits += 6; // 3 color channels × 2 points max each
+        maxTraits += hasGradient ? 10 : 6; // 6 for colors + 4 for gradient if present
 
         rarityBreakdown.push({
             name: bodyPartNames[bodyPart],
@@ -1206,13 +1345,28 @@ async function openLaboratory(parrotId) {
     }
     html += `</div>`;
 
+    // Per-part contributions
+    html += `<div style="margin-top: 10px; font-size: 0.9em;">`;
+    html += `<div style="font-weight: 600; margin-bottom: 5px; color: #666;">Beauty Contribution by Part:</div>`;
+    for (const bodyPart of ['wings', 'special_wing', 'body', 'head', 'tail', 'accents']) {
+        const contribution = beautyData.partContributions[bodyPart];
+        const displayValue = contribution >= 0 ? `+${contribution.toFixed(1)}` : contribution.toFixed(1);
+        const color = contribution > 0 ? beautyColor : (contribution < 0 ? '#dc3545' : '#999');
+        html += `<div style="display: flex; justify-content: space-between; margin-bottom: 3px;">`;
+        html += `<span>${bodyPartNames[bodyPart]}</span>`;
+        html += `<span style="color: ${color}; font-weight: 600;">${displayValue} pts</span>`;
+        html += `</div>`;
+    }
+    html += `</div>`;
+
     // Beauty traits
     if (beautyData.traits.length > 0) {
         html += `<div style="margin-top: 10px; font-size: 0.9em;">`;
         html += `<div style="font-weight: 600; margin-bottom: 5px; color: #666;">Beauty Traits:</div>`;
         for (const trait of beautyData.traits) {
-            const isPositive = trait.includes('Beautiful') || trait.includes('diversity') || trait.includes('Orthogonal');
-            const icon = isPositive ? '✨' : '⚪';
+            const isPositive = trait.includes('+');
+            const isNegative = trait.includes('-');
+            const icon = isPositive ? '✨' : (isNegative ? '❌' : '⚪');
             html += `<div style="margin-bottom: 3px;">${icon} ${trait}</div>`;
         }
         html += `</div>`;
@@ -1220,14 +1374,15 @@ async function openLaboratory(parrotId) {
 
     html += `<div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 8px; font-size: 0.85em;">`;
     html += `<strong>Beauty Guide:</strong><br>`;
-    html += `• Beautiful colors: red, orange, yellow, green, cyan, blue, magenta<br>`;
+    html += `• Beautiful colors: red, green, blue, yellow, cyan, magenta, orange, and variations<br>`;
+    html += `• Also beautiful: half-intensity (dark-red, dark-green, dark-blue) and mixed (lime, amber, sky, teal, purple, rose, light variants)<br>`;
     html += `• Different color gradients: +10 pts<br>`;
     html += `• Each beautiful solid color: +3 pts<br>`;
     html += `• Color diversity (3+ colors): +15 pts<br>`;
-    html += `• Complementary colors (opposite): +18 pts<br>`;
-    html += `• Contrasting colors (orthogonal): +12 pts<br>`;
-    html += `• Different colors (varied): +5 pts<br>`;
-    html += `• Similar colors: -3 pts penalty`;
+    html += `• Complementary colors (opposite, dot < -0.7): +18 pts<br>`;
+    html += `• Contrasting colors (orthogonal, |dot| < 0.3): +12 pts<br>`;
+    html += `• Different colors (varied, 0.3 < |dot| < 0.7): +5 pts<br>`;
+    html += `• Similar colors (dot > 0.9): -3 pts penalty`;
     html += `</div>`;
 
     html += `</div>`;
