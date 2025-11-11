@@ -937,3 +937,27 @@ header h1 {
     color: #666;
     margin-top: 4px;
 }
+
+/* Hold to Sell Button */
+.btn-sell {
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.btn-sell.holding {
+    background: #28a745;
+    transform: scale(0.98);
+}
+
+.hold-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.5);
+    width: 0%;
+    transition: width 0.05s linear;
+    pointer-events: none;
+}
