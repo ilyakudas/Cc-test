@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChromaWing - 12-Gene RGB Genetics Explorer</title>
+    <title>ChromaWing - Body-Part RGB Genetics</title>
     <style>
         * {
             margin: 0;
@@ -19,7 +19,7 @@
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
         }
 
@@ -37,7 +37,7 @@
 
         .main-grid {
             display: grid;
-            grid-template-columns: 400px 1fr;
+            grid-template-columns: 500px 1fr;
             gap: 20px;
             margin-bottom: 20px;
         }
@@ -56,87 +56,119 @@
             padding-bottom: 10px;
         }
 
-        .gene-group {
-            margin-bottom: 25px;
-            background: #f8f9fa;
-            padding: 15px;
+        .body-part-section {
+            margin-bottom: 20px;
+            border: 2px solid #e0e7ff;
             border-radius: 10px;
+            overflow: hidden;
         }
 
-        .gene-group h3 {
+        .body-part-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .body-part-header:hover {
+            background: linear-gradient(135deg, #7689eb 0%, #8558b3 100%);
+        }
+
+        .body-part-header h3 {
             font-size: 1.1em;
-            margin-bottom: 15px;
-            color: #333;
+            margin: 0;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .color-indicator {
-            width: 20px;
-            height: 20px;
+        .color-preview {
+            width: 40px;
+            height: 24px;
             border-radius: 4px;
+            border: 2px solid white;
             display: inline-block;
-            border: 2px solid #ddd;
         }
 
-        .gene-selector {
-            margin-bottom: 12px;
+        .expand-icon {
+            font-size: 1.2em;
+            transition: transform 0.3s;
         }
 
-        .gene-selector label {
+        .expand-icon.expanded {
+            transform: rotate(180deg);
+        }
+
+        .body-part-controls {
+            padding: 15px;
+            background: #f8f9fa;
+            display: none;
+        }
+
+        .body-part-controls.expanded {
+            display: block;
+        }
+
+        .gene-channel {
+            margin-bottom: 15px;
+        }
+
+        .gene-channel h4 {
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            color: #555;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #555;
-            font-size: 0.9em;
         }
 
-        .gene-value {
+        .gene-count {
             font-family: 'Courier New', monospace;
-            font-size: 1em;
-            color: #667eea;
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: white;
         }
 
-        .gene-slider {
-            width: 100%;
-            height: 8px;
-            border-radius: 5px;
-            outline: none;
-            -webkit-appearance: none;
+        .gene-toggles {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
         }
 
-        .gene-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #667eea;
+        .gene-toggle {
+            padding: 8px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 6px;
             cursor: pointer;
-        }
-
-        .gene-slider::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #667eea;
-            cursor: pointer;
-        }
-
-        .red-slider { background: linear-gradient(to right, #ffcccc, #ff0000); }
-        .green-slider { background: linear-gradient(to right, #ccffcc, #00ff00); }
-        .blue-slider { background: linear-gradient(to right, #ccccff, #0000ff); }
-
-        .preview-area {
             text-align: center;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            transition: all 0.2s;
         }
+
+        .gene-toggle:hover {
+            border-color: #667eea;
+        }
+
+        .gene-toggle.dominant {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .gene-toggle.red.dominant { background: #dc3545; border-color: #dc3545; }
+        .gene-toggle.green.dominant { background: #28a745; border-color: #28a745; }
+        .gene-toggle.blue.dominant { background: #007bff; border-color: #007bff; }
 
         .parrot-preview {
             width: 100%;
-            min-height: 500px;
+            min-height: 600px;
             margin: 20px auto;
             border-radius: 15px;
             background: white;
@@ -149,44 +181,8 @@
         }
 
         .parrot-preview svg {
-            max-width: 90%;
-            max-height: 90%;
-        }
-
-        .body-parts-display {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .body-part-sample {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 15px;
-            text-align: center;
-        }
-
-        .body-part-sample label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #555;
-            font-size: 0.9em;
-        }
-
-        .color-swatch {
-            height: 80px;
-            border-radius: 8px;
-            border: 2px solid #ddd;
-            margin-bottom: 8px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .rgb-value {
-            font-family: 'Courier New', monospace;
-            font-size: 0.85em;
-            color: #666;
+            max-width: 95%;
+            max-height: 95%;
         }
 
         .preset-buttons {
@@ -212,26 +208,52 @@
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
-        .genotype-display {
-            background: #f0f4ff;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.85em;
-            line-height: 1.6;
-        }
-
         .info-box {
             background: #fff3cd;
             border-left: 4px solid #ffc107;
             padding: 15px;
             border-radius: 5px;
-            margin-top: 20px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-card label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #555;
             font-size: 0.9em;
         }
 
-        @media (max-width: 1100px) {
+        .stat-card .color-display {
+            height: 60px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .rgb-text {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        @media (max-width: 1200px) {
             .main-grid {
                 grid-template-columns: 1fr;
             }
@@ -241,208 +263,91 @@
 <body>
     <div class="container">
         <header>
-            <h1>🧬 ChromaWing 12-Gene RGB Genetics Explorer</h1>
-            <p>Explore how 12 RGB genes create distinct body part colors</p>
+            <h1>🧬 ChromaWing Body-Part RGB Genetics</h1>
+            <p>Each body part has 12 genes (4 red, 4 green, 4 blue). Count of dominant alleles determines color intensity!</p>
         </header>
 
+        <div class="info-box">
+            <strong>🎯 How it works:</strong> Each body part has its own set of 12 genes.
+            Click on gene buttons to toggle between dominant (colored) and recessive (white).
+            The COUNT of dominant alleles matters, not position!
+            <br><strong>Examples:</strong> rrrr = 0% red, Rrrr = 25%, RRrr = 50%, RRRr = 75%, RRRR = 100%
+        </div>
+
         <div class="preset-buttons">
-            <button class="preset-btn" onclick="loadPreset('red')">Red Parrot</button>
-            <button class="preset-btn" onclick="loadPreset('blue')">Blue Parrot</button>
-            <button class="preset-btn" onclick="loadPreset('green')">Green Parrot</button>
-            <button class="preset-btn" onclick="loadPreset('yellow')">Yellow Parrot</button>
-            <button class="preset-btn" onclick="loadPreset('rainbow')">Rainbow</button>
-            <button class="preset-btn" onclick="loadPreset('mixed')">Mixed Colors</button>
+            <button class="preset-btn" onclick="loadPreset('rainbow')">🌈 Rainbow</button>
+            <button class="preset-btn" onclick="loadPreset('red')">❤️ Red Parrot</button>
+            <button class="preset-btn" onclick="loadPreset('blue')">💙 Blue Parrot</button>
+            <button class="preset-btn" onclick="loadPreset('green')">💚 Green Parrot</button>
+            <button class="preset-btn" onclick="loadPreset('mixed')">🎨 Mixed Colors</button>
+            <button class="preset-btn" onclick="loadPreset('natural')">🦜 Natural</button>
         </div>
 
         <div class="main-grid">
-            <!-- Gene Selectors -->
+            <!-- Gene Controls -->
             <div class="card">
-                <h2>🧬 Gene Controls</h2>
+                <h2>🧬 Body Part Genetics</h2>
 
-                <!-- Red Genes -->
-                <div class="gene-group">
-                    <h3>
-                        <span class="color-indicator" style="background: #ff0000;"></span>
-                        Red Genes (R/r)
-                    </h3>
-                    <div class="gene-selector">
-                        <label>
-                            <span>r1</span>
-                            <span class="gene-value" id="r1-display">RR</span>
-                        </label>
-                        <input type="range" min="0" max="2" value="2" class="gene-slider red-slider" id="r1" onchange="updateGenes()">
-                    </div>
-                    <div class="gene-selector">
-                        <label>
-                            <span>r2</span>
-                            <span class="gene-value" id="r2-display">RR</span>
-                        </label>
-                        <input type="range" min="0" max="2" value="2" class="gene-slider red-slider" id="r2" onchange="updateGenes()">
-                    </div>
-                    <div class="gene-selector">
-                        <label>
-                            <span>r3</span>
-                            <span class="gene-value" id="r3-display">rr</span>
-                        </label>
-                        <input type="range" min="0" max="2" value="0" class="gene-slider red-slider" id="r3" onchange="updateGenes()">
-                    </div>
-                    <div class="gene-selector">
-                        <label>
-                            <span>r4</span>
-                            <span class="gene-value" id="r4-display">rr</span>
-                        </label>
-                        <input type="range" min="0" max="2" value="0" class="gene-slider red-slider" id="r4" onchange="updateGenes()">
-                    </div>
-                </div>
-
-                <!-- Green Genes -->
-                <div class="gene-group">
-                    <h3>
-                        <span class="color-indicator" style="background: #00ff00;"></span>
-                        Green Genes (G/g)
-                    </h3>
-                    <div class="gene-selector">
-                        <label>
-                            <span>g1</span>
-                            <span class="gene-value" id="g1-display">gg</span>
-                        </label>
-                        <input type="range" min="0" max="2" value="0" class="gene-slider green-slider" id="g1" onchange="updateGenes()">
-                    </div>
-                    <div class="gene-selector">
-                        <label>
-                            <span>g2</span>
-                            <span class="gene-value" id="g2-display">gg</span>
-                        </label>
-                        <input type="range" min="0" max="2" value="0" class="gene-slider green-slider" id="g2" onchange="updateGenes()">
-                    </div>
-                    <div class="gene-selector">
-                        <label>
-                            <span>g3</span>
-                            <span class="gene-value" id="g3-display">GG</span>
-                        </label>
-                        <input type="range" min="0" max="2" value="2" class="gene-slider green-slider" id="g3" onchange="updateGenes()">
-                    </div>
-                    <div class="gene-selector">
-                        <label>
-                            <span>g4</span>
-                            <span class="gene-value" id="g4-display">GG</span>
-                        </label>
-                        <input type="range" min="0" max="2" value="2" class="gene-slider green-slider" id="g4" onchange="updateGenes()">
-                    </div>
-                </div>
-
-                <!-- Blue Genes -->
-                <div class="gene-group">
-                    <h3>
-                        <span class="color-indicator" style="background: #0000ff;"></span>
-                        Blue Genes (B/b)
-                    </h3>
-                    <div class="gene-selector">
-                        <label>
-                            <span>b1</span>
-                            <span class="gene-value" id="b1-display">bb</span>
-                        </label>
-                        <input type="range" min="0" max="2" value="0" class="gene-slider blue-slider" id="b1" onchange="updateGenes()">
-                    </div>
-                    <div class="gene-selector">
-                        <label>
-                            <span>b2</span>
-                            <span class="gene-value" id="b2-display">bb</span>
-                        </label>
-                        <input type="range" min="0" max="2" value="0" class="gene-slider blue-slider" id="b2" onchange="updateGenes()">
-                    </div>
-                    <div class="gene-selector">
-                        <label>
-                            <span>b3</span>
-                            <span class="gene-value" id="b3-display">bb</span>
-                        </label>
-                        <input type="range" min="0" max="2" value="0" class="gene-slider blue-slider" id="b3" onchange="updateGenes()">
-                    </div>
-                    <div class="gene-selector">
-                        <label>
-                            <span>b4</span>
-                            <span class="gene-value" id="b4-display">bb</span>
-                        </label>
-                        <input type="range" min="0" max="2" value="0" class="gene-slider blue-slider" id="b4" onchange="updateGenes()">
-                    </div>
-                </div>
-
-                <div class="info-box">
-                    <strong>How it works:</strong><br>
-                    Each slider controls one gene (0 = rr/gg/bb, 1 = Rr/Gg/Bb, 2 = RR/GG/BB).
-                    Different body parts use different gene combinations to create distinct colors!
-                </div>
+                <div id="bodyPartControls"></div>
             </div>
 
             <!-- Preview Area -->
             <div class="card">
                 <h2>🦜 Phenotype Preview</h2>
 
-                <div class="genotype-display" id="genotypeText"></div>
+                <div class="stats-grid" id="colorStats"></div>
 
                 <div class="parrot-preview" id="parrotPreview">
                     <div style="color: #999;">Loading parrot...</div>
-                </div>
-
-                <div class="body-parts-display">
-                    <div class="body-part-sample">
-                        <label>Wings (r1,r2,g1,g2,b1,b2)</label>
-                        <div class="color-swatch" id="wingsColor"></div>
-                        <div class="rgb-value" id="wingsRGB"></div>
-                    </div>
-                    <div class="body-part-sample">
-                        <label>Body (r3,r4,g3,g4,b3,b4)</label>
-                        <div class="color-swatch" id="bodyColor"></div>
-                        <div class="rgb-value" id="bodyRGB"></div>
-                    </div>
-                    <div class="body-part-sample">
-                        <label>Head (r1,r3,g1,g3,b1,b3)</label>
-                        <div class="color-swatch" id="headColor"></div>
-                        <div class="rgb-value" id="headRGB"></div>
-                    </div>
-                    <div class="body-part-sample">
-                        <label>Tail (r2,r4,g2,g4,b2,b4)</label>
-                        <div class="color-swatch" id="tailColor"></div>
-                        <div class="rgb-value" id="tailRGB"></div>
-                    </div>
-                    <div class="body-part-sample">
-                        <label>Accents (all genes)</label>
-                        <div class="color-swatch" id="accentsColor"></div>
-                        <div class="rgb-value" id="accentsRGB"></div>
-                    </div>
                 </div>
             </div>
         </div>
 
         <div class="card">
-            <h2>📊 Gene Mapping System</h2>
-            <p><strong>Body Part to Gene Mapping:</strong></p>
-            <ul style="margin: 15px 0 15px 20px; line-height: 1.8;">
-                <li><strong>Wings:</strong> Use genes 1-2 (r1, r2, g1, g2, b1, b2) - max 4 dominant alleles per channel</li>
-                <li><strong>Body:</strong> Use genes 3-4 (r3, r4, g3, g4, b3, b4) - max 4 dominant alleles per channel</li>
-                <li><strong>Head/Crest:</strong> Use genes 1,3 (r1, r3, g1, g3, b1, b3) - blend of wing and body genes</li>
-                <li><strong>Tail:</strong> Use genes 2,4 (r2, r4, g2, g4, b2, b4) - complementary blend</li>
-                <li><strong>Accents:</strong> Use all genes (r1-r4, g1-g4, b1-b4) - full genetic expression</li>
-            </ul>
-
-            <p style="margin-top: 15px;"><strong>Why This Prevents Graying:</strong></p>
-            <p style="margin: 10px 0 0 20px; line-height: 1.6;">
-                By mapping different body parts to different gene subsets, each part can have its own distinct color.
-                For example: Wings can be pure red (RR RR gg gg bb bb) while Body is pure green (rr rr GG GG bb bb),
-                creating a beautiful red-and-green parrot instead of a gray one!
+            <h2>📊 Genetics System Explained</h2>
+            <p><strong>Normal Distribution:</strong></p>
+            <p style="margin: 10px 0; line-height: 1.6;">
+                With 4 genes per color channel, there are different numbers of ways to get each count:
             </p>
+            <ul style="margin: 10px 0 10px 20px; line-height: 1.8;">
+                <li><strong>0 dominant (rrrr):</strong> 1 way → 0% color</li>
+                <li><strong>1 dominant (Rrrr):</strong> 4 ways → 25% color</li>
+                <li><strong>2 dominant (RRrr):</strong> 6 ways → 50% color (most common!)</li>
+                <li><strong>3 dominant (RRRr):</strong> 4 ways → 75% color</li>
+                <li><strong>4 dominant (RRRR):</strong> 1 way → 100% color</li>
+            </ul>
+            <p style="margin-top: 15px;"><strong>This creates realistic variation:</strong> Most offspring will have medium colors (around 50%), with fewer pure/absent colors.</p>
+
+            <p style="margin-top: 15px;"><strong>Prevents graying:</strong> Each body part has independent genes, so wings can be pure red while body is pure green!</p>
         </div>
     </div>
 
     <script>
         let svgTemplate = null;
 
-        // Gene state (0 = recessive, 1 = hetero, 2 = dominant)
-        const genes = {
-            r1: 2, r2: 2, r3: 0, r4: 0,
-            g1: 0, g2: 0, g3: 2, g4: 2,
-            b1: 0, b2: 0, b3: 0, b4: 0
-        };
+        // Body parts configuration
+        const bodyParts = [
+            { id: 'wings', name: 'Wings', svgGroups: ['wing-blue'], emoji: '🪽' },
+            { id: 'body', name: 'Body', svgGroups: ['body-yellow', 'body-gold'], emoji: '🦜' },
+            { id: 'head', name: 'Head/Crest', svgGroups: ['accent-blue', 'covert-yellow'], emoji: '👑' },
+            { id: 'tail', name: 'Tail', svgGroups: ['accent-white', 'accent-brown'], emoji: '✨' },
+            { id: 'accents', name: 'Accents', svgGroups: ['accent-green', 'detail-gray'], emoji: '💎' }
+        ];
+
+        // Gene state: each body part has 12 genes (r1-r4, g1-g4, b1-b4)
+        // Each gene is boolean: true = dominant, false = recessive
+        const genes = {};
+
+        // Initialize genes for all body parts
+        function initializeGenes() {
+            bodyParts.forEach(part => {
+                genes[part.id] = {
+                    red: [false, false, false, false],
+                    green: [false, false, false, false],
+                    blue: [false, false, false, false]
+                };
+            });
+        }
 
         // Load SVG template
         async function loadSVGTemplate() {
@@ -459,104 +364,135 @@
             }
         }
 
-        // Convert gene value to genotype string
-        function geneValueToString(value, letter) {
-            const upper = letter.toUpperCase();
-            const lower = letter.toLowerCase();
-            if (value === 2) return upper + upper;
-            if (value === 1) return upper + lower;
-            return lower + lower;
+        // Calculate color from gene array
+        function calculateChannelValue(geneArray) {
+            const dominantCount = geneArray.filter(g => g).length;
+            // Map 0-4 dominant alleles to 0-255
+            return Math.round((dominantCount / 4) * 255);
         }
 
-        // Calculate color for a body part based on gene subset
-        function calculateBodyPartColor(redGenes, greenGenes, blueGenes) {
-            // Count dominant alleles in the subset
-            let redCount = 0, greenCount = 0, blueCount = 0;
-
-            redGenes.forEach(geneKey => {
-                redCount += genes[geneKey];
-            });
-            greenGenes.forEach(geneKey => {
-                greenCount += genes[geneKey];
-            });
-            blueGenes.forEach(geneKey => {
-                blueCount += genes[geneKey];
-            });
-
-            // Max possible for each subset
-            const maxRed = redGenes.length * 2;
-            const maxGreen = greenGenes.length * 2;
-            const maxBlue = blueGenes.length * 2;
-
-            // Convert to 0-255
-            const r = Math.round((redCount / maxRed) * 255);
-            const g = Math.round((greenCount / maxGreen) * 255);
-            const b = Math.round((blueCount / maxBlue) * 255);
-
+        // Calculate RGB color for a body part
+        function calculateBodyPartColor(partId) {
+            const partGenes = genes[partId];
+            const r = calculateChannelValue(partGenes.red);
+            const g = calculateChannelValue(partGenes.green);
+            const b = calculateChannelValue(partGenes.blue);
             return { r, g, b, rgb: `rgb(${r}, ${g}, ${b})` };
         }
 
-        // Update gene displays and phenotype
-        function updateGenes() {
-            // Update gene value displays
-            ['r1', 'r2', 'r3', 'r4'].forEach(geneKey => {
-                const value = parseInt(document.getElementById(geneKey).value);
-                genes[geneKey] = value;
-                document.getElementById(geneKey + '-display').textContent = geneValueToString(value, 'r');
-            });
-            ['g1', 'g2', 'g3', 'g4'].forEach(geneKey => {
-                const value = parseInt(document.getElementById(geneKey).value);
-                genes[geneKey] = value;
-                document.getElementById(geneKey + '-display').textContent = geneValueToString(value, 'g');
-            });
-            ['b1', 'b2', 'b3', 'b4'].forEach(geneKey => {
-                const value = parseInt(document.getElementById(geneKey).value);
-                genes[geneKey] = value;
-                document.getElementById(geneKey + '-display').textContent = geneValueToString(value, 'b');
-            });
-
-            updatePhenotype();
+        // Count dominant alleles
+        function countDominant(geneArray) {
+            return geneArray.filter(g => g).length;
         }
 
-        // Update the visual display
-        async function updatePhenotype() {
-            // Calculate colors for each body part
-            const wings = calculateBodyPartColor(['r1', 'r2'], ['g1', 'g2'], ['b1', 'b2']);
-            const body = calculateBodyPartColor(['r3', 'r4'], ['g3', 'g4'], ['b3', 'b4']);
-            const head = calculateBodyPartColor(['r1', 'r3'], ['g1', 'g3'], ['b1', 'b3']);
-            const tail = calculateBodyPartColor(['r2', 'r4'], ['g2', 'g4'], ['b2', 'b4']);
-            const accents = calculateBodyPartColor(['r1', 'r2', 'r3', 'r4'], ['g1', 'g2', 'g3', 'g4'], ['b1', 'b2', 'b3', 'b4']);
+        // Create gene controls UI
+        function createGeneControls() {
+            const container = document.getElementById('bodyPartControls');
+            container.innerHTML = '';
 
-            // Update color swatches
-            document.getElementById('wingsColor').style.background = wings.rgb;
-            document.getElementById('wingsRGB').textContent = wings.rgb;
+            bodyParts.forEach(part => {
+                const section = document.createElement('div');
+                section.className = 'body-part-section';
 
-            document.getElementById('bodyColor').style.background = body.rgb;
-            document.getElementById('bodyRGB').textContent = body.rgb;
+                const color = calculateBodyPartColor(part.id);
+                const redCount = countDominant(genes[part.id].red);
+                const greenCount = countDominant(genes[part.id].green);
+                const blueCount = countDominant(genes[part.id].blue);
 
-            document.getElementById('headColor').style.background = head.rgb;
-            document.getElementById('headRGB').textContent = head.rgb;
+                section.innerHTML = `
+                    <div class="body-part-header" onclick="toggleSection('${part.id}')">
+                        <h3>
+                            <span>${part.emoji}</span>
+                            <span>${part.name}</span>
+                            <span class="color-preview" style="background: ${color.rgb}"></span>
+                        </h3>
+                        <span class="expand-icon" id="icon-${part.id}">▼</span>
+                    </div>
+                    <div class="body-part-controls" id="controls-${part.id}">
+                        <div class="gene-channel">
+                            <h4>
+                                <span>❤️ Red Genes</span>
+                                <span class="gene-count" style="color: #dc3545;">${redCount}/4 dominant</span>
+                            </h4>
+                            <div class="gene-toggles">
+                                ${genes[part.id].red.map((dominant, i) =>
+                                    `<div class="gene-toggle red ${dominant ? 'dominant' : ''}"
+                                          onclick="toggleGene('${part.id}', 'red', ${i})">
+                                        ${dominant ? 'R' : 'r'}${i+1}
+                                    </div>`
+                                ).join('')}
+                            </div>
+                        </div>
+                        <div class="gene-channel">
+                            <h4>
+                                <span>💚 Green Genes</span>
+                                <span class="gene-count" style="color: #28a745;">${greenCount}/4 dominant</span>
+                            </h4>
+                            <div class="gene-toggles">
+                                ${genes[part.id].green.map((dominant, i) =>
+                                    `<div class="gene-toggle green ${dominant ? 'dominant' : ''}"
+                                          onclick="toggleGene('${part.id}', 'green', ${i})">
+                                        ${dominant ? 'G' : 'g'}${i+1}
+                                    </div>`
+                                ).join('')}
+                            </div>
+                        </div>
+                        <div class="gene-channel">
+                            <h4>
+                                <span>💙 Blue Genes</span>
+                                <span class="gene-count" style="color: #007bff;">${blueCount}/4 dominant</span>
+                            </h4>
+                            <div class="gene-toggles">
+                                ${genes[part.id].blue.map((dominant, i) =>
+                                    `<div class="gene-toggle blue ${dominant ? 'dominant' : ''}"
+                                          onclick="toggleGene('${part.id}', 'blue', ${i})">
+                                        ${dominant ? 'B' : 'b'}${i+1}
+                                    </div>`
+                                ).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
 
-            document.getElementById('tailColor').style.background = tail.rgb;
-            document.getElementById('tailRGB').textContent = tail.rgb;
-
-            document.getElementById('accentsColor').style.background = accents.rgb;
-            document.getElementById('accentsRGB').textContent = accents.rgb;
-
-            // Update genotype display
-            const genotypeText = `
-                <strong>Red Genes:</strong> ${geneValueToString(genes.r1, 'r')} ${geneValueToString(genes.r2, 'r')} ${geneValueToString(genes.r3, 'r')} ${geneValueToString(genes.r4, 'r')}<br>
-                <strong>Green Genes:</strong> ${geneValueToString(genes.g1, 'g')} ${geneValueToString(genes.g2, 'g')} ${geneValueToString(genes.g3, 'g')} ${geneValueToString(genes.g4, 'g')}<br>
-                <strong>Blue Genes:</strong> ${geneValueToString(genes.b1, 'b')} ${geneValueToString(genes.b2, 'b')} ${geneValueToString(genes.b3, 'b')} ${geneValueToString(genes.b4, 'b')}
-            `;
-            document.getElementById('genotypeText').innerHTML = genotypeText;
-
-            // Render colored SVG
-            await renderColoredSVG(wings, body, head, tail, accents);
+                container.appendChild(section);
+            });
         }
 
-        // Render the SVG with colored feathers
-        async function renderColoredSVG(wings, body, head, tail, accents) {
+        // Toggle section expand/collapse
+        function toggleSection(partId) {
+            const controls = document.getElementById(`controls-${partId}`);
+            const icon = document.getElementById(`icon-${partId}`);
+
+            controls.classList.toggle('expanded');
+            icon.classList.toggle('expanded');
+        }
+
+        // Toggle individual gene
+        function toggleGene(partId, channel, index) {
+            genes[partId][channel][index] = !genes[partId][channel][index];
+            updateUI();
+        }
+
+        // Update color stats display
+        function updateColorStats() {
+            const container = document.getElementById('colorStats');
+            container.innerHTML = '';
+
+            bodyParts.forEach(part => {
+                const color = calculateBodyPartColor(part.id);
+                const stat = document.createElement('div');
+                stat.className = 'stat-card';
+                stat.innerHTML = `
+                    <label>${part.emoji} ${part.name}</label>
+                    <div class="color-display" style="background: ${color.rgb}"></div>
+                    <div class="rgb-text">${color.rgb}</div>
+                `;
+                container.appendChild(stat);
+            });
+        }
+
+        // Render colored SVG
+        async function renderColoredSVG() {
             const template = await loadSVGTemplate();
             if (!template) {
                 document.getElementById('parrotPreview').innerHTML = '<div style="color: #999;">Failed to load SVG</div>';
@@ -565,86 +501,124 @@
 
             let svg = template;
 
-            // Color mapping: feather group -> color
-            const colorMap = {
-                'wing-blue': wings.rgb,
-                'body-yellow': body.rgb,
-                'body-gold': body.rgb,
-                'accent-green': accents.rgb,
-                'accent-blue': head.rgb,
-                'accent-white': tail.rgb,
-                'accent-brown': tail.rgb,
-                'detail-gray': accents.rgb
-            };
+            // Apply colors to each body part's SVG groups
+            bodyParts.forEach(part => {
+                const color = calculateBodyPartColor(part.id);
 
-            // Apply colors to feather groups
-            Object.keys(colorMap).forEach(groupPrefix => {
-                const color = colorMap[groupPrefix];
-
-                // Find all feathers in this group (1-30 range to cover all possible IDs)
-                for (let i = 1; i <= 30; i++) {
-                    const featherId = `${groupPrefix}-${i}`;
-
-                    // Replace fill color for this feather
-                    const regex = new RegExp(`id="${featherId}"[^>]*fill="[^"]*"`, 'g');
-                    svg = svg.replace(regex, match => {
-                        return match.replace(/fill="[^"]*"/, `fill="${color}"`);
-                    });
-                }
+                part.svgGroups.forEach(groupPrefix => {
+                    // Color all feathers in this group
+                    for (let i = 1; i <= 30; i++) {
+                        const featherId = `${groupPrefix}-${i}`;
+                        const regex = new RegExp(`id="${featherId}"[^>]*fill="[^"]*"`, 'g');
+                        svg = svg.replace(regex, match => {
+                            return match.replace(/fill="[^"]*"/, `fill="${color.rgb}"`);
+                        });
+                    }
+                });
             });
 
-            // Display the colored SVG
             document.getElementById('parrotPreview').innerHTML = svg;
+        }
+
+        // Update entire UI
+        function updateUI() {
+            createGeneControls();
+            updateColorStats();
+            renderColoredSVG();
         }
 
         // Load preset genotypes
         function loadPreset(preset) {
             const presets = {
-                red: {
-                    r1: 2, r2: 2, r3: 2, r4: 2,
-                    g1: 0, g2: 0, g3: 0, g4: 0,
-                    b1: 0, b2: 0, b3: 0, b4: 0
+                rainbow: () => {
+                    // All genes dominant - full rainbow
+                    bodyParts.forEach(part => {
+                        genes[part.id].red = [true, true, true, true];
+                        genes[part.id].green = [true, true, true, true];
+                        genes[part.id].blue = [true, true, true, true];
+                    });
                 },
-                blue: {
-                    r1: 0, r2: 0, r3: 0, r4: 0,
-                    g1: 0, g2: 0, g3: 0, g4: 0,
-                    b1: 2, b2: 2, b3: 2, b4: 2
+                red: () => {
+                    // Pure red parrot
+                    bodyParts.forEach(part => {
+                        genes[part.id].red = [true, true, true, true];
+                        genes[part.id].green = [false, false, false, false];
+                        genes[part.id].blue = [false, false, false, false];
+                    });
                 },
-                green: {
-                    r1: 0, r2: 0, r3: 0, r4: 0,
-                    g1: 2, g2: 2, g3: 2, g4: 2,
-                    b1: 0, b2: 0, b3: 0, b4: 0
+                blue: () => {
+                    // Pure blue parrot
+                    bodyParts.forEach(part => {
+                        genes[part.id].red = [false, false, false, false];
+                        genes[part.id].green = [false, false, false, false];
+                        genes[part.id].blue = [true, true, true, true];
+                    });
                 },
-                yellow: {
-                    r1: 2, r2: 2, r3: 2, r4: 2,
-                    g1: 2, g2: 2, g3: 2, g4: 2,
-                    b1: 0, b2: 0, b3: 0, b4: 0
+                green: () => {
+                    // Pure green parrot
+                    bodyParts.forEach(part => {
+                        genes[part.id].red = [false, false, false, false];
+                        genes[part.id].green = [true, true, true, true];
+                        genes[part.id].blue = [false, false, false, false];
+                    });
                 },
-                rainbow: {
-                    r1: 2, r2: 2, r3: 2, r4: 2,
-                    g1: 2, g2: 2, g3: 2, g4: 2,
-                    b1: 2, b2: 2, b3: 2, b4: 2
+                mixed: () => {
+                    // Wings: Red, Body: Green, Head: Blue, Tail: Yellow, Accents: Purple
+                    genes.wings.red = [true, true, true, true];
+                    genes.wings.green = [false, false, false, false];
+                    genes.wings.blue = [false, false, false, false];
+
+                    genes.body.red = [false, false, false, false];
+                    genes.body.green = [true, true, true, true];
+                    genes.body.blue = [false, false, false, false];
+
+                    genes.head.red = [false, false, false, false];
+                    genes.head.green = [false, false, false, false];
+                    genes.head.blue = [true, true, true, true];
+
+                    genes.tail.red = [true, true, true, true];
+                    genes.tail.green = [true, true, true, true];
+                    genes.tail.blue = [false, false, false, false];
+
+                    genes.accents.red = [true, true, true, true];
+                    genes.accents.green = [false, false, false, false];
+                    genes.accents.blue = [true, true, true, true];
                 },
-                mixed: {
-                    r1: 2, r2: 2, r3: 0, r4: 0,
-                    g1: 0, g2: 0, g3: 2, g4: 2,
-                    b1: 0, b2: 0, b3: 0, b4: 0
+                natural: () => {
+                    // Natural looking parrot with variation
+                    genes.wings.red = [false, false, false, false];
+                    genes.wings.green = [false, true, false, false];
+                    genes.wings.blue = [true, true, true, false];
+
+                    genes.body.red = [false, false, false, false];
+                    genes.body.green = [true, true, true, true];
+                    genes.body.blue = [true, true, false, false];
+
+                    genes.head.red = [true, false, false, false];
+                    genes.head.green = [true, true, false, false];
+                    genes.head.blue = [false, false, false, false];
+
+                    genes.tail.red = [true, true, true, false];
+                    genes.tail.green = [true, false, false, false];
+                    genes.tail.blue = [false, false, false, false];
+
+                    genes.accents.red = [false, false, false, false];
+                    genes.accents.green = [true, true, false, false];
+                    genes.accents.blue = [true, false, false, false];
                 }
             };
 
-            const selected = presets[preset];
-            if (selected) {
-                Object.keys(selected).forEach(geneKey => {
-                    genes[geneKey] = selected[geneKey];
-                    document.getElementById(geneKey).value = selected[geneKey];
-                });
-                updateGenes();
+            if (presets[preset]) {
+                presets[preset]();
+                updateUI();
             }
         }
 
         // Initialize on load
-        window.addEventListener('load', () => {
-            updateGenes();
+        window.addEventListener('load', async () => {
+            initializeGenes();
+            await loadSVGTemplate();
+            loadPreset('natural');
         });
     </script>
 </body>
