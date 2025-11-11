@@ -1721,7 +1721,7 @@ function startSellHold(parrotId) {
 
     const button = event.target;
     const sellValue = Math.floor(parrot.getValue() * 0.7);
-    const holdDuration = 2000; // 2 seconds
+    const holdDuration = 1000; // 1 second
     const startTime = Date.now();
 
     // Create progress overlay
