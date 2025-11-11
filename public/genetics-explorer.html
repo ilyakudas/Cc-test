@@ -362,19 +362,19 @@
                 <li><strong>100 - Horizontal 3-Color:</strong> Genes 1-2, 3-4, 5-6 = three horizontal bands</li>
                 <li><strong>101 - Vertical 3-Color:</strong> Genes 1-2, 3-4, 5-6 = three vertical bands</li>
                 <li><strong>110 - Diagonal:</strong> Genes 1-3 = top-left, genes 4-6 = bottom-right</li>
-                <li><strong>111 - Bilateral Mirror:</strong> Genes 1-2 = edges, genes 3-4 = center (mirrored)</li>
+                <li><strong>111 - Bilateral Mirror:</strong> Genes 1-3 = edges, genes 4-6 = center (mirrored)</li>
             </ul>
 
             <p style="margin-top: 20px;"><strong>4 Animation Types (controlled by genes P4, P5):</strong></p>
             <ul style="margin: 10px 0 10px 20px; line-height: 1.8;">
                 <li><strong>00 - Still:</strong> No animation, static display</li>
-                <li><strong>01 - Color Shift:</strong> Colors shift through hue variations (RGB channel rotation)</li>
+                <li><strong>01 - Color Shift:</strong> Colors shift through subtle hue variations while maintaining original color recognizability</li>
                 <li><strong>10 - Slide:</strong> Gradient position moves across the feathers</li>
                 <li><strong>11 - Shimmer:</strong> Wave of light sweeps across with color brightening</li>
             </ul>
             <p style="margin: 10px 0 10px 20px; line-height: 1.6;">
                 <strong>Example:</strong> Red genes <code>rrrRRR</code> with pattern <code>001</code> creates horizontal gradient from black to red.
-                <br><strong>With Animation:</strong> Add genes <code>01</code> for Color Shift → colors cycle through red, green, blue hues!
+                <br><strong>With Animation:</strong> Add genes <code>01</code> for Color Shift → red subtly shifts towards orange and pink!
                 <br><strong>Full Example:</strong> Pattern <code>001 10</code> = Horizontal 2-Color with Slide animation
             </p>
         </div>
@@ -622,14 +622,14 @@
                 };
             }
 
-            // Pattern 111: Bilateral Mirror (genes 0-1 edges, 2-3 center, mirror)
+            // Pattern 111: Bilateral Mirror (genes 0-2 edges, 3-5 center, mirror)
             if (p1 && p2 && p3) {
-                const r1 = calculateChannelValueSubset(partGenes.red, 0, 2);
-                const g1 = calculateChannelValueSubset(partGenes.green, 0, 2);
-                const b1 = calculateChannelValueSubset(partGenes.blue, 0, 2);
-                const r2 = calculateChannelValueSubset(partGenes.red, 2, 4);
-                const g2 = calculateChannelValueSubset(partGenes.green, 2, 4);
-                const b2 = calculateChannelValueSubset(partGenes.blue, 2, 4);
+                const r1 = calculateChannelValueSubset(partGenes.red, 0, 3);
+                const g1 = calculateChannelValueSubset(partGenes.green, 0, 3);
+                const b1 = calculateChannelValueSubset(partGenes.blue, 0, 3);
+                const r2 = calculateChannelValueSubset(partGenes.red, 3, 6);
+                const g2 = calculateChannelValueSubset(partGenes.green, 3, 6);
+                const b2 = calculateChannelValueSubset(partGenes.blue, 3, 6);
                 return {
                     pattern: 'bilateral',
                     patternName: 'Bilateral Mirror',
@@ -912,14 +912,21 @@
                         let stopsHtml = '';
 
                         if (animationType === 'Color Shift') {
-                            // Color Shift: Shift hue by rotating RGB values
+                            // Color Shift: Subtle hue shift by adding to adjacent channels
                             stopsHtml = color.stops.map((stop, idx) => {
                                 const rgb = stop.color.match(/\d+/g);
                                 const r = parseInt(rgb[0]), g = parseInt(rgb[1]), b = parseInt(rgb[2]);
 
-                                // Create hue-shifted color (rotate RGB channels)
-                                const shift1 = `rgb(${g}, ${b}, ${r})`; // Rotate right
-                                const shift2 = `rgb(${b}, ${r}, ${g})`; // Rotate left
+                                // Create subtle hue shifts (add 30% to adjacent channels)
+                                const shift1R = Math.min(255, Math.round(r + g * 0.3));
+                                const shift1G = Math.min(255, Math.round(g + b * 0.3));
+                                const shift1B = Math.min(255, Math.round(b + r * 0.3));
+                                const shift1 = `rgb(${shift1R}, ${shift1G}, ${shift1B})`;
+
+                                const shift2R = Math.min(255, Math.round(r + b * 0.3));
+                                const shift2G = Math.min(255, Math.round(g + r * 0.3));
+                                const shift2B = Math.min(255, Math.round(b + g * 0.3));
+                                const shift2 = `rgb(${shift2R}, ${shift2G}, ${shift2B})`;
 
                                 return `<stop offset="${stop.offset}" style="stop-color:${stop.color};stop-opacity:1">
                                     <animate attributeName="stop-color"
@@ -974,14 +981,21 @@
                                 `<stop offset="${stop.offset}" style="stop-color:${stop.color};stop-opacity:1" />`
                             ).join('\n');
                         } else if (animationType === 'Color Shift') {
-                            // Color Shift: Shift hue by rotating RGB values
+                            // Color Shift: Subtle hue shift by adding to adjacent channels
                             stopsHtml = color.stops.map((stop, idx) => {
                                 const rgb = stop.color.match(/\d+/g);
                                 const r = parseInt(rgb[0]), g = parseInt(rgb[1]), b = parseInt(rgb[2]);
 
-                                // Create hue-shifted color (rotate RGB channels)
-                                const shift1 = `rgb(${g}, ${b}, ${r})`; // Rotate right
-                                const shift2 = `rgb(${b}, ${r}, ${g})`; // Rotate left
+                                // Create subtle hue shifts (add 30% to adjacent channels)
+                                const shift1R = Math.min(255, Math.round(r + g * 0.3));
+                                const shift1G = Math.min(255, Math.round(g + b * 0.3));
+                                const shift1B = Math.min(255, Math.round(b + r * 0.3));
+                                const shift1 = `rgb(${shift1R}, ${shift1G}, ${shift1B})`;
+
+                                const shift2R = Math.min(255, Math.round(r + b * 0.3));
+                                const shift2G = Math.min(255, Math.round(g + r * 0.3));
+                                const shift2B = Math.min(255, Math.round(b + g * 0.3));
+                                const shift2 = `rgb(${shift2R}, ${shift2G}, ${shift2B})`;
 
                                 return `<stop offset="${stop.offset}" style="stop-color:${stop.color};stop-opacity:1">
                                     <animate attributeName="stop-color"
