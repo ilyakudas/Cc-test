@@ -700,9 +700,9 @@
                 }
             });
 
-            // Insert gradient definitions into SVG
+            // Insert gradient definitions into SVG (after the opening svg tag closes)
             if (gradientDefs) {
-                svg = svg.replace('<svg', `<svg><defs>${gradientDefs}</defs>`);
+                svg = svg.replace(/(<svg[^>]*>)/, `$1<defs>${gradientDefs}</defs>`);
             }
 
             document.getElementById('parrotPreview').innerHTML = svg;
