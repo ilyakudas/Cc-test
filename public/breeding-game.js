@@ -53,7 +53,7 @@ class Parrot {
 
     calculateRGBValue(alleles) {
         const count = this.countDominant(alleles);
-        return Math.round((count / 4) * 255);
+        return Math.round((count / alleles.length) * 255);
     }
 
     calculateBodyPartColor(bodyPart) {
@@ -93,7 +93,7 @@ class Parrot {
     // Distance from 2 (center) determines rarity: 0 or 4 = most rare, 1 or 3 = somewhat rare, 2 = common
     calculateRarity() {
         let rareTraits = 0;
-        let maxTraits = 0;
+        const maxTraits = 60; // Absolute maximum: 6 parts × (6 color points + 4 gradient points)
 
         for (const bodyPart of ['wings', 'special_wing', 'body', 'head', 'tail', 'accents']) {
             const part = this.genes[bodyPart];
@@ -116,18 +116,15 @@ class Parrot {
             // Gradient is very rare (worth 4 points)
             if (part.gradient) {
                 rareTraits += 4;
-                maxTraits += 10; // 6 for colors + 4 for gradient
-            } else {
-                maxTraits += 6; // 3 color channels × 2 points max each
             }
         }
 
         // Return rarity level: common, uncommon, rare, epic, legendary
         const rarityRatio = rareTraits / maxTraits;
-        if (rarityRatio >= 0.9 || this.hasAnyGradients()) return 'legendary';
-        if (rarityRatio >= 0.7) return 'epic';
-        if (rarityRatio >= 0.5) return 'rare';
-        if (rarityRatio >= 0.3) return 'uncommon';
+        if (rarityRatio >= 0.9) return 'legendary';  // 54+ out of 60 points
+        if (rarityRatio >= 0.7) return 'epic';       // 42+ out of 60 points
+        if (rarityRatio >= 0.5) return 'rare';       // 30+ out of 60 points
+        if (rarityRatio >= 0.3) return 'uncommon';   // 18+ out of 60 points
         return 'common';
     }
 
@@ -1039,8 +1036,7 @@ async function breedOnLeft(parrotId) {
 
     // Prevent selecting the same parrot in both slots
     if (breedingPair.right === parrotId) {
-        alert('Cannot select the same parrot for both breeding slots!');
-        return;
+        return; // Silently prevent - UI already shows slots
     }
 
     breedingPair.left = parrotId;
@@ -1054,8 +1050,7 @@ async function breedOnRight(parrotId) {
 
     // Prevent selecting the same parrot in both slots
     if (breedingPair.left === parrotId) {
-        alert('Cannot select the same parrot for both breeding slots!');
-        return;
+        return; // Silently prevent - UI already shows slots
     }
 
     breedingPair.right = parrotId;
@@ -1518,8 +1513,7 @@ function buyParrot(parrotId) {
 
     const price = parrot.getValue();
     if (coins < price) {
-        alert('Not enough coins!');
-        return;
+        return; // Button should be disabled, but just in case
     }
 
     coins -= price;
@@ -1571,8 +1565,6 @@ function buyParrot(parrotId) {
     selectedParrotId = null;
     updateUI();
     saveGame();
-
-    alert(`${parrot.name} joined your collection!`);
 }
 
 // Sell parrot
