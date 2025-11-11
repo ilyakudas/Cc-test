@@ -11,6 +11,7 @@
         <header>
             <h1>🦜 ChromaWing Breeding Simulator</h1>
             <p>RGB Genetics v2.1 with Gradient System - 78 Genes Per Parrot (6 body parts × 13 genes)</p>
+            <button onclick="newGame()" style="background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9em; margin-top: 10px;">🔄 New Game</button>
         </header>
 
         <div class="stats-bar">
@@ -25,7 +26,7 @@
                 <span>🦜</span>
                 <div>
                     <div style="font-size: 0.75em; color: #666;">Parrots</div>
-                    <div class="value" id="parrotCount">3</div>
+                    <div class="value" id="parrotCount">1</div>
                 </div>
             </div>
             <div class="stat-badge">
@@ -50,6 +51,11 @@
                     <button class="tab" onclick="switchTab('store')">🏪 Store</button>
                 </div>
 
+                <!-- Actions Section - Moved to top -->
+                <div class="top-actions-section" id="topActionSection" style="display: none;">
+                    <div class="action-buttons-horizontal" id="actionButtons"></div>
+                </div>
+
                 <div id="collectionTab" class="parrot-grid">
                     <!-- Parrot cards will be inserted here -->
                 </div>
@@ -59,28 +65,32 @@
                 </div>
             </div>
 
-            <!-- Right Panel - Preview & Actions -->
+            <!-- Right Panel - Preview & Breeding -->
             <div class="panel preview-panel">
+                <!-- Breeding Pair Box - Always Visible -->
+                <div class="breeding-pair-box">
+                    <h4>🧬 Breeding Pair</h4>
+                    <div class="breeding-slots">
+                        <div class="breeding-slot" id="breedSlotLeft">
+                            <div class="slot-label">Left Parent</div>
+                            <div style="color: #ccc; font-size: 0.9em;">Empty</div>
+                        </div>
+                        <div class="breeding-slot" id="breedSlotRight">
+                            <div class="slot-label">Right Parent</div>
+                            <div style="color: #ccc; font-size: 0.9em;">Empty</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-breed" id="breedButton" onclick="breedParrots()" disabled>
+                        💕 Breed Parrots
+                    </button>
+                </div>
+
                 <div class="preview-section">
                     <h3>Selected Parrot</h3>
                     <div id="selectedPreview">
                         <div class="empty-preview">
                             Click a parrot to view details
                         </div>
-                    </div>
-                </div>
-
-                <div class="preview-section">
-                    <h3>Actions</h3>
-                    <div id="breedingSection" style="display: none;">
-                        <div class="info-box">
-                            Ready to breed! Select two parrots from your collection to create offspring.
-                        </div>
-                        <div class="breeding-preview" id="breedingPreview"></div>
-                        <button class="btn btn-breed" onclick="breedParrots()">💕 Breed Selected Parrots</button>
-                    </div>
-                    <div id="actionSection" style="display: none;">
-                        <div class="action-buttons" id="actionButtons"></div>
                     </div>
                 </div>
             </div>
@@ -92,6 +102,26 @@
         <div class="modal-content">
             <span class="modal-close" onclick="closeModal()">&times;</span>
             <div id="laboratoryDisplay"></div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Notification History Toggle -->
+    <button id="notificationHistoryToggle" class="notification-toggle" onclick="toggleNotificationHistory()">
+        🔔 <span id="notificationCount">0</span>
+    </button>
+
+    <!-- Notification History Panel -->
+    <div id="notificationHistoryPanel" class="notification-history-panel">
+        <div class="notification-history-header">
+            <h3>Notifications</h3>
+            <button onclick="clearNotificationHistory()">Clear All</button>
+            <span class="modal-close" onclick="toggleNotificationHistory()">&times;</span>
+        </div>
+        <div id="notificationHistoryList" class="notification-history-list">
+            <!-- Notification history will be displayed here -->
         </div>
     </div>
 
