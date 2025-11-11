@@ -445,6 +445,65 @@ async function initGame() {
     await updateUI();
 }
 
+// Helper: Create parrot with specific gene purity
+function createParrotWithPurity(targetPurity) {
+    // targetPurity: 'high' = 80% pure genes, 'medium' = 50%, 'low' = 20%, 'random' = random
+    const genes = {
+        wings: null,
+        special_wing: null,
+        body: null,
+        head: null,
+        tail: null,
+        accents: null
+    };
+
+    const bodyParts = ['wings', 'special_wing', 'body', 'head', 'tail', 'accents'];
+
+    for (const part of bodyParts) {
+        const partGenes = {
+            red: [],
+            green: [],
+            blue: [],
+            gradient: false
+        };
+
+        // Generate each color channel based on purity
+        for (const color of ['red', 'green', 'blue']) {
+            let alleles;
+            if (targetPurity === 'high') {
+                // 80% chance of pure (0000 or 1111)
+                if (Math.random() < 0.8) {
+                    const val = Math.random() < 0.5;
+                    alleles = [val, val, val, val];
+                } else {
+                    // Nearly pure (0001 or 1110)
+                    const base = Math.random() < 0.5;
+                    alleles = [base, base, base, !base];
+                }
+            } else if (targetPurity === 'medium') {
+                // 50% pure, 50% mixed
+                if (Math.random() < 0.5) {
+                    const val = Math.random() < 0.5;
+                    alleles = [val, val, val, val];
+                } else {
+                    alleles = [randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean()];
+                }
+            } else if (targetPurity === 'low') {
+                // Mostly mixed
+                alleles = [randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean()];
+            } else {
+                // Random
+                alleles = [randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean()];
+            }
+            partGenes[color] = alleles;
+        }
+
+        genes[part] = partGenes;
+    }
+
+    return genes;
+}
+
 // Generate random parrots for store
 async function generateStore(prismParrot = null) {
     storeParrots = [];
@@ -454,31 +513,56 @@ async function generateStore(prismParrot = null) {
         storeParrots.push(prismParrot);
     }
 
-    // Add 2 legendary parrots with gradients
-    for (let i = 0; i < 2; i++) {
-        const genes = {
-            wings: randomBodyPartGenes(),
-            special_wing: randomBodyPartGenes(),
-            body: randomBodyPartGenes(),
-            head: randomBodyPartGenes(),
-            tail: randomBodyPartGenes(),
-            accents: randomBodyPartGenes()
-        };
+    // Generate store parrots with diverse rarities
+    // Target: 1-2 legendary, 1 epic, 1 rare, 1 uncommon, 1-2 common
+    const targetRarities = ['legendary', 'legendary', 'epic', 'rare', 'uncommon', 'common'];
 
-        // Force gradients on 2-3 body parts
-        const bodyParts = ['wings', 'special_wing', 'body', 'head', 'tail', 'accents'];
-        const numGradients = 2 + Math.floor(Math.random() * 2);
-        for (let j = 0; j < numGradients; j++) {
-            const part = bodyParts[Math.floor(Math.random() * bodyParts.length)];
-            genes[part].gradient = true;
+    for (const targetRarity of targetRarities) {
+        let parrot = null;
+        let attempts = 0;
+        const maxAttempts = 50;
+
+        while (attempts < maxAttempts) {
+            attempts++;
+
+            let genes;
+            if (targetRarity === 'legendary') {
+                // High purity + gradients
+                genes = createParrotWithPurity('high');
+                // Add gradients to 2-3 body parts
+                const bodyParts = ['wings', 'special_wing', 'body', 'head', 'tail', 'accents'];
+                const numGradients = 2 + Math.floor(Math.random() * 2);
+                for (let j = 0; j < numGradients; j++) {
+                    const part = bodyParts[Math.floor(Math.random() * bodyParts.length)];
+                    genes[part].gradient = true;
+                }
+            } else if (targetRarity === 'epic') {
+                genes = createParrotWithPurity('high');
+            } else if (targetRarity === 'rare') {
+                genes = createParrotWithPurity('medium');
+            } else if (targetRarity === 'uncommon') {
+                genes = createParrotWithPurity('low');
+            } else {
+                genes = createParrotWithPurity('random');
+            }
+
+            const testParrot = new Parrot(getRandomName(), genes, 1);
+            const actualRarity = testParrot.calculateRarity();
+
+            // Accept if rarity matches or we're on last attempt
+            if (actualRarity === targetRarity || attempts >= maxAttempts) {
+                parrot = testParrot;
+                break;
+            }
         }
 
-        const parrot = new Parrot(getRandomName(), genes, 1);
-        storeParrots.push(parrot);
+        if (parrot) {
+            storeParrots.push(parrot);
+        }
     }
 
-    // Add 4 regular parrots
-    for (let i = 0; i < 4; i++) {
+    // Fill remaining slots with random parrots if needed
+    while (storeParrots.length < 7) {
         const parrot = new Parrot(getRandomName(), {
             wings: randomBodyPartGenes(),
             special_wing: randomBodyPartGenes(),
@@ -557,8 +641,8 @@ async function createParrotCard(parrot, isStore) {
     const svg = await generateParrotSVG(parrot);
     const rarity = parrot.calculateRarity();
 
-    // Legendary parrots cost 500, others use calculated value
-    const price = rarity === 'legendary' ? 500 : parrot.getValue();
+    // Calculate price based on rarity multiplier
+    const price = parrot.getValue();
 
     // Check if parrot is in breeding slots
     let breedingIndicator = '';
@@ -743,7 +827,7 @@ async function updatePreview() {
     const actionButtons = document.getElementById('actionButtons');
 
     if (currentTab === 'store') {
-        const price = rarity === 'legendary' ? 500 : parrot.getValue();
+        const price = parrot.getValue();
         actionButtons.innerHTML = `
             <button class="btn btn-buy" onclick="buyParrot(${parrot.id})" ${coins < price ? 'disabled' : ''}>
                 💰 Buy for ${price} coins
@@ -788,9 +872,83 @@ async function openLaboratory(parrotId) {
         'accents': '💎 Accents'
     };
 
+    // Calculate rarity breakdown
+    let totalRareTraits = 0;
+    let maxTraits = 0;
+    let rarityBreakdown = [];
+
+    for (const bodyPart of ['wings', 'special_wing', 'body', 'head', 'tail', 'accents']) {
+        const part = parrot.genes[bodyPart];
+        const redCount = parrot.countDominant(part.red);
+        const greenCount = parrot.countDominant(part.green);
+        const blueCount = parrot.countDominant(part.blue);
+
+        const redRarity = redCount === 0 || redCount === 4 ? 2 : (redCount === 1 || redCount === 3 ? 1 : 0);
+        const greenRarity = greenCount === 0 || greenCount === 4 ? 2 : (greenCount === 1 || greenCount === 3 ? 1 : 0);
+        const blueRarity = blueCount === 0 || blueCount === 4 ? 2 : (blueCount === 1 || blueCount === 3 ? 1 : 0);
+
+        let partRarity = redRarity + greenRarity + blueRarity;
+        const hasGradient = part.gradient;
+        if (hasGradient) partRarity += 4;
+
+        totalRareTraits += partRarity;
+        maxTraits += 6; // 3 color channels × 2 points max each
+
+        rarityBreakdown.push({
+            name: bodyPartNames[bodyPart],
+            points: partRarity,
+            maxPoints: hasGradient ? 10 : 6,
+            hasGradient
+        });
+    }
+
+    const rarityRatio = totalRareTraits / maxTraits;
+    const rarity = parrot.calculateRarity();
+
+    const rarityConfig = {
+        'common': { color: '#9e9e9e', label: 'Common' },
+        'uncommon': { color: '#4caf50', label: 'Uncommon' },
+        'rare': { color: '#2196f3', label: 'Rare' },
+        'epic': { color: '#9c27b0', label: 'Epic' },
+        'legendary': { color: '#ff9800', label: 'Legendary' }
+    };
+
+    const rarityInfo = rarityConfig[rarity];
+
     let html = `<h3>🔬 Laboratory Analysis: ${parrot.name}</h3>`;
     html += `<p style="color: #666; margin-bottom: 20px;">Generation ${parrot.generation} • Total: 78 Genes (6 body parts × 13 genes each)</p>`;
 
+    // Rarity Summary Section
+    html += `<div class="body-part-genes" style="background: linear-gradient(135deg, ${rarityInfo.color}22, ${rarityInfo.color}11); border-color: ${rarityInfo.color};">`;
+    html += `<h4>📊 Rarity Analysis <span class="rarity-badge" style="background: ${rarityInfo.color}; margin-left: 10px;">${rarityInfo.label}</span></h4>`;
+    html += `<div class="gene-row">`;
+    html += `<div class="gene-label">Rarity Score</div>`;
+    html += `<div style="font-weight: bold; color: ${rarityInfo.color};">${totalRareTraits} / ${maxTraits} points (${(rarityRatio * 100).toFixed(1)}%)</div>`;
+    html += `</div>`;
+
+    // Breakdown by body part
+    html += `<div style="margin-top: 10px; font-size: 0.9em;">`;
+    html += `<div style="font-weight: 600; margin-bottom: 5px; color: #666;">Points by Body Part:</div>`;
+    for (const part of rarityBreakdown) {
+        const percentage = (part.points / part.maxPoints) * 100;
+        html += `<div style="display: flex; justify-content: space-between; margin-bottom: 3px;">`;
+        html += `<span>${part.name}</span>`;
+        html += `<span style="color: ${rarityInfo.color};">${part.points}/${part.maxPoints} ${part.hasGradient ? '✨' : ''}</span>`;
+        html += `</div>`;
+    }
+    html += `</div>`;
+
+    html += `<div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 8px; font-size: 0.85em;">`;
+    html += `<strong>Rarity Guide:</strong><br>`;
+    html += `• Pure (0 or 4 dominant): 2 pts per color<br>`;
+    html += `• Nearly Pure (1 or 3): 1 pt per color<br>`;
+    html += `• Mixed (2 dominant): 0 pts<br>`;
+    html += `• Gradient: +4 pts (very rare!)`;
+    html += `</div>`;
+
+    html += `</div>`;
+
+    // Body part genes sections
     for (const bodyPart of ['wings', 'special_wing', 'body', 'head', 'tail', 'accents']) {
         const part = parrot.genes[bodyPart];
         const colorData = parrot.calculateBodyPartColor(bodyPart);
@@ -872,8 +1030,7 @@ function buyParrot(parrotId) {
     const parrot = storeParrots.find(p => p.id === parrotId);
     if (!parrot) return;
 
-    const rarity = parrot.calculateRarity();
-    const price = rarity === 'legendary' ? 500 : parrot.getValue();
+    const price = parrot.getValue();
     if (coins < price) {
         alert('Not enough coins!');
         return;
@@ -883,29 +1040,47 @@ function buyParrot(parrotId) {
     parrots.push(parrot);
     storeParrots = storeParrots.filter(p => p.id !== parrotId);
 
-    // Generate new store parrot (replace with same type)
-    const wasLegendary = rarity === 'legendary';
-    const genes = {
-        wings: randomBodyPartGenes(),
-        special_wing: randomBodyPartGenes(),
-        body: randomBodyPartGenes(),
-        head: randomBodyPartGenes(),
-        tail: randomBodyPartGenes(),
-        accents: randomBodyPartGenes()
-    };
+    // Generate new store parrot (replace with similar rarity)
+    const oldRarity = parrot.calculateRarity();
+    let newParrot = null;
+    let attempts = 0;
+    const maxAttempts = 50;
 
-    if (wasLegendary) {
-        // Force gradients on 2-3 body parts for legendary replacement
-        const bodyParts = ['wings', 'special_wing', 'body', 'head', 'tail', 'accents'];
-        const numGradients = 2 + Math.floor(Math.random() * 2);
-        for (let j = 0; j < numGradients; j++) {
-            const part = bodyParts[Math.floor(Math.random() * bodyParts.length)];
-            genes[part].gradient = true;
+    while (attempts < maxAttempts && !newParrot) {
+        attempts++;
+
+        let genes;
+        if (oldRarity === 'legendary') {
+            genes = createParrotWithPurity('high');
+            // Add gradients to 2-3 body parts
+            const bodyParts = ['wings', 'special_wing', 'body', 'head', 'tail', 'accents'];
+            const numGradients = 2 + Math.floor(Math.random() * 2);
+            for (let j = 0; j < numGradients; j++) {
+                const part = bodyParts[Math.floor(Math.random() * bodyParts.length)];
+                genes[part].gradient = true;
+            }
+        } else if (oldRarity === 'epic') {
+            genes = createParrotWithPurity('high');
+        } else if (oldRarity === 'rare') {
+            genes = createParrotWithPurity('medium');
+        } else if (oldRarity === 'uncommon') {
+            genes = createParrotWithPurity('low');
+        } else {
+            genes = createParrotWithPurity('random');
+        }
+
+        const testParrot = new Parrot(getRandomName(), genes, 1, parrotIdCounter++);
+        const actualRarity = testParrot.calculateRarity();
+
+        // Accept if rarity matches or we're on last attempt
+        if (actualRarity === oldRarity || attempts >= maxAttempts) {
+            newParrot = testParrot;
         }
     }
 
-    const newParrot = new Parrot(getRandomName(), genes, 1, parrotIdCounter++);
-    storeParrots.push(newParrot);
+    if (newParrot) {
+        storeParrots.push(newParrot);
+    }
 
     selectedParrotId = null;
     updateUI();
