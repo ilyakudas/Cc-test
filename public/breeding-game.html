@@ -738,35 +738,55 @@
                 </linearGradient>`;
             }
 
-            // Insert gradients into SVG if any exist
+            // Insert gradients into SVG if any exist - fix: insert after opening svg tag, not replace it
             if (gradientDefs) {
-                svg = svg.replace('<svg', `<svg><defs>${gradientDefs}</defs`);
+                const svgMatch = svg.match(/<svg[^>]*>/);
+                if (svgMatch) {
+                    const openingSvgTag = svgMatch[0];
+                    svg = svg.replace(openingSvgTag, `${openingSvgTag}<defs>${gradientDefs}</defs>`);
+                }
             }
 
-            // Body part to feather group mapping
+            // Body part to feather group mapping (using our custom implementation)
             const bodyPartMap = {
-                'wings': ['wing-blue'],
-                'body': ['body-yellow', 'accent-brown'],
-                'head': ['accent-blue', 'detail-gray'],
-                'tail': ['accent-green', 'accent-white', 'other-1'],
-                'accents': []
+                'wings': ['wing-blue'],                    // Wings
+                'body': ['body-yellow'],                   // Main body feathers
+                'head': ['accent-blue'],                   // Head/crest area
+                'tail': ['accent-green', 'accent-white'],  // Tail feathers
+                'accents': ['accent-brown']                // Shoulders/back accents
             };
 
-            // Fixed color elements
+            // Fixed color elements (non-genetic)
+            const BEAK_COLOR = '#696969';  // Fixed gray beak
             const fixedColorElements = {
+                // Branches (body-gold 1-11)
                 'body-gold-1': GROUND_COLOR, 'body-gold-2': GROUND_COLOR, 'body-gold-3': GROUND_COLOR,
                 'body-gold-4': GROUND_COLOR, 'body-gold-5': GROUND_COLOR, 'body-gold-6': GROUND_COLOR,
                 'body-gold-7': GROUND_COLOR, 'body-gold-8': GROUND_COLOR, 'body-gold-9': GROUND_COLOR,
                 'body-gold-10': GROUND_COLOR, 'body-gold-11': GROUND_COLOR,
+
+                // Ground (covert-yellow 1-5)
                 'covert-yellow-1': GROUND_COLOR, 'covert-yellow-2': GROUND_COLOR, 'covert-yellow-3': GROUND_COLOR,
                 'covert-yellow-4': GROUND_COLOR, 'covert-yellow-5': GROUND_COLOR,
-                'body-yellow-4': EYE_COLOR, 'accent-white-4': EYE_COLOR,
-                'other-2': CLAW_COLOR, 'other-3': CLAW_COLOR, 'other-4': CLAW_COLOR,
-                'accent-white-3': FACE_COLOR,
-                'detail-gray-2': headColor.isGradient ? `url(#${gradientMap['head']})` : headColor.color
+
+                // Eyes (non-genetic, fixed black)
+                'body-yellow-4': EYE_COLOR,
+                'accent-white-4': EYE_COLOR,
+
+                // Beak (detail-gray-1 and detail-gray-3) - FIXED color, not genetic
+                'detail-gray-1': BEAK_COLOR,
+                'detail-gray-3': BEAK_COLOR,
+
+                // Claws (other 2-4)
+                'other-2': CLAW_COLOR,
+                'other-3': CLAW_COLOR,
+                'other-4': CLAW_COLOR,
+
+                // Face marking (non-genetic white)
+                'accent-white-3': FACE_COLOR
             };
 
-            // Apply fixed colors
+            // Apply fixed colors first
             Object.keys(fixedColorElements).forEach(featherId => {
                 const color = fixedColorElements[featherId];
                 const regex = new RegExp(`id="${featherId}"[^>]*fill="[^"]*"`, 'g');
@@ -775,7 +795,21 @@
                 });
             });
 
-            // Apply body part colors
+            // Apply beard color (detail-gray-2) - genetic, uses head color
+            const beardFillValue = headColor.isGradient ? `url(#${gradientMap['head']})` : headColor.color;
+            const beardRegex = new RegExp(`id="detail-gray-2"[^>]*fill="[^"]*"`, 'g');
+            svg = svg.replace(beardRegex, match => {
+                return match.replace(/fill="[^"]*"/, `fill="${beardFillValue}"`);
+            });
+
+            // Apply tail tip color (other-1) - uses tail color
+            const tailTipFillValue = tailColor.isGradient ? `url(#${gradientMap['tail']})` : tailColor.color;
+            const tailTipRegex = new RegExp(`id="other-1"[^>]*fill="[^"]*"`, 'g');
+            svg = svg.replace(tailTipRegex, match => {
+                return match.replace(/fill="[^"]*"/, `fill="${tailTipFillValue}"`);
+            });
+
+            // Apply body part colors to feather groups
             const colorAssignments = {
                 'wings': wingColor,
                 'body': bodyColor,
@@ -793,12 +827,8 @@
                     for (let i = 1; i <= 30; i++) {
                         const featherId = `${groupPrefix}-${i}`;
 
-                        // Skip fixed elements
+                        // Skip all fixed elements
                         if (fixedColorElements[featherId]) continue;
-                        if (featherId === 'body-yellow-4') continue;
-                        if (featherId === 'accent-white-4') continue;
-                        if (featherId === 'accent-white-3') continue;
-                        if (featherId === 'detail-gray-2') continue;
 
                         const regex = new RegExp(`id="${featherId}"[^>]*fill="[^"]*"`, 'g');
                         svg = svg.replace(regex, match => {
@@ -808,7 +838,7 @@
                 });
             });
 
-            // Keep contours black
+            // Keep contours black (detail-black)
             for (let i = 1; i <= 30; i++) {
                 const regex = new RegExp(`id="detail-black-${i}"[^>]*fill="[^"]*"`, 'g');
                 svg = svg.replace(regex, match => {
