@@ -814,6 +814,53 @@ async function generateStore(prismParrot = null) {
     }, 1);
     storeParrots.push(maxBeautyParrot);
 
+    // TEST: Add max gradient beauty parrot (6 beautiful gradients with complementary averages)
+    const maxGradientParrot = new Parrot('[TEST-MAX-GRADIENT]', {
+        wings: {
+            // Red→Yellow: (255,0,0)→(255,255,0), avg (255,127.5,0) orange
+            red: [true, true, true, true],
+            green: [false, false, true, true],
+            blue: [false, false, false, false],
+            gradient: true
+        },
+        special_wing: {
+            // Green→Cyan: (0,255,0)→(0,255,255), avg (0,255,127.5) cyan-green
+            red: [false, false, false, false],
+            green: [true, true, true, true],
+            blue: [false, false, true, true],
+            gradient: true
+        },
+        body: {
+            // Blue→Magenta: (0,0,255)→(255,0,255), avg (127.5,0,255) purple
+            red: [false, false, true, true],
+            green: [false, false, false, false],
+            blue: [true, true, true, true],
+            gradient: true
+        },
+        head: {
+            // Yellow→Green: (255,255,0)→(0,255,0), avg (127.5,255,0) lime
+            red: [true, true, false, false],
+            green: [true, true, true, true],
+            blue: [false, false, false, false],
+            gradient: true
+        },
+        tail: {
+            // Cyan→Blue: (0,255,255)→(0,0,255), avg (0,127.5,255) sky
+            red: [false, false, false, false],
+            green: [true, true, false, false],
+            blue: [true, true, true, true],
+            gradient: true
+        },
+        accents: {
+            // Magenta→Red: (255,0,255)→(255,0,0), avg (255,0,127.5) rose
+            red: [true, true, true, true],
+            green: [false, false, false, false],
+            blue: [true, true, false, false],
+            gradient: true
+        }
+    }, 1);
+    storeParrots.push(maxGradientParrot);
+
     // Generate store parrots with diverse rarities
     // Target: 1-2 legendary, 1 epic, 1 rare, 1 uncommon, 1-2 common
     const targetRarities = ['legendary', 'legendary', 'epic', 'rare', 'uncommon', 'common'];
