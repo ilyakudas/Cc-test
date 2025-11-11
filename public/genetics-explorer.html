@@ -158,7 +158,13 @@
 
         .gene-toggles {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+        }
+
+        .pattern-toggles {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
             gap: 8px;
         }
 
@@ -286,15 +292,15 @@
     <div class="container">
         <header>
             <h1>🧬 ChromaWing Body-Part RGB Genetics</h1>
-            <p>Each body part has 13 genes (4 red, 4 green, 4 blue, 1 gradient). Count of dominant alleles determines color intensity!</p>
+            <p>Each body part has 21 genes (6 red, 6 green, 6 blue, 3 pattern). Count of dominant alleles determines color intensity!</p>
         </header>
 
         <div class="info-box">
-            <strong>🎯 How it works:</strong> Each body part has its own set of 13 genes (4 red, 4 green, 4 blue, 1 gradient).
+            <strong>🎯 How it works:</strong> Each body part has 21 genes (6 red, 6 green, 6 blue, 3 pattern).
             Click on gene buttons to toggle between dominant (colored) and recessive (white).
             The COUNT of dominant alleles matters, not position!
-            <br><strong>Color Examples:</strong> rrrr = 0% red, Rrrr = 25%, RRrr = 50%, RRRr = 75%, RRRR = 100%
-            <br><strong>Gradient:</strong> If gradient gene is dominant, genes 1-2 control start color, genes 3-4 control end color. Example: rrRR creates gradient from black to red.
+            <br><strong>Color Examples:</strong> rrrrrr = 0%, RRrrrr = 33%, RRRrrr = 50%, RRRRrr = 67%, RRRRRR = 100%
+            <br><strong>Patterns:</strong> 3 pattern genes create 8 pattern types: Solid, Horizontal/Vertical/Radial 2-color, Horizontal/Vertical 3-color, Diagonal, Bilateral Mirror.
         </div>
 
         <div class="preset-buttons">
@@ -332,31 +338,36 @@
 
             <p><strong>Normal Distribution:</strong></p>
             <p style="margin: 10px 0; line-height: 1.6;">
-                With 4 genes per color channel, there are different numbers of ways to get each count:
+                With 6 genes per color channel, there are different numbers of ways to get each count:
             </p>
             <ul style="margin: 10px 0 10px 20px; line-height: 1.8;">
-                <li><strong>0 dominant (rrrr):</strong> 1 way → 0% color</li>
-                <li><strong>1 dominant (Rrrr):</strong> 4 ways → 25% color</li>
-                <li><strong>2 dominant (RRrr):</strong> 6 ways → 50% color (most common!)</li>
-                <li><strong>3 dominant (RRRr):</strong> 4 ways → 75% color</li>
-                <li><strong>4 dominant (RRRR):</strong> 1 way → 100% color</li>
+                <li><strong>0 dominant (rrrrrr):</strong> 1 way → 0% color (1.6%)</li>
+                <li><strong>1 dominant (Rrrrr):</strong> 6 ways → 17% color (9.4%)</li>
+                <li><strong>2 dominant (RRrrrr):</strong> 15 ways → 33% color (23.4%)</li>
+                <li><strong>3 dominant (RRRrrr):</strong> 20 ways → 50% color (most common! 31.3%)</li>
+                <li><strong>4 dominant (RRRRrr):</strong> 15 ways → 67% color (23.4%)</li>
+                <li><strong>5 dominant (RRRRRr):</strong> 6 ways → 83% color (9.4%)</li>
+                <li><strong>6 dominant (RRRRRR):</strong> 1 way → 100% color (1.6%)</li>
             </ul>
             <p style="margin-top: 15px;"><strong>This creates realistic variation:</strong> Most offspring will have medium colors (around 50%), with fewer pure/absent colors.</p>
 
             <p style="margin-top: 15px;"><strong>Prevents graying:</strong> Each body part has independent genes, so wings can be pure red while body is pure green!</p>
 
-            <p style="margin-top: 20px;"><strong>Gradient Gene:</strong></p>
-            <p style="margin: 10px 0 10px 0; line-height: 1.6;">
-                When the gradient gene is dominant, genes are split into two groups:
-            </p>
+            <p style="margin-top: 20px;"><strong>8 Pattern Types (controlled by 3 pattern genes P1, P2, P3):</strong></p>
             <ul style="margin: 10px 0 10px 20px; line-height: 1.8;">
-                <li><strong>Genes 1-2:</strong> Control the start color (left side)</li>
-                <li><strong>Genes 3-4:</strong> Control the end color (right side)</li>
+                <li><strong>000 - Solid:</strong> All 6 genes work together for uniform color</li>
+                <li><strong>001 - Horizontal 2-Color:</strong> Genes 1-3 = left, genes 4-6 = right</li>
+                <li><strong>010 - Vertical 2-Color:</strong> Genes 1-3 = top, genes 4-6 = bottom</li>
+                <li><strong>011 - Radial 2-Color:</strong> Genes 1-3 = center, genes 4-6 = edge</li>
+                <li><strong>100 - Horizontal 3-Color:</strong> Genes 1-2, 3-4, 5-6 = three horizontal bands</li>
+                <li><strong>101 - Vertical 3-Color:</strong> Genes 1-2, 3-4, 5-6 = three vertical bands</li>
+                <li><strong>110 - Diagonal:</strong> Genes 1-3 = top-left, genes 4-6 = bottom-right</li>
+                <li><strong>111 - Bilateral Mirror:</strong> Genes 1-2 = edges, genes 3-4 = center (mirrored)</li>
             </ul>
             <p style="margin: 10px 0 10px 20px; line-height: 1.6;">
-                <strong>Example:</strong> Red genes <code>rrRR</code> creates a gradient from black (rr = 0%) to red (RR = 100%).
-                <br><strong>Another:</strong> Red <code>RRrr</code> creates a gradient from red (RR) to black (rr).
-                <br><strong>Complex:</strong> Red <code>RrRR</code>, Green <code>ggGG</code>, Blue <code>bbbb</code> = dark red → bright yellow-green gradient!
+                <strong>Example:</strong> Red genes <code>rrrRRR</code> with pattern <code>001</code> creates horizontal gradient from black (rrr = 0%) to red (RRR = 100%).
+                <br><strong>3-Color:</strong> Red <code>rrRRRR</code> with pattern <code>100</code> creates three bands: black (rr), medium red (RR), full red (RR).
+                <br><strong>Radial:</strong> Red <code>RRRrrr</code> with pattern <code>011</code> creates red center fading to black edges.
             </p>
         </div>
     </div>
@@ -373,7 +384,7 @@
             { id: 'accents', name: 'Accents', svgGroups: ['accent-green', 'detail-gray'], emoji: '💎' }
         ];
 
-        // Gene state: each body part has 13 genes (r1-r4, g1-g4, b1-b4, gradient)
+        // Gene state: each body part has 21 genes (r1-r6, g1-g6, b1-b6, p1-p3)
         // Each gene is boolean: true = dominant, false = recessive
         const genes = {};
 
@@ -381,10 +392,10 @@
         function initializeGenes() {
             bodyParts.forEach(part => {
                 genes[part.id] = {
-                    red: [false, false, false, false],
-                    green: [false, false, false, false],
-                    blue: [false, false, false, false],
-                    gradient: false
+                    red: [false, false, false, false, false, false],
+                    green: [false, false, false, false, false, false],
+                    blue: [false, false, false, false, false, false],
+                    pattern: [false, false, false]  // P1, P2, P3
                 };
             });
         }
@@ -407,45 +418,213 @@
         // Calculate color from gene array
         function calculateChannelValue(geneArray) {
             const dominantCount = geneArray.filter(g => g).length;
-            // Map 0-4 dominant alleles to 0-255
-            return Math.round((dominantCount / 4) * 255);
+            // Map 0-6 dominant alleles to 0-255
+            return Math.round((dominantCount / 6) * 255);
         }
 
-        // Calculate color from subset of genes (for gradients)
+        // Calculate color from subset of genes
         function calculateChannelValueSubset(geneArray, startIdx, endIdx) {
             const subset = geneArray.slice(startIdx, endIdx);
             const dominantCount = subset.filter(g => g).length;
-            // Map 0-2 dominant alleles to 0-255
-            return Math.round((dominantCount / 2) * 255);
+            const maxCount = subset.length;
+            // Map to 0-255
+            return Math.round((dominantCount / maxCount) * 255);
+        }
+
+        // Get pattern name from pattern genes
+        function getPatternName(pattern) {
+            const [p1, p2, p3] = pattern;
+            if (!p1 && !p2 && !p3) return 'Solid';
+            if (!p1 && !p2 && p3) return 'Horizontal 2-Color';
+            if (!p1 && p2 && !p3) return 'Vertical 2-Color';
+            if (!p1 && p2 && p3) return 'Radial 2-Color';
+            if (p1 && !p2 && !p3) return 'Horizontal 3-Color';
+            if (p1 && !p2 && p3) return 'Vertical 3-Color';
+            if (p1 && p2 && !p3) return 'Diagonal';
+            if (p1 && p2 && p3) return 'Bilateral Mirror';
+            return 'Unknown';
         }
 
         // Calculate RGB color for a body part
         function calculateBodyPartColor(partId) {
             const partGenes = genes[partId];
+            const [p1, p2, p3] = partGenes.pattern;
 
-            if (partGenes.gradient) {
-                // Gradient mode: genes 1-2 for start color, genes 3-4 for end color
-                const r1 = calculateChannelValueSubset(partGenes.red, 0, 2);
-                const g1 = calculateChannelValueSubset(partGenes.green, 0, 2);
-                const b1 = calculateChannelValueSubset(partGenes.blue, 0, 2);
-
-                const r2 = calculateChannelValueSubset(partGenes.red, 2, 4);
-                const g2 = calculateChannelValueSubset(partGenes.green, 2, 4);
-                const b2 = calculateChannelValueSubset(partGenes.blue, 2, 4);
-
-                return {
-                    isGradient: true,
-                    startColor: { r: r1, g: g1, b: b1, rgb: `rgb(${r1}, ${g1}, ${b1})` },
-                    endColor: { r: r2, g: g2, b: b2, rgb: `rgb(${r2}, ${g2}, ${b2})` },
-                    rgb: `linear-gradient(90deg, rgb(${r1}, ${g1}, ${b1}), rgb(${r2}, ${g2}, ${b2}))`
-                };
-            } else {
-                // Solid color mode: all 4 genes
+            // Pattern 000: Solid
+            if (!p1 && !p2 && !p3) {
                 const r = calculateChannelValue(partGenes.red);
                 const g = calculateChannelValue(partGenes.green);
                 const b = calculateChannelValue(partGenes.blue);
-                return { isGradient: false, r, g, b, rgb: `rgb(${r}, ${g}, ${b})` };
+                return {
+                    pattern: 'solid',
+                    patternName: 'Solid',
+                    r, g, b,
+                    rgb: `rgb(${r}, ${g}, ${b})`
+                };
             }
+
+            // Pattern 001: Horizontal 2-Color (genes 0-2 left, 3-5 right)
+            if (!p1 && !p2 && p3) {
+                const r1 = calculateChannelValueSubset(partGenes.red, 0, 3);
+                const g1 = calculateChannelValueSubset(partGenes.green, 0, 3);
+                const b1 = calculateChannelValueSubset(partGenes.blue, 0, 3);
+                const r2 = calculateChannelValueSubset(partGenes.red, 3, 6);
+                const g2 = calculateChannelValueSubset(partGenes.green, 3, 6);
+                const b2 = calculateChannelValueSubset(partGenes.blue, 3, 6);
+                return {
+                    pattern: 'horizontal2',
+                    patternName: 'Horizontal 2-Color',
+                    gradientType: 'linear',
+                    x1: '0%', y1: '0%', x2: '100%', y2: '0%',
+                    stops: [
+                        { offset: '0%', color: `rgb(${r1}, ${g1}, ${b1})` },
+                        { offset: '100%', color: `rgb(${r2}, ${g2}, ${b2})` }
+                    ],
+                    rgb: `linear-gradient(90deg, rgb(${r1}, ${g1}, ${b1}), rgb(${r2}, ${g2}, ${b2}))`
+                };
+            }
+
+            // Pattern 010: Vertical 2-Color (genes 0-2 top, 3-5 bottom)
+            if (!p1 && p2 && !p3) {
+                const r1 = calculateChannelValueSubset(partGenes.red, 0, 3);
+                const g1 = calculateChannelValueSubset(partGenes.green, 0, 3);
+                const b1 = calculateChannelValueSubset(partGenes.blue, 0, 3);
+                const r2 = calculateChannelValueSubset(partGenes.red, 3, 6);
+                const g2 = calculateChannelValueSubset(partGenes.green, 3, 6);
+                const b2 = calculateChannelValueSubset(partGenes.blue, 3, 6);
+                return {
+                    pattern: 'vertical2',
+                    patternName: 'Vertical 2-Color',
+                    gradientType: 'linear',
+                    x1: '0%', y1: '0%', x2: '0%', y2: '100%',
+                    stops: [
+                        { offset: '0%', color: `rgb(${r1}, ${g1}, ${b1})` },
+                        { offset: '100%', color: `rgb(${r2}, ${g2}, ${b2})` }
+                    ],
+                    rgb: `linear-gradient(180deg, rgb(${r1}, ${g1}, ${b1}), rgb(${r2}, ${g2}, ${b2}))`
+                };
+            }
+
+            // Pattern 011: Radial 2-Color (genes 0-2 center, 3-5 edge)
+            if (!p1 && p2 && p3) {
+                const r1 = calculateChannelValueSubset(partGenes.red, 0, 3);
+                const g1 = calculateChannelValueSubset(partGenes.green, 0, 3);
+                const b1 = calculateChannelValueSubset(partGenes.blue, 0, 3);
+                const r2 = calculateChannelValueSubset(partGenes.red, 3, 6);
+                const g2 = calculateChannelValueSubset(partGenes.green, 3, 6);
+                const b2 = calculateChannelValueSubset(partGenes.blue, 3, 6);
+                return {
+                    pattern: 'radial2',
+                    patternName: 'Radial 2-Color',
+                    gradientType: 'radial',
+                    stops: [
+                        { offset: '0%', color: `rgb(${r1}, ${g1}, ${b1})` },
+                        { offset: '100%', color: `rgb(${r2}, ${g2}, ${b2})` }
+                    ],
+                    rgb: `radial-gradient(circle, rgb(${r1}, ${g1}, ${b1}), rgb(${r2}, ${g2}, ${b2}))`
+                };
+            }
+
+            // Pattern 100: Horizontal 3-Color (genes 0-1, 2-3, 4-5)
+            if (p1 && !p2 && !p3) {
+                const r1 = calculateChannelValueSubset(partGenes.red, 0, 2);
+                const g1 = calculateChannelValueSubset(partGenes.green, 0, 2);
+                const b1 = calculateChannelValueSubset(partGenes.blue, 0, 2);
+                const r2 = calculateChannelValueSubset(partGenes.red, 2, 4);
+                const g2 = calculateChannelValueSubset(partGenes.green, 2, 4);
+                const b2 = calculateChannelValueSubset(partGenes.blue, 2, 4);
+                const r3 = calculateChannelValueSubset(partGenes.red, 4, 6);
+                const g3 = calculateChannelValueSubset(partGenes.green, 4, 6);
+                const b3 = calculateChannelValueSubset(partGenes.blue, 4, 6);
+                return {
+                    pattern: 'horizontal3',
+                    patternName: 'Horizontal 3-Color',
+                    gradientType: 'linear',
+                    x1: '0%', y1: '0%', x2: '100%', y2: '0%',
+                    stops: [
+                        { offset: '0%', color: `rgb(${r1}, ${g1}, ${b1})` },
+                        { offset: '50%', color: `rgb(${r2}, ${g2}, ${b2})` },
+                        { offset: '100%', color: `rgb(${r3}, ${g3}, ${b3})` }
+                    ],
+                    rgb: `linear-gradient(90deg, rgb(${r1}, ${g1}, ${b1}), rgb(${r2}, ${g2}, ${b2}), rgb(${r3}, ${g3}, ${b3}))`
+                };
+            }
+
+            // Pattern 101: Vertical 3-Color (genes 0-1, 2-3, 4-5)
+            if (p1 && !p2 && p3) {
+                const r1 = calculateChannelValueSubset(partGenes.red, 0, 2);
+                const g1 = calculateChannelValueSubset(partGenes.green, 0, 2);
+                const b1 = calculateChannelValueSubset(partGenes.blue, 0, 2);
+                const r2 = calculateChannelValueSubset(partGenes.red, 2, 4);
+                const g2 = calculateChannelValueSubset(partGenes.green, 2, 4);
+                const b2 = calculateChannelValueSubset(partGenes.blue, 2, 4);
+                const r3 = calculateChannelValueSubset(partGenes.red, 4, 6);
+                const g3 = calculateChannelValueSubset(partGenes.green, 4, 6);
+                const b3 = calculateChannelValueSubset(partGenes.blue, 4, 6);
+                return {
+                    pattern: 'vertical3',
+                    patternName: 'Vertical 3-Color',
+                    gradientType: 'linear',
+                    x1: '0%', y1: '0%', x2: '0%', y2: '100%',
+                    stops: [
+                        { offset: '0%', color: `rgb(${r1}, ${g1}, ${b1})` },
+                        { offset: '50%', color: `rgb(${r2}, ${g2}, ${b2})` },
+                        { offset: '100%', color: `rgb(${r3}, ${g3}, ${b3})` }
+                    ],
+                    rgb: `linear-gradient(180deg, rgb(${r1}, ${g1}, ${b1}), rgb(${r2}, ${g2}, ${b2}), rgb(${r3}, ${g3}, ${b3}))`
+                };
+            }
+
+            // Pattern 110: Diagonal (genes 0-2 top-left, 3-5 bottom-right)
+            if (p1 && p2 && !p3) {
+                const r1 = calculateChannelValueSubset(partGenes.red, 0, 3);
+                const g1 = calculateChannelValueSubset(partGenes.green, 0, 3);
+                const b1 = calculateChannelValueSubset(partGenes.blue, 0, 3);
+                const r2 = calculateChannelValueSubset(partGenes.red, 3, 6);
+                const g2 = calculateChannelValueSubset(partGenes.green, 3, 6);
+                const b2 = calculateChannelValueSubset(partGenes.blue, 3, 6);
+                return {
+                    pattern: 'diagonal',
+                    patternName: 'Diagonal',
+                    gradientType: 'linear',
+                    x1: '0%', y1: '0%', x2: '100%', y2: '100%',
+                    stops: [
+                        { offset: '0%', color: `rgb(${r1}, ${g1}, ${b1})` },
+                        { offset: '100%', color: `rgb(${r2}, ${g2}, ${b2})` }
+                    ],
+                    rgb: `linear-gradient(135deg, rgb(${r1}, ${g1}, ${b1}), rgb(${r2}, ${g2}, ${b2}))`
+                };
+            }
+
+            // Pattern 111: Bilateral Mirror (genes 0-1 edges, 2-3 center, mirror)
+            if (p1 && p2 && p3) {
+                const r1 = calculateChannelValueSubset(partGenes.red, 0, 2);
+                const g1 = calculateChannelValueSubset(partGenes.green, 0, 2);
+                const b1 = calculateChannelValueSubset(partGenes.blue, 0, 2);
+                const r2 = calculateChannelValueSubset(partGenes.red, 2, 4);
+                const g2 = calculateChannelValueSubset(partGenes.green, 2, 4);
+                const b2 = calculateChannelValueSubset(partGenes.blue, 2, 4);
+                return {
+                    pattern: 'bilateral',
+                    patternName: 'Bilateral Mirror',
+                    gradientType: 'linear',
+                    x1: '0%', y1: '0%', x2: '100%', y2: '0%',
+                    stops: [
+                        { offset: '0%', color: `rgb(${r1}, ${g1}, ${b1})` },
+                        { offset: '50%', color: `rgb(${r2}, ${g2}, ${b2})` },
+                        { offset: '100%', color: `rgb(${r1}, ${g1}, ${b1})` }  // Mirror
+                    ],
+                    rgb: `linear-gradient(90deg, rgb(${r1}, ${g1}, ${b1}), rgb(${r2}, ${g2}, ${b2}), rgb(${r1}, ${g1}, ${b1}))`
+                };
+            }
+
+            // Fallback
+            return {
+                pattern: 'solid',
+                patternName: 'Solid',
+                r: 128, g: 128, b: 128,
+                rgb: 'rgb(128, 128, 128)'
+            };
         }
 
         // Count dominant alleles
@@ -467,6 +646,9 @@
                 const greenCount = countDominant(genes[part.id].green);
                 const blueCount = countDominant(genes[part.id].blue);
 
+                const patternName = getPatternName(genes[part.id].pattern);
+                const patternBinary = genes[part.id].pattern.map(p => p ? '1' : '0').join('');
+
                 section.innerHTML = `
                     <div class="body-part-header">
                         <div onclick="toggleSection('${part.id}')" style="flex: 1; display: flex; align-items: center; gap: 10px;">
@@ -483,7 +665,7 @@
                         <div class="gene-channel">
                             <h4>
                                 <span>❤️ Red Genes</span>
-                                <span class="gene-count" style="color: #dc3545;">${redCount}/4 dominant</span>
+                                <span class="gene-count" style="color: #dc3545;">${redCount}/6 dominant</span>
                             </h4>
                             <div class="gene-toggles">
                                 ${genes[part.id].red.map((dominant, i) =>
@@ -497,7 +679,7 @@
                         <div class="gene-channel">
                             <h4>
                                 <span>💚 Green Genes</span>
-                                <span class="gene-count" style="color: #28a745;">${greenCount}/4 dominant</span>
+                                <span class="gene-count" style="color: #28a745;">${greenCount}/6 dominant</span>
                             </h4>
                             <div class="gene-toggles">
                                 ${genes[part.id].green.map((dominant, i) =>
@@ -511,7 +693,7 @@
                         <div class="gene-channel">
                             <h4>
                                 <span>💙 Blue Genes</span>
-                                <span class="gene-count" style="color: #007bff;">${blueCount}/4 dominant</span>
+                                <span class="gene-count" style="color: #007bff;">${blueCount}/6 dominant</span>
                             </h4>
                             <div class="gene-toggles">
                                 ${genes[part.id].blue.map((dominant, i) =>
@@ -524,14 +706,16 @@
                         </div>
                         <div class="gene-channel">
                             <h4>
-                                <span>🌈 Gradient Gene</span>
-                                <span class="gene-count" style="color: #667eea;">${genes[part.id].gradient ? 'ON' : 'OFF'}</span>
+                                <span>🌈 Pattern Genes</span>
+                                <span class="gene-count" style="color: #667eea;">${patternBinary} - ${patternName}</span>
                             </h4>
-                            <div class="gene-toggles">
-                                <div class="gene-toggle ${genes[part.id].gradient ? 'dominant' : ''}"
-                                      onclick="toggleGradient('${part.id}')" style="grid-column: span 4;">
-                                    ${genes[part.id].gradient ? 'GRADIENT' : 'gradient'}
-                                </div>
+                            <div class="pattern-toggles">
+                                ${genes[part.id].pattern.map((dominant, i) =>
+                                    `<div class="gene-toggle ${dominant ? 'dominant' : ''}"
+                                          onclick="togglePattern('${part.id}', ${i})">
+                                        ${dominant ? 'P' : 'p'}${i+1}
+                                    </div>`
+                                ).join('')}
                             </div>
                         </div>
                     </div>
@@ -578,26 +762,30 @@
             const countSpan = document.querySelector(`#controls-${partId} .gene-channel:nth-child(${channel === 'red' ? 1 : channel === 'green' ? 2 : 3}) .gene-count`);
             if (countSpan) {
                 const count = countDominant(genes[partId][channel]);
-                countSpan.textContent = `${count}/4 dominant`;
+                countSpan.textContent = `${count}/6 dominant`;
             }
         }
 
-        // Toggle gradient gene
-        function toggleGradient(partId) {
-            genes[partId].gradient = !genes[partId].gradient;
+        // Toggle pattern gene
+        function togglePattern(partId, index) {
+            genes[partId].pattern[index] = !genes[partId].pattern[index];
             updateColorStats();
             renderColoredSVG();
 
-            // Update gradient display
-            const gradientToggle = document.querySelector(`#controls-${partId} .gene-channel:nth-child(4) .gene-toggle`);
-            if (gradientToggle) {
-                gradientToggle.className = `gene-toggle ${genes[partId].gradient ? 'dominant' : ''}`;
-                gradientToggle.textContent = genes[partId].gradient ? 'GRADIENT' : 'gradient';
+            // Update pattern display
+            const patternToggles = document.querySelectorAll(`#controls-${partId} .gene-channel:nth-child(4) .gene-toggle`);
+            if (patternToggles[index]) {
+                const dominant = genes[partId].pattern[index];
+                patternToggles[index].className = `gene-toggle ${dominant ? 'dominant' : ''}`;
+                patternToggles[index].textContent = `${dominant ? 'P' : 'p'}${index+1}`;
             }
 
-            const gradientCount = document.querySelector(`#controls-${partId} .gene-channel:nth-child(4) .gene-count`);
-            if (gradientCount) {
-                gradientCount.textContent = genes[partId].gradient ? 'ON' : 'OFF';
+            // Update pattern count display
+            const patternName = getPatternName(genes[partId].pattern);
+            const patternBinary = genes[partId].pattern.map(p => p ? '1' : '0').join('');
+            const patternCount = document.querySelector(`#controls-${partId} .gene-channel:nth-child(4) .gene-count`);
+            if (patternCount) {
+                patternCount.textContent = `${patternBinary} - ${patternName}`;
             }
 
             // Update color preview
@@ -618,7 +806,7 @@
             genes[partId].red = genes[partId].red.map(() => Math.random() < 0.5);
             genes[partId].green = genes[partId].green.map(() => Math.random() < 0.5);
             genes[partId].blue = genes[partId].blue.map(() => Math.random() < 0.5);
-            genes[partId].gradient = Math.random() < 0.3; // 30% chance of gradient
+            genes[partId].pattern = genes[partId].pattern.map(() => Math.random() < 0.3); // 30% chance for each pattern gene
             updateUI();
         }
 
@@ -632,19 +820,23 @@
                 const stat = document.createElement('div');
                 stat.className = 'stat-card';
 
-                if (color.isGradient) {
-                    stat.innerHTML = `
-                        <label>${part.emoji} ${part.name}</label>
-                        <div class="color-display" style="background: ${color.rgb}"></div>
-                        <div class="rgb-text" style="font-size: 0.75em;">
-                            ${color.startColor.rgb}<br>→<br>${color.endColor.rgb}
-                        </div>
-                    `;
-                } else {
+                if (color.pattern === 'solid') {
                     stat.innerHTML = `
                         <label>${part.emoji} ${part.name}</label>
                         <div class="color-display" style="background: ${color.rgb}"></div>
                         <div class="rgb-text">${color.rgb}</div>
+                        <div style="font-size: 0.75em; color: #999; margin-top: 4px;">${color.patternName}</div>
+                    `;
+                } else {
+                    // Gradient/pattern display
+                    const colorStops = color.stops.map(s => s.color).join('<br>→<br>');
+                    stat.innerHTML = `
+                        <label>${part.emoji} ${part.name}</label>
+                        <div class="color-display" style="background: ${color.rgb}"></div>
+                        <div class="rgb-text" style="font-size: 0.75em;">
+                            ${colorStops}
+                        </div>
+                        <div style="font-size: 0.75em; color: #999; margin-top: 4px;">${color.patternName}</div>
                     `;
                 }
                 container.appendChild(stat);
@@ -666,15 +858,40 @@
             bodyParts.forEach(part => {
                 const color = calculateBodyPartColor(part.id);
 
-                if (color.isGradient) {
+                if (color.pattern === 'solid') {
+                    // Solid color
+                    part.svgGroups.forEach(groupPrefix => {
+                        for (let i = 1; i <= 30; i++) {
+                            const featherId = `${groupPrefix}-${i}`;
+                            const regex = new RegExp(`id="${featherId}"[^>]*fill="[^"]*"`, 'g');
+                            svg = svg.replace(regex, match => {
+                                return match.replace(/fill="[^"]*"/, `fill="${color.rgb}"`);
+                            });
+                        }
+                    });
+                } else {
                     // Create gradient definition for this body part
                     const gradientId = `gradient-${part.id}`;
-                    gradientDefs += `
-                        <linearGradient id="${gradientId}" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" style="stop-color:${color.startColor.rgb};stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:${color.endColor.rgb};stop-opacity:1" />
-                        </linearGradient>
-                    `;
+
+                    if (color.gradientType === 'radial') {
+                        // Radial gradient
+                        gradientDefs += `
+                            <radialGradient id="${gradientId}">
+                                ${color.stops.map(stop =>
+                                    `<stop offset="${stop.offset}" style="stop-color:${stop.color};stop-opacity:1" />`
+                                ).join('\n')}
+                            </radialGradient>
+                        `;
+                    } else {
+                        // Linear gradient
+                        gradientDefs += `
+                            <linearGradient id="${gradientId}" x1="${color.x1}" y1="${color.y1}" x2="${color.x2}" y2="${color.y2}">
+                                ${color.stops.map(stop =>
+                                    `<stop offset="${stop.offset}" style="stop-color:${stop.color};stop-opacity:1" />`
+                                ).join('\n')}
+                            </linearGradient>
+                        `;
+                    }
 
                     // Apply gradient to all feathers in this body part's groups
                     part.svgGroups.forEach(groupPrefix => {
@@ -683,17 +900,6 @@
                             const regex = new RegExp(`id="${featherId}"[^>]*fill="[^"]*"`, 'g');
                             svg = svg.replace(regex, match => {
                                 return match.replace(/fill="[^"]*"/, `fill="url(#${gradientId})"`);
-                            });
-                        }
-                    });
-                } else {
-                    // Solid color
-                    part.svgGroups.forEach(groupPrefix => {
-                        for (let i = 1; i <= 30; i++) {
-                            const featherId = `${groupPrefix}-${i}`;
-                            const regex = new RegExp(`id="${featherId}"[^>]*fill="[^"]*"`, 'g');
-                            svg = svg.replace(regex, match => {
-                                return match.replace(/fill="[^"]*"/, `fill="${color.rgb}"`);
                             });
                         }
                     });
@@ -719,95 +925,104 @@
         function loadPreset(preset) {
             const presets = {
                 rainbow: () => {
-                    // All genes dominant - full rainbow
+                    // All genes dominant - full white/rainbow
                     bodyParts.forEach(part => {
-                        genes[part.id].red = [true, true, true, true];
-                        genes[part.id].green = [true, true, true, true];
-                        genes[part.id].blue = [true, true, true, true];
-                        genes[part.id].gradient = false;
+                        genes[part.id].red = [true, true, true, true, true, true];
+                        genes[part.id].green = [true, true, true, true, true, true];
+                        genes[part.id].blue = [true, true, true, true, true, true];
+                        genes[part.id].pattern = [false, false, false]; // Solid
                     });
                 },
                 red: () => {
                     // Pure red parrot
                     bodyParts.forEach(part => {
-                        genes[part.id].red = [true, true, true, true];
-                        genes[part.id].green = [false, false, false, false];
-                        genes[part.id].blue = [false, false, false, false];
-                        genes[part.id].gradient = false;
+                        genes[part.id].red = [true, true, true, true, true, true];
+                        genes[part.id].green = [false, false, false, false, false, false];
+                        genes[part.id].blue = [false, false, false, false, false, false];
+                        genes[part.id].pattern = [false, false, false]; // Solid
                     });
                 },
                 blue: () => {
                     // Pure blue parrot
                     bodyParts.forEach(part => {
-                        genes[part.id].red = [false, false, false, false];
-                        genes[part.id].green = [false, false, false, false];
-                        genes[part.id].blue = [true, true, true, true];
-                        genes[part.id].gradient = false;
+                        genes[part.id].red = [false, false, false, false, false, false];
+                        genes[part.id].green = [false, false, false, false, false, false];
+                        genes[part.id].blue = [true, true, true, true, true, true];
+                        genes[part.id].pattern = [false, false, false]; // Solid
                     });
                 },
                 green: () => {
                     // Pure green parrot
                     bodyParts.forEach(part => {
-                        genes[part.id].red = [false, false, false, false];
-                        genes[part.id].green = [true, true, true, true];
-                        genes[part.id].blue = [false, false, false, false];
-                        genes[part.id].gradient = false;
+                        genes[part.id].red = [false, false, false, false, false, false];
+                        genes[part.id].green = [true, true, true, true, true, true];
+                        genes[part.id].blue = [false, false, false, false, false, false];
+                        genes[part.id].pattern = [false, false, false]; // Solid
                     });
                 },
                 mixed: () => {
-                    // Wings: Red, Body: Green, Head: Blue, Tail: Yellow gradient, Accents: Purple
-                    genes.wings.red = [true, true, true, true];
-                    genes.wings.green = [false, false, false, false];
-                    genes.wings.blue = [false, false, false, false];
-                    genes.wings.gradient = false;
+                    // Wings: Red solid
+                    genes.wings.red = [true, true, true, true, true, true];
+                    genes.wings.green = [false, false, false, false, false, false];
+                    genes.wings.blue = [false, false, false, false, false, false];
+                    genes.wings.pattern = [false, false, false]; // Solid
 
-                    genes.body.red = [false, false, false, false];
-                    genes.body.green = [true, true, true, true];
-                    genes.body.blue = [false, false, false, false];
-                    genes.body.gradient = false;
+                    // Body: Green solid
+                    genes.body.red = [false, false, false, false, false, false];
+                    genes.body.green = [true, true, true, true, true, true];
+                    genes.body.blue = [false, false, false, false, false, false];
+                    genes.body.pattern = [false, false, false]; // Solid
 
-                    genes.head.red = [false, false, false, false];
-                    genes.head.green = [false, false, false, false];
-                    genes.head.blue = [true, true, true, true];
-                    genes.head.gradient = false;
+                    // Head: Blue solid
+                    genes.head.red = [false, false, false, false, false, false];
+                    genes.head.green = [false, false, false, false, false, false];
+                    genes.head.blue = [true, true, true, true, true, true];
+                    genes.head.pattern = [false, false, false]; // Solid
 
-                    // Tail with gradient: black to yellow
-                    genes.tail.red = [false, false, true, true];
-                    genes.tail.green = [false, false, true, true];
-                    genes.tail.blue = [false, false, false, false];
-                    genes.tail.gradient = true;
+                    // Tail: Horizontal 2-color gradient (black to yellow)
+                    genes.tail.red = [false, false, false, true, true, true];   // Left: 0%, Right: 100%
+                    genes.tail.green = [false, false, false, true, true, true]; // Left: 0%, Right: 100%
+                    genes.tail.blue = [false, false, false, false, false, false];
+                    genes.tail.pattern = [false, false, true]; // 001 = Horizontal 2-Color
 
-                    genes.accents.red = [true, true, true, true];
-                    genes.accents.green = [false, false, false, false];
-                    genes.accents.blue = [true, true, true, true];
-                    genes.accents.gradient = false;
+                    // Accents: Purple solid
+                    genes.accents.red = [true, true, true, true, true, true];
+                    genes.accents.green = [false, false, false, false, false, false];
+                    genes.accents.blue = [true, true, true, true, true, true];
+                    genes.accents.pattern = [false, false, false]; // Solid
                 },
                 natural: () => {
-                    // Natural looking parrot with variation and gradients
-                    genes.wings.red = [false, false, false, false];
-                    genes.wings.green = [false, true, false, false];
-                    genes.wings.blue = [true, true, true, false];
-                    genes.wings.gradient = true; // Blue gradient on wings
+                    // Natural looking parrot with variation and patterns
 
-                    genes.body.red = [false, false, false, false];
-                    genes.body.green = [true, true, true, true];
-                    genes.body.blue = [true, true, false, false];
-                    genes.body.gradient = false;
+                    // Wings: Blue gradient (dark to light)
+                    genes.wings.red = [false, false, false, false, false, false];
+                    genes.wings.green = [false, false, false, false, true, false];
+                    genes.wings.blue = [true, false, false, true, true, true];
+                    genes.wings.pattern = [false, false, true]; // 001 = Horizontal 2-Color gradient
 
-                    genes.head.red = [true, false, false, false];
-                    genes.head.green = [true, true, false, false];
-                    genes.head.blue = [false, false, false, false];
-                    genes.head.gradient = false;
+                    // Body: Teal/cyan solid
+                    genes.body.red = [false, false, false, false, false, false];
+                    genes.body.green = [true, true, true, true, true, true];
+                    genes.body.blue = [true, true, false, false, false, false];
+                    genes.body.pattern = [false, false, false]; // Solid
 
-                    genes.tail.red = [true, true, true, false];
-                    genes.tail.green = [true, false, false, false];
-                    genes.tail.blue = [false, false, false, false];
-                    genes.tail.gradient = false;
+                    // Head: Yellow-green solid
+                    genes.head.red = [true, false, false, false, false, false];
+                    genes.head.green = [true, true, false, false, true, false];
+                    genes.head.blue = [false, false, false, false, false, false];
+                    genes.head.pattern = [false, false, false]; // Solid
 
-                    genes.accents.red = [false, false, false, false];
-                    genes.accents.green = [true, true, false, false];
-                    genes.accents.blue = [true, false, false, false];
-                    genes.accents.gradient = false;
+                    // Tail: Reddish-orange solid
+                    genes.tail.red = [true, true, true, false, true, false];
+                    genes.tail.green = [true, false, false, false, false, true];
+                    genes.tail.blue = [false, false, false, false, false, false];
+                    genes.tail.pattern = [false, false, false]; // Solid
+
+                    // Accents: Greenish-blue solid
+                    genes.accents.red = [false, false, false, false, false, false];
+                    genes.accents.green = [true, true, false, false, true, false];
+                    genes.accents.blue = [true, false, false, true, false, false];
+                    genes.accents.pattern = [false, false, false]; // Solid
                 }
             };
 
