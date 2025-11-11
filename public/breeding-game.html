@@ -105,6 +105,26 @@
         </div>
     </div>
 
+    <!-- Toast Notifications Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Notification History Toggle -->
+    <button id="notificationHistoryToggle" class="notification-toggle" onclick="toggleNotificationHistory()">
+        🔔 <span id="notificationCount">0</span>
+    </button>
+
+    <!-- Notification History Panel -->
+    <div id="notificationHistoryPanel" class="notification-history-panel">
+        <div class="notification-history-header">
+            <h3>Notifications</h3>
+            <button onclick="clearNotificationHistory()">Clear All</button>
+            <span class="modal-close" onclick="toggleNotificationHistory()">&times;</span>
+        </div>
+        <div id="notificationHistoryList" class="notification-history-list">
+            <!-- Notification history will be displayed here -->
+        </div>
+    </div>
+
     <script src="breeding-game.js"></script>
 </body>
 </html>

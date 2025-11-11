@@ -1208,6 +1208,13 @@ async function performExamination(parrotId) {
     updateStats();
     saveGame();
 
+    // Show info toast
+    showToast(
+        `Laboratory analysis complete`,
+        `${parrot.name} examined • -100 coins`,
+        'info'
+    );
+
     // Re-render the laboratory with full analysis
     openLaboratory(parrotId);
 }
@@ -1565,6 +1572,14 @@ function buyParrot(parrotId) {
     selectedParrotId = null;
     updateUI();
     saveGame();
+
+    // Show success toast
+    const rarity = parrot.calculateRarity();
+    showToast(
+        `${parrot.name} joined your collection!`,
+        `${rarity.charAt(0).toUpperCase() + rarity.slice(1)} • Gen ${parrot.generation} • -${price} coins`,
+        'success'
+    );
 }
 
 // Sell parrot
@@ -1572,9 +1587,10 @@ function sellParrot(parrotId) {
     const parrot = parrots.find(p => p.id === parrotId);
     if (!parrot) return;
 
-    if (!confirm(`Sell ${parrot.name} for ${Math.floor(parrot.getValue() * 0.7)} coins?`)) return;
+    const sellValue = Math.floor(parrot.getValue() * 0.7);
+    if (!confirm(`Sell ${parrot.name} for ${sellValue} coins?`)) return;
 
-    coins += Math.floor(parrot.getValue() * 0.7);
+    coins += sellValue;
     parrots = parrots.filter(p => p.id !== parrotId);
 
     // Clear from breeding pair if present
@@ -1584,6 +1600,13 @@ function sellParrot(parrotId) {
 
     updateUI();
     saveGame();
+
+    // Show info toast
+    showToast(
+        `${parrot.name} sold`,
+        `+${sellValue} coins`,
+        'info'
+    );
 }
 
 // Free parrot
@@ -1602,6 +1625,13 @@ function freeParrot(parrotId) {
 
     updateUI();
     saveGame();
+
+    // Show info toast
+    showToast(
+        `${parrot.name} released`,
+        `Set free to the wild`,
+        'info'
+    );
 }
 
 // Breed parrots
@@ -1643,6 +1673,15 @@ async function breedParrots() {
 
     await updateUI();
     saveGame();
+
+    // Show success toast
+    const offspringNames = offspring.map(p => p.name).join(', ');
+    showToast(
+        `Breeding successful!`,
+        `4 new parrots: ${offspringNames}`,
+        'success',
+        5000
+    );
 }
 
 // Breed a single body part
@@ -1761,3 +1800,129 @@ window.addEventListener('load', async () => {
         await initGame();
     }
 });
+
+// Toast Notification System
+let notificationHistory = [];
+let toastIdCounter = 0;
+
+const TOAST_ICONS = {
+    'success': '✅',
+    'info': 'ℹ️',
+    'warning': '⚠️',
+    'error': '❌'
+};
+
+function showToast(message, details = '', type = 'info', duration = 4000) {
+    const toastId = toastIdCounter++;
+    const container = document.getElementById('toastContainer');
+    const icon = TOAST_ICONS[type] || 'ℹ️';
+
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.id = `toast-${toastId}`;
+
+    toast.innerHTML = `
+        <div class="toast-icon">${icon}</div>
+        <div class="toast-content">
+            <div class="toast-message">${message}</div>
+            ${details ? `<div class="toast-details">${details}</div>` : ''}
+        </div>
+        <button class="toast-close" onclick="dismissToast('toast-${toastId}')">&times;</button>
+    `;
+
+    container.appendChild(toast);
+
+    // Add to history
+    addToHistory(message, details, type);
+
+    // Auto-dismiss after duration
+    if (duration > 0) {
+        setTimeout(() => {
+            dismissToast(`toast-${toastId}`);
+        }, duration);
+    }
+
+    return toastId;
+}
+
+function dismissToast(toastId) {
+    const toast = document.getElementById(toastId);
+    if (!toast) return;
+
+    toast.classList.add('toast-exit');
+
+    setTimeout(() => {
+        toast.remove();
+    }, 300); // Match animation duration
+}
+
+function addToHistory(message, details, type) {
+    const timestamp = new Date();
+    notificationHistory.unshift({
+        message,
+        details,
+        type,
+        timestamp
+    });
+
+    // Limit history to 50 items
+    if (notificationHistory.length > 50) {
+        notificationHistory.pop();
+    }
+
+    updateNotificationCount();
+    updateNotificationHistoryDisplay();
+}
+
+function updateNotificationCount() {
+    const countElement = document.getElementById('notificationCount');
+    countElement.textContent = notificationHistory.length;
+}
+
+function toggleNotificationHistory() {
+    const panel = document.getElementById('notificationHistoryPanel');
+    panel.classList.toggle('active');
+}
+
+function clearNotificationHistory() {
+    if (!confirm('Clear all notifications?')) return;
+
+    notificationHistory = [];
+    updateNotificationCount();
+    updateNotificationHistoryDisplay();
+}
+
+function updateNotificationHistoryDisplay() {
+    const listElement = document.getElementById('notificationHistoryList');
+
+    if (notificationHistory.length === 0) {
+        listElement.innerHTML = '<div style="text-align: center; color: #999; padding: 40px;">No notifications yet</div>';
+        return;
+    }
+
+    listElement.innerHTML = notificationHistory.map(notif => {
+        const icon = TOAST_ICONS[notif.type] || 'ℹ️';
+        const timeStr = formatTimeAgo(notif.timestamp);
+
+        return `
+            <div class="notification-history-item ${notif.type}">
+                <div class="notification-history-item-header">
+                    <span class="notification-history-item-icon">${icon}</span>
+                    <span class="notification-history-item-message">${notif.message}</span>
+                    <span class="notification-history-item-time">${timeStr}</span>
+                </div>
+                ${notif.details ? `<div class="notification-history-item-details">${notif.details}</div>` : ''}
+            </div>
+        `;
+    }).join('');
+}
+
+function formatTimeAgo(timestamp) {
+    const seconds = Math.floor((new Date() - timestamp) / 1000);
+
+    if (seconds < 60) return 'Just now';
+    if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+    return `${Math.floor(seconds / 86400)}d ago`;
+}
