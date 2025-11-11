@@ -537,6 +537,12 @@ async function breedOnLeft(parrotId) {
     const parrot = parrots.find(p => p.id === parrotId);
     if (!parrot) return;
 
+    // Prevent selecting the same parrot in both slots
+    if (breedingPair.right === parrotId) {
+        alert('Cannot select the same parrot for both breeding slots!');
+        return;
+    }
+
     breedingPair.left = parrotId;
     await renderBreedingSlots();
     updateBreedButton();
@@ -545,6 +551,12 @@ async function breedOnLeft(parrotId) {
 async function breedOnRight(parrotId) {
     const parrot = parrots.find(p => p.id === parrotId);
     if (!parrot) return;
+
+    // Prevent selecting the same parrot in both slots
+    if (breedingPair.left === parrotId) {
+        alert('Cannot select the same parrot for both breeding slots!');
+        return;
+    }
 
     breedingPair.right = parrotId;
     await renderBreedingSlots();
@@ -621,7 +633,7 @@ async function updatePreview() {
     const previewDiv = document.getElementById('selectedPreview');
     const actionSection = document.getElementById('actionSection');
 
-    if (!selectedParrotId) {
+    if (selectedParrotId === null) {
         previewDiv.innerHTML = '<div class="empty-preview">Click a parrot to view details</div>';
         actionSection.style.display = 'none';
         return;
