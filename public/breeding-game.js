@@ -1280,7 +1280,7 @@ async function openLaboratory(parrotId) {
 
     // Calculate rarity breakdown
     let totalRareTraits = 0;
-    let maxTraits = 0;
+    const maxTraits = 60; // Absolute maximum: 6 parts × (6 color points + 4 gradient points)
     let rarityBreakdown = [];
 
     for (const bodyPart of ['wings', 'special_wing', 'body', 'head', 'tail', 'accents']) {
@@ -1298,7 +1298,6 @@ async function openLaboratory(parrotId) {
         if (hasGradient) partRarity += 4;
 
         totalRareTraits += partRarity;
-        maxTraits += hasGradient ? 10 : 6; // 6 for colors + 4 for gradient if present
 
         rarityBreakdown.push({
             name: bodyPartNames[bodyPart],
