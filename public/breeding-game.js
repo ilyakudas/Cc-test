@@ -89,35 +89,40 @@ class Parrot {
     }
 
     // Calculate rarity score based on genetic patterns
+    // Distance from 2 (center) determines rarity: 0 or 4 = most rare, 1 or 3 = somewhat rare, 2 = common
     calculateRarity() {
         let rareTraits = 0;
-        let totalTraits = 0;
+        let maxTraits = 0;
 
         for (const bodyPart of ['wings', 'special_wing', 'body', 'head', 'tail', 'accents']) {
             const part = this.genes[bodyPart];
 
-            // Check each color channel for pure patterns (all dominant or all recessive)
+            // Check each color channel for pure patterns
             const redCount = this.countDominant(part.red);
             const greenCount = this.countDominant(part.green);
             const blueCount = this.countDominant(part.blue);
 
-            // All recessive (0) or all dominant (4) = rare
-            if (redCount === 0 || redCount === 4) rareTraits++;
-            if (greenCount === 0 || greenCount === 4) rareTraits++;
-            if (blueCount === 0 || blueCount === 4) rareTraits++;
+            // Distance from 2 (most common due to breeding)
+            // 0 or 4 = 2 points (pure, most rare)
+            // 1 or 3 = 1 point (nearly pure, somewhat rare)
+            // 2 = 0 points (mixed, common)
+            const redRarity = redCount === 0 || redCount === 4 ? 2 : (redCount === 1 || redCount === 3 ? 1 : 0);
+            const greenRarity = greenCount === 0 || greenCount === 4 ? 2 : (greenCount === 1 || greenCount === 3 ? 1 : 0);
+            const blueRarity = blueCount === 0 || blueCount === 4 ? 2 : (blueCount === 1 || blueCount === 3 ? 1 : 0);
 
-            totalTraits += 3; // 3 color channels per body part
+            rareTraits += redRarity + greenRarity + blueRarity;
+            maxTraits += 6; // 3 color channels × 2 points max each
 
-            // Gradient is rare
-            if (part.gradient) rareTraits += 2;
+            // Gradient is very rare (worth 4 points)
+            if (part.gradient) rareTraits += 4;
         }
 
         // Return rarity level: common, uncommon, rare, epic, legendary
-        const rarityRatio = rareTraits / totalTraits;
-        if (rarityRatio >= 0.7 || this.hasAnyGradients()) return 'legendary';
-        if (rarityRatio >= 0.5) return 'epic';
-        if (rarityRatio >= 0.35) return 'rare';
-        if (rarityRatio >= 0.2) return 'uncommon';
+        const rarityRatio = rareTraits / maxTraits;
+        if (rarityRatio >= 0.9 || this.hasAnyGradients()) return 'legendary';
+        if (rarityRatio >= 0.7) return 'epic';
+        if (rarityRatio >= 0.5) return 'rare';
+        if (rarityRatio >= 0.3) return 'uncommon';
         return 'common';
     }
 
@@ -444,13 +449,12 @@ async function initGame() {
 async function generateStore(prismParrot = null) {
     storeParrots = [];
 
-    // Add Prism parrot if provided
+    // Add Prism parrot if provided (legendary parrot with gradients)
     if (prismParrot) {
-        prismParrot.isElite = true;
         storeParrots.push(prismParrot);
     }
 
-    // Add 2 elite parrots with gradients (500 coins each)
+    // Add 2 legendary parrots with gradients
     for (let i = 0; i < 2; i++) {
         const genes = {
             wings: randomBodyPartGenes(),
@@ -470,8 +474,6 @@ async function generateStore(prismParrot = null) {
         }
 
         const parrot = new Parrot(getRandomName(), genes, 1);
-        parrot.isElite = true;
-        parrot.price = 500;
         storeParrots.push(parrot);
     }
 
@@ -553,8 +555,10 @@ async function createParrotCard(parrot, isStore) {
     }
 
     const svg = await generateParrotSVG(parrot);
-    const price = parrot.isElite ? 500 : parrot.getValue();
     const rarity = parrot.calculateRarity();
+
+    // Legendary parrots cost 500, others use calculated value
+    const price = rarity === 'legendary' ? 500 : parrot.getValue();
 
     // Check if parrot is in breeding slots
     let breedingIndicator = '';
@@ -576,7 +580,6 @@ async function createParrotCard(parrot, isStore) {
     const rarityInfo = rarityConfig[rarity];
 
     card.innerHTML = `
-        ${parrot.isElite ? '<div class="elite-badge">⭐ ELITE</div>' : ''}
         ${isStore ? `<div class="price">${price}💰</div>` : ''}
         ${breedingIndicator}
         <div class="parrot-mini">${svg}</div>
@@ -638,7 +641,7 @@ async function removeFromSlot(slot) {
 // Update breed button state
 function updateBreedButton() {
     const btn = document.getElementById('breedButton');
-    if (breedingPair.left && breedingPair.right) {
+    if (breedingPair.left !== null && breedingPair.right !== null) {
         btn.disabled = false;
     } else {
         btn.disabled = true;
@@ -651,7 +654,7 @@ async function renderBreedingSlots() {
     const rightSlot = document.getElementById('breedSlotRight');
 
     // Render left slot
-    if (breedingPair.left) {
+    if (breedingPair.left !== null) {
         const parrot = parrots.find(p => p.id === breedingPair.left);
         if (parrot) {
             const svg = await generateParrotSVG(parrot);
@@ -672,7 +675,7 @@ async function renderBreedingSlots() {
     }
 
     // Render right slot
-    if (breedingPair.right) {
+    if (breedingPair.right !== null) {
         const parrot = parrots.find(p => p.id === breedingPair.right);
         if (parrot) {
             const svg = await generateParrotSVG(parrot);
@@ -740,7 +743,7 @@ async function updatePreview() {
     const actionButtons = document.getElementById('actionButtons');
 
     if (currentTab === 'store') {
-        const price = parrot.isElite ? 500 : parrot.getValue();
+        const price = rarity === 'legendary' ? 500 : parrot.getValue();
         actionButtons.innerHTML = `
             <button class="btn btn-buy" onclick="buyParrot(${parrot.id})" ${coins < price ? 'disabled' : ''}>
                 💰 Buy for ${price} coins
@@ -869,7 +872,8 @@ function buyParrot(parrotId) {
     const parrot = storeParrots.find(p => p.id === parrotId);
     if (!parrot) return;
 
-    const price = parrot.isElite ? 500 : parrot.getValue();
+    const rarity = parrot.calculateRarity();
+    const price = rarity === 'legendary' ? 500 : parrot.getValue();
     if (coins < price) {
         alert('Not enough coins!');
         return;
@@ -879,8 +883,8 @@ function buyParrot(parrotId) {
     parrots.push(parrot);
     storeParrots = storeParrots.filter(p => p.id !== parrotId);
 
-    // Generate new store parrot
-    const isElite = parrot.isElite;
+    // Generate new store parrot (replace with same type)
+    const wasLegendary = rarity === 'legendary';
     const genes = {
         wings: randomBodyPartGenes(),
         special_wing: randomBodyPartGenes(),
@@ -890,7 +894,8 @@ function buyParrot(parrotId) {
         accents: randomBodyPartGenes()
     };
 
-    if (isElite) {
+    if (wasLegendary) {
+        // Force gradients on 2-3 body parts for legendary replacement
         const bodyParts = ['wings', 'special_wing', 'body', 'head', 'tail', 'accents'];
         const numGradients = 2 + Math.floor(Math.random() * 2);
         for (let j = 0; j < numGradients; j++) {
@@ -900,10 +905,6 @@ function buyParrot(parrotId) {
     }
 
     const newParrot = new Parrot(getRandomName(), genes, 1, parrotIdCounter++);
-    if (isElite) {
-        newParrot.isElite = true;
-        newParrot.price = 500;
-    }
     storeParrots.push(newParrot);
 
     selectedParrotId = null;
@@ -949,7 +950,7 @@ function freeParrot(parrotId) {
 
 // Breed parrots
 async function breedParrots() {
-    if (!breedingPair.left || !breedingPair.right) return;
+    if (breedingPair.left === null || breedingPair.right === null) return;
 
     const parent1 = parrots.find(p => p.id === breedingPair.left);
     const parent2 = parrots.find(p => p.id === breedingPair.right);
