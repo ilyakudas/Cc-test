@@ -365,10 +365,12 @@ header h1 {
     background: white;
     border-radius: 15px;
     padding: 30px;
+    padding-top: 50px;
     max-width: 800px;
     width: 90%;
     max-height: 80vh;
     overflow-y: auto;
+    position: relative;
 }
 
 .modal-content h3 {
@@ -377,14 +379,28 @@ header h1 {
 }
 
 .modal-close {
+    position: sticky;
+    top: 10px;
     float: right;
-    font-size: 1.5em;
+    font-size: 1.8em;
     cursor: pointer;
     color: #999;
+    background: white;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    z-index: 10;
+    margin-top: -40px;
+    margin-right: -10px;
 }
 
 .modal-close:hover {
-    color: #333;
+    color: white;
+    background: #dc3545;
 }
 
 @media (max-width: 1200px) {

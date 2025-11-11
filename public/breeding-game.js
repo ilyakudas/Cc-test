@@ -176,22 +176,22 @@ class Parrot {
         return 'mixed';
     }
 
-    // Get orthogonal color pairs
-    getOrthogonalPairs() {
-        return {
-            'red': 'cyan',
-            'cyan': 'red',
-            'green': 'magenta',
-            'magenta': 'green',
-            'blue': 'yellow',
-            'yellow': 'blue'
-        };
+    // Calculate dot product between two color vectors
+    colorDotProduct(rgb1, rgb2) {
+        // Normalize vectors
+        const len1 = Math.sqrt(rgb1[0]*rgb1[0] + rgb1[1]*rgb1[1] + rgb1[2]*rgb1[2]);
+        const len2 = Math.sqrt(rgb2[0]*rgb2[0] + rgb2[1]*rgb2[1] + rgb2[2]*rgb2[2]);
+        if (len1 === 0 || len2 === 0) return 0;
+
+        const dot = rgb1[0]*rgb2[0] + rgb1[1]*rgb2[1] + rgb1[2]*rgb2[2];
+        return dot / (len1 * len2);
     }
 
     // Calculate beauty breakdown
     calculateBeauty() {
         const bodyParts = ['wings', 'special_wing', 'body', 'head', 'tail', 'accents'];
         const bodyPartColors = {};
+        const bodyPartRGB = {};
         const beautyTraits = [];
         let beautyScore = 0;
 
@@ -211,6 +211,12 @@ class Parrot {
                         endColor,
                         displayColor: `${startColor}→${endColor}`
                     };
+                    // Store average RGB for gradient
+                    bodyPartRGB[bodyPart] = [
+                        (+startMatch[1] + +endMatch[1]) / 2,
+                        (+startMatch[2] + +endMatch[2]) / 2,
+                        (+startMatch[3] + +endMatch[3]) / 2
+                    ];
                 }
             } else {
                 // Extract RGB from solid color
@@ -222,6 +228,7 @@ class Parrot {
                         color,
                         displayColor: color
                     };
+                    bodyPartRGB[bodyPart] = [+match[1], +match[2], +match[3]];
                 }
             }
         }
@@ -266,33 +273,35 @@ class Parrot {
             beautyTraits.push(`Some diversity: ${uniqueBeautifulColors.size} different colors`);
         }
 
-        // Check for same-color penalty
-        if (uniqueBeautifulColors.size === 1 && beautifulSolidColors.length > 1) {
-            beautyScore -= 5;
-            beautyTraits.push(`Same color on multiple parts - reduces beauty`);
-        }
+        // Check for same-color penalty using dot product
+        const rgbParts = bodyParts.filter(bp => bodyPartRGB[bp]);
+        for (let i = 0; i < rgbParts.length; i++) {
+            for (let j = i + 1; j < rgbParts.length; j++) {
+                const rgb1 = bodyPartRGB[rgbParts[i]];
+                const rgb2 = bodyPartRGB[rgbParts[j]];
+                const dotProduct = this.colorDotProduct(rgb1, rgb2);
 
-        // Check for orthogonal color pairs
-        const orthogonalPairs = this.getOrthogonalPairs();
-        let orthogonalCount = 0;
-
-        for (let i = 0; i < beautifulSolidColors.length; i++) {
-            for (let j = i + 1; j < beautifulSolidColors.length; j++) {
-                const color1 = bodyPartColors[beautifulSolidColors[i]].color;
-                const color2 = bodyPartColors[beautifulSolidColors[j]].color;
-                if (orthogonalPairs[color1] === color2) {
-                    orthogonalCount++;
+                // Very similar colors (dot product > 0.9): penalty
+                if (dotProduct > 0.9) {
+                    beautyScore -= 3;
+                    beautyTraits.push(`Similar colors: ${rgbParts[i]} and ${rgbParts[j]} (too similar)`);
+                }
+                // Orthogonal colors (dot product near 0): bonus
+                else if (Math.abs(dotProduct) < 0.3) {
                     beautyScore += 12;
-                    beautyTraits.push(`Orthogonal pair: ${beautifulSolidColors[i]} (${color1}) & ${beautifulSolidColors[j]} (${color2})`);
+                    beautyTraits.push(`Contrasting colors: ${rgbParts[i]} and ${rgbParts[j]} (orthogonal)`);
+                }
+                // Opposite colors (dot product < -0.7): big bonus
+                else if (dotProduct < -0.7) {
+                    beautyScore += 18;
+                    beautyTraits.push(`Opposite colors: ${rgbParts[i]} and ${rgbParts[j]} (complementary)`);
+                }
+                // Somewhat different (0.3 < |dot| < 0.7): small bonus
+                else if (Math.abs(dotProduct) > 0.3 && Math.abs(dotProduct) < 0.7) {
+                    beautyScore += 5;
+                    beautyTraits.push(`Different colors: ${rgbParts[i]} and ${rgbParts[j]} (varied)`);
                 }
             }
-        }
-
-        // Max 3 orthogonal pairs possible with 6 parts
-        if (orthogonalCount > 3) {
-            const excess = orthogonalCount - 3;
-            beautyScore -= excess * 4;
-            beautyTraits.push(`Too many orthogonal pairs (${orthogonalCount} > 3) - slight penalty`);
         }
 
         return {
@@ -1008,31 +1017,69 @@ async function updatePreview() {
     }
 }
 
+// Perform laboratory examination (after payment)
+async function performExamination(parrotId) {
+    const parrot = parrots.find(p => p.id === parrotId);
+    if (!parrot) return;
+
+    coins -= 100;
+    examinedParrots.add(parrotId);
+    updateStats();
+    saveGame();
+
+    // Re-render the laboratory with full analysis
+    openLaboratory(parrotId);
+}
+
 // Open Laboratory Modal
 async function openLaboratory(parrotId) {
     const parrot = parrots.find(p => p.id === parrotId);
     if (!parrot) return;
+
+    const modal = document.getElementById('laboratoryModal');
+    const display = document.getElementById('laboratoryDisplay');
 
     // Check if parrot has been examined before
     const hasBeenExamined = examinedParrots.has(parrotId);
     const examCost = 100;
 
     if (!hasBeenExamined) {
-        if (coins < examCost) {
-            alert(`Laboratory examination costs ${examCost} coins. You don't have enough coins!`);
-            return;
-        }
-        if (!confirm(`Laboratory examination costs ${examCost} coins for first analysis of ${parrot.name}. Proceed?`)) {
-            return;
-        }
-        coins -= examCost;
-        examinedParrots.add(parrotId);
-        updateStats();
-        saveGame();
+        // Show payment screen
+        const svg = await generateParrotSVG(parrot);
+        display.innerHTML = `
+            <h3>🔬 Laboratory Analysis: ${parrot.name}</h3>
+            <p style="color: #666; margin-bottom: 20px;">Generation ${parrot.generation}</p>
+
+            <div style="text-align: center; margin: 30px 0;">
+                <div style="width: 300px; height: 300px; margin: 0 auto; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                    ${svg}
+                </div>
+            </div>
+
+            <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                <h4 style="margin: 0 0 10px 0;">🔬 Detailed Genetic Analysis Available</h4>
+                <p style="margin: 0;">Unlock comprehensive analysis including:</p>
+                <ul style="margin: 10px 0;">
+                    <li>78 Gene Breakdown (6 body parts × 13 genes)</li>
+                    <li>Rarity Analysis with detailed scoring</li>
+                    <li>Beauty Assessment with color harmony</li>
+                    <li>RGB values for each body part</li>
+                </ul>
+                <p style="margin: 10px 0 0 0; font-weight: bold; color: #ff6b00;">Cost: ${examCost} coins (one-time fee per parrot)</p>
+            </div>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn btn-lab" onclick="performExamination(${parrotId})" ${coins < examCost ? 'disabled' : ''} style="font-size: 1.1em; padding: 15px 30px;">
+                    ${coins < examCost ? '❌ Not Enough Coins' : `💰 Pay ${examCost} Coins & Examine`}
+                </button>
+                ${coins < examCost ? `<p style="color: #dc3545; margin-top: 10px;">You need ${examCost - coins} more coins</p>` : ''}
+            </div>
+        `;
+        modal.classList.add('active');
+        return;
     }
 
-    const modal = document.getElementById('laboratoryModal');
-    const display = document.getElementById('laboratoryDisplay');
+    // Show full analysis for examined parrot
 
     const bodyPartNames = {
         'wings': '🪽 Wings',
@@ -1177,7 +1224,10 @@ async function openLaboratory(parrotId) {
     html += `• Different color gradients: +10 pts<br>`;
     html += `• Each beautiful solid color: +3 pts<br>`;
     html += `• Color diversity (3+ colors): +15 pts<br>`;
-    html += `• Orthogonal pairs (red/cyan, green/magenta, blue/yellow): +12 pts`;
+    html += `• Complementary colors (opposite): +18 pts<br>`;
+    html += `• Contrasting colors (orthogonal): +12 pts<br>`;
+    html += `• Different colors (varied): +5 pts<br>`;
+    html += `• Similar colors: -3 pts penalty`;
     html += `</div>`;
 
     html += `</div>`;
@@ -1399,8 +1449,6 @@ async function breedParrots() {
 
     await updateUI();
     saveGame();
-
-    alert(`🎉 4 chicks hatched! ${offspring.map(o => o.name).join(', ')} joined your collection!`);
 }
 
 // Breed a single body part
