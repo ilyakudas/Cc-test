@@ -12,6 +12,90 @@ let svgCache = null;
 let gradientIdCounter = 0;
 let examinedParrots = new Set();  // Track which parrots have been examined in laboratory
 
+// Contest State
+let contestProgress = {};  // Track which tiers each parrot has completed: {parrotId: {tierIndex: {placed, coins, badge}}}
+let parrotTrophies = {};  // Track trophies per parrot: {parrotId: ['bronze', 'silver', 'gold']}
+
+// Contest Tiers
+const CONTEST_TIERS = [
+    {
+        name: '🎨 Beginner Beauty Show',
+        description: 'A friendly local competition for budding beauties',
+        entryCost: 50,
+        minBeautyRange: [40, 60],
+        rewards: { 1: {coins: 150, badge: '🥇'}, 2: {coins: 100, badge: '🥈'}, 3: {coins: 75, badge: '🥉'} },
+        specialRules: null,
+        unlocked: true
+    },
+    {
+        name: '🌈 Rainbow Showcase',
+        description: 'Celebrate diversity with colorful plumage',
+        entryCost: 100,
+        minBeautyRange: [70, 90],
+        rewards: { 1: {coins: 300, badge: '🥇'}, 2: {coins: 200, badge: '🥈'}, 3: {coins: 150, badge: '🥉'} },
+        specialRules: {
+            type: 'minColors',
+            description: 'Must have at least 3 different beautiful colors',
+            validator: (parrot) => {
+                const beauty = parrot.calculateBeauty();
+                const solidParts = Object.keys(beauty.bodyPartColors).filter(bp => beauty.bodyPartColors[bp]?.type === 'solid');
+                const colors = new Set(solidParts.map(bp => beauty.bodyPartColors[bp].color).filter(c => c !== 'mixed'));
+                return colors.size >= 3;
+            }
+        },
+        unlocked: false
+    },
+    {
+        name: '✨ Gradient Masters',
+        description: 'Where smooth transitions steal the show',
+        entryCost: 200,
+        minBeautyRange: [100, 130],
+        rewards: { 1: {coins: 500, badge: '🥇'}, 2: {coins: 350, badge: '🥈'}, 3: {coins: 250, badge: '🥉'} },
+        specialRules: {
+            type: 'minGradients',
+            description: 'Must have at least 2 beautiful gradients',
+            validator: (parrot) => {
+                return Object.values(parrot.genes).filter(part => part.gradient).length >= 2;
+            }
+        },
+        unlocked: false
+    },
+    {
+        name: '🎭 Contrast Championship',
+        description: 'Bold opposites make stunning statements',
+        entryCost: 300,
+        minBeautyRange: [130, 160],
+        rewards: { 1: {coins: 750, badge: '🥇'}, 2: {coins: 500, badge: '🥈'}, 3: {coins: 350, badge: '🥉'} },
+        specialRules: {
+            type: 'complementary',
+            description: 'Must have at least one complementary color pair',
+            validator: (parrot) => {
+                const beauty = parrot.calculateBeauty();
+                return beauty.traits.some(t => t.includes('Complementary') || t.includes('complementary'));
+            }
+        },
+        unlocked: false
+    },
+    {
+        name: '👑 Elite Grand Prix',
+        description: 'The ultimate test of chromatic perfection',
+        entryCost: 500,
+        minBeautyRange: [180, 220],
+        rewards: { 1: {coins: 1500, badge: '🥇'}, 2: {coins: 1000, badge: '🥈'}, 3: {coins: 750, badge: '🥉'} },
+        specialRules: {
+            type: 'all',
+            description: 'Must have gradients AND complementary colors',
+            validator: (parrot) => {
+                const hasGradients = Object.values(parrot.genes).filter(part => part.gradient).length >= 2;
+                const beauty = parrot.calculateBeauty();
+                const hasComplementary = beauty.traits.some(t => t.includes('Complementary') || t.includes('complementary'));
+                return hasGradients && hasComplementary;
+            }
+        },
+        unlocked: false
+    }
+];
+
 // Parrot name pool
 const PARROT_NAMES = [
     'Aurora', 'Blaze', 'Crystal', 'Dazzle', 'Echo', 'Flame', 'Glimmer', 'Horizon',
@@ -1051,14 +1135,22 @@ function switchTab(tab) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     event.target.classList.add('active');
 
+    // Hide all tabs
+    document.getElementById('collectionTab').style.display = 'none';
+    document.getElementById('storeTab').style.display = 'none';
+    document.getElementById('contestsTab').style.display = 'none';
+
     if (tab === 'collection') {
         document.getElementById('collectionTab').style.display = 'grid';
-        document.getElementById('storeTab').style.display = 'none';
         document.getElementById('panelTitle').textContent = 'Your Parrots';
-    } else {
-        document.getElementById('collectionTab').style.display = 'none';
+    } else if (tab === 'store') {
         document.getElementById('storeTab').style.display = 'grid';
         document.getElementById('panelTitle').textContent = 'Store - Buy Parrots';
+    } else if (tab === 'contests') {
+        document.getElementById('contestsTab').style.display = 'block';
+        document.getElementById('panelTitle').textContent = 'Beauty Contests';
+        renderContestsTab();
+        return; // Don't call updateUI for contests tab
     }
 
     selectedParrotId = null;
@@ -1311,6 +1403,9 @@ async function updatePreview() {
             </button>
             <button class="btn btn-lab" onclick="openLaboratory(${parrot.id})">
                 🔬 Examine in Laboratory
+            </button>
+            <button class="btn btn-contest" onclick="switchTab('contests')">
+                🏆 Enter Beauty Contest
             </button>
             <button class="btn btn-sell"
                     onmousedown="startSellHold(${parrot.id})"
