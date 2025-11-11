@@ -1312,8 +1312,14 @@ async function updatePreview() {
             <button class="btn btn-lab" onclick="openLaboratory(${parrot.id})">
                 🔬 Examine in Laboratory
             </button>
-            <button class="btn btn-sell" onclick="sellParrot(${parrot.id})">
-                💰 Sell for ${sellValue} coins
+            <button class="btn btn-sell"
+                    onmousedown="startSellHold(${parrot.id})"
+                    onmouseup="cancelSellHold()"
+                    onmouseleave="cancelSellHold()"
+                    ontouchstart="startSellHold(${parrot.id})"
+                    ontouchend="cancelSellHold()"
+                    ontouchcancel="cancelSellHold()">
+                💰 Hold to Sell (${sellValue} coins)
             </button>
             <button class="btn btn-free" onclick="freeParrot(${parrot.id})">
                 🕊️ Release to Wild
@@ -1706,30 +1712,72 @@ function buyParrot(parrotId) {
 }
 
 // Sell parrot
-function sellParrot(parrotId) {
+let sellHoldTimer = null;
+let sellHoldProgress = null;
+
+function startSellHold(parrotId) {
     const parrot = parrots.find(p => p.id === parrotId);
     if (!parrot) return;
 
+    const button = event.target;
     const sellValue = Math.floor(parrot.getValue() * 0.7);
-    if (!confirm(`Sell ${parrot.name} for ${sellValue} coins?`)) return;
+    const holdDuration = 2000; // 2 seconds
+    const startTime = Date.now();
 
-    coins += sellValue;
-    parrots = parrots.filter(p => p.id !== parrotId);
+    // Create progress overlay
+    const progressBar = document.createElement('div');
+    progressBar.className = 'hold-progress';
+    progressBar.style.cssText = 'position: absolute; bottom: 0; left: 0; height: 4px; background: #28a745; width: 0%; transition: width 0.05s linear;';
+    button.style.position = 'relative';
+    button.appendChild(progressBar);
 
-    // Clear from breeding pair if present
-    if (breedingPair.left === parrotId) breedingPair.left = null;
-    if (breedingPair.right === parrotId) breedingPair.right = null;
-    selectedParrotId = null;
+    button.classList.add('holding');
 
-    updateUI();
-    saveGame();
+    sellHoldTimer = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min((elapsed / holdDuration) * 100, 100);
+        progressBar.style.width = `${progress}%`;
 
-    // Show info toast
-    showToast(
-        `${parrot.name} sold`,
-        `+${sellValue} coins`,
-        'info'
-    );
+        if (elapsed >= holdDuration) {
+            clearInterval(sellHoldTimer);
+            sellHoldTimer = null;
+
+            // Execute sell
+            coins += sellValue;
+            parrots = parrots.filter(p => p.id !== parrotId);
+
+            // Clear from breeding pair if present
+            if (breedingPair.left === parrotId) breedingPair.left = null;
+            if (breedingPair.right === parrotId) breedingPair.right = null;
+            selectedParrotId = null;
+
+            updateUI();
+            saveGame();
+
+            // Show info toast
+            showToast(
+                `${parrot.name} sold`,
+                `+${sellValue} coins`,
+                'success'
+            );
+        }
+    }, 50);
+}
+
+function cancelSellHold() {
+    if (sellHoldTimer) {
+        clearInterval(sellHoldTimer);
+        sellHoldTimer = null;
+    }
+
+    // Remove progress bar and holding class from all sell buttons
+    document.querySelectorAll('.btn-sell').forEach(btn => {
+        btn.classList.remove('holding');
+        const progressBar = btn.querySelector('.hold-progress');
+        if (progressBar) {
+            progressBar.remove();
+        }
+    });
 }
 
 // Free parrot
