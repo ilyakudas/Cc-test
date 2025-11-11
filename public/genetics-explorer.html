@@ -300,7 +300,7 @@
             Click on gene buttons to toggle between dominant (colored) and recessive (white).
             The COUNT of dominant alleles matters, not position!
             <br><strong>Color Examples:</strong> rrrrrr = 0%, RRrrrr = 33%, RRRrrr = 50%, RRRRrr = 67%, RRRRRR = 100%
-            <br><strong>Patterns:</strong> P1-P3 create 8 pattern types. P4-P5 create 4 animation types: Still, Pulse, Slide, Shimmer.
+            <br><strong>Patterns:</strong> P1-P3 create 8 pattern types. P4-P5 create 4 animation types: Still, Color Shift, Slide, Shimmer.
         </div>
 
         <div class="preset-buttons">
@@ -368,13 +368,13 @@
             <p style="margin-top: 20px;"><strong>4 Animation Types (controlled by genes P4, P5):</strong></p>
             <ul style="margin: 10px 0 10px 20px; line-height: 1.8;">
                 <li><strong>00 - Still:</strong> No animation, static display</li>
-                <li><strong>01 - Pulse:</strong> Opacity fades in and out (breathing effect)</li>
+                <li><strong>01 - Color Shift:</strong> Colors shift through hue variations (RGB channel rotation)</li>
                 <li><strong>10 - Slide:</strong> Gradient position moves across the feathers</li>
                 <li><strong>11 - Shimmer:</strong> Wave of light sweeps across with color brightening</li>
             </ul>
             <p style="margin: 10px 0 10px 20px; line-height: 1.6;">
                 <strong>Example:</strong> Red genes <code>rrrRRR</code> with pattern <code>001</code> creates horizontal gradient from black to red.
-                <br><strong>With Animation:</strong> Add genes <code>10</code> for Slide animation → gradient flows across the feathers!
+                <br><strong>With Animation:</strong> Add genes <code>01</code> for Color Shift → colors cycle through red, green, blue hues!
                 <br><strong>Full Example:</strong> Pattern <code>001 10</code> = Horizontal 2-Color with Slide animation
             </p>
         </div>
@@ -457,7 +457,7 @@
         function getAnimationName(pattern) {
             const [,, , p4, p5] = pattern;
             if (!p4 && !p5) return 'Still';
-            if (!p4 && p5) return 'Pulse';
+            if (!p4 && p5) return 'Color Shift';
             if (p4 && !p5) return 'Slide';
             if (p4 && p5) return 'Shimmer';
             return 'Unknown';
@@ -911,13 +911,23 @@
                         // Radial gradient
                         let stopsHtml = '';
 
-                        if (animationType === 'Pulse') {
-                            // Pulse: Animate opacity
-                            stopsHtml = color.stops.map((stop, idx) =>
-                                `<stop offset="${stop.offset}" style="stop-color:${stop.color};stop-opacity:1">
-                                    <animate attributeName="stop-opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite" />
-                                </stop>`
-                            ).join('\n');
+                        if (animationType === 'Color Shift') {
+                            // Color Shift: Shift hue by rotating RGB values
+                            stopsHtml = color.stops.map((stop, idx) => {
+                                const rgb = stop.color.match(/\d+/g);
+                                const r = parseInt(rgb[0]), g = parseInt(rgb[1]), b = parseInt(rgb[2]);
+
+                                // Create hue-shifted color (rotate RGB channels)
+                                const shift1 = `rgb(${g}, ${b}, ${r})`; // Rotate right
+                                const shift2 = `rgb(${b}, ${r}, ${g})`; // Rotate left
+
+                                return `<stop offset="${stop.offset}" style="stop-color:${stop.color};stop-opacity:1">
+                                    <animate attributeName="stop-color"
+                                             values="${stop.color};${shift1};${shift2};${stop.color}"
+                                             dur="4s"
+                                             repeatCount="indefinite" />
+                                </stop>`;
+                            }).join('\n');
                         } else if (animationType === 'Shimmer') {
                             // Shimmer: Brighten colors in sequence
                             stopsHtml = color.stops.map((stop, idx) => {
@@ -963,13 +973,23 @@
                             stopsHtml = color.stops.map(stop =>
                                 `<stop offset="${stop.offset}" style="stop-color:${stop.color};stop-opacity:1" />`
                             ).join('\n');
-                        } else if (animationType === 'Pulse') {
-                            // Pulse: Animate opacity
-                            stopsHtml = color.stops.map(stop =>
-                                `<stop offset="${stop.offset}" style="stop-color:${stop.color};stop-opacity:1">
-                                    <animate attributeName="stop-opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite" />
-                                </stop>`
-                            ).join('\n');
+                        } else if (animationType === 'Color Shift') {
+                            // Color Shift: Shift hue by rotating RGB values
+                            stopsHtml = color.stops.map((stop, idx) => {
+                                const rgb = stop.color.match(/\d+/g);
+                                const r = parseInt(rgb[0]), g = parseInt(rgb[1]), b = parseInt(rgb[2]);
+
+                                // Create hue-shifted color (rotate RGB channels)
+                                const shift1 = `rgb(${g}, ${b}, ${r})`; // Rotate right
+                                const shift2 = `rgb(${b}, ${r}, ${g})`; // Rotate left
+
+                                return `<stop offset="${stop.offset}" style="stop-color:${stop.color};stop-opacity:1">
+                                    <animate attributeName="stop-color"
+                                             values="${stop.color};${shift1};${shift2};${stop.color}"
+                                             dur="4s"
+                                             repeatCount="indefinite" />
+                                </stop>`;
+                            }).join('\n');
                         } else if (animationType === 'Shimmer') {
                             // Shimmer: Brighten colors in wave pattern
                             stopsHtml = color.stops.map((stop, idx) => {
