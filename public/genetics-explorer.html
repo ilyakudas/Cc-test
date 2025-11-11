@@ -164,7 +164,7 @@
 
         .pattern-toggles {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 8px;
         }
 
@@ -292,15 +292,15 @@
     <div class="container">
         <header>
             <h1>🧬 ChromaWing Body-Part RGB Genetics</h1>
-            <p>Each body part has 21 genes (6 red, 6 green, 6 blue, 3 pattern). Count of dominant alleles determines color intensity!</p>
+            <p>Each body part has 25 genes (6 red, 6 green, 6 blue, 5 pattern). Count of dominant alleles determines color intensity!</p>
         </header>
 
         <div class="info-box">
-            <strong>🎯 How it works:</strong> Each body part has 21 genes (6 red, 6 green, 6 blue, 3 pattern).
+            <strong>🎯 How it works:</strong> Each body part has 25 genes (6 red, 6 green, 6 blue, 5 pattern).
             Click on gene buttons to toggle between dominant (colored) and recessive (white).
             The COUNT of dominant alleles matters, not position!
             <br><strong>Color Examples:</strong> rrrrrr = 0%, RRrrrr = 33%, RRRrrr = 50%, RRRRrr = 67%, RRRRRR = 100%
-            <br><strong>Patterns:</strong> 3 pattern genes create 8 pattern types: Solid, Horizontal/Vertical/Radial 2-color, Horizontal/Vertical 3-color, Diagonal, Bilateral Mirror.
+            <br><strong>Patterns:</strong> P1-P3 create 8 pattern types. P4-P5 create 4 animation types: Still, Pulse, Slide, Shimmer.
         </div>
 
         <div class="preset-buttons">
@@ -353,7 +353,7 @@
 
             <p style="margin-top: 15px;"><strong>Prevents graying:</strong> Each body part has independent genes, so wings can be pure red while body is pure green!</p>
 
-            <p style="margin-top: 20px;"><strong>8 Pattern Types (controlled by 3 pattern genes P1, P2, P3):</strong></p>
+            <p style="margin-top: 20px;"><strong>8 Pattern Types (controlled by genes P1, P2, P3):</strong></p>
             <ul style="margin: 10px 0 10px 20px; line-height: 1.8;">
                 <li><strong>000 - Solid:</strong> All 6 genes work together for uniform color</li>
                 <li><strong>001 - Horizontal 2-Color:</strong> Genes 1-3 = left, genes 4-6 = right</li>
@@ -364,10 +364,18 @@
                 <li><strong>110 - Diagonal:</strong> Genes 1-3 = top-left, genes 4-6 = bottom-right</li>
                 <li><strong>111 - Bilateral Mirror:</strong> Genes 1-2 = edges, genes 3-4 = center (mirrored)</li>
             </ul>
+
+            <p style="margin-top: 20px;"><strong>4 Animation Types (controlled by genes P4, P5):</strong></p>
+            <ul style="margin: 10px 0 10px 20px; line-height: 1.8;">
+                <li><strong>00 - Still:</strong> No animation, static display</li>
+                <li><strong>01 - Pulse:</strong> Opacity fades in and out (breathing effect)</li>
+                <li><strong>10 - Slide:</strong> Gradient position moves across the feathers</li>
+                <li><strong>11 - Shimmer:</strong> Wave of light sweeps across with color brightening</li>
+            </ul>
             <p style="margin: 10px 0 10px 20px; line-height: 1.6;">
-                <strong>Example:</strong> Red genes <code>rrrRRR</code> with pattern <code>001</code> creates horizontal gradient from black (rrr = 0%) to red (RRR = 100%).
-                <br><strong>3-Color:</strong> Red <code>rrRRRR</code> with pattern <code>100</code> creates three bands: black (rr), medium red (RR), full red (RR).
-                <br><strong>Radial:</strong> Red <code>RRRrrr</code> with pattern <code>011</code> creates red center fading to black edges.
+                <strong>Example:</strong> Red genes <code>rrrRRR</code> with pattern <code>001</code> creates horizontal gradient from black to red.
+                <br><strong>With Animation:</strong> Add genes <code>10</code> for Slide animation → gradient flows across the feathers!
+                <br><strong>Full Example:</strong> Pattern <code>001 10</code> = Horizontal 2-Color with Slide animation
             </p>
         </div>
     </div>
@@ -384,7 +392,7 @@
             { id: 'accents', name: 'Accents', svgGroups: ['accent-green', 'detail-gray'], emoji: '💎' }
         ];
 
-        // Gene state: each body part has 21 genes (r1-r6, g1-g6, b1-b6, p1-p3)
+        // Gene state: each body part has 25 genes (r1-r6, g1-g6, b1-b6, p1-p5)
         // Each gene is boolean: true = dominant, false = recessive
         const genes = {};
 
@@ -395,7 +403,7 @@
                     red: [false, false, false, false, false, false],
                     green: [false, false, false, false, false, false],
                     blue: [false, false, false, false, false, false],
-                    pattern: [false, false, false]  // P1, P2, P3
+                    pattern: [false, false, false, false, false]  // P1, P2, P3, P4, P5
                 };
             });
         }
@@ -431,7 +439,7 @@
             return Math.round((dominantCount / maxCount) * 255);
         }
 
-        // Get pattern name from pattern genes
+        // Get pattern name from pattern genes (P1, P2, P3)
         function getPatternName(pattern) {
             const [p1, p2, p3] = pattern;
             if (!p1 && !p2 && !p3) return 'Solid';
@@ -445,10 +453,21 @@
             return 'Unknown';
         }
 
+        // Get animation name from animation genes (P4, P5)
+        function getAnimationName(pattern) {
+            const [,, , p4, p5] = pattern;
+            if (!p4 && !p5) return 'Still';
+            if (!p4 && p5) return 'Pulse';
+            if (p4 && !p5) return 'Slide';
+            if (p4 && p5) return 'Shimmer';
+            return 'Unknown';
+        }
+
         // Calculate RGB color for a body part
         function calculateBodyPartColor(partId) {
             const partGenes = genes[partId];
-            const [p1, p2, p3] = partGenes.pattern;
+            const [p1, p2, p3, p4, p5] = partGenes.pattern;
+            const animationType = getAnimationName(partGenes.pattern);
 
             // Pattern 000: Solid
             if (!p1 && !p2 && !p3) {
@@ -458,6 +477,7 @@
                 return {
                     pattern: 'solid',
                     patternName: 'Solid',
+                    animationType,
                     r, g, b,
                     rgb: `rgb(${r}, ${g}, ${b})`
                 };
@@ -474,6 +494,7 @@
                 return {
                     pattern: 'horizontal2',
                     patternName: 'Horizontal 2-Color',
+                    animationType,
                     gradientType: 'linear',
                     x1: '0%', y1: '0%', x2: '100%', y2: '0%',
                     stops: [
@@ -495,6 +516,7 @@
                 return {
                     pattern: 'vertical2',
                     patternName: 'Vertical 2-Color',
+                    animationType,
                     gradientType: 'linear',
                     x1: '0%', y1: '0%', x2: '0%', y2: '100%',
                     stops: [
@@ -516,6 +538,7 @@
                 return {
                     pattern: 'radial2',
                     patternName: 'Radial 2-Color',
+                    animationType,
                     gradientType: 'radial',
                     stops: [
                         { offset: '0%', color: `rgb(${r1}, ${g1}, ${b1})` },
@@ -539,6 +562,7 @@
                 return {
                     pattern: 'horizontal3',
                     patternName: 'Horizontal 3-Color',
+                    animationType,
                     gradientType: 'linear',
                     x1: '0%', y1: '0%', x2: '100%', y2: '0%',
                     stops: [
@@ -564,6 +588,7 @@
                 return {
                     pattern: 'vertical3',
                     patternName: 'Vertical 3-Color',
+                    animationType,
                     gradientType: 'linear',
                     x1: '0%', y1: '0%', x2: '0%', y2: '100%',
                     stops: [
@@ -586,6 +611,7 @@
                 return {
                     pattern: 'diagonal',
                     patternName: 'Diagonal',
+                    animationType,
                     gradientType: 'linear',
                     x1: '0%', y1: '0%', x2: '100%', y2: '100%',
                     stops: [
@@ -607,6 +633,7 @@
                 return {
                     pattern: 'bilateral',
                     patternName: 'Bilateral Mirror',
+                    animationType,
                     gradientType: 'linear',
                     x1: '0%', y1: '0%', x2: '100%', y2: '0%',
                     stops: [
@@ -622,6 +649,7 @@
             return {
                 pattern: 'solid',
                 patternName: 'Solid',
+                animationType,
                 r: 128, g: 128, b: 128,
                 rgb: 'rgb(128, 128, 128)'
             };
@@ -647,7 +675,9 @@
                 const blueCount = countDominant(genes[part.id].blue);
 
                 const patternName = getPatternName(genes[part.id].pattern);
-                const patternBinary = genes[part.id].pattern.map(p => p ? '1' : '0').join('');
+                const animationName = getAnimationName(genes[part.id].pattern);
+                const patternBinary = genes[part.id].pattern.slice(0, 3).map(p => p ? '1' : '0').join('');
+                const animationBinary = genes[part.id].pattern.slice(3, 5).map(p => p ? '1' : '0').join('');
 
                 section.innerHTML = `
                     <div class="body-part-header">
@@ -706,13 +736,14 @@
                         </div>
                         <div class="gene-channel">
                             <h4>
-                                <span>🌈 Pattern Genes</span>
-                                <span class="gene-count" style="color: #667eea;">${patternBinary} - ${patternName}</span>
+                                <span>🎨 Pattern & Animation</span>
+                                <span class="gene-count" style="color: #667eea; font-size: 0.85em;">${patternBinary}=${patternName} | ${animationBinary}=${animationName}</span>
                             </h4>
                             <div class="pattern-toggles">
                                 ${genes[part.id].pattern.map((dominant, i) =>
                                     `<div class="gene-toggle ${dominant ? 'dominant' : ''}"
-                                          onclick="togglePattern('${part.id}', ${i})">
+                                          onclick="togglePattern('${part.id}', ${i})"
+                                          title="${i < 3 ? 'Pattern Gene' : 'Animation Gene'}">
                                         ${dominant ? 'P' : 'p'}${i+1}
                                     </div>`
                                 ).join('')}
@@ -780,12 +811,14 @@
                 patternToggles[index].textContent = `${dominant ? 'P' : 'p'}${index+1}`;
             }
 
-            // Update pattern count display
+            // Update pattern & animation count display
             const patternName = getPatternName(genes[partId].pattern);
-            const patternBinary = genes[partId].pattern.map(p => p ? '1' : '0').join('');
+            const animationName = getAnimationName(genes[partId].pattern);
+            const patternBinary = genes[partId].pattern.slice(0, 3).map(p => p ? '1' : '0').join('');
+            const animationBinary = genes[partId].pattern.slice(3, 5).map(p => p ? '1' : '0').join('');
             const patternCount = document.querySelector(`#controls-${partId} .gene-channel:nth-child(4) .gene-count`);
             if (patternCount) {
-                patternCount.textContent = `${patternBinary} - ${patternName}`;
+                patternCount.textContent = `${patternBinary}=${patternName} | ${animationBinary}=${animationName}`;
             }
 
             // Update color preview
@@ -825,7 +858,7 @@
                         <label>${part.emoji} ${part.name}</label>
                         <div class="color-display" style="background: ${color.rgb}"></div>
                         <div class="rgb-text">${color.rgb}</div>
-                        <div style="font-size: 0.75em; color: #999; margin-top: 4px;">${color.patternName}</div>
+                        <div style="font-size: 0.75em; color: #999; margin-top: 4px;">${color.patternName}${color.animationType !== 'Still' ? ' • ' + color.animationType : ''}</div>
                     `;
                 } else {
                     // Gradient/pattern display
@@ -836,7 +869,7 @@
                         <div class="rgb-text" style="font-size: 0.75em;">
                             ${colorStops}
                         </div>
-                        <div style="font-size: 0.75em; color: #999; margin-top: 4px;">${color.patternName}</div>
+                        <div style="font-size: 0.75em; color: #999; margin-top: 4px;">${color.patternName}${color.animationType !== 'Still' ? ' • ' + color.animationType : ''}</div>
                     `;
                 }
                 container.appendChild(stat);
@@ -872,23 +905,101 @@
                 } else {
                     // Create gradient definition for this body part
                     const gradientId = `gradient-${part.id}`;
+                    const animationType = color.animationType;
 
                     if (color.gradientType === 'radial') {
                         // Radial gradient
+                        let stopsHtml = '';
+
+                        if (animationType === 'Pulse') {
+                            // Pulse: Animate opacity
+                            stopsHtml = color.stops.map((stop, idx) =>
+                                `<stop offset="${stop.offset}" style="stop-color:${stop.color};stop-opacity:1">
+                                    <animate attributeName="stop-opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite" />
+                                </stop>`
+                            ).join('\n');
+                        } else if (animationType === 'Shimmer') {
+                            // Shimmer: Brighten colors in sequence
+                            stopsHtml = color.stops.map((stop, idx) => {
+                                // Extract RGB values and create brightened version
+                                const rgb = stop.color.match(/\d+/g);
+                                const r = parseInt(rgb[0]), g = parseInt(rgb[1]), b = parseInt(rgb[2]);
+                                const brightR = Math.min(255, r + 80);
+                                const brightG = Math.min(255, g + 80);
+                                const brightB = Math.min(255, b + 80);
+                                const brightColor = `rgb(${brightR}, ${brightG}, ${brightB})`;
+
+                                return `<stop offset="${stop.offset}" style="stop-color:${stop.color};stop-opacity:1">
+                                    <animate attributeName="stop-color"
+                                             values="${stop.color};${brightColor};${stop.color}"
+                                             dur="2.5s"
+                                             begin="${idx * 0.3}s"
+                                             repeatCount="indefinite" />
+                                </stop>`;
+                            }).join('\n');
+                        } else {
+                            // Still or Slide (slide doesn't apply to radial)
+                            stopsHtml = color.stops.map(stop =>
+                                `<stop offset="${stop.offset}" style="stop-color:${stop.color};stop-opacity:1" />`
+                            ).join('\n');
+                        }
+
                         gradientDefs += `
                             <radialGradient id="${gradientId}">
-                                ${color.stops.map(stop =>
-                                    `<stop offset="${stop.offset}" style="stop-color:${stop.color};stop-opacity:1" />`
-                                ).join('\n')}
+                                ${stopsHtml}
                             </radialGradient>
                         `;
                     } else {
                         // Linear gradient
+                        let gradientAnimations = '';
+                        let stopsHtml = '';
+
+                        if (animationType === 'Slide') {
+                            // Slide: Animate gradient position
+                            gradientAnimations = `
+                                <animate attributeName="x1" values="${color.x1};100%;${color.x1}" dur="3s" repeatCount="indefinite" />
+                                <animate attributeName="x2" values="${color.x2};200%;${color.x2}" dur="3s" repeatCount="indefinite" />
+                            `;
+                            stopsHtml = color.stops.map(stop =>
+                                `<stop offset="${stop.offset}" style="stop-color:${stop.color};stop-opacity:1" />`
+                            ).join('\n');
+                        } else if (animationType === 'Pulse') {
+                            // Pulse: Animate opacity
+                            stopsHtml = color.stops.map(stop =>
+                                `<stop offset="${stop.offset}" style="stop-color:${stop.color};stop-opacity:1">
+                                    <animate attributeName="stop-opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite" />
+                                </stop>`
+                            ).join('\n');
+                        } else if (animationType === 'Shimmer') {
+                            // Shimmer: Brighten colors in wave pattern
+                            stopsHtml = color.stops.map((stop, idx) => {
+                                // Extract RGB values and create brightened version
+                                const rgb = stop.color.match(/\d+/g);
+                                const r = parseInt(rgb[0]), g = parseInt(rgb[1]), b = parseInt(rgb[2]);
+                                const brightR = Math.min(255, r + 80);
+                                const brightG = Math.min(255, g + 80);
+                                const brightB = Math.min(255, b + 80);
+                                const brightColor = `rgb(${brightR}, ${brightG}, ${brightB})`;
+
+                                return `<stop offset="${stop.offset}" style="stop-color:${stop.color};stop-opacity:1">
+                                    <animate attributeName="stop-color"
+                                             values="${stop.color};${brightColor};${stop.color}"
+                                             dur="2.5s"
+                                             begin="${idx * 0.4}s"
+                                             repeatCount="indefinite" />
+                                </stop>`;
+                            }).join('\n');
+                        } else {
+                            // Still
+                            stopsHtml = color.stops.map(stop =>
+                                `<stop offset="${stop.offset}" style="stop-color:${stop.color};stop-opacity:1" />`
+                            ).join('\n');
+                        }
+
                         gradientDefs += `
                             <linearGradient id="${gradientId}" x1="${color.x1}" y1="${color.y1}" x2="${color.x2}" y2="${color.y2}">
-                                ${color.stops.map(stop =>
-                                    `<stop offset="${stop.offset}" style="stop-color:${stop.color};stop-opacity:1" />`
-                                ).join('\n')}
+                                ${gradientAnimations}
+                                ${stopsHtml}
                             </linearGradient>
                         `;
                     }
@@ -930,7 +1041,7 @@
                         genes[part.id].red = [true, true, true, true, true, true];
                         genes[part.id].green = [true, true, true, true, true, true];
                         genes[part.id].blue = [true, true, true, true, true, true];
-                        genes[part.id].pattern = [false, false, false]; // Solid
+                        genes[part.id].pattern = [false, false, false, false, false]; // Solid, Still
                     });
                 },
                 red: () => {
@@ -939,7 +1050,7 @@
                         genes[part.id].red = [true, true, true, true, true, true];
                         genes[part.id].green = [false, false, false, false, false, false];
                         genes[part.id].blue = [false, false, false, false, false, false];
-                        genes[part.id].pattern = [false, false, false]; // Solid
+                        genes[part.id].pattern = [false, false, false, false, false]; // Solid, Still
                     });
                 },
                 blue: () => {
@@ -948,7 +1059,7 @@
                         genes[part.id].red = [false, false, false, false, false, false];
                         genes[part.id].green = [false, false, false, false, false, false];
                         genes[part.id].blue = [true, true, true, true, true, true];
-                        genes[part.id].pattern = [false, false, false]; // Solid
+                        genes[part.id].pattern = [false, false, false, false, false]; // Solid, Still
                     });
                 },
                 green: () => {
@@ -957,72 +1068,72 @@
                         genes[part.id].red = [false, false, false, false, false, false];
                         genes[part.id].green = [true, true, true, true, true, true];
                         genes[part.id].blue = [false, false, false, false, false, false];
-                        genes[part.id].pattern = [false, false, false]; // Solid
+                        genes[part.id].pattern = [false, false, false, false, false]; // Solid, Still
                     });
                 },
                 mixed: () => {
-                    // Wings: Red solid
+                    // Wings: Red solid with shimmer
                     genes.wings.red = [true, true, true, true, true, true];
                     genes.wings.green = [false, false, false, false, false, false];
                     genes.wings.blue = [false, false, false, false, false, false];
-                    genes.wings.pattern = [false, false, false]; // Solid
+                    genes.wings.pattern = [false, false, false, true, true]; // Solid, Shimmer
 
                     // Body: Green solid
                     genes.body.red = [false, false, false, false, false, false];
                     genes.body.green = [true, true, true, true, true, true];
                     genes.body.blue = [false, false, false, false, false, false];
-                    genes.body.pattern = [false, false, false]; // Solid
+                    genes.body.pattern = [false, false, false, false, false]; // Solid, Still
 
-                    // Head: Blue solid
+                    // Head: Blue solid with pulse
                     genes.head.red = [false, false, false, false, false, false];
                     genes.head.green = [false, false, false, false, false, false];
                     genes.head.blue = [true, true, true, true, true, true];
-                    genes.head.pattern = [false, false, false]; // Solid
+                    genes.head.pattern = [false, false, false, false, true]; // Solid, Pulse
 
-                    // Tail: Horizontal 2-color gradient (black to yellow)
+                    // Tail: Horizontal 2-color gradient (black to yellow) with slide
                     genes.tail.red = [false, false, false, true, true, true];   // Left: 0%, Right: 100%
                     genes.tail.green = [false, false, false, true, true, true]; // Left: 0%, Right: 100%
                     genes.tail.blue = [false, false, false, false, false, false];
-                    genes.tail.pattern = [false, false, true]; // 001 = Horizontal 2-Color
+                    genes.tail.pattern = [false, false, true, true, false]; // 001 = Horizontal 2-Color, Slide
 
                     // Accents: Purple solid
                     genes.accents.red = [true, true, true, true, true, true];
                     genes.accents.green = [false, false, false, false, false, false];
                     genes.accents.blue = [true, true, true, true, true, true];
-                    genes.accents.pattern = [false, false, false]; // Solid
+                    genes.accents.pattern = [false, false, false, false, false]; // Solid, Still
                 },
                 natural: () => {
                     // Natural looking parrot with variation and patterns
 
-                    // Wings: Blue gradient (dark to light)
+                    // Wings: Blue gradient (dark to light) with shimmer
                     genes.wings.red = [false, false, false, false, false, false];
                     genes.wings.green = [false, false, false, false, true, false];
                     genes.wings.blue = [true, false, false, true, true, true];
-                    genes.wings.pattern = [false, false, true]; // 001 = Horizontal 2-Color gradient
+                    genes.wings.pattern = [false, false, true, true, true]; // 001 = Horizontal 2-Color gradient, Shimmer
 
                     // Body: Teal/cyan solid
                     genes.body.red = [false, false, false, false, false, false];
                     genes.body.green = [true, true, true, true, true, true];
                     genes.body.blue = [true, true, false, false, false, false];
-                    genes.body.pattern = [false, false, false]; // Solid
+                    genes.body.pattern = [false, false, false, false, false]; // Solid, Still
 
-                    // Head: Yellow-green solid
+                    // Head: Yellow-green solid with pulse
                     genes.head.red = [true, false, false, false, false, false];
                     genes.head.green = [true, true, false, false, true, false];
                     genes.head.blue = [false, false, false, false, false, false];
-                    genes.head.pattern = [false, false, false]; // Solid
+                    genes.head.pattern = [false, false, false, false, true]; // Solid, Pulse
 
                     // Tail: Reddish-orange solid
                     genes.tail.red = [true, true, true, false, true, false];
                     genes.tail.green = [true, false, false, false, false, true];
                     genes.tail.blue = [false, false, false, false, false, false];
-                    genes.tail.pattern = [false, false, false]; // Solid
+                    genes.tail.pattern = [false, false, false, false, false]; // Solid, Still
 
                     // Accents: Greenish-blue solid
                     genes.accents.red = [false, false, false, false, false, false];
                     genes.accents.green = [true, true, false, false, true, false];
                     genes.accents.blue = [true, false, false, true, false, false];
-                    genes.accents.pattern = [false, false, false]; // Solid
+                    genes.accents.pattern = [false, false, false, false, false]; // Solid, Still
                 }
             };
 
