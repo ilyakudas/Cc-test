@@ -53,7 +53,7 @@ class Parrot {
 
     calculateRGBValue(alleles) {
         const count = this.countDominant(alleles);
-        return Math.round((count / 4) * 255);
+        return Math.round((count / alleles.length) * 255);
     }
 
     calculateBodyPartColor(bodyPart) {
