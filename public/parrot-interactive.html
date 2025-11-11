@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChromaWing - Parrot with Individual Feather Control</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            text-align: center;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+
+        .parrot-display {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .parrot-display svg {
+            max-width: 800px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .info-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .feather-count {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 0.9em;
+        }
+
+        .feather-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .feather-item .color-box {
+            width: 30px;
+            height: 20px;
+            border-radius: 3px;
+            border: 1px solid #ddd;
+        }
+
+        .controls {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .controls h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e0e7ff;
+            color: #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #c7d2fe;
+        }
+
+        path {
+            transition: fill 0.3s ease, opacity 0.3s ease;
+            cursor: pointer;
+        }
+
+        path:hover {
+            opacity: 0.7;
+            stroke: #333;
+            stroke-width: 2;
+        }
+
+        .highlight-info {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .highlight-info.active {
+            display: block;
+        }
+
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🦜 ChromaWing - Individual Feather Control</h1>
+        <p class="subtitle">119 individually identifiable and colorable feathers - Based on realistic parrot anatomy</p>
+
+        <div class="controls">
+            <h3>Interactive Controls</h3>
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="highlightGroup('wing-blue')">Highlight Blue Wing Feathers (18)</button>
+                <button class="btn btn-primary" onclick="highlightGroup('body-yellow')">Highlight Yellow Body (10)</button>
+                <button class="btn btn-primary" onclick="highlightGroup('body-gold')">Highlight Gold Body (11)</button>
+                <button class="btn btn-primary" onclick="highlightGroup('accent-green')">Highlight Green Accents (7)</button>
+                <button class="btn btn-secondary" onclick="resetColors()">Reset All Colors</button>
+                <button class="btn btn-secondary" onclick="randomizeFeathers()">Randomize Feathers</button>
+            </div>
+            <div id="highlightInfo" class="highlight-info"></div>
+        </div>
+
+        <div class="parrot-display" id="parrotContainer">
+            <div style="text-align: center; padding: 40px; color: #999;">
+                Loading parrot...
+            </div>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <h3>🎨 Feather Groups</h3>
+                <div class="feather-count">
+                    <div class="feather-item">
+                        <span>Blue Wing Feathers:</span>
+                        <strong>18</strong>
+                    </div>
+                    <div class="feather-item">
+                        <span>Gold/Brown Body:</span>
+                        <strong>11</strong>
+                    </div>
+                    <div class="feather-item">
+                        <span>Yellow Body:</span>
+                        <strong>10</strong>
+                    </div>
+                    <div class="feather-item">
+                        <span>Detail Black:</span>
+                        <strong>13</strong>
+                    </div>
+                    <div class="feather-item">
+                        <span>Yellow Coverts:</span>
+                        <strong>5</strong>
+                    </div>
+                    <div class="feather-item">
+                        <span>Green Accents:</span>
+                        <strong>7</strong>
+                    </div>
+                    <div class="feather-item">
+                        <span>Gray Details:</span>
+                        <strong>8</strong>
+                    </div>
+                    <div class="feather-item">
+                        <span>White Accents:</span>
+                        <strong>4</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <h3>🧬 Genetic Mapping</h3>
+                <p><strong>Blue Wing Feathers (BB genes):</strong></p>
+                <p>18 primary wing feathers showing gradient from dark to light blue. Each can be individually colored based on blue gene expression (BB, Bb, bb).</p>
+
+                <p style="margin-top: 15px;"><strong>Yellow/Gold Body (YY genes):</strong></p>
+                <p>21 total feathers (10 yellow + 11 gold) representing yellow gene variations. Gradient colors show intensity gene effects.</p>
+
+                <p style="margin-top: 15px;"><strong>Green Accents (YY + BB mix):</strong></p>
+                <p>7 feathers showing blue+yellow mixing to create green tones - demonstrating color combination genetics.</p>
+            </div>
+
+            <div class="info-card">
+                <h3>💡 Usage in Game</h3>
+                <ul style="line-height: 1.8;">
+                    <li><strong>Individual IDs:</strong> Each of 119 paths has unique ID (e.g., <code>wing-blue-1</code>, <code>body-yellow-5</code>)</li>
+                    <li><strong>Programmatic coloring:</strong> <code>document.getElementById('wing-blue-1').setAttribute('fill', color)</code></li>
+                    <li><strong>Gradient effects:</strong> Apply color progression across feather groups</li>
+                    <li><strong>Pattern support:</strong> Can replace solid fills with SVG patterns for speckled/striped genotypes</li>
+                    <li><strong>Genetic calculation:</strong> Color intensity based on gene dominance (RR vs Rr vs rr)</li>
+                </ul>
+            </div>
+
+            <div class="info-card">
+                <h3>✨ Interactive Features</h3>
+                <p><strong>Hover over feathers</strong> in the parrot to see hover effects!</p>
+
+                <p style="margin-top: 15px;"><strong>Genetic Variations Possible:</strong></p>
+                <ul>
+                    <li>Scarlet Macaw: Red body (RR), yellow wing band (YY), blue primaries (BB)</li>
+                    <li>Blue-and-Gold: No red (rr), yellow body (YY), blue wings (BB)</li>
+                    <li>Green Parrot: No red (rr), yellow+blue mixing (YY BB)</li>
+                    <li>Rainbow: All colors active (RR YY BB)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let originalColors = {};
+        let svgElement = null;
+
+        // Load SVG directly via fetch
+        window.addEventListener('load', function() {
+            fetch('Parrot-1-recolored.svg')
+                .then(response => response.text())
+                .then(svgText => {
+                    // Insert SVG into container
+                    const container = document.getElementById('parrotContainer');
+                    container.innerHTML = svgText;
+
+                    // Get reference to SVG element
+                    svgElement = container.querySelector('svg');
+
+                    if (svgElement) {
+                        // Set max width for display
+                        svgElement.style.maxWidth = '800px';
+                        svgElement.style.height = 'auto';
+                        svgElement.style.display = 'block';
+                        svgElement.style.margin = '0 auto';
+
+                        // Store original colors and add interactivity
+                        const paths = svgElement.querySelectorAll('path');
+                        paths.forEach(path => {
+                            const id = path.getAttribute('id');
+                            originalColors[id] = path.getAttribute('fill');
+
+                            // Add click event
+                            path.addEventListener('click', function() {
+                                showFeatherInfo(id, this.getAttribute('fill'));
+                            });
+                        });
+
+                        console.log(`✓ SVG loaded successfully with ${paths.length} feather paths`);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading SVG:', error);
+                    document.getElementById('parrotContainer').innerHTML =
+                        '<div style="text-align: center; padding: 40px; color: #d9534f;">Error loading parrot SVG. Please refresh the page.</div>';
+                });
+        });
+
+        function highlightGroup(groupName) {
+            if (!svgElement) return;
+
+            const paths = svgElement.querySelectorAll('path');
+            let count = 0;
+
+            paths.forEach(path => {
+                const id = path.getAttribute('id');
+                if (id && id.startsWith(groupName)) {
+                    // Highlight by adding brightness
+                    path.style.filter = 'brightness(1.3)';
+                    path.style.stroke = '#FFD700';
+                    path.style.strokeWidth = '3';
+                    count++;
+                } else {
+                    path.style.filter = 'brightness(0.6)';
+                    path.style.stroke = 'none';
+                }
+            });
+
+            const info = document.getElementById('highlightInfo');
+            info.className = 'highlight-info active';
+            info.innerHTML = `<strong>Highlighted:</strong> ${count} feathers in group <code>${groupName}</code>. These feathers would be controlled by the same genetic genes.`;
+        }
+
+        function resetColors() {
+            if (!svgElement) return;
+
+            const paths = svgElement.querySelectorAll('path');
+            paths.forEach(path => {
+                const id = path.getAttribute('id');
+                if (originalColors[id]) {
+                    path.setAttribute('fill', originalColors[id]);
+                }
+                path.style.filter = 'none';
+                path.style.stroke = 'none';
+            });
+
+            const info = document.getElementById('highlightInfo');
+            info.className = 'highlight-info';
+        }
+
+        function randomizeFeathers() {
+            if (!svgElement) return;
+
+            const colorPalettes = {
+                red: ['#8B0000', '#A52A2A', '#DC143C', '#FF4500', '#FF6347', '#FF7F50'],
+                yellow: ['#FFD700', '#FFC700', '#FFB700', '#FFA500', '#FF9500', '#FFDF00'],
+                blue: ['#003F7F', '#004B8D', '#00589B', '#0066AA', '#0073B8', '#0080C6', '#1E90FF'],
+                green: ['#228B22', '#32CD32', '#7FFF00', '#ADFF2F', '#50C878', '#2EC4B6']
+            };
+
+            const paths = svgElement.querySelectorAll('path');
+            paths.forEach(path => {
+                const id = path.getAttribute('id');
+
+                if (id && id.includes('wing-blue')) {
+                    const randomColor = colorPalettes.blue[Math.floor(Math.random() * colorPalettes.blue.length)];
+                    path.setAttribute('fill', randomColor);
+                } else if (id && id.includes('body-yellow')) {
+                    const randomColor = colorPalettes.yellow[Math.floor(Math.random() * colorPalettes.yellow.length)];
+                    path.setAttribute('fill', randomColor);
+                } else if (id && id.includes('accent-green')) {
+                    const randomColor = colorPalettes.green[Math.floor(Math.random() * colorPalettes.green.length)];
+                    path.setAttribute('fill', randomColor);
+                }
+            });
+
+            const info = document.getElementById('highlightInfo');
+            info.className = 'highlight-info active';
+            info.innerHTML = '<strong>Randomized!</strong> Feathers have been recolored with variations within their genetic color groups.';
+        }
+
+        function showFeatherInfo(id, color) {
+            const info = document.getElementById('highlightInfo');
+            info.className = 'highlight-info active';
+            info.innerHTML = `
+                <strong>Feather Selected:</strong> <code>${id}</code><br>
+                <strong>Current Color:</strong> <span style="display:inline-block; width:20px; height:20px; background:${color}; border:1px solid #333; vertical-align:middle; margin:0 5px;"></span> <code>${color}</code><br>
+                <small>Click the buttons above to highlight feather groups or click other feathers to inspect them.</small>
+            `;
+        }
+    </script>
+</body>
+</html>
