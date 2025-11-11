@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChromaWing Breeding Simulator - Advanced</title>
+    <title>ChromaWing Breeding Simulator - RGB Genetics v2.0</title>
     <style>
         * {
             box-sizing: border-box;
@@ -171,20 +171,6 @@
             text-align: center;
         }
 
-        .parrot-card .genes {
-            display: flex;
-            justify-content: center;
-            gap: 3px;
-            margin-top: 5px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.7em;
-            font-weight: bold;
-        }
-
-        .gene-r { color: #dc3545; }
-        .gene-y { color: #ffc107; }
-        .gene-b { color: #007bff; }
-
         .parrot-card .price {
             position: absolute;
             top: 8px;
@@ -195,6 +181,19 @@
             border-radius: 12px;
             font-size: 0.75em;
             font-weight: bold;
+        }
+
+        .parrot-card .elite-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            color: #333;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7em;
+            font-weight: bold;
+            box-shadow: 0 2px 6px rgba(255, 215, 0, 0.5);
         }
 
         .preview-panel {
@@ -217,7 +216,7 @@
 
         .large-parrot-display {
             width: 100%;
-            height: 300px;
+            height: 400px;
             background: white;
             border-radius: 12px;
             display: flex;
@@ -235,37 +234,6 @@
             color: #999;
             text-align: center;
             padding: 40px;
-        }
-
-        .genotype-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-
-        .genotype-grid.extended {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        .gene-display {
-            background: white;
-            border-radius: 8px;
-            padding: 10px;
-            text-align: center;
-        }
-
-        .gene-display label {
-            font-size: 0.75em;
-            color: #666;
-            display: block;
-            margin-bottom: 3px;
-        }
-
-        .gene-display .alleles {
-            font-family: 'Courier New', monospace;
-            font-size: 1.3em;
-            font-weight: bold;
         }
 
         .action-buttons {
@@ -386,13 +354,7 @@
             border: 2px solid #dee2e6;
             border-radius: 8px;
             padding: 10px;
-            cursor: pointer;
             transition: all 0.3s;
-        }
-
-        .offspring-mini:hover {
-            border-color: #667eea;
-            transform: scale(1.05);
         }
 
         .offspring-mini .svg-container {
@@ -469,13 +431,21 @@
             font-size: 0.7em;
             font-weight: bold;
         }
+
+        .gradient-indicator {
+            text-align: center;
+            margin-top: 5px;
+            font-size: 0.75em;
+            color: #9c27b0;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>🦜 ChromaWing Breeding Simulator</h1>
-            <p>Advanced Genetics Game with Real SVG Parrot Rendering</p>
+            <p>RGB Genetics v2.0 with Gradient System - 65 Genes Per Parrot</p>
         </header>
 
         <div class="stats-bar">
@@ -571,195 +541,116 @@
         let parrotIdCounter = 0;
         let generation = 1;
         let svgCache = null;
+        let gradientIdCounter = 0;
 
-        // Parrot Class
+        // Parrot name pool
+        const PARROT_NAMES = [
+            'Aurora', 'Blaze', 'Crystal', 'Dazzle', 'Echo', 'Flame', 'Glimmer', 'Horizon',
+            'Iris', 'Jewel', 'Kaleidoscope', 'Luna', 'Mystic', 'Nova', 'Opal', 'Phoenix',
+            'Quest', 'Rainbow', 'Starlight', 'Twilight', 'Unity', 'Vortex', 'Whisper', 'Xenon',
+            'Yonder', 'Zenith', 'Azure', 'Breeze', 'Cascade', 'Dawn', 'Ember', 'Frost',
+            'Galaxy', 'Haven', 'Indigo', 'Jasper', 'Karma', 'Luxe', 'Midnight', 'Nebula',
+            'Oracle', 'Prism', 'Quartz', 'Radiance', 'Solstice', 'Thunder', 'Umbra', 'Velvet',
+            'Wonder', 'Xanthe', 'Yarrow', 'Zephyr'
+        ];
+        let usedNames = new Set();
+
+        function getRandomName() {
+            const availableNames = PARROT_NAMES.filter(name => !usedNames.has(name));
+            if (availableNames.length === 0) {
+                // Reset if all names used
+                usedNames.clear();
+                return PARROT_NAMES[Math.floor(Math.random() * PARROT_NAMES.length)];
+            }
+            const name = availableNames[Math.floor(Math.random() * availableNames.length)];
+            usedNames.add(name);
+            return name;
+        }
+
+        // Parrot Class with RGB Genetics v2.0
         class Parrot {
             constructor(name, genes, generation = 1, id = null) {
                 this.id = id !== null ? id : parrotIdCounter++;
                 this.name = name;
-                // Genes: red, yellow, blue, pattern, intensity, melanin
+                // New gene structure: 5 body parts × 13 genes each = 65 genes
+                // Each body part has: 4 red, 4 green, 4 blue, 1 gradient
                 this.genes = genes;
                 this.generation = generation;
             }
 
-            getGenotype(gene) {
-                return this.genes[gene].join('');
+            // Count dominant alleles (true = dominant, false = recessive)
+            countDominant(alleles) {
+                return alleles.filter(a => a === true).length;
             }
 
-            calculateGeneValue(gene) {
-                const alleles = this.genes[gene];
-                const dominantMap = {
-                    'red': 'R',
-                    'yellow': 'Y',
-                    'blue': 'B',
-                    'pattern': 'P',      // P = solid, p = speckled/striped
-                    'intensity': 'I'     // I = intense, i = diluted
-                };
-
-                const dominant = dominantMap[gene];
-                if (!dominant) return 0;
-
-                if (alleles[0] === dominant && alleles[1] === dominant) return 2;
-                if (alleles[0] === dominant || alleles[1] === dominant) return 1;
-                return 0;
+            // Calculate RGB value from gene array (0-4 dominant → 0-255 RGB)
+            calculateRGBValue(alleles) {
+                const count = this.countDominant(alleles);
+                return Math.round((count / 4) * 255);
             }
 
-            getColorMap() {
-                const red = this.calculateGeneValue('red');
-                const yellow = this.calculateGeneValue('yellow');
-                const blue = this.calculateGeneValue('blue');
-                const intensity = this.calculateGeneValue('intensity');
+            // Calculate color for a body part
+            calculateBodyPartColor(bodyPart) {
+                const part = this.genes[bodyPart];
+                const gradient = part.gradient;
 
-                // Calculate colors for different feather groups
-                const colorMap = {};
-
-                // Intensity modifier (makes colors more or less vibrant)
-                // II = 100% vibrant, Ii = 85%, ii = 70% pale/washed out
-                const intensityMod = intensity === 2 ? 1.0 : (intensity === 1 ? 0.85 : 0.7);
-
-                // Helper function to apply intensity modifier to hex color
-                const modifyColor = (hexColor, intensityFactor) => {
-                    const r = parseInt(hexColor.slice(1, 3), 16);
-                    const g = parseInt(hexColor.slice(3, 5), 16);
-                    const b = parseInt(hexColor.slice(5, 7), 16);
-
-                    const newR = Math.round(r * intensityFactor);
-                    const newG = Math.round(g * intensityFactor);
-                    const newB = Math.round(b * intensityFactor);
-
-                    return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
-                };
-
-                // === WINGS === (Blue gene controlled - wing-blue)
-                let wingColors;
-                if (blue === 2) {
-                    // BB = Deep blue
-                    wingColors = ['#003F7F', '#004B8D', '#00589B', '#0066AA', '#0073B8', '#0080C6'];
-                } else if (blue === 1) {
-                    // Bb = Sky blue
-                    wingColors = ['#4A90E2', '#5B9FE3', '#6CAFE4', '#7DBEE5', '#8DD3FF', '#A0E0FF'];
+                if (!gradient) {
+                    // Solid color - use all 4 genes together
+                    const r = this.calculateRGBValue(part.red);
+                    const g = this.calculateRGBValue(part.green);
+                    const b = this.calculateRGBValue(part.blue);
+                    return {
+                        color: `rgb(${r}, ${g}, ${b})`,
+                        isGradient: false
+                    };
                 } else {
-                    // bb = No blue pigment (gray/white)
-                    wingColors = ['#A0A0A0', '#B0B0B0', '#C0C0C0', '#D0D0D0', '#E0E0E0', '#F0F0F0'];
+                    // Gradient - split genes 1-2 vs 3-4
+                    const startR = this.calculateRGBValue([part.red[0], part.red[1]]);
+                    const startG = this.calculateRGBValue([part.green[0], part.green[1]]);
+                    const startB = this.calculateRGBValue([part.blue[0], part.blue[1]]);
+
+                    const endR = this.calculateRGBValue([part.red[2], part.red[3]]);
+                    const endG = this.calculateRGBValue([part.green[2], part.green[3]]);
+                    const endB = this.calculateRGBValue([part.blue[2], part.blue[3]]);
+
+                    return {
+                        startColor: `rgb(${startR}, ${startG}, ${startB})`,
+                        endColor: `rgb(${endR}, ${endG}, ${endB})`,
+                        isGradient: true
+                    };
                 }
-                colorMap['wing-blue'] = wingColors.map(c => modifyColor(c, intensityMod));
+            }
 
-                // === BODY FEATHERS === (Yellow gene - body-yellow, excluding body-yellow-4 which is eye)
-                let bodyYellowColors;
-                if (yellow === 2) {
-                    // YY = Golden yellow
-                    bodyYellowColors = ['#FFD700', '#FFC700', '#FFB700', '#FFA500', '#FF9500', '#FF8C00'];
-                } else if (yellow === 1) {
-                    // Yy = Bright yellow
-                    bodyYellowColors = ['#FFE66D', '#FFED88', '#FFF4A3', '#FFFBBE', '#FFFDD0', '#FFFFE0'];
-                } else {
-                    // yy = No yellow pigment (white/cream)
-                    bodyYellowColors = ['#F5F5F5', '#F7F7F7', '#FAFAFA', '#FCFCFC', '#FDFDFD', '#FFFFFF'];
-                }
-                colorMap['body-yellow'] = bodyYellowColors.map(c => modifyColor(c, intensityMod));
-
-                // === TAIL FEATHERS === (Yellow + Blue mix creates green - accent-green)
-                let tailColors;
-                if (yellow > 0 && blue > 0) {
-                    const greenIntensity = Math.min(yellow, blue);
-                    if (greenIntensity === 2) {
-                        // Both genes strong = vibrant green
-                        tailColors = ['#228B22', '#32CD32', '#3CB371', '#50C878', '#66CDAA', '#7FFF00'];
-                    } else {
-                        // One gene weaker = pale green
-                        tailColors = ['#90EE90', '#98FB98', '#A0FFA0', '#A8FFA8', '#B4FFB4', '#C0FFC0'];
-                    }
-                } else {
-                    // No color mixing = gray
-                    tailColors = ['#C0C0C0', '#C8C8C8', '#D0D0D0', '#D8D8D8', '#E0E0E0', '#E8E8E8'];
-                }
-                colorMap['accent-green'] = tailColors.map(c => modifyColor(c, intensityMod));
-
-                // === CHEST/BELLY ACCENTS === (Blue gene variation - accent-blue)
-                let chestColors;
-                if (blue === 2) {
-                    chestColors = ['#1E90FF', '#4169E1', '#0000CD', '#00008B', '#191970'];
-                } else if (blue === 1) {
-                    chestColors = ['#87CEEB', '#87CEFA', '#ADD8E6', '#B0E0E6', '#AFEEEE'];
-                } else {
-                    chestColors = ['#D3D3D3', '#DCDCDC', '#E0E0E0', '#E8E8E8', '#F0F0F0'];
-                }
-                colorMap['accent-blue'] = chestColors.map(c => modifyColor(c, intensityMod));
-
-                // === SHOULDER/BACK FEATHERS === (Red + Yellow creates orange/brown - accent-brown)
-                let shoulderColors;
-                if (red >= 1 && yellow >= 1) {
-                    const brownIntensity = Math.min(red, yellow);
-                    if (brownIntensity === 2) {
-                        // Both genes strong = deep brown/orange
-                        shoulderColors = ['#8B4513', '#A0522D', '#CD853F', '#D2691E', '#B8860B', '#DAA520'];
-                    } else {
-                        // One gene weaker = tan/light brown
-                        shoulderColors = ['#D2B48C', '#DEB887', '#F5DEB3', '#FFE4B5', '#FFDEAD', '#F4E5C2'];
-                    }
-                } else {
-                    // No mixing = white/cream
-                    shoulderColors = ['#E8E8E8', '#F0F0F0', '#F5F5F5', '#FAFAFA', '#FCFCFC', '#FFFFFF'];
-                }
-                colorMap['accent-brown'] = shoulderColors.map(c => modifyColor(c, intensityMod));
-
-                // === BEAK === (Red gene controlled - detail-gray 1 and 3)
-                // In parrots, beak color often correlates with red pigments
-                let beakColors;
-                if (red === 2) {
-                    // RR = Dark beak
-                    beakColors = ['#2F2F2F', '#3A3A3A', '#454545'];
-                } else if (red === 1) {
-                    // Rr = Medium gray beak
-                    beakColors = ['#696969', '#787878', '#808080'];
-                } else {
-                    // rr = Light gray beak
-                    beakColors = ['#A9A9A9', '#B0B0B0', '#BEBEBE'];
-                }
-                colorMap['detail-gray'] = beakColors;
-
-                // === BEARD === (Red + Yellow creates orange - detail-gray-2 ONLY)
-                // Beard is the wattle/skin patch, genetically controlled
-                let beardColor;
-                if (red >= 1 && yellow >= 1) {
-                    const combo = red + yellow;
-                    if (combo >= 4) {
-                        beardColor = '#FF6347';  // Bright orange-red
-                    } else if (combo >= 2) {
-                        beardColor = '#FFA500';  // Orange
-                    } else {
-                        beardColor = '#FFD700';  // Yellow-orange
-                    }
-                } else if (red >= 1) {
-                    beardColor = '#DC143C';  // Crimson
-                } else if (yellow >= 1) {
-                    beardColor = '#FFD700';  // Gold
-                } else {
-                    beardColor = '#F5DDA9';  // Pale cream
-                }
-                colorMap['beard'] = [modifyColor(beardColor, intensityMod)];
-
-                // Note: The following are EXCLUDED from gene control (fixed colors):
-                // - All body-gold (branches)
-                // - All covert-yellow (ground)
-                // - detail-black (tail contours/outlines)
-                // - body-yellow-4, accent-white-4 (eyes)
-                // - accent-white-3 (face marking)
-                // - other-2, other-3, other-4 (claws)
-                // - other-1 (tail feather tip - will use accent-green colors)
-
-                return colorMap;
+            hasAnyGradients() {
+                return Object.values(this.genes).some(part => part.gradient === true);
             }
 
             getValue() {
-                // Calculate parrot value based on generation and genes
-                const geneScore = this.calculateGeneValue('red') +
-                                this.calculateGeneValue('yellow') +
-                                this.calculateGeneValue('blue') +
-                                this.calculateGeneValue('intensity') +
-                                this.calculateGeneValue('pattern');
-                return 50 + (geneScore * 15) + (this.generation * 10);
+                // Calculate value based on gene diversity and gradients
+                let score = 0;
+                for (const bodyPart of ['wings', 'body', 'head', 'tail', 'accents']) {
+                    const part = this.genes[bodyPart];
+                    score += this.countDominant(part.red);
+                    score += this.countDominant(part.green);
+                    score += this.countDominant(part.blue);
+                    if (part.gradient) score += 10; // Gradients are valuable
+                }
+                return 50 + Math.floor(score * 2) + (this.generation * 10);
             }
+        }
+
+        // Create random genes for a body part
+        function randomBodyPartGenes() {
+            return {
+                red: [randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean()],
+                green: [randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean()],
+                blue: [randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean()],
+                gradient: false
+            };
+        }
+
+        function randomBoolean() {
+            return Math.random() < 0.5;
         }
 
         // Load SVG template
@@ -783,55 +674,99 @@
             if (!template) return '<div>Error loading parrot</div>';
 
             let svg = template;
-            const colorMap = parrot.getColorMap();
 
             // Fixed colors for non-genetic elements
-            const GROUND_COLOR = '#8B7355';  // Brown ground
-            const EYE_COLOR = '#000000';     // Black eyes
-            const CLAW_COLOR = '#4A4A4A';    // Dark gray claws
-            const FACE_COLOR = '#FFFFFF';    // White face marking
-            const CONTOUR_COLOR = '#000000'; // Black contours
+            const GROUND_COLOR = '#8B7355';
+            const EYE_COLOR = '#000000';
+            const CLAW_COLOR = '#4A4A4A';
+            const FACE_COLOR = '#FFFFFF';
+            const CONTOUR_COLOR = '#000000';
 
-            // Complete exclusion list with special handling
-            const fixedColorElements = {
-                // All branches (body-gold)
-                'body-gold-1': GROUND_COLOR,
-                'body-gold-2': GROUND_COLOR,
-                'body-gold-3': GROUND_COLOR,
-                'body-gold-4': GROUND_COLOR,
-                'body-gold-5': GROUND_COLOR,
-                'body-gold-6': GROUND_COLOR,
-                'body-gold-7': GROUND_COLOR,
-                'body-gold-8': GROUND_COLOR,
-                'body-gold-9': GROUND_COLOR,
-                'body-gold-10': GROUND_COLOR,
-                'body-gold-11': GROUND_COLOR,
+            // Calculate colors for each body part
+            const wingColor = parrot.calculateBodyPartColor('wings');
+            const bodyColor = parrot.calculateBodyPartColor('body');
+            const headColor = parrot.calculateBodyPartColor('head');
+            const tailColor = parrot.calculateBodyPartColor('tail');
+            const accentColor = parrot.calculateBodyPartColor('accents');
 
-                // Ground (covert-yellow)
-                'covert-yellow-1': GROUND_COLOR,
-                'covert-yellow-2': GROUND_COLOR,
-                'covert-yellow-3': GROUND_COLOR,
-                'covert-yellow-4': GROUND_COLOR,
-                'covert-yellow-5': GROUND_COLOR,
+            // Create gradient definitions if needed
+            let gradientDefs = '';
+            const gradientMap = {};
 
-                // Eyes
-                'body-yellow-4': EYE_COLOR,
-                'accent-white-4': EYE_COLOR,
+            if (wingColor.isGradient) {
+                const id = `grad-wing-${gradientIdCounter++}`;
+                gradientMap['wings'] = id;
+                gradientDefs += `<linearGradient id="${id}" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:${wingColor.startColor};stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:${wingColor.endColor};stop-opacity:1" />
+                </linearGradient>`;
+            }
 
-                // Claws
-                'other-2': CLAW_COLOR,
-                'other-3': CLAW_COLOR,
-                'other-4': CLAW_COLOR,
+            if (bodyColor.isGradient) {
+                const id = `grad-body-${gradientIdCounter++}`;
+                gradientMap['body'] = id;
+                gradientDefs += `<linearGradient id="${id}" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:${bodyColor.startColor};stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:${bodyColor.endColor};stop-opacity:1" />
+                </linearGradient>`;
+            }
 
-                // Face marking (non-genetic white)
-                'accent-white-3': FACE_COLOR
+            if (headColor.isGradient) {
+                const id = `grad-head-${gradientIdCounter++}`;
+                gradientMap['head'] = id;
+                gradientDefs += `<linearGradient id="${id}" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:${headColor.startColor};stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:${headColor.endColor};stop-opacity:1" />
+                </linearGradient>`;
+            }
+
+            if (tailColor.isGradient) {
+                const id = `grad-tail-${gradientIdCounter++}`;
+                gradientMap['tail'] = id;
+                gradientDefs += `<linearGradient id="${id}" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:${tailColor.startColor};stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:${tailColor.endColor};stop-opacity:1" />
+                </linearGradient>`;
+            }
+
+            if (accentColor.isGradient) {
+                const id = `grad-accent-${gradientIdCounter++}`;
+                gradientMap['accents'] = id;
+                gradientDefs += `<linearGradient id="${id}" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:${accentColor.startColor};stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:${accentColor.endColor};stop-opacity:1" />
+                </linearGradient>`;
+            }
+
+            // Insert gradients into SVG if any exist
+            if (gradientDefs) {
+                svg = svg.replace('<svg', `<svg><defs>${gradientDefs}</defs`);
+            }
+
+            // Body part to feather group mapping
+            const bodyPartMap = {
+                'wings': ['wing-blue'],
+                'body': ['body-yellow', 'accent-brown'],
+                'head': ['accent-blue', 'detail-gray'],
+                'tail': ['accent-green', 'accent-white', 'other-1'],
+                'accents': []
             };
 
-            // Special cases: tail tip and beard
-            const tailTipColor = colorMap['accent-green'] ? colorMap['accent-green'][0] : '#50C878';
-            const beardColor = colorMap['beard'] ? colorMap['beard'][0] : '#FFA500';
+            // Fixed color elements
+            const fixedColorElements = {
+                'body-gold-1': GROUND_COLOR, 'body-gold-2': GROUND_COLOR, 'body-gold-3': GROUND_COLOR,
+                'body-gold-4': GROUND_COLOR, 'body-gold-5': GROUND_COLOR, 'body-gold-6': GROUND_COLOR,
+                'body-gold-7': GROUND_COLOR, 'body-gold-8': GROUND_COLOR, 'body-gold-9': GROUND_COLOR,
+                'body-gold-10': GROUND_COLOR, 'body-gold-11': GROUND_COLOR,
+                'covert-yellow-1': GROUND_COLOR, 'covert-yellow-2': GROUND_COLOR, 'covert-yellow-3': GROUND_COLOR,
+                'covert-yellow-4': GROUND_COLOR, 'covert-yellow-5': GROUND_COLOR,
+                'body-yellow-4': EYE_COLOR, 'accent-white-4': EYE_COLOR,
+                'other-2': CLAW_COLOR, 'other-3': CLAW_COLOR, 'other-4': CLAW_COLOR,
+                'accent-white-3': FACE_COLOR,
+                'detail-gray-2': headColor.isGradient ? `url(#${gradientMap['head']})` : headColor.color
+            };
 
-            // Apply fixed colors first
+            // Apply fixed colors
             Object.keys(fixedColorElements).forEach(featherId => {
                 const color = fixedColorElements[featherId];
                 const regex = new RegExp(`id="${featherId}"[^>]*fill="[^"]*"`, 'g');
@@ -840,99 +775,129 @@
                 });
             });
 
-            // Apply tail tip color (other-1)
-            const tailTipRegex = new RegExp(`id="other-1"[^>]*fill="[^"]*"`, 'g');
-            svg = svg.replace(tailTipRegex, match => {
-                return match.replace(/fill="[^"]*"/, `fill="${tailTipColor}"`);
+            // Apply body part colors
+            const colorAssignments = {
+                'wings': wingColor,
+                'body': bodyColor,
+                'head': headColor,
+                'tail': tailColor,
+                'accents': accentColor
+            };
+
+            Object.keys(bodyPartMap).forEach(bodyPart => {
+                const groups = bodyPartMap[bodyPart];
+                const colorData = colorAssignments[bodyPart];
+                const fillValue = colorData.isGradient ? `url(#${gradientMap[bodyPart]})` : colorData.color;
+
+                groups.forEach(groupPrefix => {
+                    for (let i = 1; i <= 30; i++) {
+                        const featherId = `${groupPrefix}-${i}`;
+
+                        // Skip fixed elements
+                        if (fixedColorElements[featherId]) continue;
+                        if (featherId === 'body-yellow-4') continue;
+                        if (featherId === 'accent-white-4') continue;
+                        if (featherId === 'accent-white-3') continue;
+                        if (featherId === 'detail-gray-2') continue;
+
+                        const regex = new RegExp(`id="${featherId}"[^>]*fill="[^"]*"`, 'g');
+                        svg = svg.replace(regex, match => {
+                            return match.replace(/fill="[^"]*"/, `fill="${fillValue}"`);
+                        });
+                    }
+                });
             });
 
-            // Apply beard color (detail-gray-2 - genetically controlled)
-            const beardRegex = new RegExp(`id="detail-gray-2"[^>]*fill="[^"]*"`, 'g');
-            svg = svg.replace(beardRegex, match => {
-                return match.replace(/fill="[^"]*"/, `fill="${beardColor}"`);
-            });
-
-            // Keep detail-black as contours (black outline)
+            // Keep contours black
             for (let i = 1; i <= 30; i++) {
-                const featherId = `detail-black-${i}`;
-                const regex = new RegExp(`id="${featherId}"[^>]*fill="[^"]*"`, 'g');
+                const regex = new RegExp(`id="detail-black-${i}"[^>]*fill="[^"]*"`, 'g');
                 svg = svg.replace(regex, match => {
                     return match.replace(/fill="[^"]*"/, `fill="${CONTOUR_COLOR}"`);
                 });
             }
-
-            // Replace colors for gene-controlled feather groups
-            Object.keys(colorMap).forEach(groupPrefix => {
-                const colors = colorMap[groupPrefix];
-
-                // Find all feathers in this group and recolor them
-                for (let i = 1; i <= 30; i++) {
-                    const featherId = `${groupPrefix}-${i}`;
-
-                    // Skip if this element has a fixed color
-                    if (fixedColorElements[featherId]) {
-                        continue;
-                    }
-
-                    // Skip detail-black (contours)
-                    if (groupPrefix === 'detail-black') {
-                        continue;
-                    }
-
-                    // Skip body-yellow-4 (eye)
-                    if (featherId === 'body-yellow-4') {
-                        continue;
-                    }
-
-                    // Skip accent-white-4 (eye)
-                    if (featherId === 'accent-white-4') {
-                        continue;
-                    }
-
-                    // Skip detail-gray-2 (beard)
-                    if (featherId === 'detail-gray-2') {
-                        continue;
-                    }
-
-                    // Use appropriate color
-                    const colorIndex = i % colors.length;
-                    const color = colors[colorIndex];
-
-                    // Replace color for this specific feather ID
-                    const regex = new RegExp(`id="${featherId}"[^>]*fill="[^"]*"`, 'g');
-                    svg = svg.replace(regex, match => {
-                        return match.replace(/fill="[^"]*"/, `fill="${color}"`);
-                    });
-                }
-            });
 
             return svg;
         }
 
         // Initialize game
         async function initGame() {
-            // Create starter parrots with diverse genetics
+            // Create 2 predefined beautiful parrots + 1 random
             parrots = [
-                new Parrot('Scarlet', {
-                    red: ['R','R'],
-                    yellow: ['Y','y'],
-                    blue: ['b','b'],
-                    pattern: ['P','P'],
-                    intensity: ['I','I']
+                // Predefined 1: Blue/Purple gradient wings, orange body
+                new Parrot('Twilight', {
+                    wings: {
+                        red: [false, false, true, true],    // Gradient: black→red
+                        green: [false, false, false, false],
+                        blue: [true, true, true, true],     // Gradient: blue→blue (full blue)
+                        gradient: true
+                    },
+                    body: {
+                        red: [true, true, true, true],      // Full red
+                        green: [true, true, false, false],  // Half green = orange
+                        blue: [false, false, false, false],
+                        gradient: false
+                    },
+                    head: {
+                        red: [true, true, true, false],
+                        green: [true, true, true, false],
+                        blue: [false, false, false, false],
+                        gradient: false
+                    },
+                    tail: {
+                        red: [false, false, true, true],
+                        green: [true, true, true, true],
+                        blue: [false, false, true, true],
+                        gradient: true
+                    },
+                    accents: {
+                        red: [true, false, true, false],
+                        green: [false, false, true, true],
+                        blue: [true, true, false, false],
+                        gradient: false
+                    }
                 }, 1),
-                new Parrot('Sunshine', {
-                    red: ['r','r'],
-                    yellow: ['Y','Y'],
-                    blue: ['b','b'],
-                    pattern: ['P','p'],
-                    intensity: ['I','i']
+
+                // Predefined 2: Rainbow gradient parrot
+                new Parrot('Prism', {
+                    wings: {
+                        red: [true, true, false, false],    // Red→none gradient
+                        green: [false, false, true, true],  // None→green gradient
+                        blue: [true, true, true, true],     // Full blue
+                        gradient: true
+                    },
+                    body: {
+                        red: [true, true, true, true],
+                        green: [true, true, true, false],
+                        blue: [false, false, false, false],
+                        gradient: false
+                    },
+                    head: {
+                        red: [false, false, false, false],
+                        green: [true, true, true, true],
+                        blue: [true, true, true, true],
+                        gradient: false
+                    },
+                    tail: {
+                        red: [true, true, true, true],
+                        green: [true, true, false, false],
+                        blue: [false, false, true, true],
+                        gradient: true
+                    },
+                    accents: {
+                        red: [true, true, true, false],
+                        green: [false, false, false, false],
+                        blue: [true, true, true, true],
+                        gradient: false
+                    }
                 }, 1),
-                new Parrot('Sapphire', {
-                    red: ['r','r'],
-                    yellow: ['y','y'],
-                    blue: ['B','B'],
-                    pattern: ['P','P'],
-                    intensity: ['I','I']
+
+                // Random starter
+                new Parrot(getRandomName(), {
+                    wings: randomBodyPartGenes(),
+                    body: randomBodyPartGenes(),
+                    head: randomBodyPartGenes(),
+                    tail: randomBodyPartGenes(),
+                    accents: randomBodyPartGenes()
                 }, 1)
             ];
 
@@ -942,27 +907,45 @@
             await updateUI();
         }
 
-        // Generate random parrots for store
+        // Generate random parrots for store (including elite parrots with gradients)
         async function generateStore() {
             storeParrots = [];
-            const names = ['Azure', 'Crimson', 'Goldie', 'Emerald', 'Pearl', 'Ruby', 'Amber', 'Jade', 'Onyx', 'Ivory'];
 
-            for (let i = 0; i < 6; i++) {
+            // Add 2 elite parrots with gradients (500 coins each)
+            for (let i = 0; i < 2; i++) {
                 const genes = {
-                    red: [randomAllele('R'), randomAllele('R')].sort().reverse(),
-                    yellow: [randomAllele('Y'), randomAllele('Y')].sort().reverse(),
-                    blue: [randomAllele('B'), randomAllele('B')].sort().reverse(),
-                    pattern: [randomAllele('P'), randomAllele('P')].sort().reverse(),
-                    intensity: [randomAllele('I'), randomAllele('I')].sort().reverse()
+                    wings: randomBodyPartGenes(),
+                    body: randomBodyPartGenes(),
+                    head: randomBodyPartGenes(),
+                    tail: randomBodyPartGenes(),
+                    accents: randomBodyPartGenes()
                 };
 
-                const parrot = new Parrot(names[i % names.length] + '-' + Math.floor(Math.random() * 100), genes, 1);
+                // Force gradients on 2-3 body parts for elite parrots
+                const bodyParts = ['wings', 'body', 'head', 'tail', 'accents'];
+                const numGradients = 2 + Math.floor(Math.random() * 2); // 2-3 gradients
+                for (let j = 0; j < numGradients; j++) {
+                    const part = bodyParts[Math.floor(Math.random() * bodyParts.length)];
+                    genes[part].gradient = true;
+                }
+
+                const parrot = new Parrot(getRandomName(), genes, 1);
+                parrot.isElite = true;
+                parrot.price = 500;
                 storeParrots.push(parrot);
             }
-        }
 
-        function randomAllele(dominant) {
-            return Math.random() < 0.5 ? dominant : dominant.toLowerCase();
+            // Add 4 regular parrots
+            for (let i = 0; i < 4; i++) {
+                const parrot = new Parrot(getRandomName(), {
+                    wings: randomBodyPartGenes(),
+                    body: randomBodyPartGenes(),
+                    head: randomBodyPartGenes(),
+                    tail: randomBodyPartGenes(),
+                    accents: randomBodyPartGenes()
+                }, 1);
+                storeParrots.push(parrot);
+            }
         }
 
         // Switch tabs
@@ -1030,20 +1013,17 @@
             }
 
             const svg = await generateParrotSVG(parrot);
-
             const selectionNum = selectedParrotIds.indexOf(parrot.id) + 1;
+            const price = parrot.isElite ? 500 : parrot.getValue();
 
             card.innerHTML = `
                 ${selectionNum > 0 ? `<div class="selection-indicator">${selectionNum}</div>` : ''}
-                ${isStore ? `<div class="price">${parrot.getValue()}💰</div>` : ''}
+                ${parrot.isElite ? '<div class="elite-badge">⭐ ELITE</div>' : ''}
+                ${isStore ? `<div class="price">${price}💰</div>` : ''}
                 <div class="parrot-mini">${svg}</div>
                 <div class="parrot-name">${parrot.name}</div>
                 <div class="parrot-gen">Gen ${parrot.generation}</div>
-                <div class="genes">
-                    <span class="gene-r">${parrot.getGenotype('red')}</span>
-                    <span class="gene-y">${parrot.getGenotype('yellow')}</span>
-                    <span class="gene-b">${parrot.getGenotype('blue')}</span>
-                </div>
+                ${parrot.hasAnyGradients() ? '<div class="gradient-indicator">✨ Gradient</div>' : ''}
             `;
 
             card.onclick = () => selectParrot(parrot.id, isStore);
@@ -1054,10 +1034,8 @@
         // Select parrot
         function selectParrot(parrotId, isStore) {
             if (isStore) {
-                // Store mode - select only one for purchase
                 selectedParrotIds = [parrotId];
             } else {
-                // Collection mode - select up to 2 for breeding
                 const index = selectedParrotIds.indexOf(parrotId);
                 if (index >= 0) {
                     selectedParrotIds.splice(index, 1);
@@ -1113,7 +1091,7 @@
                 return;
             }
 
-            // Show single parrot preview
+            // Show single parrot preview (2x larger)
             const selectedId = selectedParrotIds[0];
             const parrot = currentTab === 'collection'
                 ? parrots.find(p => p.id === selectedId)
@@ -1128,28 +1106,7 @@
                 <div style="text-align: center; margin-bottom: 10px;">
                     <strong style="font-size: 1.3em;">${parrot.name}</strong><br>
                     <span style="color: #666;">Generation ${parrot.generation}</span>
-                </div>
-                <div class="genotype-grid">
-                    <div class="gene-display">
-                        <label>Red</label>
-                        <div class="alleles gene-r">${parrot.getGenotype('red')}</div>
-                    </div>
-                    <div class="gene-display">
-                        <label>Yellow</label>
-                        <div class="alleles gene-y">${parrot.getGenotype('yellow')}</div>
-                    </div>
-                    <div class="gene-display">
-                        <label>Blue</label>
-                        <div class="alleles gene-b">${parrot.getGenotype('blue')}</div>
-                    </div>
-                    <div class="gene-display">
-                        <label>Pattern</label>
-                        <div class="alleles" style="color: #9c27b0;">${parrot.getGenotype('pattern')}</div>
-                    </div>
-                    <div class="gene-display">
-                        <label>Intensity</label>
-                        <div class="alleles" style="color: #ff9800;">${parrot.getGenotype('intensity')}</div>
-                    </div>
+                    ${parrot.hasAnyGradients() ? '<br><span style="color: #9c27b0; font-weight: bold;">✨ Has Gradients</span>' : ''}
                 </div>
             `;
 
@@ -1160,7 +1117,7 @@
             const actionButtons = document.getElementById('actionButtons');
 
             if (currentTab === 'store') {
-                const price = parrot.getValue();
+                const price = parrot.isElite ? 500 : parrot.getValue();
                 actionButtons.innerHTML = `
                     <button class="btn btn-buy" onclick="buyParrot(${parrot.id})" ${coins < price ? 'disabled' : ''}>
                         💰 Buy for ${price} coins
@@ -1184,7 +1141,7 @@
             const parrot = storeParrots.find(p => p.id === parrotId);
             if (!parrot) return;
 
-            const price = parrot.getValue();
+            const price = parrot.isElite ? 500 : parrot.getValue();
             if (coins < price) {
                 alert('Not enough coins!');
                 return;
@@ -1194,16 +1151,31 @@
             parrots.push(parrot);
             storeParrots = storeParrots.filter(p => p.id !== parrotId);
 
-            // Generate new store parrot
-            const names = ['Azure', 'Crimson', 'Goldie', 'Emerald', 'Pearl', 'Ruby', 'Amber', 'Jade', 'Onyx', 'Ivory'];
+            // Generate new store parrot (elite or regular)
+            const isElite = parrot.isElite;
             const genes = {
-                red: [randomAllele('R'), randomAllele('R')].sort().reverse(),
-                yellow: [randomAllele('Y'), randomAllele('Y')].sort().reverse(),
-                blue: [randomAllele('B'), randomAllele('B')].sort().reverse(),
-                pattern: [randomAllele('P'), randomAllele('P')].sort().reverse(),
-                intensity: [randomAllele('I'), randomAllele('I')].sort().reverse()
+                wings: randomBodyPartGenes(),
+                body: randomBodyPartGenes(),
+                head: randomBodyPartGenes(),
+                tail: randomBodyPartGenes(),
+                accents: randomBodyPartGenes()
             };
-            const newParrot = new Parrot(names[Math.floor(Math.random() * names.length)] + '-' + Math.floor(Math.random() * 100), genes, 1, parrotIdCounter++);
+
+            if (isElite) {
+                // Add gradients for elite
+                const bodyParts = ['wings', 'body', 'head', 'tail', 'accents'];
+                const numGradients = 2 + Math.floor(Math.random() * 2);
+                for (let j = 0; j < numGradients; j++) {
+                    const part = bodyParts[Math.floor(Math.random() * bodyParts.length)];
+                    genes[part].gradient = true;
+                }
+            }
+
+            const newParrot = new Parrot(getRandomName(), genes, 1, parrotIdCounter++);
+            if (isElite) {
+                newParrot.isElite = true;
+                newParrot.price = 500;
+            }
             storeParrots.push(newParrot);
 
             selectedParrotIds = [];
@@ -1250,86 +1222,52 @@
             const offspring = [];
             for (let i = 0; i < 4; i++) {
                 const childGenes = {
-                    red: [
-                        parent1.genes.red[Math.floor(Math.random() * 2)],
-                        parent2.genes.red[Math.floor(Math.random() * 2)]
-                    ].sort().reverse(),
-                    yellow: [
-                        parent1.genes.yellow[Math.floor(Math.random() * 2)],
-                        parent2.genes.yellow[Math.floor(Math.random() * 2)]
-                    ].sort().reverse(),
-                    blue: [
-                        parent1.genes.blue[Math.floor(Math.random() * 2)],
-                        parent2.genes.blue[Math.floor(Math.random() * 2)]
-                    ].sort().reverse(),
-                    pattern: [
-                        parent1.genes.pattern[Math.floor(Math.random() * 2)],
-                        parent2.genes.pattern[Math.floor(Math.random() * 2)]
-                    ].sort().reverse(),
-                    intensity: [
-                        parent1.genes.intensity[Math.floor(Math.random() * 2)],
-                        parent2.genes.intensity[Math.floor(Math.random() * 2)]
-                    ].sort().reverse()
+                    wings: breedBodyPart(parent1.genes.wings, parent2.genes.wings),
+                    body: breedBodyPart(parent1.genes.body, parent2.genes.body),
+                    head: breedBodyPart(parent1.genes.head, parent2.genes.head),
+                    tail: breedBodyPart(parent1.genes.tail, parent2.genes.tail),
+                    accents: breedBodyPart(parent1.genes.accents, parent2.genes.accents)
                 };
 
                 const childGen = Math.max(parent1.generation, parent2.generation) + 1;
                 if (childGen > generation) generation = childGen;
 
-                const child = new Parrot(`Chick-${parrotIdCounter}`, childGenes, childGen, parrotIdCounter++);
+                const child = new Parrot(getRandomName(), childGenes, childGen, parrotIdCounter++);
                 offspring.push(child);
             }
 
-            // Show offspring modal
-            await showOffspringModal(offspring);
+            // Auto-adopt all offspring
+            offspring.forEach(chick => {
+                parrots.push(chick);
+            });
+
+            selectedParrotIds = [];
+            await updateUI();
+
+            // Show a simple alert instead of modal
+            alert(`🎉 4 chicks hatched! ${offspring.map(o => o.name).join(', ')} joined your collection!`);
         }
 
-        // Show offspring modal
-        async function showOffspringModal(offspring) {
-            const modal = document.getElementById('breedingModal');
-            const display = document.getElementById('offspringDisplay');
+        // Breed a single body part
+        function breedBodyPart(part1, part2) {
+            const childPart = {
+                red: [],
+                green: [],
+                blue: [],
+                gradient: Math.random() < 0.5 ? part1.gradient : part2.gradient
+            };
 
-            display.innerHTML = '<div class="offspring-grid"></div>';
-            const grid = display.querySelector('.offspring-grid');
-
-            for (const chick of offspring) {
-                const svg = await generateParrotSVG(chick);
-                const card = document.createElement('div');
-                card.className = 'offspring-mini';
-                card.innerHTML = `
-                    <div class="svg-container">${svg}</div>
-                    <div style="text-align: center; margin-bottom: 8px;">
-                        <strong>${chick.name}</strong><br>
-                        <small>Gen ${chick.generation}</small>
-                    </div>
-                    <div style="text-align: center; font-size: 0.8em; font-family: monospace;">
-                        <span class="gene-r">${chick.getGenotype('red')}</span>
-                        <span class="gene-y">${chick.getGenotype('yellow')}</span>
-                        <span class="gene-b">${chick.getGenotype('blue')}</span>
-                    </div>
-                    <button class="btn btn-breed" style="margin-top: 8px; padding: 6px; font-size: 0.85em;" onclick="adoptOffspring(${chick.id}, '${chick.name}', ${JSON.stringify(chick.genes).replace(/"/g, '&quot;')}, ${chick.generation})">
-                        Adopt
-                    </button>
-                `;
-                grid.appendChild(card);
+            // For each of 4 genes in each color
+            for (let i = 0; i < 4; i++) {
+                childPart.red.push(Math.random() < 0.5 ? part1.red[i] : part2.red[i]);
+                childPart.green.push(Math.random() < 0.5 ? part1.green[i] : part2.green[i]);
+                childPart.blue.push(Math.random() < 0.5 ? part1.blue[i] : part2.blue[i]);
             }
 
-            modal.classList.add('active');
+            return childPart;
         }
 
-        // Adopt offspring
-        function adoptOffspring(id, name, genes, gen) {
-            const customName = prompt('Name your new parrot:', name);
-            if (!customName) return;
-
-            const parrot = new Parrot(customName, genes, gen, id);
-            parrots.push(parrot);
-
-            closeModal();
-            selectedParrotIds = [];
-            updateUI();
-        }
-
-        // Close modal
+        // Close modal (kept for compatibility)
         function closeModal() {
             document.getElementById('breedingModal').classList.remove('active');
         }
