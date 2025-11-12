@@ -10,6 +10,7 @@ export async function updateUI() {
     updateStats();
     await renderParrotGrid();
     updateBreedingPanel();
+    updateActionButtons();
 }
 
 // Update stats bar
@@ -85,16 +86,21 @@ async function createParrotCard(parrot, isStore) {
             Beauty: ${Math.round(beauty.score)}
         </div>
         ${parrot.hasAnyGradients() ? '<div class="gradient-indicator">✨ Gradient</div>' : ''}
+        ${isStore ? `<button class="btn-buy" onclick="event.stopPropagation(); buyParrot(${parrot.id});" style="background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 8px; width: 100%; font-weight: 600;">💰 Buy (${price} coins)</button>` : ''}
     `;
 
-    // Add click handler
-    card.onclick = () => {
-        if (isStore) {
-            buyParrot(parrot.id);
-        } else {
+    // Add click handler for collection cards (select) and store cards (preview)
+    if (!isStore) {
+        card.onclick = () => {
             selectParrot(parrot.id);
-        }
-    };
+        };
+    } else {
+        // Store cards can be clicked to preview, but buy button is separate
+        card.onclick = () => {
+            state.selectedParrotId = parrot.id;
+            updateUI();
+        };
+    }
 
     return card;
 }
@@ -123,6 +129,47 @@ function updateBreedingPanel() {
     breedButton.disabled = !(state.breedingPair.left && state.breedingPair.right);
 }
 
+// Update action buttons for selected parrot
+function updateActionButtons() {
+    const actionSection = document.getElementById('topActionSection');
+    const actionButtons = document.getElementById('actionButtons');
+
+    if (!actionSection || !actionButtons) {
+        console.warn('[Render] Action buttons container not found');
+        return;
+    }
+
+    // Only show actions when viewing collection tab and a parrot is selected
+    if (state.currentTab !== 'collection' || !state.selectedParrotId) {
+        actionSection.style.display = 'none';
+        return;
+    }
+
+    const selectedParrot = state.parrots.find(p => p.id === state.selectedParrotId);
+    if (!selectedParrot) {
+        actionSection.style.display = 'none';
+        return;
+    }
+
+    actionSection.style.display = 'block';
+
+    // Build action buttons
+    actionButtons.innerHTML = `
+        <button class="btn" onclick="addToBreedingSlot('left', ${selectedParrot.id})" style="background: #667eea; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-right: 8px;">
+            ⬅️ Breed Left
+        </button>
+        <button class="btn" onclick="addToBreedingSlot('right', ${selectedParrot.id})" style="background: #764ba2; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-right: 8px;">
+            ➡️ Breed Right
+        </button>
+        <button class="btn" onclick="sellParrot(${selectedParrot.id})" style="background: #ffc107; color: #333; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-right: 8px;">
+            💵 Sell (${Math.floor(selectedParrot.getValue() * 0.6)} coins)
+        </button>
+        <button class="btn" onclick="openLaboratory(${selectedParrot.id})" style="background: #17a2b8; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">
+            🔬 Laboratory
+        </button>
+    `;
+}
+
 // Select a parrot
 function selectParrot(parrotId) {
     state.selectedParrotId = parrotId;
@@ -134,6 +181,16 @@ function selectParrot(parrotId) {
         state.breedingPair.right = parrotId;
     }
 
+    updateUI();
+}
+
+// Add parrot to specific breeding slot
+function addToBreedingSlot(slot, parrotId) {
+    if (slot === 'left') {
+        state.breedingPair.left = parrotId;
+    } else if (slot === 'right') {
+        state.breedingPair.right = parrotId;
+    }
     updateUI();
 }
 
@@ -157,4 +214,4 @@ function buyParrot(parrotId) {
 }
 
 // Export for window
-export { selectParrot, buyParrot };
+export { selectParrot, buyParrot, addToBreedingSlot };

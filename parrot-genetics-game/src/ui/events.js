@@ -50,6 +50,35 @@ export function toggleMutations() {
     }
 }
 
+// Open laboratory modal
+export function openLaboratory(parrotId) {
+    const parrot = state.parrots.find(p => p.id === parrotId);
+    if (!parrot) return;
+
+    const modal = document.getElementById('laboratoryModal');
+    const display = document.getElementById('laboratoryDisplay');
+
+    if (!modal || !display) {
+        console.warn('[Events] Laboratory modal not found');
+        alert('Laboratory feature coming soon!');
+        return;
+    }
+
+    // For now, show a simple placeholder
+    display.innerHTML = `
+        <h2>🔬 Laboratory Analysis</h2>
+        <h3>${parrot.name}</h3>
+        <p><strong>Generation:</strong> ${parrot.generation}</p>
+        <p><strong>Rarity:</strong> ${parrot.calculateRarity()}</p>
+        <p><strong>Beauty Score:</strong> ${Math.round(parrot.calculateBeauty().score)}</p>
+        <p><strong>Value:</strong> ${parrot.getValue()} coins</p>
+        <hr>
+        <p style="color: #999; font-style: italic;">Full genetic analysis coming in future update...</p>
+    `;
+
+    modal.style.display = 'flex';
+}
+
 // Close modals
 export function closeModal() {
     document.getElementById('laboratoryModal').style.display = 'none';

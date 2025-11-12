@@ -10,8 +10,8 @@ import { randomBodyPartGenes, breedBodyPartGenes, getDNAString, hasFullGenotype 
 import { generateParrotSVG } from './rendering/svgRenderer.js';
 import { initGame, newGame, generateStore } from './game/init.js';
 import { breedParrots, sellParrot } from './game/breeding.js';
-import { updateUI, updateStats } from './ui/renderer.js';
-import { switchTab, toggleMutations, closeModal, closeContestModal, toggleNotificationHistory, clearNotificationHistory } from './ui/events.js';
+import { updateUI, updateStats, addToBreedingSlot, buyParrot } from './ui/renderer.js';
+import { switchTab, toggleMutations, openLaboratory, closeModal, closeContestModal, toggleNotificationHistory, clearNotificationHistory } from './ui/events.js';
 
 // Expose to window for HTML onclick handlers
 window.Parrot = Parrot;
@@ -35,8 +35,11 @@ window.sellParrot = sellParrot;
 // UI functions
 window.updateUI = updateUI;
 window.updateStats = updateStats;
+window.addToBreedingSlot = addToBreedingSlot;
+window.buyParrot = buyParrot;
 window.switchTab = switchTab;
 window.toggleMutations = toggleMutations;
+window.openLaboratory = openLaboratory;
 window.closeModal = closeModal;
 window.closeContestModal = closeContestModal;
 window.toggleNotificationHistory = toggleNotificationHistory;
