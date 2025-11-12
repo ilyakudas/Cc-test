@@ -8,8 +8,12 @@ import { CONTEST_TIERS, MUTATION_RATE } from './data/constants.js';
 import { getRandomName } from './utils/naming.js';
 import { randomBodyPartGenes, breedBodyPartGenes, getDNAString, hasFullGenotype } from './utils/genetics.js';
 import { generateParrotSVG } from './rendering/svgRenderer.js';
+import { initGame, newGame, generateStore } from './game/init.js';
+import { breedParrots, sellParrot } from './game/breeding.js';
+import { updateUI, updateStats } from './ui/renderer.js';
+import { switchTab, toggleMutations, closeModal, closeContestModal, toggleNotificationHistory, clearNotificationHistory } from './ui/events.js';
 
-// Expose to window for HTML onclick handlers (temporary - will be refactored)
+// Expose to window for HTML onclick handlers
 window.Parrot = Parrot;
 window.state = state;
 window.generateParrotSVG = generateParrotSVG;
@@ -21,30 +25,59 @@ window.hasFullGenotype = hasFullGenotype;
 window.CONTEST_TIERS = CONTEST_TIERS;
 window.MUTATION_RATE = MUTATION_RATE;
 
-// Re-export everything temporarily
-// This allows the original code to work while we gradually refactor
+// Game functions
+window.initGame = initGame;
+window.newGame = newGame;
+window.generateStore = generateStore;
+window.breedParrots = breedParrots;
+window.sellParrot = sellParrot;
+
+// UI functions
+window.updateUI = updateUI;
+window.updateStats = updateStats;
+window.switchTab = switchTab;
+window.toggleMutations = toggleMutations;
+window.closeModal = closeModal;
+window.closeContestModal = closeContestModal;
+window.toggleNotificationHistory = toggleNotificationHistory;
+window.clearNotificationHistory = clearNotificationHistory;
+
+// Simple toast notification
+window.showToast = function(message, details = '', type = 'info') {
+    console.log(`[${type.toUpperCase()}] ${message}`, details);
+    alert(`${message}${details ? '\n' + details : ''}`);
+};
 
 console.log('ChromaWing v3.0 - Modular version loaded');
 console.log('Modules loaded:', {
     Parrot: !!Parrot,
     state: !!state,
-    CONTEST_TIERS: !!CONTEST_TIERS,
-    generateParrotSVG: !!generateParrotSVG
+    initGame: !!initGame,
+    updateUI: !!updateUI,
+    breedParrots: !!breedParrots
 });
 
 // Initialize game when DOM is ready
+async function initialize() {
+    console.log('Initializing ChromaWing...');
+
+    try {
+        await initGame();
+        await updateUI();
+        console.log('Game initialized successfully!');
+    } catch (error) {
+        console.error('Error initializing game:', error);
+        alert('Error loading game. Check console for details.');
+    }
+}
+
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeGame);
+    document.addEventListener('DOMContentLoaded', initialize);
 } else {
-    initializeGame();
+    initialize();
 }
 
-function initializeGame() {
-    console.log('Game initialized');
-    // Game initialization logic will go here
-    // For now, we're just confirming modules load correctly
-}
-
+// Export everything
 export {
     Parrot,
     state,
@@ -56,5 +89,9 @@ export {
     breedBodyPartGenes,
     getDNAString,
     hasFullGenotype,
-    generateParrotSVG
+    generateParrotSVG,
+    initGame,
+    newGame,
+    breedParrots,
+    updateUI
 };

@@ -1,53 +1,77 @@
 # ChromaWing - Refactored Version
 
-## 🚧 Status: Work in Progress
+## ✅ Status: Basic Game Working!
 
 This is the modular, refactored version of ChromaWing built with **Vite** and **ES Modules**.
 
-### ✅ What Works
+### ✅ What Works (v0.5 - MVP)
 
-The build system compiles successfully and exposes:
-- `Parrot` class - Complete genetics model
-- `state` object - Game state management
-- `generateParrotSVG()` - SVG rendering
-- `getRandomName()` - Name generation
-- `randomBodyPartGenes()` - Gene creation
-- `breedBodyPartGenes()` - Breeding logic
-- `getDNAString()` - DNA export
-- `hasFullGenotype()` - Collection checker
+**Core Gameplay:**
+- ✅ Game initialization with starter parrot
+- ✅ Store with random parrots
+- ✅ Buy parrots from store
+- ✅ Breed two parrots (Mendelian inheritance)
+- ✅ Select parrots for breeding
+- ✅ Tab switching (Collection/Store)
+- ✅ Coin economy
+- ✅ Generation tracking
+- ✅ SVG rendering with genetics
+- ✅ Rarity and beauty calculations
+- ✅ Mutation system
+- ✅ New game function
 
-### ❌ What's Missing
+**File Size:** 20KB minified (vs 132KB original)
 
-The HTML expects these functions that aren't extracted yet:
-- `newGame()` - Game initialization
-- `switchTab()` - UI tab switching
-- `breedParrots()` - Main breeding function
-- `buyParrot()`, `sellParrot()` - Store functions
-- `selectParrot()` - Selection handler
-- `openLaboratory()` - Modal opening
-- `enterContest()` - Contest entry
-- All other UI functions...
+### ⏳ What's Missing (Advanced Features)
 
-**Result**: The page loads but the game doesn't work yet.
+These features from the original game aren't ported yet:
+- Laboratory modal with genetic details
+- Contest system
+- Achievement system
+- Save/load to localStorage
+- Proper toast notifications (using alert for now)
+- Sell parrot functionality
+- Notification history
+- DNA export strings
 
-### 📋 To Make It Work
+### 🎮 How to Play
 
-Need to extract and module ~1,800 more lines:
-1. Game logic (breeding, store, contests)
-2. UI components and event handlers
-3. Achievement system
-4. Save/load functionality
-5. Notification system
+1. Start with one beautiful starter parrot (Twilight)
+2. Visit the Store tab to buy more parrots (500 starting coins)
+3. Select two parrots from your collection
+4. Click "Breed Parrots" (costs 50 coins)
+5. Watch offspring inherit genetics via Mendelian inheritance
+6. Build your collection!
+
+### 🏗️ Architecture
+
+**Modular Structure:**
+```
+src/
+├── models/Parrot.js       - Genetics model
+├── game/
+│   ├── gameState.js       - State management
+│   ├── init.js            - Game initialization
+│   └── breeding.js        - Breeding logic
+├── ui/
+│   ├── renderer.js        - UI rendering
+│   └── events.js          - Event handlers
+├── rendering/
+│   ├── svgRenderer.js     - SVG generation
+│   └── colors.js          - Color utilities
+├── data/constants.js      - Game constants
+└── utils/                 - Helper functions
+```
 
 ### 🔧 Development
 
-Source code: `/parrot-genetics-game/src/`
+Source: `/parrot-genetics-game/src/`
 Build: `cd /parrot-genetics-game && npm run build`
-Original working game: `/public/breeding-game.html`
+Original: `/public/breeding-game.html`
 
 ### 📊 Progress
 
-- ✅ 40% - Core models and utilities
-- ⏳ 60% - Game logic and UI (pending)
+- ✅ 65% - Core gameplay working
+- ⏳ 35% - Advanced features (pending)
 
-See `/parrot-genetics-game/REFACTORING_STATUS.md` for details.
+**Next up:** Laboratory, Contests, Achievements, Save/Load
