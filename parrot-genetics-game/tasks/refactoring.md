@@ -135,14 +135,16 @@ main.js
   - Exported: PARROT_NAMES, TOAST_ICONS, CONTEST_TIERS, RARE_CONTEST_PARROTS
 - [x] Test: Ensure constants load correctly ✅
 
-### Phase 2: Core Systems ✅ (Partial - 3/5 complete)
+### Phase 2: Core Systems ✅ (Complete - 5/5 complete)
 - [x] Extract `gameState.js` (global state management)
   - Exported: State getters/setters, parrot management, coins, generation, etc.
 - [x] Extract `utils.js` (utility functions)
   - Exported: getRandomName, randomBoolean, randomBodyPartGenes
-- [x] Create `test-modules.html` for module verification (22 tests, all passing)
-- [ ] Extract `parrot.js` (Parrot class) - DEFERRED
-- [ ] Extract `genetics.js` (breeding functions) - DEFERRED
+- [x] Extract `parrot.js` (Parrot class - 526 lines)
+  - Exported: Parrot class with all genetics and beauty calculation methods
+- [x] Extract `genetics.js` (breeding functions - 66 lines)
+  - Exported: breedBodyPart, breedParrotGenes
+- [x] Create `test-modules.html` for module verification (30 tests, all passing)
 - [x] Test: Modules load and function correctly ✅
 
 ### Phase 3: Rendering
@@ -224,10 +226,12 @@ Using **ES6 modules** with `type="module"` in HTML:
   - `constants.js` - All game constants (401 lines)
   - `gameState.js` - Centralized state management (238 lines)
   - `utils.js` - Utility functions (47 lines)
-  - `test-modules.html` - Test suite (22 tests, 100% pass rate)
+  - `parrot.js` - Parrot class with genetics (526 lines)
+  - `genetics.js` - Breeding functions (66 lines)
+  - `test-modules.html` - Test suite (30 tests, 100% pass rate)
 - ✅ **Verified:** All modules load correctly via ES6 imports
-- 📊 **Status:** 3 modules complete, original game still functional
-- 🎯 **Next Step:** Wait for user feedback before extracting Parrot class
+- 📊 **Status:** 5 core modules complete (~1,278 lines extracted), original game still functional
+- 🎯 **Next Step:** Extract remaining systems (SVG, UI, notifications, storage, etc.)
 
 ---
 

@@ -68,6 +68,8 @@
         import { PARROT_NAMES, TOAST_ICONS, CONTEST_TIERS, RARE_CONTEST_PARROTS } from './js/constants.js';
         import * as GameState from './js/gameState.js';
         import { getRandomName, randomBoolean, randomBodyPartGenes } from './js/utils.js';
+        import { Parrot } from './js/parrot.js';
+        import { breedBodyPart, breedParrotGenes } from './js/genetics.js';
 
         const results = [];
 
@@ -100,7 +102,7 @@
         });
 
         test('PARROT_NAMES has correct length', () => {
-            assertEqual(PARROT_NAMES.length, 48, 'Should have 48 parrot names');
+            assertEqual(PARROT_NAMES.length, 52, 'Should have 52 parrot names');
         });
 
         test('TOAST_ICONS has correct keys', () => {
@@ -218,6 +220,138 @@
             genes.blue.forEach(allele => {
                 assert(typeof allele === 'boolean', 'Blue alleles should be boolean');
             });
+        });
+
+        // Test Parrot class
+        test('Can create Parrot instance', () => {
+            const genes = {
+                wings: randomBodyPartGenes(),
+                special_wing: randomBodyPartGenes(),
+                body: randomBodyPartGenes(),
+                head: randomBodyPartGenes(),
+                tail: randomBodyPartGenes(),
+                accents: randomBodyPartGenes()
+            };
+            const parrot = new Parrot('Test', genes, 1);
+            assert(parrot instanceof Parrot, 'Should be a Parrot instance');
+            assertEqual(parrot.name, 'Test', 'Should have correct name');
+            assertEqual(parrot.generation, 1, 'Should have generation 1');
+        });
+
+        test('Parrot countDominant works', () => {
+            const genes = {
+                wings: randomBodyPartGenes(),
+                special_wing: randomBodyPartGenes(),
+                body: randomBodyPartGenes(),
+                head: randomBodyPartGenes(),
+                tail: randomBodyPartGenes(),
+                accents: randomBodyPartGenes()
+            };
+            const parrot = new Parrot('Test', genes, 1);
+            const count = parrot.countDominant([true, true, false, false]);
+            assertEqual(count, 2, 'Should count 2 dominant alleles');
+        });
+
+        test('Parrot calculateRGBValue works', () => {
+            const genes = {
+                wings: randomBodyPartGenes(),
+                special_wing: randomBodyPartGenes(),
+                body: randomBodyPartGenes(),
+                head: randomBodyPartGenes(),
+                tail: randomBodyPartGenes(),
+                accents: randomBodyPartGenes()
+            };
+            const parrot = new Parrot('Test', genes, 1);
+            const value = parrot.calculateRGBValue([true, true, true, true]);
+            assertEqual(value, 255, 'All dominant should be 255');
+            const value2 = parrot.calculateRGBValue([false, false, false, false]);
+            assertEqual(value2, 0, 'All recessive should be 0');
+        });
+
+        test('Parrot calculateRarity returns valid value', () => {
+            const genes = {
+                wings: randomBodyPartGenes(),
+                special_wing: randomBodyPartGenes(),
+                body: randomBodyPartGenes(),
+                head: randomBodyPartGenes(),
+                tail: randomBodyPartGenes(),
+                accents: randomBodyPartGenes()
+            };
+            const parrot = new Parrot('Test', genes, 1);
+            const rarity = parrot.calculateRarity();
+            const validRarities = ['common', 'uncommon', 'rare', 'epic', 'legendary'];
+            assert(validRarities.includes(rarity), 'Should return valid rarity');
+        });
+
+        test('Parrot getValue returns positive number', () => {
+            const genes = {
+                wings: randomBodyPartGenes(),
+                special_wing: randomBodyPartGenes(),
+                body: randomBodyPartGenes(),
+                head: randomBodyPartGenes(),
+                tail: randomBodyPartGenes(),
+                accents: randomBodyPartGenes()
+            };
+            const parrot = new Parrot('Test', genes, 1);
+            const value = parrot.getValue();
+            assert(value > 0, 'Value should be positive');
+            assert(typeof value === 'number', 'Value should be a number');
+        });
+
+        test('Parrot calculateBeauty returns valid structure', () => {
+            const genes = {
+                wings: randomBodyPartGenes(),
+                special_wing: randomBodyPartGenes(),
+                body: randomBodyPartGenes(),
+                head: randomBodyPartGenes(),
+                tail: randomBodyPartGenes(),
+                accents: randomBodyPartGenes()
+            };
+            const parrot = new Parrot('Test', genes, 1);
+            const beauty = parrot.calculateBeauty();
+            assert(typeof beauty.score === 'number', 'Should have numeric score');
+            assert(Array.isArray(beauty.traits), 'Should have traits array');
+            assert(typeof beauty.bodyPartColors === 'object', 'Should have bodyPartColors');
+        });
+
+        // Test genetics module
+        test('breedBodyPart returns valid structure', () => {
+            const part1 = randomBodyPartGenes();
+            const part2 = randomBodyPartGenes();
+            const child = breedBodyPart(part1, part2);
+            assert(Array.isArray(child.red), 'Child should have red array');
+            assert(Array.isArray(child.green), 'Child should have green array');
+            assert(Array.isArray(child.blue), 'Child should have blue array');
+            assertEqual(child.red.length, 4, 'Red should have 4 alleles');
+            assertEqual(child.green.length, 4, 'Green should have 4 alleles');
+            assertEqual(child.blue.length, 4, 'Blue should have 4 alleles');
+            assert(typeof child.gradient === 'boolean', 'Gradient should be boolean');
+        });
+
+        test('breedParrotGenes returns all body parts', () => {
+            const genes1 = {
+                wings: randomBodyPartGenes(),
+                special_wing: randomBodyPartGenes(),
+                body: randomBodyPartGenes(),
+                head: randomBodyPartGenes(),
+                tail: randomBodyPartGenes(),
+                accents: randomBodyPartGenes()
+            };
+            const genes2 = {
+                wings: randomBodyPartGenes(),
+                special_wing: randomBodyPartGenes(),
+                body: randomBodyPartGenes(),
+                head: randomBodyPartGenes(),
+                tail: randomBodyPartGenes(),
+                accents: randomBodyPartGenes()
+            };
+            const childGenes = breedParrotGenes(genes1, genes2);
+            assert(childGenes.wings, 'Should have wings');
+            assert(childGenes.special_wing, 'Should have special_wing');
+            assert(childGenes.body, 'Should have body');
+            assert(childGenes.head, 'Should have head');
+            assert(childGenes.tail, 'Should have tail');
+            assert(childGenes.accents, 'Should have accents');
         });
 
         // Display results
