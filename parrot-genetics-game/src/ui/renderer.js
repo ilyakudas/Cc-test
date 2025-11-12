@@ -111,14 +111,14 @@ function updateBreedingPanel() {
     const rightSlot = document.getElementById('breedSlotRight');
     const breedButton = document.getElementById('breedButton');
 
-    if (state.breedingPair.left) {
+    if (state.breedingPair.left !== null) {
         const parrot = state.parrots.find(p => p.id === state.breedingPair.left);
         leftSlot.innerHTML = `<div class="slot-label">Left Parent</div><div>${parrot.name}</div>`;
     } else {
         leftSlot.innerHTML = `<div class="slot-label">Left Parent</div><div style="color: #ccc;">Empty</div>`;
     }
 
-    if (state.breedingPair.right) {
+    if (state.breedingPair.right !== null) {
         const parrot = state.parrots.find(p => p.id === state.breedingPair.right);
         rightSlot.innerHTML = `<div class="slot-label">Right Parent</div><div>${parrot.name}</div>`;
     } else {
@@ -126,7 +126,7 @@ function updateBreedingPanel() {
     }
 
     // Enable breed button if both slots filled
-    breedButton.disabled = !(state.breedingPair.left && state.breedingPair.right);
+    breedButton.disabled = !(state.breedingPair.left !== null && state.breedingPair.right !== null);
 }
 
 // Update action buttons for selected parrot
@@ -140,7 +140,7 @@ function updateActionButtons() {
     }
 
     // Only show actions when viewing collection tab and a parrot is selected
-    if (state.currentTab !== 'collection' || !state.selectedParrotId) {
+    if (state.currentTab !== 'collection' || state.selectedParrotId === null || state.selectedParrotId === undefined) {
         actionSection.style.display = 'none';
         return;
     }
@@ -175,9 +175,9 @@ function selectParrot(parrotId) {
     state.selectedParrotId = parrotId;
 
     // Add to breeding pair if not already in
-    if (!state.breedingPair.left) {
+    if (state.breedingPair.left === null) {
         state.breedingPair.left = parrotId;
-    } else if (!state.breedingPair.right && state.breedingPair.left !== parrotId) {
+    } else if (state.breedingPair.right === null && state.breedingPair.left !== parrotId) {
         state.breedingPair.right = parrotId;
     }
 

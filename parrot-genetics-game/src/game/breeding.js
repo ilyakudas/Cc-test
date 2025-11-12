@@ -9,7 +9,7 @@ import { BODY_PARTS, MUTATION_RATE } from '../data/constants.js';
 
 // Breed two parrots
 export async function breedParrots() {
-    if (!state.breedingPair.left || !state.breedingPair.right) {
+    if (state.breedingPair.left === null || state.breedingPair.right === null) {
         alert('Please select two parrots to breed!');
         return;
     }
