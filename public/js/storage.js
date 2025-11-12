@@ -70,16 +70,16 @@ export function loadGame() {
 
                 // Restore other state
                 GameState.setCoins(gameStateData.coins);
-                GameState.parrotIdCounter = gameStateData.parrotIdCounter;
+                GameState.setParrotIdCounter(gameStateData.parrotIdCounter);
                 GameState.setGeneration(gameStateData.generation);
 
                 // Restore used names
                 const usedNamesSet = new Set(gameStateData.usedNames || []);
-                GameState.usedNames = usedNamesSet;
+                GameState.setUsedNames(usedNamesSet);
 
                 // Restore examined parrots
                 const examinedSet = new Set(gameStateData.examinedParrots || []);
-                GameState.examinedParrots = examinedSet;
+                GameState.setExaminedParrots(examinedSet);
 
                 GameState.setContestProgress(gameStateData.contestProgress || {});
                 GameState.setParrotTrophies(gameStateData.parrotTrophies || {});

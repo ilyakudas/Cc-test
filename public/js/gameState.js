@@ -203,6 +203,14 @@ export function clearUsedNames() {
     usedNames.clear();
 }
 
+export function setUsedNames(namesSet) {
+    usedNames = namesSet;
+}
+
+export function setExaminedParrots(examinedSet) {
+    examinedParrots = examinedSet;
+}
+
 export function setNotificationHistory(history) {
     notificationHistory = history;
 }

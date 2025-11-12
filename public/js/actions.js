@@ -548,7 +548,51 @@ export async function openLaboratory(parrotId) {
 
     html += `</div>`;
 
-    // Body part genes sections (abbreviated for brevity)
+    // DNA Sequence Section (Compact, Parseable Format)
+    html += `<div class="body-part-genes" style="background: linear-gradient(135deg, #00695c22, #00695c11); border-color: #00695c;">`;
+    html += `<h4>🧬 DNA Sequence <span style="font-size: 0.7em; color: #666; font-weight: normal;">(Compact Genotype)</span></h4>`;
+
+    // Generate compact DNA string
+    const bodyPartAbbr = {
+        'wings': 'W',
+        'special_wing': 'S',
+        'body': 'B',
+        'head': 'H',
+        'tail': 'T',
+        'accents': 'A'
+    };
+
+    let dnaString = '';
+    let fullDnaString = '';
+    for (const bodyPart of ['wings', 'special_wing', 'body', 'head', 'tail', 'accents']) {
+        const part = parrot.genes[bodyPart];
+        const rCount = parrot.countDominant(part.red);
+        const gCount = parrot.countDominant(part.green);
+        const bCount = parrot.countDominant(part.blue);
+        const grad = part.gradient ? '*' : '';
+
+        dnaString += `${bodyPartAbbr[bodyPart]}:${rCount}${gCount}${bCount}${grad} `;
+        fullDnaString += `${rCount}${gCount}${bCount}${grad ? '1' : '0'}-`;
+    }
+
+    fullDnaString = fullDnaString.slice(0, -1); // Remove trailing dash
+
+    html += `<div style="margin: 10px 0; padding: 12px; background: #f8f9fa; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.95em; word-break: break-all;">`;
+    html += `<div style="color: #00695c; font-weight: bold; margin-bottom: 8px;">${dnaString.trim()}</div>`;
+    html += `<div style="color: #666; font-size: 0.85em; margin-top: 5px;">Raw: ${fullDnaString}</div>`;
+    html += `</div>`;
+
+    html += `<div style="margin-top: 10px; padding: 10px; background: #e0f2f1; border-radius: 8px; font-size: 0.85em;">`;
+    html += `<strong>Format:</strong> [Part]:[R][G][B][Gradient]<br>`;
+    html += `• Part: W=Wings, S=Special, B=Body, H=Head, T=Tail, A=Accents<br>`;
+    html += `• RGB: 0-4 dominant alleles per color<br>`;
+    html += `• Gradient: * if present<br>`;
+    html += `• Raw format: RGBG-RGBG-... (G=0/1 for gradient)`;
+    html += `</div>`;
+
+    html += `</div>`;
+
+    // Body part genes sections
     for (const bodyPart of ['wings', 'special_wing', 'body', 'head', 'tail', 'accents']) {
         const part = parrot.genes[bodyPart];
         const colorData = parrot.calculateBodyPartColor(bodyPart);
