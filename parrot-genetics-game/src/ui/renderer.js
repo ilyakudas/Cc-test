@@ -75,9 +75,20 @@ async function createParrotCard(parrot, isStore) {
     const beautyColor = getBeautyColor(beauty.score);
     const price = parrot.getValue();
 
+    // Check if parrot is in breeding slots (show L/R indicator)
+    let breedingIndicator = '';
+    if (!isStore) {
+        if (state.breedingPair.left === parrot.id) {
+            breedingIndicator = '<div class="breeding-indicator breeding-left">L</div>';
+        } else if (state.breedingPair.right === parrot.id) {
+            breedingIndicator = '<div class="breeding-indicator breeding-right">R</div>';
+        }
+    }
+
     // Build card HTML
     card.innerHTML = `
         ${isStore ? `<div class="price">${price}💰</div>` : ''}
+        ${breedingIndicator}
         <div class="parrot-mini">${svg}</div>
         <div class="parrot-name">${parrot.name}</div>
         <div class="parrot-gen">Gen ${parrot.generation}</div>
@@ -86,21 +97,12 @@ async function createParrotCard(parrot, isStore) {
             Beauty: ${Math.round(beauty.score)}
         </div>
         ${parrot.hasAnyGradients() ? '<div class="gradient-indicator">✨ Gradient</div>' : ''}
-        ${isStore ? `<button class="btn-buy" onclick="event.stopPropagation(); buyParrot(${parrot.id});" style="background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 8px; width: 100%; font-weight: 600;">💰 Buy (${price} coins)</button>` : ''}
     `;
 
-    // Add click handler for collection cards (select) and store cards (preview)
-    if (!isStore) {
-        card.onclick = () => {
-            selectParrot(parrot.id);
-        };
-    } else {
-        // Store cards can be clicked to preview, but buy button is separate
-        card.onclick = () => {
-            state.selectedParrotId = parrot.id;
-            updateUI();
-        };
-    }
+    // Click to select (both store and collection)
+    card.onclick = () => {
+        selectParrot(parrot.id);
+    };
 
     return card;
 }
@@ -139,58 +141,78 @@ function updateActionButtons() {
         return;
     }
 
-    // Only show actions when viewing collection tab and a parrot is selected
-    if (state.currentTab !== 'collection' || state.selectedParrotId === null || state.selectedParrotId === undefined) {
+    // Only show actions when a parrot is selected
+    if (state.selectedParrotId === null || state.selectedParrotId === undefined) {
         actionSection.style.display = 'none';
         return;
     }
 
-    const selectedParrot = state.parrots.find(p => p.id === state.selectedParrotId);
-    if (!selectedParrot) {
+    // Check if parrot is in store or collection
+    let parrot = state.parrots.find(p => p.id === state.selectedParrotId);
+    let isInStore = false;
+
+    if (!parrot) {
+        parrot = state.storeParrots.find(p => p.id === state.selectedParrotId);
+        isInStore = true;
+    }
+
+    if (!parrot) {
         actionSection.style.display = 'none';
         return;
     }
 
     actionSection.style.display = 'block';
 
-    // Build action buttons
-    actionButtons.innerHTML = `
-        <button class="btn" onclick="addToBreedingSlot('left', ${selectedParrot.id})" style="background: #667eea; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-right: 8px;">
-            ⬅️ Breed Left
-        </button>
-        <button class="btn" onclick="addToBreedingSlot('right', ${selectedParrot.id})" style="background: #764ba2; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-right: 8px;">
-            ➡️ Breed Right
-        </button>
-        <button class="btn" onclick="sellParrot(${selectedParrot.id})" style="background: #ffc107; color: #333; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-right: 8px;">
-            💵 Sell (${Math.floor(selectedParrot.getValue() * 0.6)} coins)
-        </button>
-        <button class="btn" onclick="openLaboratory(${selectedParrot.id})" style="background: #17a2b8; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">
-            🔬 Laboratory
-        </button>
-    `;
+    // Build action buttons based on whether it's a store or collection parrot
+    if (isInStore) {
+        const price = parrot.getValue();
+        actionButtons.innerHTML = `
+            <button class="btn btn-buy" onclick="buyParrot(${parrot.id})" ${state.coins < price ? 'disabled' : ''} style="background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                💰 Buy for ${price} coins
+            </button>
+        `;
+    } else {
+        const sellValue = Math.floor(parrot.getValue() * 0.7);
+        actionButtons.innerHTML = `
+            <button class="btn btn-breed-left" onclick="breedOnLeft(${parrot.id})" style="background: #667eea; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-right: 8px;">
+                💕 Breed on Left
+            </button>
+            <button class="btn btn-breed-right" onclick="breedOnRight(${parrot.id})" style="background: #764ba2; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-right: 8px;">
+                💕 Breed on Right
+            </button>
+            <button class="btn btn-sell" onclick="sellParrot(${parrot.id})" style="background: #ffc107; color: #333; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-right: 8px;">
+                💵 Sell for ${sellValue} coins
+            </button>
+            <button class="btn btn-lab" onclick="openLaboratory(${parrot.id})" style="background: #17a2b8; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">
+                🔬 Laboratory
+            </button>
+        `;
+    }
 }
 
-// Select a parrot
+// Select a parrot (just for preview - doesn't add to breeding slots)
 function selectParrot(parrotId) {
     state.selectedParrotId = parrotId;
-
-    // Add to breeding pair if not already in
-    if (state.breedingPair.left === null) {
-        state.breedingPair.left = parrotId;
-    } else if (state.breedingPair.right === null && state.breedingPair.left !== parrotId) {
-        state.breedingPair.right = parrotId;
-    }
-
     updateUI();
 }
 
-// Add parrot to specific breeding slot
-function addToBreedingSlot(slot, parrotId) {
-    if (slot === 'left') {
-        state.breedingPair.left = parrotId;
-    } else if (slot === 'right') {
-        state.breedingPair.right = parrotId;
+// Add parrot to left breeding slot
+function breedOnLeft(parrotId) {
+    // Prevent selecting the same parrot in both slots
+    if (state.breedingPair.right === parrotId) {
+        return; // Silently prevent
     }
+    state.breedingPair.left = parrotId;
+    updateUI();
+}
+
+// Add parrot to right breeding slot
+function breedOnRight(parrotId) {
+    // Prevent selecting the same parrot in both slots
+    if (state.breedingPair.left === parrotId) {
+        return; // Silently prevent
+    }
+    state.breedingPair.right = parrotId;
     updateUI();
 }
 
@@ -214,4 +236,4 @@ function buyParrot(parrotId) {
 }
 
 // Export for window
-export { selectParrot, buyParrot, addToBreedingSlot };
+export { selectParrot, buyParrot, breedOnLeft, breedOnRight };
