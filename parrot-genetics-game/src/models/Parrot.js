@@ -32,7 +32,7 @@ export class Parrot {
             const g = this.calculateRGBValue(part.green);
             const b = this.calculateRGBValue(part.blue);
             return {
-                color: `rgb(\${r}, \${g}, \${b})`,
+                color: `rgb(${r}, ${g}, ${b})`,
                 isGradient: false
             };
         } else {
@@ -45,8 +45,8 @@ export class Parrot {
             const endB = this.calculateRGBValue([part.blue[2], part.blue[3]]);
 
             return {
-                startColor: `rgb(\${startR}, \${startG}, \${startB})`,
-                endColor: `rgb(\${endR}, \${endG}, \${endB})`,
+                startColor: `rgb(${startR}, ${startG}, ${startB})`,
+                endColor: `rgb(${endR}, ${endG}, ${endB})`,
                 isGradient: true
             };
         }

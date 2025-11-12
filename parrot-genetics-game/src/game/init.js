@@ -8,6 +8,8 @@ import { randomBodyPartGenes } from '../utils/genetics.js';
 
 // Initialize a new game
 export async function initGame() {
+    console.log('[Init] Starting game initialization...');
+
     // Create starter parrot
     const starterGenes = {
         wings: {
@@ -50,9 +52,12 @@ export async function initGame() {
 
     const starter = new Parrot('Twilight', starterGenes, 1);
     state.parrots = [starter];
+    console.log('[Init] Created starter parrot:', starter.name, '| ID:', starter.id);
+    console.log('[Init] State parrots count:', state.parrots.length);
 
     // Generate store with random parrots
     generateStore();
+    console.log('[Init] Generated store with', state.storeParrots.length, 'parrots');
 
     return true;
 }

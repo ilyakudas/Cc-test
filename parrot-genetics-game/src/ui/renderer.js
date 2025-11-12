@@ -21,12 +21,22 @@ export function updateStats() {
 
 // Render parrot grid
 export async function renderParrotGrid() {
+    console.log('[Render] Rendering parrot grid...');
+    console.log('[Render] Collection parrots:', state.parrots.length);
+    console.log('[Render] Store parrots:', state.storeParrots.length);
+
     const collectionTab = document.getElementById('collectionTab');
     const storeTab = document.getElementById('storeTab');
+
+    if (!collectionTab || !storeTab) {
+        console.error('[Render] ERROR: Could not find tab elements!');
+        return;
+    }
 
     // Render collection
     collectionTab.innerHTML = '';
     for (const parrot of state.parrots) {
+        console.log('[Render] Creating card for collection parrot:', parrot.name);
         const card = await createParrotCard(parrot, false);
         collectionTab.appendChild(card);
     }
@@ -34,9 +44,12 @@ export async function renderParrotGrid() {
     // Render store
     storeTab.innerHTML = '';
     for (const parrot of state.storeParrots) {
+        console.log('[Render] Creating card for store parrot:', parrot.name);
         const card = await createParrotCard(parrot, true);
         storeTab.appendChild(card);
     }
+
+    console.log('[Render] Grid rendering complete!');
 }
 
 // Create a parrot card
