@@ -147,17 +147,17 @@ main.js
 - [x] Create `test-modules.html` for module verification (30 tests, all passing)
 - [x] Test: Modules load and function correctly ✅
 
-### Phase 3: Rendering
-- [ ] Extract `svg.js` (SVG handling)
-- [ ] Extract `ui.js` (UI rendering)
-- [ ] Test: Ensure parrots display correctly
+### Phase 3: Rendering ✅ (Partial - 1/2 complete)
+- [x] Extract `svg.js` (SVG loading and rendering - 210 lines)
+- [ ] Extract `ui.js` (UI rendering) - DEFERRED to Phase 5
+- [x] Test: SVG module loads correctly ✅
 
-### Phase 4: Features
-- [ ] Extract `notifications.js` (toast system)
-- [ ] Extract `storage.js` (save/load)
-- [ ] Extract `contests.js` (contest system)
-- [ ] Extract `achievements.js` (achievement system)
-- [ ] Test: Ensure all features work
+### Phase 4: Features ✅ (Partial - 2/4 complete)
+- [x] Extract `notifications.js` (toast system - 165 lines)
+- [x] Extract `storage.js` (save/load - 127 lines)
+- [ ] Extract `contests.js` (contest system) - DEFERRED to Phase 5
+- [ ] Extract `achievements.js` (achievement system) - DEFERRED to Phase 5
+- [x] Test: Notifications and storage modules load correctly ✅
 
 ### Phase 5: Integration
 - [ ] Extract `actions.js` (action handlers)
@@ -228,10 +228,13 @@ Using **ES6 modules** with `type="module"` in HTML:
   - `utils.js` - Utility functions (47 lines)
   - `parrot.js` - Parrot class with genetics (526 lines)
   - `genetics.js` - Breeding functions (66 lines)
+  - `svg.js` - SVG rendering (210 lines)
+  - `notifications.js` - Toast system (165 lines)
+  - `storage.js` - Save/load (127 lines)
   - `test-modules.html` - Test suite (30 tests, 100% pass rate)
 - ✅ **Verified:** All modules load correctly via ES6 imports
-- 📊 **Status:** 5 core modules complete (~1,278 lines extracted), original game still functional
-- 🎯 **Next Step:** Extract remaining systems (SVG, UI, notifications, storage, etc.)
+- 📊 **Status:** 8 modules complete (~1,780 lines extracted / 55%), original game still functional
+- 🎯 **Next Step:** Create main.js integration and wire up all modules
 
 ---
 
