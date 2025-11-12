@@ -57,6 +57,18 @@ export function setStoreParrots(newStoreParrots) {
     storeParrots = newStoreParrots;
 }
 
+export function addStoreParrot(parrot) {
+    storeParrots.push(parrot);
+}
+
+export function removeStoreParrot(parrotId) {
+    storeParrots = storeParrots.filter(p => p.id !== parrotId);
+}
+
+export function clearStoreParrots() {
+    storeParrots = [];
+}
+
 export function setSelectedParrotId(id) {
     selectedParrotId = id;
 }
@@ -90,7 +102,19 @@ export function subtractCoins(amount) {
 }
 
 export function incrementParrotIdCounter() {
+    parrotIdCounter++;
+}
+
+export function getParrotIdCounter() {
+    return parrotIdCounter;
+}
+
+export function getAndIncrementParrotIdCounter() {
     return parrotIdCounter++;
+}
+
+export function setParrotIdCounter(value) {
+    parrotIdCounter = value;
 }
 
 export function setGeneration(gen) {
@@ -117,12 +141,35 @@ export function hasExaminedParrot(parrotId) {
     return examinedParrots.has(parrotId);
 }
 
-export function setContestProgress(progress) {
-    contestProgress = progress;
+export function setContestProgress(parrotIdOrProgress, tierIndex, progressData) {
+    // Support both old API (single object) and new API (parrotId, tierIndex, progressData)
+    if (typeof parrotIdOrProgress === 'object' && tierIndex === undefined) {
+        contestProgress = parrotIdOrProgress;
+    } else {
+        if (!contestProgress[parrotIdOrProgress]) {
+            contestProgress[parrotIdOrProgress] = {};
+        }
+        contestProgress[parrotIdOrProgress][tierIndex] = progressData;
+    }
 }
 
-export function setParrotTrophies(trophies) {
-    parrotTrophies = trophies;
+export function setParrotTrophies(trophiesOrParrotId, trophyData) {
+    // Support both old API (single object) and new API (parrotId, trophyData)
+    if (typeof trophiesOrParrotId === 'object' && trophyData === undefined) {
+        parrotTrophies = trophiesOrParrotId;
+    } else {
+        if (!parrotTrophies[trophiesOrParrotId]) {
+            parrotTrophies[trophiesOrParrotId] = [];
+        }
+        parrotTrophies[trophiesOrParrotId].push(trophyData);
+    }
+}
+
+export function addParrotTrophy(parrotId, trophy) {
+    if (!parrotTrophies[parrotId]) {
+        parrotTrophies[parrotId] = [];
+    }
+    parrotTrophies[parrotId].push(trophy);
 }
 
 export function setAchievements(newAchievements) {
@@ -185,14 +232,30 @@ export function getStoreParrots() {
     return storeParrots;
 }
 
+export function getSelectedParrotId() {
+    return selectedParrotId;
+}
+
 export function getSelectedParrot() {
     return parrots.find(p => p.id === selectedParrotId);
+}
+
+export function getBreedingPair() {
+    return breedingPair;
 }
 
 export function getBreedingParents() {
     const left = breedingPair.left !== null ? parrots.find(p => p.id === breedingPair.left) : null;
     const right = breedingPair.right !== null ? parrots.find(p => p.id === breedingPair.right) : null;
     return { left, right };
+}
+
+export function getCurrentTab() {
+    return currentTab;
+}
+
+export function getExaminedParrots() {
+    return examinedParrots;
 }
 
 export function getCoins() {
@@ -223,7 +286,12 @@ export function getContestProgress() {
     return contestProgress;
 }
 
-export function getParrotTrophies() {
+export function getParrotTrophies(parrotId) {
+    // If parrotId is provided, return trophies for that parrot
+    if (parrotId !== undefined) {
+        return parrotTrophies[parrotId] || [];
+    }
+    // Otherwise return entire trophies object (for save/load)
     return parrotTrophies;
 }
 

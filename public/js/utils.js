@@ -44,3 +44,65 @@ export function randomBodyPartGenes() {
         gradient: false
     };
 }
+
+/**
+ * Create parrot genes with specified color purity
+ * @param {string} targetPurity - 'high' (80% pure), 'medium' (50%), 'low' (20%), or 'random'
+ * @returns {Object} Complete gene set for all body parts
+ */
+export function createParrotWithPurity(targetPurity) {
+    const genes = {
+        wings: null,
+        special_wing: null,
+        body: null,
+        head: null,
+        tail: null,
+        accents: null
+    };
+
+    const bodyParts = ['wings', 'special_wing', 'body', 'head', 'tail', 'accents'];
+
+    for (const part of bodyParts) {
+        const partGenes = {
+            red: [],
+            green: [],
+            blue: [],
+            gradient: false
+        };
+
+        // Generate each color channel based on purity
+        for (const color of ['red', 'green', 'blue']) {
+            let alleles;
+            if (targetPurity === 'high') {
+                // 80% chance of pure (0000 or 1111)
+                if (Math.random() < 0.8) {
+                    const val = Math.random() < 0.5;
+                    alleles = [val, val, val, val];
+                } else {
+                    // Nearly pure (0001 or 1110)
+                    const base = Math.random() < 0.5;
+                    alleles = [base, base, base, !base];
+                }
+            } else if (targetPurity === 'medium') {
+                // 50% pure, 50% mixed
+                if (Math.random() < 0.5) {
+                    const val = Math.random() < 0.5;
+                    alleles = [val, val, val, val];
+                } else {
+                    alleles = [randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean()];
+                }
+            } else if (targetPurity === 'low') {
+                // Mostly mixed
+                alleles = [randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean()];
+            } else {
+                // Random
+                alleles = [randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean()];
+            }
+            partGenes[color] = alleles;
+        }
+
+        genes[part] = partGenes;
+    }
+
+    return genes;
+}
