@@ -64,16 +64,111 @@ export function openLaboratory(parrotId) {
         return;
     }
 
-    // For now, show a simple placeholder
+    // Get detailed analysis
+    const rarity = parrot.calculateRarity();
+    const beauty = parrot.calculateBeauty();
+    const bodyParts = ['wings', 'special_wing', 'body', 'head', 'tail', 'accents'];
+    const bodyPartLabels = {
+        'wings': 'Wings',
+        'special_wing': 'Special Wings',
+        'body': 'Body',
+        'head': 'Head',
+        'tail': 'Tail',
+        'accents': 'Accents'
+    };
+
+    // Generate genetics table
+    let geneticsTable = '<table style="width: 100%; border-collapse: collapse; margin: 10px 0;">';
+    geneticsTable += '<thead><tr style="background: #2a2a3e; color: white;">';
+    geneticsTable += '<th style="padding: 8px; border: 1px solid #444;">Part</th>';
+    geneticsTable += '<th style="padding: 8px; border: 1px solid #444;">Red</th>';
+    geneticsTable += '<th style="padding: 8px; border: 1px solid #444;">Green</th>';
+    geneticsTable += '<th style="padding: 8px; border: 1px solid #444;">Blue</th>';
+    geneticsTable += '<th style="padding: 8px; border: 1px solid #444;">Gradient</th>';
+    geneticsTable += '<th style="padding: 8px; border: 1px solid #444;">Color</th>';
+    geneticsTable += '</tr></thead><tbody>';
+
+    for (const part of bodyParts) {
+        const genes = parrot.genes[part];
+        const redDom = parrot.countDominant(genes.red);
+        const greenDom = parrot.countDominant(genes.green);
+        const blueDom = parrot.countDominant(genes.blue);
+        const colorInfo = parrot.calculateBodyPartColor(part);
+        const colorDisplay = beauty.bodyPartColors[part]?.displayColor || 'N/A';
+
+        geneticsTable += `<tr style="background: ${part === 'wings' || part === 'body' || part === 'tail' ? '#1a1a2e' : '#16213e'};">`;
+        geneticsTable += `<td style="padding: 8px; border: 1px solid #444;"><strong>${bodyPartLabels[part]}</strong></td>`;
+        geneticsTable += `<td style="padding: 8px; border: 1px solid #444;">${redDom}/4</td>`;
+        geneticsTable += `<td style="padding: 8px; border: 1px solid #444;">${greenDom}/4</td>`;
+        geneticsTable += `<td style="padding: 8px; border: 1px solid #444;">${blueDom}/4</td>`;
+        geneticsTable += `<td style="padding: 8px; border: 1px solid #444;">${genes.gradient ? '✓' : '✗'}</td>`;
+        geneticsTable += `<td style="padding: 8px; border: 1px solid #444;">${colorDisplay}</td>`;
+        geneticsTable += '</tr>';
+    }
+    geneticsTable += '</tbody></table>';
+
+    // Beauty score breakdown
+    let beautyBreakdown = '<div style="margin: 15px 0;">';
+    beautyBreakdown += `<h4>Beauty Score Breakdown: ${Math.round(beauty.score)}/200</h4>`;
+    beautyBreakdown += '<ul style="list-style: none; padding-left: 0; max-height: 200px; overflow-y: auto;">';
+    for (const trait of beauty.traits) {
+        beautyBreakdown += `<li style="padding: 3px 0; font-size: 0.9em;">• ${trait}</li>`;
+    }
+    beautyBreakdown += '</ul></div>';
+
+    // Part contributions
+    let contributionsTable = '<table style="width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 0.9em;">';
+    contributionsTable += '<thead><tr style="background: #2a2a3e; color: white;">';
+    contributionsTable += '<th style="padding: 6px; border: 1px solid #444;">Part</th>';
+    contributionsTable += '<th style="padding: 6px; border: 1px solid #444;">Contribution</th>';
+    contributionsTable += '</tr></thead><tbody>';
+
+    for (const part of bodyParts) {
+        const contrib = beauty.partContributions[part] || 0;
+        contributionsTable += `<tr style="background: ${part === 'wings' || part === 'body' || part === 'tail' ? '#1a1a2e' : '#16213e'};">`;
+        contributionsTable += `<td style="padding: 6px; border: 1px solid #444;">${bodyPartLabels[part]}</td>`;
+        contributionsTable += `<td style="padding: 6px; border: 1px solid #444;">${contrib >= 0 ? '+' : ''}${contrib.toFixed(1)}</td>`;
+        contributionsTable += '</tr>';
+    }
+    contributionsTable += '</tbody></table>';
+
+    // DNA string
+    const dnaString = window.getDNAString ? window.getDNAString(parrot, 'human') : 'N/A';
+
+    // Build complete display
     display.innerHTML = `
-        <h2>🔬 Laboratory Analysis</h2>
-        <h3>${parrot.name}</h3>
-        <p><strong>Generation:</strong> ${parrot.generation}</p>
-        <p><strong>Rarity:</strong> ${parrot.calculateRarity()}</p>
-        <p><strong>Beauty Score:</strong> ${Math.round(parrot.calculateBeauty().score)}</p>
-        <p><strong>Value:</strong> ${parrot.getValue()} coins</p>
-        <hr>
-        <p style="color: #999; font-style: italic;">Full genetic analysis coming in future update...</p>
+        <div style="max-height: 80vh; overflow-y: auto;">
+            <h2>🔬 Laboratory Analysis</h2>
+            <h3>${parrot.name}</h3>
+
+            <div style="background: #1a1a2e; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                <h4>Basic Statistics</h4>
+                <p><strong>Generation:</strong> ${parrot.generation}</p>
+                <p><strong>Rarity:</strong> <span style="text-transform: capitalize;">${rarity}</span></p>
+                <p><strong>Beauty Score:</strong> ${Math.round(beauty.score)} / 200</p>
+                <p><strong>Value:</strong> ${parrot.getValue()} coins</p>
+                <p><strong>Has Gradients:</strong> ${parrot.hasAnyGradients() ? 'Yes' : 'No'}</p>
+            </div>
+
+            <div style="background: #1a1a2e; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                <h4>Genetic Makeup</h4>
+                ${geneticsTable}
+            </div>
+
+            <div style="background: #1a1a2e; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                ${beautyBreakdown}
+            </div>
+
+            <div style="background: #1a1a2e; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                <h4>Part Contributions to Beauty</h4>
+                ${contributionsTable}
+            </div>
+
+            <div style="background: #1a1a2e; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                <h4>DNA String</h4>
+                <p style="font-family: monospace; word-break: break-all; font-size: 0.9em;">${dnaString}</p>
+            </div>
+        </div>
     `;
 
     modal.style.display = 'flex';

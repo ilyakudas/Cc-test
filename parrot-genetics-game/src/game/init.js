@@ -5,10 +5,23 @@ import { Parrot } from '../models/Parrot.js';
 import { state, resetGame } from './gameState.js';
 import { getRandomName } from '../utils/naming.js';
 import { randomBodyPartGenes } from '../utils/genetics.js';
+import { hasSaveData, loadGame, enableAutoSave } from './saveLoad.js';
 
 // Initialize a new game
 export async function initGame() {
     console.log('[Init] Starting game initialization...');
+
+    // Check for existing save data
+    if (hasSaveData()) {
+        console.log('[Init] Found existing save data, loading...');
+        const loaded = loadGame();
+        if (loaded) {
+            // Enable auto-save
+            enableAutoSave();
+            return true;
+        }
+        console.log('[Init] Failed to load save data, starting new game...');
+    }
 
     // Create starter parrot
     const starterGenes = {
@@ -59,6 +72,9 @@ export async function initGame() {
     generateStore();
     console.log('[Init] Generated store with', state.storeParrots.length, 'parrots');
 
+    // Enable auto-save
+    enableAutoSave();
+
     return true;
 }
 
@@ -85,16 +101,18 @@ export function generateStore() {
 }
 
 // Start a new game
-export function newGame() {
+export async function newGame() {
     if (!confirm('Start a new game? This will erase your current progress!')) {
         return;
     }
 
+    const { deleteSaveData } = await import('./saveLoad.js');
+    deleteSaveData();
     resetGame();
-    initGame();
+    await initGame();
 
     // Trigger UI update
     if (window.updateUI) {
-        window.updateUI();
+        await window.updateUI();
     }
 }

@@ -13,6 +13,7 @@ import { breedParrots, sellParrot } from './game/breeding.js';
 import { updateUI, updateStats, breedOnLeft, breedOnRight, buyParrot, removeFromSlot } from './ui/renderer.js';
 import { switchTab, toggleMutations, openLaboratory, closeModal, closeContestModal } from './ui/events.js';
 import { showToast, dismissToast, toggleNotificationHistory, clearNotificationHistory } from './ui/notifications.js';
+import { saveGame, loadGame, exportSaveData, importSaveData, getSaveInfo } from './game/saveLoad.js';
 
 // Expose to window for HTML onclick handlers
 window.Parrot = Parrot;
@@ -51,6 +52,13 @@ window.clearNotificationHistory = clearNotificationHistory;
 // Toast notification system
 window.showToast = showToast;
 window.dismissToast = dismissToast;
+
+// Save/Load system
+window.saveGame = saveGame;
+window.loadGame = loadGame;
+window.exportSaveData = exportSaveData;
+window.importSaveData = importSaveData;
+window.getSaveInfo = getSaveInfo;
 
 console.log('ChromaWing v3.0 - Modular version loaded');
 console.log('Modules loaded:', {
