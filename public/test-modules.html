@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module Test - ChromaWing</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #667eea;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #ccc;
+        }
+        .test-result.pass {
+            background: #d4edda;
+            border-left-color: #28a745;
+            color: #155724;
+        }
+        .test-result.fail {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+            color: #721c24;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Module Test Suite</h1>
+        <p>Testing refactored modules for ChromaWing Breeding Simulator</p>
+
+        <div id="testResults"></div>
+
+        <div class="test-section">
+            <h3>Test Summary</h3>
+            <div id="summary"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { PARROT_NAMES, TOAST_ICONS, CONTEST_TIERS, RARE_CONTEST_PARROTS } from './js/constants.js';
+        import * as GameState from './js/gameState.js';
+        import { getRandomName, randomBoolean, randomBodyPartGenes } from './js/utils.js';
+
+        const results = [];
+
+        function test(name, fn) {
+            try {
+                fn();
+                results.push({ name, status: 'pass', message: 'Test passed' });
+                return true;
+            } catch (error) {
+                results.push({ name, status: 'fail', message: error.message });
+                return false;
+            }
+        }
+
+        function assert(condition, message) {
+            if (!condition) {
+                throw new Error(message || 'Assertion failed');
+            }
+        }
+
+        function assertEqual(actual, expected, message) {
+            if (actual !== expected) {
+                throw new Error(message || `Expected ${expected}, got ${actual}`);
+            }
+        }
+
+        // Test constants.js
+        test('PARROT_NAMES is an array', () => {
+            assert(Array.isArray(PARROT_NAMES), 'PARROT_NAMES should be an array');
+        });
+
+        test('PARROT_NAMES has correct length', () => {
+            assertEqual(PARROT_NAMES.length, 48, 'Should have 48 parrot names');
+        });
+
+        test('TOAST_ICONS has correct keys', () => {
+            assert(TOAST_ICONS.success === '✅', 'Should have success icon');
+            assert(TOAST_ICONS.info === 'ℹ️', 'Should have info icon');
+            assert(TOAST_ICONS.warning === '⚠️', 'Should have warning icon');
+            assert(TOAST_ICONS.error === '❌', 'Should have error icon');
+        });
+
+        test('CONTEST_TIERS is an array of 5 tiers', () => {
+            assert(Array.isArray(CONTEST_TIERS), 'CONTEST_TIERS should be an array');
+            assertEqual(CONTEST_TIERS.length, 5, 'Should have 5 contest tiers');
+        });
+
+        test('First contest tier is unlocked', () => {
+            assertEqual(CONTEST_TIERS[0].unlocked, true, 'First tier should be unlocked');
+        });
+
+        test('RARE_CONTEST_PARROTS has correct structure', () => {
+            assert(typeof RARE_CONTEST_PARROTS === 'object', 'Should be an object');
+            assert(RARE_CONTEST_PARROTS[0], 'Should have tier 0');
+            assert(RARE_CONTEST_PARROTS[0][1], 'Should have placement 1');
+            assert(RARE_CONTEST_PARROTS[0][1].name === 'Golden Dawn', 'Should have correct name');
+        });
+
+        // Test gameState.js
+        test('Initial coins is 500', () => {
+            assertEqual(GameState.getCoins(), 500, 'Initial coins should be 500');
+        });
+
+        test('Can set and get coins', () => {
+            GameState.setCoins(1000);
+            assertEqual(GameState.getCoins(), 1000, 'Coins should be 1000 after setting');
+            GameState.setCoins(500); // Reset
+        });
+
+        test('Can add coins', () => {
+            GameState.setCoins(500);
+            GameState.addCoins(100);
+            assertEqual(GameState.getCoins(), 600, 'Should have 600 coins after adding 100');
+            GameState.setCoins(500); // Reset
+        });
+
+        test('Can subtract coins', () => {
+            GameState.setCoins(500);
+            GameState.subtractCoins(100);
+            assertEqual(GameState.getCoins(), 400, 'Should have 400 coins after subtracting 100');
+            GameState.setCoins(500); // Reset
+        });
+
+        test('Initial parrots array is empty', () => {
+            assert(Array.isArray(GameState.getParrots()), 'Parrots should be an array');
+            assertEqual(GameState.getParrots().length, 0, 'Should start with 0 parrots');
+        });
+
+        test('Can toggle mutations', () => {
+            const initial = GameState.getMutationsEnabled();
+            const toggled = GameState.toggleMutationsEnabled();
+            assertEqual(toggled, !initial, 'Should toggle mutations');
+            GameState.setMutationsEnabled(true); // Reset
+        });
+
+        test('Breeding pair starts empty', () => {
+            const pair = GameState.getBreedingParents();
+            assertEqual(pair.left, null, 'Left parent should be null');
+            assertEqual(pair.right, null, 'Right parent should be null');
+        });
+
+        test('Initial generation is 1', () => {
+            assertEqual(GameState.getGeneration(), 1, 'Generation should start at 1');
+        });
+
+        test('Achievements start empty', () => {
+            const achievements = GameState.getAchievements();
+            assert(Array.isArray(achievements.unlocked), 'Unlocked should be an array');
+            assertEqual(achievements.unlocked.length, 0, 'Should have no unlocked achievements');
+        });
+
+        // Test utils.js
+        test('randomBoolean returns boolean', () => {
+            const result = randomBoolean();
+            assert(typeof result === 'boolean', 'Should return a boolean');
+        });
+
+        test('getRandomName returns a string', () => {
+            const name = getRandomName();
+            assert(typeof name === 'string', 'Should return a string');
+            assert(name.length > 0, 'Name should not be empty');
+        });
+
+        test('getRandomName returns valid parrot name', () => {
+            const name = getRandomName();
+            assert(PARROT_NAMES.includes(name), 'Should be a valid parrot name');
+        });
+
+        test('randomBodyPartGenes returns correct structure', () => {
+            const genes = randomBodyPartGenes();
+            assert(Array.isArray(genes.red), 'Should have red array');
+            assert(Array.isArray(genes.green), 'Should have green array');
+            assert(Array.isArray(genes.blue), 'Should have blue array');
+            assertEqual(genes.red.length, 4, 'Red should have 4 alleles');
+            assertEqual(genes.green.length, 4, 'Green should have 4 alleles');
+            assertEqual(genes.blue.length, 4, 'Blue should have 4 alleles');
+            assertEqual(genes.gradient, false, 'Gradient should default to false');
+        });
+
+        test('randomBodyPartGenes alleles are booleans', () => {
+            const genes = randomBodyPartGenes();
+            genes.red.forEach(allele => {
+                assert(typeof allele === 'boolean', 'Red alleles should be boolean');
+            });
+            genes.green.forEach(allele => {
+                assert(typeof allele === 'boolean', 'Green alleles should be boolean');
+            });
+            genes.blue.forEach(allele => {
+                assert(typeof allele === 'boolean', 'Blue alleles should be boolean');
+            });
+        });
+
+        // Display results
+        const resultsDiv = document.getElementById('testResults');
+        const summaryDiv = document.getElementById('summary');
+
+        let passCount = 0;
+        let failCount = 0;
+
+        results.forEach(result => {
+            const div = document.createElement('div');
+            div.className = `test-result ${result.status}`;
+            div.innerHTML = `
+                <strong>${result.status === 'pass' ? '✅' : '❌'} ${result.name}</strong><br>
+                ${result.message}
+            `;
+            resultsDiv.appendChild(div);
+
+            if (result.status === 'pass') passCount++;
+            else failCount++;
+        });
+
+        summaryDiv.innerHTML = `
+            <strong>Total Tests:</strong> ${results.length}<br>
+            <strong style="color: #28a745;">Passed:</strong> ${passCount}<br>
+            <strong style="color: #dc3545;">Failed:</strong> ${failCount}<br>
+            <strong>Success Rate:</strong> ${((passCount / results.length) * 100).toFixed(1)}%
+        `;
+
+        console.log('✅ All module tests completed!');
+        console.log(`Passed: ${passCount}/${results.length}`);
+    </script>
+</body>
+</html>
