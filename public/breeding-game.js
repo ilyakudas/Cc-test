@@ -16,6 +16,12 @@ let examinedParrots = new Set();  // Track which parrots have been examined in l
 let contestProgress = {};  // Track which tiers each parrot has completed: {parrotId: {tierIndex: {placed, coins, badge}}}
 let parrotTrophies = {};  // Track trophies per parrot: {parrotId: ['bronze', 'silver', 'gold']}
 
+// Achievement State
+let achievements = {
+    unlocked: [], // Array of achievement IDs that have been unlocked
+    progress: {}  // Object tracking progress for achievements (e.g., {contest_wins: 5})
+};
+
 // Contest Tiers
 const CONTEST_TIERS = [
     {
@@ -1228,12 +1234,12 @@ async function createParrotCard(parrot, isStore) {
     const beauty = parrot.calculateBeauty();
     const beautyScore = beauty.score;
 
-    // Beauty score color coding (similar to rarity but for beauty)
-    let beautyColor = '#9e9e9e'; // Default gray
-    if (beautyScore >= 180) beautyColor = '#ff9800'; // Legendary gold
-    else if (beautyScore >= 130) beautyColor = '#9c27b0'; // Epic purple
-    else if (beautyScore >= 80) beautyColor = '#2196f3'; // Rare blue
-    else if (beautyScore >= 40) beautyColor = '#4caf50'; // Uncommon green
+    // Beauty score color coding (cool to warm spectrum, distinct from rarity)
+    let beautyColor = '#607d8b'; // Low: Blue-gray (cold)
+    if (beautyScore >= 180) beautyColor = '#e91e63'; // Exceptional: Hot pink
+    else if (beautyScore >= 130) beautyColor = '#ff5722'; // High: Deep orange
+    else if (beautyScore >= 80) beautyColor = '#ffc107'; // Medium: Amber
+    else if (beautyScore >= 40) beautyColor = '#00bcd4'; // Medium-low: Cyan
 
     // Trophy/contest indicators
     let trophyIndicator = '';
@@ -1687,6 +1693,50 @@ async function openLaboratory(parrotId) {
 
     html += `</div>`;
 
+    // DNA Sequence Section (Compact, Parseable Format)
+    html += `<div class="body-part-genes" style="background: linear-gradient(135deg, #00695c22, #00695c11); border-color: #00695c;">`;
+    html += `<h4>🧬 DNA Sequence <span style="font-size: 0.7em; color: #666; font-weight: normal;">(Compact Genotype)</span></h4>`;
+
+    // Generate compact DNA string
+    const bodyPartAbbr = {
+        'wings': 'W',
+        'special_wing': 'S',
+        'body': 'B',
+        'head': 'H',
+        'tail': 'T',
+        'accents': 'A'
+    };
+
+    let dnaString = '';
+    let fullDnaString = '';
+    for (const bodyPart of ['wings', 'special_wing', 'body', 'head', 'tail', 'accents']) {
+        const part = parrot.genes[bodyPart];
+        const rCount = parrot.countDominant(part.red);
+        const gCount = parrot.countDominant(part.green);
+        const bCount = parrot.countDominant(part.blue);
+        const grad = part.gradient ? '*' : '';
+
+        dnaString += `${bodyPartAbbr[bodyPart]}:${rCount}${gCount}${bCount}${grad} `;
+        fullDnaString += `${rCount}${gCount}${bCount}${grad ? '1' : '0'}-`;
+    }
+
+    fullDnaString = fullDnaString.slice(0, -1); // Remove trailing dash
+
+    html += `<div style="margin: 10px 0; padding: 12px; background: #f8f9fa; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.95em; word-break: break-all;">`;
+    html += `<div style="color: #00695c; font-weight: bold; margin-bottom: 8px;">${dnaString.trim()}</div>`;
+    html += `<div style="color: #666; font-size: 0.85em; margin-top: 5px;">Raw: ${fullDnaString}</div>`;
+    html += `</div>`;
+
+    html += `<div style="margin-top: 10px; padding: 10px; background: #e0f2f1; border-radius: 8px; font-size: 0.85em;">`;
+    html += `<strong>Format:</strong> [Part]:[R][G][B][Gradient]<br>`;
+    html += `• Part: W=Wings, S=Special, B=Body, H=Head, T=Tail, A=Accents<br>`;
+    html += `• RGB: 0-4 dominant alleles per color<br>`;
+    html += `• Gradient: * if present<br>`;
+    html += `• Raw format: RGBG-RGBG-... (G=0/1 for gradient)`;
+    html += `</div>`;
+
+    html += `</div>`;
+
     // Body part genes sections
     for (const bodyPart of ['wings', 'special_wing', 'body', 'head', 'tail', 'accents']) {
         const part = parrot.genes[bodyPart];
@@ -1823,6 +1873,7 @@ function buyParrot(parrotId) {
     selectedParrotId = null;
     updateUI();
     saveGame();
+    checkAchievements(); // Check for collection/coin achievements
 
     // Show success toast
     const rarity = parrot.calculateRarity();
@@ -1966,6 +2017,7 @@ async function breedParrots() {
 
     await updateUI();
     saveGame();
+    checkAchievements(); // Check for breeding/collection achievements
 
     // Show success toast
     const offspringNames = offspring.map(p => p.name).join(', ');
@@ -2015,7 +2067,8 @@ function saveGame() {
         usedNames: Array.from(usedNames),
         examinedParrots: Array.from(examinedParrots),
         contestProgress,
-        parrotTrophies
+        parrotTrophies,
+        achievements
     };
 
     // Store in cookie (max 4KB, so we compress by storing only essential data)
@@ -2046,6 +2099,7 @@ function loadGame() {
                 examinedParrots = new Set(gameState.examinedParrots || []);
                 contestProgress = gameState.contestProgress || {};
                 parrotTrophies = gameState.parrotTrophies || {};
+                achievements = gameState.achievements || { unlocked: [], progress: {} };
 
                 // Restore contest tier unlock status
                 if (gameState.contestProgress) {
@@ -2097,6 +2151,7 @@ function newGame() {
     examinedParrots = new Set();
     contestProgress = {};
     parrotTrophies = {};
+    achievements = { unlocked: [], progress: {} };
 
     // Reset contest tiers to locked except first
     CONTEST_TIERS.forEach((tier, index) => {
@@ -2755,6 +2810,7 @@ function takeCoinsReward(tierIndex, placement, coinsAmount) {
     coins += coinsAmount;
     updateStats();
     saveGame();
+    checkAchievements(); // Check for contest/coin achievements
 
     showToast('Coins received!', `+${coinsAmount} coins`, 'success');
     closeContestModal();
@@ -2773,8 +2829,308 @@ function takeParrotReward(tierIndex, placement) {
     parrots.push(rareParrot);
     updateStats();
     saveGame();
+    checkAchievements(); // Check for contest/collection achievements
 
     showToast('Rare parrot received!', `${rareParrot.name} added to your collection`, 'success');
     closeContestModal();
     renderContestsTab();
+}
+// ACHIEVEMENT SYSTEM
+// Tracks player progress towards various goals and win conditions
+
+const ACHIEVEMENTS = {
+    // Contest Achievements
+    'contest_beginner': {
+        id: 'contest_beginner',
+        name: '🎨 First Steps',
+        description: 'Place top 3 in Beginner Beauty Show',
+        category: 'contests',
+        check: () => {
+            return Object.values(contestProgress).some(pp => pp[0] && pp[0].placed <= 3);
+        }
+    },
+    'contest_all_tiers': {
+        id: 'contest_all_tiers',
+        name: '👑 Contest Master',
+        description: 'Place top 3 in all 5 contest tiers',
+        category: 'contests',
+        check: () => {
+            return Object.values(contestProgress).some(pp => {
+                return pp[0] && pp[1] && pp[2] && pp[3] && pp[4] &&
+                       pp[0].placed <= 3 && pp[1].placed <= 3 && pp[2].placed <= 3 &&
+                       pp[3].placed <= 3 && pp[4].placed <= 3;
+            });
+        }
+    },
+    'contest_perfect_run': {
+        id: 'contest_perfect_run',
+        name: '🥇 Perfect Champion',
+        description: 'Win 1st place in all 5 tiers with the same parrot',
+        category: 'contests',
+        check: () => {
+            return Object.values(contestProgress).some(pp => {
+                return pp[0] && pp[1] && pp[2] && pp[3] && pp[4] &&
+                       pp[0].placed === 1 && pp[1].placed === 1 && pp[2].placed === 1 &&
+                       pp[3].placed === 1 && pp[4].placed === 1;
+            });
+        }
+    },
+    'elite_champion': {
+        id: 'elite_champion',
+        name: '💎 Elite Champion',
+        description: 'Win 1st place in Elite Grand Prix',
+        category: 'contests',
+        isWinCondition: true,
+        check: () => {
+            return Object.values(contestProgress).some(pp => pp[4] && pp[4].placed === 1);
+        }
+    },
+
+    // Breeding/Beauty Achievements
+    'beautiful_parrot': {
+        id: 'beautiful_parrot',
+        name: '🌸 Beauty Enthusiast',
+        description: 'Breed a parrot with 100+ beauty score',
+        category: 'breeding',
+        check: () => {
+            return parrots.some(p => p.calculateBeauty().score >= 100);
+        }
+    },
+    'stunning_parrot': {
+        id: 'stunning_parrot',
+        name: '✨ Master Breeder',
+        description: 'Breed a parrot with 150+ beauty score',
+        category: 'breeding',
+        check: () => {
+            return parrots.some(p => p.calculateBeauty().score >= 150);
+        }
+    },
+    'perfect_parrot': {
+        id: 'perfect_parrot',
+        name: '🌟 Perfection Achieved',
+        description: 'Breed a parrot with 200 beauty score',
+        category: 'breeding',
+        isWinCondition: true,
+        check: () => {
+            return parrots.some(p => p.calculateBeauty().score >= 200);
+        }
+    },
+    'gradient_master': {
+        id: 'gradient_master',
+        name: '🌈 Gradient Collector',
+        description: 'Own a parrot with gradients on all 6 body parts',
+        category: 'breeding',
+        check: () => {
+            return parrots.some(p => {
+                return Object.values(p.genes).every(part => part.gradient);
+            });
+        }
+    },
+
+    // Collection Achievements
+    'collector_10': {
+        id: 'collector_10',
+        name: '🦜 Aviary Starter',
+        description: 'Own 10 parrots at once',
+        category: 'collection',
+        check: () => parrots.length >= 10
+    },
+    'collector_25': {
+        id: 'collector_25',
+        name: '🏆 Aviary Expert',
+        description: 'Own 25 parrots at once',
+        category: 'collection',
+        check: () => parrots.length >= 25
+    },
+    'full_rarity_set': {
+        id: 'full_rarity_set',
+        name: '💫 Rarity Collector',
+        description: 'Own at least one parrot of each rarity level',
+        category: 'collection',
+        check: () => {
+            const rarities = new Set(parrots.map(p => p.calculateRarity()));
+            return rarities.has('common') && rarities.has('uncommon') &&
+                   rarities.has('rare') && rarities.has('epic') && rarities.has('legendary');
+        }
+    },
+    'full_genotype': {
+        id: 'full_genotype',
+        name: '🧬 Geneticist',
+        description: 'Collect all possible gene combinations (0-4 dominant for R/G/B on each part)',
+        category: 'collection',
+        isWinCondition: true,
+        check: () => {
+            // Check if collection has all 0-4 values for each color on each body part
+            // This is complex - simplified version checks for diversity
+            const bodyParts = ['wings', 'special_wing', 'body', 'head', 'tail', 'accents'];
+            const colors = ['red', 'green', 'blue'];
+
+            for (const bodyPart of bodyParts) {
+                for (const color of colors) {
+                    const values = new Set();
+                    parrots.forEach(p => {
+                        const count = p.countDominant(p.genes[bodyPart][color]);
+                        values.add(count);
+                    });
+                    // Need at least 4 different values (0,1,2,3 or 1,2,3,4) for complete coverage
+                    if (values.size < 4) return false;
+                }
+            }
+            return true;
+        }
+    },
+
+    // Generation Achievements
+    'generation_5': {
+        id: 'generation_5',
+        name: '🌱 Lineage Builder',
+        description: 'Breed a parrot to generation 5',
+        category: 'breeding',
+        check: () => parrots.some(p => p.generation >= 5)
+    },
+    'generation_10': {
+        id: 'generation_10',
+        name: '🌳 Dynasty Creator',
+        description: 'Breed a parrot to generation 10',
+        category: 'breeding',
+        check: () => parrots.some(p => p.generation >= 10)
+    },
+
+    // Economic Achievements
+    'wealthy_1000': {
+        id: 'wealthy_1000',
+        name: '💰 Entrepreneur',
+        description: 'Accumulate 1000 coins',
+        category: 'economic',
+        check: () => coins >= 1000
+    },
+    'wealthy_5000': {
+        id: 'wealthy_5000',
+        name: '💎 Business Mogul',
+        description: 'Accumulate 5000 coins',
+        category: 'economic',
+        check: () => coins >= 5000
+    },
+
+    // Special Achievements
+    'all_achievements': {
+        id: 'all_achievements',
+        name: '🏅 Ultimate Master',
+        description: 'Unlock all other achievements',
+        category: 'special',
+        isWinCondition: true,
+        check: () => {
+            const allIds = Object.keys(ACHIEVEMENTS).filter(id => id !== 'all_achievements');
+            return allIds.every(id => achievements.unlocked.includes(id));
+        }
+    }
+};
+
+// Check and unlock achievements
+function checkAchievements() {
+    let newlyUnlocked = [];
+
+    for (const [id, achievement] of Object.entries(ACHIEVEMENTS)) {
+        // Skip if already unlocked
+        if (achievements.unlocked.includes(id)) continue;
+
+        // Check if achievement is completed
+        if (achievement.check()) {
+            achievements.unlocked.push(id);
+            newlyUnlocked.push(achievement);
+
+            // Show toast notification
+            showToast(
+                `Achievement Unlocked!`,
+                `${achievement.name}: ${achievement.description}`,
+                'success',
+                6000
+            );
+
+            // Check if it's a win condition
+            if (achievement.isWinCondition) {
+                showWinConditionModal(achievement);
+            }
+        }
+    }
+
+    if (newlyUnlocked.length > 0) {
+        saveGame();
+    }
+
+    return newlyUnlocked;
+}
+
+// Show win condition achievement modal
+function showWinConditionModal(achievement) {
+    setTimeout(() => {
+        const modal = document.getElementById('winModal');
+        if (!modal) {
+            // Create modal if it doesn't exist
+            const modalHTML = `
+                <div class="modal" id="winModal">
+                    <div class="modal-content">
+                        <div id="winDisplay"></div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+
+        const display = document.getElementById('winDisplay');
+        const allWinConditions = Object.values(ACHIEVEMENTS).filter(a => a.isWinCondition);
+        const completedWinConditions = allWinConditions.filter(a => achievements.unlocked.includes(a.id));
+
+        let html = '<div style="text-align: center; padding: 30px;">';
+        html += '<h1 style="font-size: 3em; margin: 0 0 10px 0;">🏆</h1>';
+        html += `<h2 style="margin: 0 0 20px 0; color: #4caf50;">Win Condition Achieved!</h2>`;
+        html += `<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px; margin: 20px 0;">`;
+        html += `<h3 style="margin: 0 0 10px 0;">${achievement.name}</h3>`;
+        html += `<p style="margin: 0; font-size: 1.1em;">${achievement.description}</p>`;
+        html += `</div>`;
+
+        html += `<div style="margin: 30px 0; padding: 20px; background: #f8f9fa; border-radius: 12px;">`;
+        html += `<h4 style="margin: 0 0 15px 0;">Win Conditions Progress</h4>`;
+        allWinConditions.forEach(wc => {
+            const completed = achievements.unlocked.includes(wc.id);
+            html += `<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; padding: 10px; background: white; border-radius: 8px;">`;
+            html += `<span style="text-align: left;">${wc.name}</span>`;
+            html += `<span>${completed ? '✅' : '⬜'}</span>`;
+            html += `</div>`;
+        });
+        html += `</div>`;
+
+        if (completedWinConditions.length === allWinConditions.length) {
+            html += `<div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; border-radius: 12px; margin: 20px 0;">`;
+            html += `<h2 style="margin: 0 0 10px 0;">🎉 GAME COMPLETE! 🎉</h2>`;
+            html += `<p style="margin: 0; font-size: 1.2em;">You've achieved all win conditions!</p>`;
+            html += `</div>`;
+        }
+
+        html += '<button class="btn" onclick="closeWinModal()" style="margin-top: 20px; font-size: 1.1em; padding: 15px 40px;">Continue Playing</button>';
+        html += '</div>';
+
+        display.innerHTML = html;
+        document.getElementById('winModal').classList.add('active');
+    }, 1000);
+}
+
+function closeWinModal() {
+    document.getElementById('winModal').classList.remove('active');
+}
+
+// Get achievement stats
+function getAchievementStats() {
+    const total = Object.keys(ACHIEVEMENTS).length;
+    const unlocked = achievements.unlocked.length;
+    const winConditions = Object.values(ACHIEVEMENTS).filter(a => a.isWinCondition);
+    const completedWinConditions = winConditions.filter(a => achievements.unlocked.includes(a.id));
+
+    return {
+        total,
+        unlocked,
+        percentage: Math.round((unlocked / total) * 100),
+        winConditions: winConditions.length,
+        completedWinConditions: completedWinConditions.length
+    };
 }
