@@ -31,32 +31,36 @@ export async function breedParrots() {
 
     state.coins -= breedingCost;
 
-    // Create offspring
-    const offspringGenes = {};
+    // Create 4 offspring (like original game)
+    const offspring = [];
+    const generation = Math.max(parent1.generation, parent2.generation) + 1;
 
-    for (const bodyPart of BODY_PARTS) {
-        const parent1Part = parent1.genes[bodyPart];
-        const parent2Part = parent2.genes[bodyPart];
+    for (let i = 0; i < 4; i++) {
+        const offspringGenes = {};
 
-        offspringGenes[bodyPart] = breedBodyPartGenes(
-            parent1Part,
-            parent2Part,
-            state.mutationsEnabled,
-            MUTATION_RATE
-        );
+        for (const bodyPart of BODY_PARTS) {
+            const parent1Part = parent1.genes[bodyPart];
+            const parent2Part = parent2.genes[bodyPart];
+
+            offspringGenes[bodyPart] = breedBodyPartGenes(
+                parent1Part,
+                parent2Part,
+                state.mutationsEnabled,
+                MUTATION_RATE
+            );
+        }
+
+        const newParrot = new Parrot(getRandomName(), offspringGenes, generation);
+        addParrot(newParrot);
+        offspring.push(newParrot);
     }
 
-    // Create offspring
-    const generation = Math.max(parent1.generation, parent2.generation) + 1;
-    const offspring = new Parrot(getRandomName(), offspringGenes, generation);
-
-    addParrot(offspring);
-
-    // Show notification (if function exists)
+    // Show notification with all 4 names (if function exists)
     if (window.showToast) {
+        const offspringNames = offspring.map(p => p.name).join(', ');
         window.showToast(
-            `New parrot born: ${offspring.name}!`,
-            `Generation ${generation} from ${parent1.name} × ${parent2.name}`,
+            `4 new parrots born!`,
+            `${offspringNames} (Gen ${generation} from ${parent1.name} × ${parent2.name})`,
             'success'
         );
     }
@@ -77,7 +81,7 @@ export function sellParrot(parrotId) {
     const parrot = state.parrots.find(p => p.id === parrotId);
     if (!parrot) return;
 
-    const sellValue = Math.floor(parrot.getValue() * 0.5);
+    const sellValue = Math.floor(parrot.getValue() * 0.7); // 70% like original
 
     if (state.parrots.length <= 1) {
         alert('Cannot sell your last parrot!');

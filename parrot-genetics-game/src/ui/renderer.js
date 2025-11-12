@@ -115,20 +115,42 @@ function updateBreedingPanel() {
 
     if (state.breedingPair.left !== null) {
         const parrot = state.parrots.find(p => p.id === state.breedingPair.left);
-        leftSlot.innerHTML = `<div class="slot-label">Left Parent</div><div>${parrot.name}</div>`;
+        leftSlot.innerHTML = `
+            <div class="slot-label">Left Parent</div>
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div>${parrot.name}</div>
+                <button onclick="removeFromSlot('left')" style="background: #f44336; color: white; border: none; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-size: 14px; line-height: 1; padding: 0;">&times;</button>
+            </div>
+        `;
     } else {
         leftSlot.innerHTML = `<div class="slot-label">Left Parent</div><div style="color: #ccc;">Empty</div>`;
     }
 
     if (state.breedingPair.right !== null) {
         const parrot = state.parrots.find(p => p.id === state.breedingPair.right);
-        rightSlot.innerHTML = `<div class="slot-label">Right Parent</div><div>${parrot.name}</div>`;
+        rightSlot.innerHTML = `
+            <div class="slot-label">Right Parent</div>
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div>${parrot.name}</div>
+                <button onclick="removeFromSlot('right')" style="background: #f44336; color: white; border: none; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-size: 14px; line-height: 1; padding: 0;">&times;</button>
+            </div>
+        `;
     } else {
         rightSlot.innerHTML = `<div class="slot-label">Right Parent</div><div style="color: #ccc;">Empty</div>`;
     }
 
     // Enable breed button if both slots filled
     breedButton.disabled = !(state.breedingPair.left !== null && state.breedingPair.right !== null);
+}
+
+// Remove parrot from breeding slot
+function removeFromSlot(slot) {
+    if (slot === 'left') {
+        state.breedingPair.left = null;
+    } else if (slot === 'right') {
+        state.breedingPair.right = null;
+    }
+    updateUI();
 }
 
 // Update action buttons for selected parrot
@@ -236,4 +258,4 @@ function buyParrot(parrotId) {
 }
 
 // Export for window
-export { selectParrot, buyParrot, breedOnLeft, breedOnRight };
+export { selectParrot, buyParrot, breedOnLeft, breedOnRight, removeFromSlot };
