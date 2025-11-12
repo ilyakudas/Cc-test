@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChromaWing Breeding Simulator - RGB Genetics v2.1</title>
+    <title>ChromaWing Breeding Simulator - RGB Genetics v3.0</title>
     <link rel="stylesheet" href="breeding-game.css">
 </head>
 <body>
     <div class="container">
         <header>
             <h1>🦜 ChromaWing Breeding Simulator</h1>
-            <p>RGB Genetics v2.1 with Gradient System - 78 Genes Per Parrot (6 body parts × 13 genes)</p>
+            <p>RGB Genetics v3.0 - Achievements, Contests & Mutations - 78 Genes Per Parrot</p>
             <button onclick="newGame()" style="background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9em; margin-top: 10px;">🔄 New Game</button>
         </header>
 
@@ -34,6 +34,13 @@
                 <div>
                     <div style="font-size: 0.75em; color: #666;">Generation</div>
                     <div class="value" id="maxGen">1</div>
+                </div>
+            </div>
+            <div class="stat-badge" style="cursor: pointer;" onclick="toggleMutations()" title="Click to toggle mutations">
+                <span id="mutationIcon">🧪</span>
+                <div>
+                    <div style="font-size: 0.75em; color: #666;">Mutations</div>
+                    <div class="value" id="mutationStatus">ON</div>
                 </div>
             </div>
         </div>

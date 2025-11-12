@@ -1,4 +1,5 @@
-// ChromaWing Breeding Simulator - RGB Genetics v2.1
+// ChromaWing Breeding Simulator - RGB Genetics v3.0
+// Major Update: Achievement System, DNA Display, Contest Rare Parrots, Gene Source Tracking
 // Game State
 let parrots = [];
 let storeParrots = [];
@@ -21,6 +22,10 @@ let achievements = {
     unlocked: [], // Array of achievement IDs that have been unlocked
     progress: {}  // Object tracking progress for achievements (e.g., {contest_wins: 5})
 };
+
+// Mutation System State
+let mutationsEnabled = true;  // Whether mutations can occur during breeding
+let mutationRate = 0.05;      // 5% chance per allele to mutate during breeding
 
 // Contest Tiers
 const CONTEST_TIERS = [
@@ -2039,9 +2044,26 @@ function breedBodyPart(part1, part2) {
     };
 
     for (let i = 0; i < 4; i++) {
-        childPart.red.push(Math.random() < 0.5 ? part1.red[i] : part2.red[i]);
-        childPart.green.push(Math.random() < 0.5 ? part1.green[i] : part2.green[i]);
-        childPart.blue.push(Math.random() < 0.5 ? part1.blue[i] : part2.blue[i]);
+        // Inherit from parent
+        let redAllele = Math.random() < 0.5 ? part1.red[i] : part2.red[i];
+        let greenAllele = Math.random() < 0.5 ? part1.green[i] : part2.green[i];
+        let blueAllele = Math.random() < 0.5 ? part1.blue[i] : part2.blue[i];
+
+        // Apply mutations if enabled
+        if (mutationsEnabled) {
+            if (Math.random() < mutationRate) redAllele = !redAllele;
+            if (Math.random() < mutationRate) greenAllele = !greenAllele;
+            if (Math.random() < mutationRate) blueAllele = !blueAllele;
+        }
+
+        childPart.red.push(redAllele);
+        childPart.green.push(greenAllele);
+        childPart.blue.push(blueAllele);
+    }
+
+    // Gradient can also mutate
+    if (mutationsEnabled && Math.random() < mutationRate) {
+        childPart.gradient = !childPart.gradient;
     }
 
     return childPart;
@@ -2068,7 +2090,9 @@ function saveGame() {
         examinedParrots: Array.from(examinedParrots),
         contestProgress,
         parrotTrophies,
-        achievements
+        achievements,
+        mutationsEnabled,
+        mutationRate
     };
 
     // Store in cookie (max 4KB, so we compress by storing only essential data)
@@ -2100,6 +2124,11 @@ function loadGame() {
                 contestProgress = gameState.contestProgress || {};
                 parrotTrophies = gameState.parrotTrophies || {};
                 achievements = gameState.achievements || { unlocked: [], progress: {} };
+                mutationsEnabled = gameState.mutationsEnabled !== undefined ? gameState.mutationsEnabled : true;
+                mutationRate = gameState.mutationRate || 0.05;
+
+                // Update mutation display
+                updateMutationDisplay();
 
                 // Restore contest tier unlock status
                 if (gameState.contestProgress) {
@@ -2152,6 +2181,11 @@ function newGame() {
     contestProgress = {};
     parrotTrophies = {};
     achievements = { unlocked: [], progress: {} };
+    mutationsEnabled = true;
+    mutationRate = 0.05;
+
+    // Update mutation display
+    updateMutationDisplay();
 
     // Reset contest tiers to locked except first
     CONTEST_TIERS.forEach((tier, index) => {
@@ -2956,12 +2990,12 @@ const ACHIEVEMENTS = {
     'full_genotype': {
         id: 'full_genotype',
         name: '🧬 Geneticist',
-        description: 'Collect all possible gene combinations (0-4 dominant for R/G/B on each part)',
+        description: 'Collect ALL 5 values (0,1,2,3,4 dominant) for each R/G/B on each body part',
         category: 'collection',
         isWinCondition: true,
         check: () => {
-            // Check if collection has all 0-4 values for each color on each body part
-            // This is complex - simplified version checks for diversity
+            // Check if collection has ALL 5 values (0-4) for each color on each body part
+            // This requires diverse breeding and cannot be cheesed with just 2 extreme parrots
             const bodyParts = ['wings', 'special_wing', 'body', 'head', 'tail', 'accents'];
             const colors = ['red', 'green', 'blue'];
 
@@ -2972,8 +3006,8 @@ const ACHIEVEMENTS = {
                         const count = p.countDominant(p.genes[bodyPart][color]);
                         values.add(count);
                     });
-                    // Need at least 4 different values (0,1,2,3 or 1,2,3,4) for complete coverage
-                    if (values.size < 4) return false;
+                    // Need ALL 5 values (0, 1, 2, 3, 4) - cannot be achieved with just 2 parrots
+                    if (values.size < 5) return false;
                 }
             }
             return true;
@@ -3133,4 +3167,42 @@ function getAchievementStats() {
         winConditions: winConditions.length,
         completedWinConditions: completedWinConditions.length
     };
+}
+
+// Toggle mutations on/off
+function toggleMutations() {
+    mutationsEnabled = !mutationsEnabled;
+
+    const statusEl = document.getElementById('mutationStatus');
+    const iconEl = document.getElementById('mutationIcon');
+
+    if (mutationsEnabled) {
+        statusEl.textContent = 'ON';
+        statusEl.style.color = '#4caf50';
+        iconEl.textContent = '🧪';
+        showToast('Mutations Enabled', 'Breeding can introduce new genes', 'success', 3000);
+    } else {
+        statusEl.textContent = 'OFF';
+        statusEl.style.color = '#dc3545';
+        iconEl.textContent = '🔒';
+        showToast('Mutations Disabled', 'Breeding will preserve pure genes', 'info', 3000);
+    }
+
+    saveGame();
+}
+
+// Update mutation display
+function updateMutationDisplay() {
+    const statusEl = document.getElementById('mutationStatus');
+    const iconEl = document.getElementById('mutationIcon');
+
+    if (mutationsEnabled) {
+        statusEl.textContent = 'ON';
+        statusEl.style.color = '#4caf50';
+        iconEl.textContent = '🧪';
+    } else {
+        statusEl.textContent = 'OFF';
+        statusEl.style.color = '#dc3545';
+        iconEl.textContent = '🔒';
+    }
 }
