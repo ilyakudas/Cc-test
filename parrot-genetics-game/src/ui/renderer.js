@@ -1,9 +1,12 @@
 // ChromaWing - UI Renderer
 // v3.0
 
-import { state } from '../game/gameState.js';
+import { Parrot } from '../models/Parrot.js';
+import { state, getNextParrotId } from '../game/gameState.js';
 import { generateParrotSVG } from '../rendering/svgRenderer.js';
-import { getBeautyColor, RARITY_COLORS, RARITY_LABELS } from '../data/constants.js';
+import { getBeautyColor, RARITY_COLORS, RARITY_LABELS, BODY_PARTS } from '../data/constants.js';
+import { getRandomName } from '../utils/naming.js';
+import { createParrotWithPurity } from '../utils/genetics.js';
 
 // Update all UI elements
 export async function updateUI() {
@@ -253,6 +256,60 @@ function buyParrot(parrotId) {
     state.coins -= price;
     state.parrots.push(parrot);
     state.storeParrots = state.storeParrots.filter(p => p.id !== parrotId);
+
+    // Generate replacement parrot with similar rarity
+    const oldRarity = parrot.calculateRarity();
+    let newParrot = null;
+    let attempts = 0;
+    const maxAttempts = 50;
+
+    while (attempts < maxAttempts && !newParrot) {
+        attempts++;
+
+        let genes;
+        if (oldRarity === 'legendary') {
+            genes = createParrotWithPurity('high');
+            // Add gradients to 2-3 body parts for legendary
+            const numGradients = 2 + Math.floor(Math.random() * 2);
+            for (let j = 0; j < numGradients; j++) {
+                const part = BODY_PARTS[Math.floor(Math.random() * BODY_PARTS.length)];
+                genes[part].gradient = true;
+            }
+        } else if (oldRarity === 'epic') {
+            genes = createParrotWithPurity('high');
+        } else if (oldRarity === 'rare') {
+            genes = createParrotWithPurity('medium');
+        } else if (oldRarity === 'uncommon') {
+            genes = createParrotWithPurity('low');
+        } else {
+            genes = createParrotWithPurity('random');
+        }
+
+        const testParrot = new Parrot(getRandomName(), genes, 1);
+        const actualRarity = testParrot.calculateRarity();
+
+        // Accept if rarity matches or we're on last attempt
+        if (actualRarity === oldRarity || attempts >= maxAttempts) {
+            newParrot = testParrot;
+        }
+    }
+
+    if (newParrot) {
+        state.storeParrots.push(newParrot);
+    }
+
+    // Clear selection
+    state.selectedParrotId = null;
+
+    // Show success toast
+    if (window.showToast) {
+        const rarity = parrot.calculateRarity();
+        window.showToast(
+            `${parrot.name} joined your collection!`,
+            `${rarity.charAt(0).toUpperCase() + rarity.slice(1)} • Gen ${parrot.generation} • -${price} coins`,
+            'success'
+        );
+    }
 
     updateUI();
 }

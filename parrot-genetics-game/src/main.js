@@ -11,7 +11,8 @@ import { generateParrotSVG } from './rendering/svgRenderer.js';
 import { initGame, newGame, generateStore } from './game/init.js';
 import { breedParrots, sellParrot } from './game/breeding.js';
 import { updateUI, updateStats, breedOnLeft, breedOnRight, buyParrot, removeFromSlot } from './ui/renderer.js';
-import { switchTab, toggleMutations, openLaboratory, closeModal, closeContestModal, toggleNotificationHistory, clearNotificationHistory } from './ui/events.js';
+import { switchTab, toggleMutations, openLaboratory, closeModal, closeContestModal } from './ui/events.js';
+import { showToast, dismissToast, toggleNotificationHistory, clearNotificationHistory } from './ui/notifications.js';
 
 // Expose to window for HTML onclick handlers
 window.Parrot = Parrot;
@@ -47,11 +48,9 @@ window.closeContestModal = closeContestModal;
 window.toggleNotificationHistory = toggleNotificationHistory;
 window.clearNotificationHistory = clearNotificationHistory;
 
-// Simple toast notification
-window.showToast = function(message, details = '', type = 'info') {
-    console.log(`[${type.toUpperCase()}] ${message}`, details);
-    alert(`${message}${details ? '\n' + details : ''}`);
-};
+// Toast notification system
+window.showToast = showToast;
+window.dismissToast = dismissToast;
 
 console.log('ChromaWing v3.0 - Modular version loaded');
 console.log('Modules loaded:', {

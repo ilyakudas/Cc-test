@@ -15,6 +15,60 @@ export function randomBoolean() {
     return Math.random() < 0.5;
 }
 
+/**
+ * Create parrot genes with specific purity level
+ * @param {string} targetPurity - 'high' (80% pure), 'medium' (50% pure), 'low' (20% pure), or 'random'
+ * @returns {object} Genes object for all body parts
+ */
+export function createParrotWithPurity(targetPurity) {
+    const genes = {};
+    const bodyParts = ['wings', 'special_wing', 'body', 'head', 'tail', 'accents'];
+
+    for (const part of bodyParts) {
+        const partGenes = {
+            red: [],
+            green: [],
+            blue: [],
+            gradient: false
+        };
+
+        // Generate each color channel based on purity
+        for (const color of ['red', 'green', 'blue']) {
+            let alleles;
+            if (targetPurity === 'high') {
+                // 80% chance of pure (0000 or 1111)
+                if (Math.random() < 0.8) {
+                    const val = randomBoolean();
+                    alleles = [val, val, val, val];
+                } else {
+                    // Nearly pure (0001 or 1110)
+                    const base = randomBoolean();
+                    alleles = [base, base, base, !base];
+                }
+            } else if (targetPurity === 'medium') {
+                // 50% pure, 50% mixed
+                if (Math.random() < 0.5) {
+                    const val = randomBoolean();
+                    alleles = [val, val, val, val];
+                } else {
+                    alleles = [randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean()];
+                }
+            } else if (targetPurity === 'low') {
+                // Mostly mixed
+                alleles = [randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean()];
+            } else {
+                // Random
+                alleles = [randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean()];
+            }
+            partGenes[color] = alleles;
+        }
+
+        genes[part] = partGenes;
+    }
+
+    return genes;
+}
+
 // Create genes with specific purity level
 export function createPureGenes(r, g, b, gradient = false) {
     return {
