@@ -1224,6 +1224,31 @@ async function createParrotCard(parrot, isStore) {
 
     const rarityInfo = rarityConfig[rarity];
 
+    // Calculate beauty score for display
+    const beauty = parrot.calculateBeauty();
+    const beautyScore = beauty.score;
+
+    // Beauty score color coding (similar to rarity but for beauty)
+    let beautyColor = '#9e9e9e'; // Default gray
+    if (beautyScore >= 180) beautyColor = '#ff9800'; // Legendary gold
+    else if (beautyScore >= 130) beautyColor = '#9c27b0'; // Epic purple
+    else if (beautyScore >= 80) beautyColor = '#2196f3'; // Rare blue
+    else if (beautyScore >= 40) beautyColor = '#4caf50'; // Uncommon green
+
+    // Trophy/contest indicators
+    let trophyIndicator = '';
+    if (!isStore && parrotTrophies[parrot.id] && parrotTrophies[parrot.id].length > 0) {
+        const trophies = parrotTrophies[parrot.id];
+        const tierIcons = ['🎨', '🌈', '✨', '🎭', '👑'];
+
+        trophyIndicator = '<div class="trophy-indicator">';
+        trophies.forEach(trophy => {
+            const tierIcon = tierIcons[trophy.tier] || '🏆';
+            trophyIndicator += `<span title="Tier ${trophy.tier + 1} - ${trophy.placement}${trophy.placement === 1 ? 'st' : trophy.placement === 2 ? 'nd' : 'rd'}">${tierIcon}${trophy.badge}</span>`;
+        });
+        trophyIndicator += '</div>';
+    }
+
     card.innerHTML = `
         ${isStore ? `<div class="price">${price}💰</div>` : ''}
         ${breedingIndicator}
@@ -1231,7 +1256,9 @@ async function createParrotCard(parrot, isStore) {
         <div class="parrot-name">${parrot.name}</div>
         <div class="parrot-gen">Gen ${parrot.generation}</div>
         <div class="rarity-badge" style="background: ${rarityInfo.color};">${rarityInfo.label}</div>
+        <div class="beauty-badge" style="background: ${beautyColor}; color: white; font-size: 0.8em; padding: 2px 6px; border-radius: 4px; margin-top: 4px;">Beauty: ${beautyScore}</div>
         ${parrot.hasAnyGradients() ? '<div class="gradient-indicator">✨ Gradient</div>' : ''}
+        ${trophyIndicator}
     `;
 
     card.onclick = () => selectParrot(parrot.id);
@@ -2336,7 +2363,7 @@ async function enterContest(tierIndex) {
         const reward = tier.rewards[placement];
         coinsWon = reward.coins;
         badge = reward.badge;
-        coins += coinsWon;
+        // DON'T auto-add coins - player will choose coins OR parrot
     }
 
     if (!contestProgress[selectedParrotId]) {
@@ -2352,13 +2379,13 @@ async function enterContest(tierIndex) {
         parrotTrophies[selectedParrotId] = [];
     }
     if (badge) {
-        parrotTrophies[selectedParrotId].push(badge);
+        parrotTrophies[selectedParrotId].push({ tier: tierIndex, badge, placement });
     }
 
     updateStats();
     saveGame();
 
-    showContestResults(tier, competitors, placement, coinsWon, badge, parrot);
+    showContestResults(tier, tierIndex, competitors, placement, coinsWon, badge, parrot);
 }
 
 function generateAIOpponents(tier, count) {
@@ -2386,7 +2413,7 @@ function generateAIOpponents(tier, count) {
     return opponents;
 }
 
-function showContestResults(tier, competitors, placement, coinsWon, badge, playerParrot) {
+function showContestResults(tier, tierIndex, competitors, placement, coinsWon, badge, playerParrot) {
     const modal = document.getElementById('contestModal');
     const display = document.getElementById('contestDisplay');
 
@@ -2399,12 +2426,48 @@ function showContestResults(tier, competitors, placement, coinsWon, badge, playe
     html += `<div style="text-align: center; padding: 30px; background: ${bgColor}; border-radius: 12px; margin-bottom: 20px; color: ${textColor};">`;
     html += `<h1 style="margin: 0 0 10px 0; font-size: 3em;">${won ? badge : '😔'}</h1>`;
     html += `<h3 style="margin: 0 0 5px 0;">${playerParrot.name} placed ${placement}${placement === 1 ? 'st' : placement === 2 ? 'nd' : placement === 3 ? 'rd' : 'th'}!</h3>`;
-    if (coinsWon > 0) {
-        html += `<p style="font-size: 1.5em; margin: 10px 0 0 0;">Won ${coinsWon} coins!</p>`;
-    } else {
-        html += '<p style="margin: 10px 0 0 0;">Better luck next time!</p>';
-    }
     html += '</div>';
+
+    // Show reward choice for top 3
+    if (won) {
+        const rareTemplate = RARE_CONTEST_PARROTS[tierIndex]?.[placement];
+        if (rareTemplate) {
+            // Create temporary rare parrot to calculate its sell value
+            const tempRareParrot = createRareParrot(tierIndex, placement);
+            const parrotSellValue = tempRareParrot ? calculateParrotSellValue(tempRareParrot) : 0;
+
+            html += '<h3 style="text-align: center; margin: 20px 0;">Choose Your Reward</h3>';
+            html += '<div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 20px;">';
+
+            // Coins option
+            html += '<div style="flex: 1; max-width: 300px; border: 2px solid #4caf50; border-radius: 12px; padding: 20px; background: white; text-align: center;">';
+            html += '<h4 style="margin: 0 0 10px 0; color: #4caf50;">💰 Take Coins</h4>';
+            html += `<p style="font-size: 2em; margin: 10px 0; font-weight: bold;">${coinsWon} coins</p>`;
+            html += '<p style="color: #666; font-size: 0.9em;">Safe choice - immediate value</p>';
+            html += `<button class="btn" style="background: #4caf50; color: white; width: 100%;" onclick="takeCoinsReward(${tierIndex}, ${placement}, ${coinsWon})">Take Coins</button>`;
+            html += '</div>';
+
+            // Parrot option
+            html += '<div style="flex: 1; max-width: 300px; border: 2px solid #9c27b0; border-radius: 12px; padding: 20px; background: white; text-align: center;">';
+            html += `<h4 style="margin: 0 0 10px 0; color: #9c27b0;">🦜 Take ${rareTemplate.name}</h4>`;
+            html += `<p style="font-size: 1.2em; margin: 10px 0; font-weight: bold; color: #9c27b0;">${rareTemplate.description}</p>`;
+            if (tempRareParrot) {
+                const beauty = tempRareParrot.calculateBeauty();
+                html += `<p style="margin: 5px 0;"><strong>Beauty:</strong> ${beauty.score} pts</p>`;
+            }
+            html += `<p style="color: #666; font-size: 0.9em;">Sell value: ~${parrotSellValue} coins</p>`;
+            html += `<p style="color: #e91e63; font-size: 0.85em; font-weight: 600;">Unique parrot with special genes!</p>`;
+            html += `<button class="btn" style="background: #9c27b0; color: white; width: 100%;" onclick="takeParrotReward(${tierIndex}, ${placement})">Take Parrot</button>`;
+            html += '</div>';
+
+            html += '</div>';
+        } else {
+            // Fallback if no rare parrot defined
+            html += `<p style="text-align: center; font-size: 1.5em; margin: 10px 0;">Won ${coinsWon} coins!</p>`;
+        }
+    } else {
+        html += '<p style="text-align: center; margin: 10px 0;">Better luck next time!</p>';
+    }
 
     html += '<h4 style="margin: 20px 0 10px 0;">Final Rankings</h4>';
     html += '<div style="background: #f8f9fa; border-radius: 12px; padding: 15px;">';
@@ -2427,9 +2490,11 @@ function showContestResults(tier, competitors, placement, coinsWon, badge, playe
 
     html += '</div>';
 
-    html += '<div style="text-align: center; margin-top: 20px;">';
-    html += '<button class="btn" onclick="closeContestModal()">Close</button>';
-    html += '</div>';
+    if (!won) {
+        html += '<div style="text-align: center; margin-top: 20px;">';
+        html += '<button class="btn" onclick="closeContestModal()">Close</button>';
+        html += '</div>';
+    }
 
     display.innerHTML = html;
     modal.classList.add('active');
@@ -2437,5 +2502,279 @@ function showContestResults(tier, competitors, placement, coinsWon, badge, playe
 
 function closeContestModal() {
     document.getElementById('contestModal').classList.remove('active');
+    renderContestsTab();
+}
+
+/*
+ * RARE CONTEST PARROT REWARD SYSTEM
+ * ==================================
+ *
+ * Players choose between COINS or a RARE PARROT when placing top 3 in contests.
+ * Each tier/placement has a predefined rare parrot with special genes.
+ *
+ * PROGRESSION DESIGN:
+ * - Tier 0 (Beginner): Rewards have SOLID COLORS → helps Tier 1's "3+ colors" requirement
+ * - Tier 1 (Rainbow): Rewards have GRADIENTS → helps Tier 2's "2+ gradients" requirement
+ * - Tier 2 (Gradient Masters): Rewards have COMPLEMENTARY COLORS → helps Tier 3's requirement
+ * - Tier 3 (Contrast): Rewards have GRADIENTS + COMPLEMENTARY → helps Tier 4's requirement
+ * - Tier 4 (Elite): ULTIMATE PARROTS with perfect genes (required for endgame)
+ */
+const RARE_CONTEST_PARROTS = {
+    // Tier 0: Beginner Beauty Show
+    0: {
+        1: {
+            name: 'Golden Dawn',
+            description: 'Warm golden tones perfect for rainbow showcases',
+            genes: {
+                wings: { red: [true, true, true, false], green: [true, true, false, false], blue: [false, false, false, false], gradient: false }, // Orange
+                special_wing: { red: [true, true, true, true], green: [true, true, true, false], blue: [false, false, false, false], gradient: false }, // Yellow
+                body: { red: [true, true, true, true], green: [true, false, false, false], blue: [false, false, false, false], gradient: false }, // Red
+                head: { red: [true, true, true, true], green: [true, true, false, false], blue: [false, false, false, false], gradient: false }, // Orange-red
+                tail: { red: [true, true, true, false], green: [true, true, true, false], blue: [false, false, false, false], gradient: false }, // Yellow-orange
+                accents: { red: [true, true, true, false], green: [true, false, false, false], blue: [false, false, false, false], gradient: false } // Orange-red
+            }
+        },
+        2: {
+            name: 'Silver Mist',
+            description: 'Cool silvery blues perfect for rainbow showcases',
+            genes: {
+                wings: { red: [false, false, false, false], green: [true, true, true, false], blue: [true, true, true, true], gradient: false }, // Cyan
+                special_wing: { red: [true, true, true, false], green: [true, true, true, true], blue: [true, true, true, true], gradient: false }, // White-ish
+                body: { red: [false, false, false, false], green: [false, false, false, false], blue: [true, true, true, true], gradient: false }, // Blue
+                head: { red: [true, true, true, false], green: [true, true, true, false], blue: [true, true, true, false], gradient: false }, // Light gray
+                tail: { red: [false, false, false, false], green: [true, true, true, false], blue: [true, true, true, false], gradient: false }, // Teal
+                accents: { red: [true, true, false, false], green: [true, true, false, false], blue: [true, true, false, false], gradient: false } // Gray
+            }
+        },
+        3: {
+            name: 'Bronze Gleam',
+            description: 'Earthy bronze tones with a metallic sheen',
+            genes: {
+                wings: { red: [true, true, false, false], green: [true, false, false, false], blue: [false, false, false, false], gradient: false },
+                special_wing: { red: [true, true, true, false], green: [true, true, false, false], blue: [false, false, false, false], gradient: false },
+                body: { red: [true, true, false, false], green: [true, false, false, false], blue: [false, false, false, false], gradient: false },
+                head: { red: [true, true, true, false], green: [true, false, false, false], blue: [false, false, false, false], gradient: false },
+                tail: { red: [true, true, false, false], green: [true, false, false, false], blue: [false, false, false, false], gradient: false },
+                accents: { red: [true, false, false, false], green: [false, false, false, false], blue: [false, false, false, false], gradient: false }
+            }
+        }
+    },
+
+    // Tier 1: Rainbow Showcase (needs 3+ colors)
+    1: {
+        1: {
+            name: 'Prismatic Pride',
+            description: 'A dazzling display of the full color spectrum',
+            genes: {
+                wings: { red: [true, true, false, false], green: [true, true, true, true], blue: [true, true, true, false], gradient: true }, // Red→Yellow gradient
+                special_wing: { red: [false, false, true, true], green: [false, false, true, true], blue: [true, true, true, true], gradient: true }, // Blue→Purple gradient
+                body: { red: [false, false, false, false], green: [true, true, true, true], blue: [false, false, false, false], gradient: false }, // Pure green
+                head: { red: [true, true, true, true], green: [false, false, false, false], blue: [false, false, false, false], gradient: false }, // Pure red
+                tail: { red: [false, false, false, false], green: [true, true, false, false], blue: [true, true, true, true], gradient: false }, // Cyan
+                accents: { red: [true, true, true, true], green: [true, true, true, true], blue: [false, false, false, false], gradient: false } // Yellow
+            }
+        },
+        2: {
+            name: 'Chromatic Dream',
+            description: 'A harmonious blend of vivid hues',
+            genes: {
+                wings: { red: [false, false, false, false], green: [true, true, true, true], blue: [false, false, true, true], gradient: true }, // Green→Cyan gradient
+                special_wing: { red: [true, true, true, true], green: [false, false, false, false], blue: [false, false, false, false], gradient: false }, // Red
+                body: { red: [false, false, false, false], green: [false, false, false, false], blue: [true, true, true, true], gradient: false }, // Blue
+                head: { red: [true, true, true, true], green: [true, true, true, true], blue: [false, false, false, false], gradient: false }, // Yellow
+                tail: { red: [true, true, false, false], green: [false, false, true, true], blue: [true, true, true, true], gradient: false }, // Purple
+                accents: { red: [false, false, false, false], green: [true, true, true, true], blue: [true, true, false, false], gradient: false } // Teal
+            }
+        },
+        3: {
+            name: 'Spectrum Wing',
+            description: 'Every color of the rainbow in perfect harmony',
+            genes: {
+                wings: { red: [true, true, true, true], green: [false, false, false, false], blue: [false, false, false, false], gradient: false }, // Red
+                special_wing: { red: [true, true, true, true], green: [true, true, false, false], blue: [false, false, false, false], gradient: false }, // Orange
+                body: { red: [true, true, true, true], green: [true, true, true, true], blue: [false, false, false, false], gradient: false }, // Yellow
+                head: { red: [false, false, false, false], green: [true, true, true, true], blue: [false, false, false, false], gradient: false }, // Green
+                tail: { red: [false, false, false, false], green: [false, false, false, false], blue: [true, true, true, true], gradient: false }, // Blue
+                accents: { red: [true, true, false, false], green: [false, false, false, false], blue: [true, true, true, true], gradient: false } // Purple
+            }
+        }
+    },
+
+    // Tier 2: Gradient Masters (needs 2+ gradients)
+    2: {
+        1: {
+            name: 'Aurora Cascade',
+            description: 'Flowing colors like the northern lights',
+            genes: {
+                wings: { red: [false, false, true, true], green: [true, true, true, true], blue: [true, true, false, false], gradient: true }, // Cyan→Green
+                special_wing: { red: [true, true, true, true], green: [false, false, true, true], blue: [true, true, true, true], gradient: true }, // Pink→Purple
+                body: { red: [false, false, true, true], green: [true, true, false, false], blue: [true, true, true, true], gradient: true }, // Blue→Purple
+                head: { red: [true, true, false, false], green: [true, true, true, true], blue: [false, false, true, true], gradient: true }, // Yellow→Green
+                tail: { red: [true, true, true, true], green: [true, true, false, false], blue: [false, false, true, true], gradient: true }, // Orange→Purple
+                accents: { red: [false, false, true, true], green: [true, true, true, true], blue: [true, true, true, true], gradient: true } // Cyan→White
+            }
+        },
+        2: {
+            name: 'Twilight Flow',
+            description: 'Sunset colors in graceful transitions',
+            genes: {
+                wings: { red: [true, true, true, true], green: [false, false, true, true], blue: [true, true, true, true], gradient: true }, // Pink→Purple
+                special_wing: { red: [true, true, false, false], green: [false, false, true, true], blue: [true, true, false, false], gradient: true }, // Orange→Blue
+                body: { red: [true, true, true, true], green: [true, true, false, false], blue: [false, false, true, true], gradient: true }, // Orange→Purple
+                head: { red: [true, true, true, true], green: [false, false, false, false], blue: [true, true, false, false], gradient: false }, // Pink
+                tail: { red: [true, true, false, false], green: [false, false, false, false], blue: [true, true, true, true], gradient: false }, // Purple
+                accents: { red: [true, true, true, true], green: [true, true, true, true], blue: [true, true, false, false], gradient: false } // Light yellow
+            }
+        },
+        3: {
+            name: 'Ocean Drift',
+            description: 'Sea blues meet warm sunset hints',
+            genes: {
+                wings: { red: [false, false, false, false], green: [false, false, true, true], blue: [true, true, true, true], gradient: true }, // Blue→Cyan
+                special_wing: { red: [false, false, false, false], green: [true, true, true, true], blue: [true, true, false, false], gradient: true }, // Cyan→Teal
+                body: { red: [false, false, false, false], green: [true, true, false, false], blue: [true, true, true, true], gradient: false }, // Ocean blue
+                head: { red: [true, true, true, false], green: [true, true, false, false], blue: [false, false, false, false], gradient: false }, // Orange (complementary to blue!)
+                tail: { red: [true, true, false, false], green: [true, false, false, false], blue: [false, false, false, false], gradient: false }, // Orange-red (complementary!)
+                accents: { red: [false, false, false, false], green: [true, true, true, true], blue: [true, true, true, false], gradient: false } // Light cyan
+            }
+        }
+    },
+
+    // Tier 3: Contrast Championship (needs complementary colors)
+    3: {
+        1: {
+            name: 'Ember & Ice',
+            description: 'Fire and frost in perfect opposition',
+            genes: {
+                wings: { red: [true, true, false, false], green: [false, false, false, false], blue: [false, false, true, true], gradient: true }, // Red→Blue (complementary)
+                special_wing: { red: [true, true, true, true], green: [false, false, true, true], blue: [false, false, true, true], gradient: true }, // Red→Cyan
+                body: { red: [true, true, true, true], green: [true, true, false, false], blue: [false, false, false, false], gradient: true }, // Orange→Red
+                head: { red: [false, false, false, false], green: [true, true, true, true], blue: [true, true, true, true], gradient: false }, // Cyan
+                tail: { red: [true, true, true, true], green: [false, false, false, false], blue: [false, false, false, false], gradient: false }, // Red
+                accents: { red: [false, false, false, false], green: [false, false, true, true], blue: [true, true, true, true], gradient: false } // Blue
+            }
+        },
+        2: {
+            name: 'Sunset Contrast',
+            description: 'Bold orange skies meet deep ocean blues',
+            genes: {
+                wings: { red: [true, true, true, true], green: [true, true, false, false], blue: [false, false, true, true], gradient: true }, // Orange→Blue (complementary)
+                special_wing: { red: [true, true, true, true], green: [true, true, true, true], blue: [false, false, false, false], gradient: true }, // Yellow→Orange
+                body: { red: [false, false, false, false], green: [false, false, false, false], blue: [true, true, true, true], gradient: false }, // Blue
+                head: { red: [true, true, true, true], green: [true, true, false, false], blue: [false, false, false, false], gradient: false }, // Orange
+                tail: { red: [false, false, false, false], green: [true, true, false, false], blue: [true, true, true, true], gradient: false }, // Deep blue
+                accents: { red: [true, true, true, true], green: [true, true, true, false], blue: [false, false, false, false], gradient: false } // Bright orange
+            }
+        },
+        3: {
+            name: 'Forest Fire',
+            description: 'Vibrant greens clash with burning reds',
+            genes: {
+                wings: { red: [true, true, true, true], green: [false, false, true, true], blue: [false, false, false, false], gradient: true }, // Red→Green (complementary)
+                special_wing: { red: [false, false, false, false], green: [true, true, true, true], blue: [false, false, false, false], gradient: false }, // Green
+                body: { red: [true, true, true, true], green: [false, false, false, false], blue: [false, false, false, false], gradient: false }, // Red
+                head: { red: [true, true, false, false], green: [true, true, true, true], blue: [false, false, false, false], gradient: false }, // Yellow-green
+                tail: { red: [true, true, true, false], green: [true, true, false, false], blue: [false, false, false, false], gradient: false }, // Orange-red
+                accents: { red: [false, false, false, false], green: [true, true, false, false], blue: [false, false, false, false], gradient: false } // Dark green
+            }
+        }
+    },
+
+    // Tier 4: Elite Grand Prix (needs gradients AND complementary)
+    4: {
+        1: {
+            name: 'Celestial Perfection',
+            description: 'The pinnacle of chromatic beauty - required for endgame',
+            genes: {
+                wings: { red: [true, true, false, false], green: [false, false, true, true], blue: [true, true, true, true], gradient: true }, // Purple→Cyan (complementary)
+                special_wing: { red: [true, true, true, true], green: [true, true, false, false], blue: [false, false, true, true], gradient: true }, // Orange→Blue (complementary)
+                body: { red: [true, true, true, true], green: [false, false, true, true], blue: [true, true, true, true], gradient: true }, // Pink→Cyan
+                head: { red: [false, false, true, true], green: [true, true, true, true], blue: [false, false, true, true], gradient: true }, // Green→Yellow
+                tail: { red: [true, true, false, false], green: [true, true, true, true], blue: [false, false, true, true], gradient: true }, // Yellow→Cyan
+                accents: { red: [true, true, true, true], green: [false, false, false, false], blue: [true, true, true, true], gradient: true } // Red→Purple
+            }
+        },
+        2: {
+            name: 'Royal Spectrum',
+            description: 'Majestic beauty fit for royalty',
+            genes: {
+                wings: { red: [true, true, true, true], green: [false, false, true, true], blue: [true, true, true, true], gradient: true }, // Pink→Purple (rich)
+                special_wing: { red: [true, true, false, false], green: [true, true, true, true], blue: [false, false, true, true], gradient: true }, // Yellow→Green
+                body: { red: [true, true, true, true], green: [true, true, false, false], blue: [false, false, true, true], gradient: true }, // Orange→Purple (complementary)
+                head: { red: [false, false, true, true], green: [false, false, true, true], blue: [true, true, true, true], gradient: true }, // Blue→Purple
+                tail: { red: [true, true, true, true], green: [true, true, true, true], blue: [false, false, false, false], gradient: true }, // Yellow→Orange
+                accents: { red: [true, true, false, false], green: [false, false, false, false], blue: [true, true, true, true], gradient: false } // Purple
+            }
+        },
+        3: {
+            name: 'Noble Radiance',
+            description: 'Dignified elegance with stunning color play',
+            genes: {
+                wings: { red: [true, true, true, true], green: [true, true, false, false], blue: [false, false, true, true], gradient: true }, // Orange→Blue (complementary)
+                special_wing: { red: [false, false, true, true], green: [true, true, true, true], blue: [true, true, false, false], gradient: true }, // Green→Cyan
+                body: { red: [true, true, false, false], green: [false, false, true, true], blue: [true, true, true, true], gradient: true }, // Purple→Cyan
+                head: { red: [true, true, true, true], green: [true, true, true, true], blue: [false, false, true, true], gradient: true }, // Yellow→Green
+                tail: { red: [true, true, true, true], green: [false, false, false, false], blue: [true, true, false, false], gradient: false }, // Pink
+                accents: { red: [false, false, false, false], green: [true, true, true, true], blue: [true, true, true, true], gradient: false } // Cyan
+            }
+        }
+    }
+};
+
+// Create a rare parrot from the predefined templates
+function createRareParrot(tierIndex, placement) {
+    const rareTemplate = RARE_CONTEST_PARROTS[tierIndex]?.[placement];
+    if (!rareTemplate) {
+        console.error(`No rare parrot defined for tier ${tierIndex}, placement ${placement}`);
+        return null;
+    }
+
+    // Create a new parrot with the predefined genes
+    const parrot = new Parrot(rareTemplate.name, rareTemplate.genes, 1);
+    parrot.isRare = true;
+    parrot.rareSource = { tier: tierIndex, placement };
+    parrot.description = rareTemplate.description;
+
+    return parrot;
+}
+
+// Calculate sell value for a parrot (approximately 50-60% of its beauty score as coins)
+function calculateParrotSellValue(parrot) {
+    const beauty = parrot.calculateBeauty();
+    // Base value on beauty score, with some variance
+    const baseValue = Math.round(beauty.score * 0.55);
+    // Rare parrots sell for slightly less to encourage keeping them
+    if (parrot.isRare) {
+        return Math.round(baseValue * 0.9);
+    }
+    return baseValue;
+}
+
+// Handle player choosing coins as reward
+function takeCoinsReward(tierIndex, placement, coinsAmount) {
+    coins += coinsAmount;
+    updateStats();
+    saveGame();
+
+    showToast('Coins received!', `+${coinsAmount} coins`, 'success');
+    closeContestModal();
+    renderContestsTab();
+}
+
+// Handle player choosing rare parrot as reward
+function takeParrotReward(tierIndex, placement) {
+    const rareParrot = createRareParrot(tierIndex, placement);
+
+    if (!rareParrot) {
+        showToast('Error', 'Failed to create rare parrot', 'error');
+        return;
+    }
+
+    parrots.push(rareParrot);
+    updateStats();
+    saveGame();
+
+    showToast('Rare parrot received!', `${rareParrot.name} added to your collection`, 'success');
+    closeContestModal();
     renderContestsTab();
 }
