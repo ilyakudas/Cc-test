@@ -356,19 +356,6 @@ window.closeSplashScreen = () => {
         splash.classList.remove('active');
     }
 };
-window.goToBreedingTabHandler = () => {
-    // Switch to collection tab first to ensure parrots are visible
-    const currentTab = document.querySelector('.tab.active');
-    if (currentTab && !currentTab.textContent.includes('Breeding')) {
-        // Find and click the breeding tab
-        const tabs = document.querySelectorAll('.tab');
-        tabs.forEach(tab => {
-            if (tab.textContent.includes('Breeding')) {
-                tab.click();
-            }
-        });
-    }
-};
 window.moveOffspringToCollectionHandler = () => Actions.moveOffspringToCollection(saveGame);
 window.sellAllOffspringHandler = () => Actions.sellAllOffspring(saveGame);
 window.dismissOffspringHandler = () => Actions.dismissOffspring(saveGame);

@@ -542,11 +542,11 @@ export async function updatePreview() {
                 <button class="btn btn-breed-left" onclick="window.breedOnLeftHandler(${parrot.id})">
                     💕 Breed on Left
                 </button>
-                <button class="btn ${canBreed ? 'btn-breed active' : 'btn-breed'}"
+                <button class="btn btn-breed ${canBreed ? 'active' : ''}"
                         onclick="window.switchTabHandler('breeding')"
                         ${!canBreed ? 'disabled' : ''}
                         title="${canBreed ? 'Go to Breeding Lab' : 'Select both parents first'}"
-                        style="font-size: 1.5em; padding: 8px 16px;">
+                        style="font-size: 1.6em; padding: 8px; min-width: auto; width: 50px;">
                     💕
                 </button>
                 <button class="btn btn-breed-right" onclick="window.breedOnRightHandler(${parrot.id})">

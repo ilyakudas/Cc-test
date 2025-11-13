@@ -83,47 +83,6 @@ header h1 {
     color: #667eea;
 }
 
-/* Heart Button for Breeding Lab */
-.heart-button {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    padding: 8px 20px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 1em;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    transition: all 0.3s ease;
-    opacity: 0.5;
-}
-
-.heart-button.active {
-    opacity: 1;
-    animation: pulse 2s ease-in-out infinite;
-}
-
-.heart-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
-}
-
-@keyframes pulse {
-    0%, 100% {
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    }
-    50% {
-        box-shadow: 0 4px 20px rgba(255, 20, 147, 0.6);
-    }
-}
-
-.heart-button-text {
-    font-size: 0.9em;
-}
-
 .main-layout {
     display: grid;
     grid-template-columns: 1fr 400px;
