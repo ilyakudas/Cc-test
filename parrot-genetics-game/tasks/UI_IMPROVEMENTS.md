@@ -859,6 +859,118 @@ export async function performExamination(parrotId, saveGameFn) {
 
 ---
 
+### Bug #10: Lab Button Click Area Not Working on Text
+**Issue**: Laboratory examination button only responded to clicks on the button background, not when clicking directly on the button text. Hover animation was also not working properly.
+
+**Root Cause**: Button text elements were blocking pointer events. When clicked, the text itself was capturing the click event instead of bubbling it up to the button element. Additionally, the `.btn-lab` hover state was missing transform and box-shadow effects present on other buttons.
+
+**Symptoms**:
+1. Clicking button text → Nothing happens
+2. Clicking button edges/background → Works correctly
+3. Hover animation less noticeable than other buttons
+
+**Fix**: Added CSS pointer-events management to ensure button handles all clicks:
+
+**CSS Changes**:
+```css
+.btn {
+    /* ... existing styles ... */
+    pointer-events: auto;  /* Ensure button captures events */
+}
+
+.btn * {
+    pointer-events: none;  /* Prevent child elements from blocking */
+}
+
+.btn-lab:hover:not(:disabled) {
+    background: linear-gradient(135deg, #138496, #117a8b);
+    transform: translateY(-2px);           /* Added */
+    box-shadow: 0 5px 15px rgba(23, 162, 184, 0.4);  /* Added */
+}
+```
+
+**How It Works**:
+- `pointer-events: auto` on `.btn` ensures the button captures all pointer events
+- `pointer-events: none` on `.btn *` makes all child elements (text, icons) transparent to pointer events
+- Clicks on text now pass through to the button element
+- Added hover transform makes the button behavior consistent with other buttons
+
+**Files Modified**:
+- `public/breeding-game.css:324-337` - Button pointer-events
+- `public/breeding-game.css:386-390` - Lab button hover animation
+
+**Commit**: `5238ad0` - "feat: Fix lab button click area and add sell all offspring button"
+
+---
+
+## New Features
+
+### Feature: Sell All Offspring Button
+**Status**: ✅ Complete
+
+**Implementation**: Added a "Sell All" button to the breeding lab that allows players to quickly sell all recent offspring for coins.
+
+**Functionality**:
+- Calculates total value of all offspring using `parrot.getValue()`
+- Adds coins to player's balance
+- Clears offspring from breeding lab
+- Shows toast notification with count and total earned
+- Uses existing `btn-sell` styling (green button)
+
+**Code Implementation**:
+```javascript
+export async function sellAllOffspring(saveGameFn) {
+    const offspring = GameState.getRecentOffspring();
+    if (offspring.length === 0) return;
+
+    // Calculate total value
+    let totalValue = 0;
+    offspring.forEach(parrot => {
+        totalValue += parrot.getValue();
+    });
+
+    // Add coins and clear offspring
+    GameState.addCoins(totalValue);
+    const count = offspring.length;
+    GameState.clearRecentOffspring();
+
+    await UI.updateStats();
+    await UI.updateBreedingLab();
+
+    if (saveGameFn) saveGameFn();
+
+    showToast(
+        `Offspring sold!`,
+        `${count} parrot${count !== 1 ? 's' : ''} sold for ${totalValue} coins`,
+        'success',
+        3000
+    );
+}
+```
+
+**UI Changes**:
+```html
+<!-- Breeding lab offspring action buttons -->
+<button class="btn btn-breed">📦 Move All (4) to Collection</button>
+<button class="btn btn-sell">💰 Sell All (4)</button>          <!-- NEW -->
+<button class="btn btn-free">✖️ Dismiss All (4)</button>
+```
+
+**Files Modified**:
+- `public/js/actions.js:859-888` - `sellAllOffspring()` function
+- `public/js/ui.js:337-345` - Added sell button to action bar
+- `public/js/main.js:372` - Added `window.sellAllOffspringHandler`
+
+**Benefits**:
+1. Quick monetization of offspring without moving to collection
+2. Saves time for players breeding for specific traits
+3. Alternative to dismissing unwanted offspring
+4. Immediate feedback on total value earned
+
+**Commit**: `5238ad0` - "feat: Fix lab button click area and add sell all offspring button"
+
+---
+
 ## State Management Changes
 
 ### GameState Module Additions
@@ -978,6 +1090,10 @@ public/js/
 - [x] Offspring display in responsive grid, not vertical column
 - [x] Lab examination works for recent offspring in breeding lab
 - [x] Lab examination works for parrots in main collection
+- [x] Lab button responds to clicks on text, not just background
+- [x] Lab button has proper hover animation
+- [x] Sell all offspring button works and calculates correct total
+- [x] All three offspring action buttons have consistent width
 
 ### Edge Cases Handled
 1. Insufficient coins for breeding
@@ -992,6 +1108,9 @@ public/js/
 10. Offspring grid layout with mixed content (header, buttons, cards)
 11. Lab examination on offspring before moving to collection
 12. Lab examination on parrots across different storage locations (collection vs offspring)
+13. Button text blocking clicks (pointer-events management)
+14. Selling offspring with 0 offspring (early return)
+15. Button hover states consistent across all button types
 
 ---
 
@@ -1040,21 +1159,31 @@ All commits on branch: `claude/parrot-game-improvements-011CV5R35qFu7t8vpMAiBgX4
    - Both openLaboratory() and performExamination() now check recentOffspring array
    - Allows examining parrots before moving them to main collection
 
+8. **67c67db** - "fix: Use correct function name addExaminedParrot instead of markParrotExamined"
+   - Fixed function name typo causing runtime error
+   - Changed markParrotExamined to addExaminedParrot (correct name)
+   - Fixed in two locations: auto-examination and manual examination
+
+9. **5238ad0** - "feat: Fix lab button click area and add sell all offspring button"
+   - Fixed lab button click detection with pointer-events CSS
+   - Added transform/box-shadow hover animation to lab button
+   - Added "Sell All" button for offspring in breeding lab
+   - Calculates total value and adds to player's coins
+
 ---
 
 ## Future Enhancement Opportunities
 
 ### Potential Additions
 1. **Sorting/Filtering**: Add sort options in breeding lab (by beauty, rarity, generation)
-2. **Quick Sell**: Add button to sell offspring directly from breeding lab
-3. **Breeding History**: Track and display breeding lineage
-4. **Favorite Pairs**: Save frequently used breeding pairs
-5. **Batch Operations**: Select multiple offspring for group actions
-6. **Genetic Search**: Filter parrots by specific genes
-7. **Beauty Predictions**: Show expected beauty range for offspring
-8. **Achievement Indicators**: Show which parrots can unlock achievements
-9. **Export/Import**: Share parrots with other players
-10. **Tutorial System**: Interactive guide for new players
+2. **Breeding History**: Track and display breeding lineage
+3. **Favorite Pairs**: Save frequently used breeding pairs
+4. **Batch Operations**: Select multiple offspring for group actions
+5. **Genetic Search**: Filter parrots by specific genes
+6. **Beauty Predictions**: Show expected beauty range for offspring
+7. **Achievement Indicators**: Show which parrots can unlock achievements
+8. **Export/Import**: Share parrots with other players
+9. **Tutorial System**: Interactive guide for new players
 
 ### Code Quality Improvements
 1. Add unit tests for breeding logic
@@ -1092,10 +1221,10 @@ This task successfully transformed the ChromaWing parrot breeding game from a fu
 All implementations maintain the existing genetic breeding mechanics while enhancing the presentation and user interaction patterns. The codebase remains modular and maintainable, with clear separation of concerns across the module structure.
 
 **Total Files Modified**: 8
-**Total Lines Changed**: ~710+ lines added/modified
-**Bugs Fixed**: 9 major issues
-**New Features Added**: 10+ enhancements
-**Commits**: 7 commits total
+**Total Lines Changed**: ~750+ lines added/modified
+**Bugs Fixed**: 10 major issues
+**New Features Added**: 11+ enhancements
+**Commits**: 9 commits total
 
 **Status**: All objectives complete and tested ✅
 
@@ -1104,5 +1233,9 @@ All implementations maintain the existing genetic breeding mechanics while enhan
 - Fixed breeding tab not scrolling
 - Fixed offspring displaying vertically instead of grid
 - Fixed lab examination button not working for recent offspring
+- Fixed lab button click area (pointer-events issue)
+- Fixed lab button hover animation
+- Fixed function name error (markParrotExamined → addExaminedParrot)
+- Added "Sell All" button for offspring
 - Added comprehensive validation for coin transactions
 - Lab now works on parrots in both collection and breeding lab
