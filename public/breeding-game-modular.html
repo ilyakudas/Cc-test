@@ -65,6 +65,9 @@
                     <div class="value" id="mutationStatus">ON</div>
                 </div>
             </div>
+            <button class="heart-button" id="heartButton" onclick="goToBreedingTabHandler()" title="Go to Breeding Lab">
+                💕 <span class="heart-button-text">Breeding Lab</span>
+            </button>
         </div>
 
         <div class="main-layout">
@@ -78,6 +81,7 @@
                 <div class="tabs">
                     <button class="tab active" onclick="switchTabHandler('collection')">📦 Collection</button>
                     <button class="tab" onclick="switchTabHandler('store')">🏪 Store</button>
+                    <button class="tab" onclick="switchTabHandler('breeding')">💕 Breeding</button>
                     <button class="tab" onclick="switchTabHandler('contests')">🏆 Contests</button>
                 </div>
 
@@ -94,31 +98,60 @@
                     <!-- Store parrots will be inserted here -->
                 </div>
 
+                <div id="breedingTab" style="display: none;">
+                    <!-- Breeding Lab Content -->
+                    <div class="breeding-lab-container">
+                        <!-- Breeding Pair Selection -->
+                        <div class="breeding-pair-section">
+                            <h3>👨‍👩‍👧 Select Parents</h3>
+                            <div class="breeding-slots-large">
+                                <div class="breeding-slot-large" id="breedSlotLeftLarge">
+                                    <div class="slot-label">Left Parent</div>
+                                    <div style="color: #ccc; font-size: 0.9em;">Empty</div>
+                                </div>
+                                <div class="breeding-icon-large">💕</div>
+                                <div class="breeding-slot-large" id="breedSlotRightLarge">
+                                    <div class="slot-label">Right Parent</div>
+                                    <div style="color: #ccc; font-size: 0.9em;">Empty</div>
+                                </div>
+                            </div>
+                            <button class="btn btn-breed-large" id="breedButtonLarge" onclick="breedParrotsHandler()" disabled>
+                                💕 Breed Parrots (Cost: 50 coins)
+                            </button>
+                        </div>
+
+                        <!-- Compatibility & Predictions -->
+                        <div class="compatibility-section" id="compatibilitySection" style="display: none;">
+                            <h3>🧬 Genetic Compatibility</h3>
+                            <div class="compatibility-info" id="compatibilityInfo">
+                                <!-- Compatibility data will be inserted here -->
+                            </div>
+                        </div>
+
+                        <div class="predictions-section" id="predictionsSection" style="display: none;">
+                            <h3>🔮 Offspring Predictions</h3>
+                            <div class="predictions-info" id="predictionsInfo">
+                                <!-- Predictions will be inserted here -->
+                            </div>
+                        </div>
+
+                        <!-- Recent Offspring -->
+                        <div class="recent-offspring-section" id="recentOffspringSection">
+                            <h3>🐣 Recent Offspring</h3>
+                            <div class="recent-offspring-grid" id="recentOffspringGrid">
+                                <div class="empty-state">Breed parrots to see your offspring here!</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div id="contestsTab" style="display: none;">
                     <!-- Contests content will be inserted here -->
                 </div>
             </div>
 
-            <!-- Right Panel - Preview & Breeding -->
+            <!-- Right Panel - Preview -->
             <div class="panel preview-panel">
-                <!-- Breeding Pair Box -->
-                <div class="breeding-pair-box">
-                    <h4>🧬 Breeding Pair</h4>
-                    <div class="breeding-slots">
-                        <div class="breeding-slot" id="breedSlotLeft">
-                            <div class="slot-label">Left Parent</div>
-                            <div style="color: #ccc; font-size: 0.9em;">Empty</div>
-                        </div>
-                        <div class="breeding-slot" id="breedSlotRight">
-                            <div class="slot-label">Right Parent</div>
-                            <div style="color: #ccc; font-size: 0.9em;">Empty</div>
-                        </div>
-                    </div>
-                    <button class="btn btn-breed" id="breedButton" onclick="breedParrotsHandler()" disabled>
-                        💕 Breed Parrots
-                    </button>
-                </div>
-
                 <div class="preview-section">
                     <h3>Selected Parrot</h3>
                     <div id="selectedPreview">

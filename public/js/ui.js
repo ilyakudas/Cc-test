@@ -35,6 +35,7 @@ export function switchTab(tab, event, renderContestsFn) {
     // Hide all tabs
     document.getElementById('collectionTab').style.display = 'none';
     document.getElementById('storeTab').style.display = 'none';
+    document.getElementById('breedingTab').style.display = 'none';
     document.getElementById('contestsTab').style.display = 'none';
 
     if (tab === 'collection') {
@@ -43,6 +44,11 @@ export function switchTab(tab, event, renderContestsFn) {
     } else if (tab === 'store') {
         document.getElementById('storeTab').style.display = 'grid';
         document.getElementById('panelTitle').textContent = 'Store - Buy Parrots';
+    } else if (tab === 'breeding') {
+        document.getElementById('breedingTab').style.display = 'block';
+        document.getElementById('panelTitle').textContent = 'Breeding Laboratory';
+        updateBreedingLab();
+        return; // Don't call updateUI for breeding tab
     } else if (tab === 'contests') {
         document.getElementById('contestsTab').style.display = 'block';
         document.getElementById('panelTitle').textContent = 'Beauty Contests';
@@ -180,50 +186,105 @@ export async function createParrotCard(parrot, isStore) {
 export async function renderBreedingSlots() {
     const leftSlot = document.getElementById('breedSlotLeft');
     const rightSlot = document.getElementById('breedSlotRight');
+    const leftSlotLarge = document.getElementById('breedSlotLeftLarge');
+    const rightSlotLarge = document.getElementById('breedSlotRightLarge');
     const breedingPair = GameState.getBreedingPair();
     const parrots = GameState.getParrots();
 
-    // Render left slot
-    if (breedingPair.left !== null) {
-        const parrot = parrots.find(p => p.id === breedingPair.left);
-        if (parrot) {
-            const svg = await generateParrotSVG(parrot);
-            leftSlot.className = 'breeding-slot filled';
+    // Render left slot (small - right panel)
+    if (leftSlot) {
+        if (breedingPair.left !== null) {
+            const parrot = parrots.find(p => p.id === breedingPair.left);
+            if (parrot) {
+                const svg = await generateParrotSVG(parrot);
+                leftSlot.className = 'breeding-slot filled';
+                leftSlot.innerHTML = `
+                    <div class="slot-label">Left Parent</div>
+                    <button class="remove-btn" onclick="window.removeFromSlotHandler('left')">×</button>
+                    <div class="parrot-mini-breed">${svg}</div>
+                    <div class="parrot-name-small">${parrot.name}</div>
+                `;
+            }
+        } else {
+            leftSlot.className = 'breeding-slot';
             leftSlot.innerHTML = `
                 <div class="slot-label">Left Parent</div>
-                <button class="remove-btn" onclick="window.removeFromSlotHandler('left')">×</button>
-                <div class="parrot-mini-breed">${svg}</div>
-                <div class="parrot-name-small">${parrot.name}</div>
+                <div style="color: #ccc; font-size: 0.9em;">Empty</div>
             `;
         }
-    } else {
-        leftSlot.className = 'breeding-slot';
-        leftSlot.innerHTML = `
-            <div class="slot-label">Left Parent</div>
-            <div style="color: #ccc; font-size: 0.9em;">Empty</div>
-        `;
     }
 
-    // Render right slot
-    if (breedingPair.right !== null) {
-        const parrot = parrots.find(p => p.id === breedingPair.right);
-        if (parrot) {
-            const svg = await generateParrotSVG(parrot);
-            rightSlot.className = 'breeding-slot filled';
+    // Render right slot (small - right panel)
+    if (rightSlot) {
+        if (breedingPair.right !== null) {
+            const parrot = parrots.find(p => p.id === breedingPair.right);
+            if (parrot) {
+                const svg = await generateParrotSVG(parrot);
+                rightSlot.className = 'breeding-slot filled';
+                rightSlot.innerHTML = `
+                    <div class="slot-label">Right Parent</div>
+                    <button class="remove-btn" onclick="window.removeFromSlotHandler('right')">×</button>
+                    <div class="parrot-mini-breed">${svg}</div>
+                    <div class="parrot-name-small">${parrot.name}</div>
+                `;
+            }
+        } else {
+            rightSlot.className = 'breeding-slot';
             rightSlot.innerHTML = `
                 <div class="slot-label">Right Parent</div>
-                <button class="remove-btn" onclick="window.removeFromSlotHandler('right')">×</button>
-                <div class="parrot-mini-breed">${svg}</div>
-                <div class="parrot-name-small">${parrot.name}</div>
+                <div style="color: #ccc; font-size: 0.9em;">Empty</div>
             `;
         }
-    } else {
-        rightSlot.className = 'breeding-slot';
-        rightSlot.innerHTML = `
-            <div class="slot-label">Right Parent</div>
-            <div style="color: #ccc; font-size: 0.9em;">Empty</div>
-        `;
     }
+
+    // Render left slot (large - breeding tab)
+    if (leftSlotLarge) {
+        if (breedingPair.left !== null) {
+            const parrot = parrots.find(p => p.id === breedingPair.left);
+            if (parrot) {
+                const svg = await generateParrotSVG(parrot);
+                leftSlotLarge.className = 'breeding-slot-large filled';
+                leftSlotLarge.innerHTML = `
+                    <div class="slot-label">Left Parent</div>
+                    <div class="parrot-display-large">${svg}</div>
+                    <div class="parrot-name-large">${parrot.name}</div>
+                    <div class="parrot-info-large">Gen ${parrot.generation} • ${parrot.calculateRarity()}</div>
+                `;
+            }
+        } else {
+            leftSlotLarge.className = 'breeding-slot-large';
+            leftSlotLarge.innerHTML = `
+                <div class="slot-label">Left Parent</div>
+                <div style="color: #ccc; font-size: 0.9em;">Select from Collection</div>
+            `;
+        }
+    }
+
+    // Render right slot (large - breeding tab)
+    if (rightSlotLarge) {
+        if (breedingPair.right !== null) {
+            const parrot = parrots.find(p => p.id === breedingPair.right);
+            if (parrot) {
+                const svg = await generateParrotSVG(parrot);
+                rightSlotLarge.className = 'breeding-slot-large filled';
+                rightSlotLarge.innerHTML = `
+                    <div class="slot-label">Right Parent</div>
+                    <div class="parrot-display-large">${svg}</div>
+                    <div class="parrot-name-large">${parrot.name}</div>
+                    <div class="parrot-info-large">Gen ${parrot.generation} • ${parrot.calculateRarity()}</div>
+                `;
+            }
+        } else {
+            rightSlotLarge.className = 'breeding-slot-large';
+            rightSlotLarge.innerHTML = `
+                <div class="slot-label">Right Parent</div>
+                <div style="color: #ccc; font-size: 0.9em;">Select from Collection</div>
+            `;
+        }
+    }
+
+    // Update heart button state
+    updateHeartButton();
 }
 
 /**
@@ -231,13 +292,150 @@ export async function renderBreedingSlots() {
  */
 export function updateBreedButton() {
     const btn = document.getElementById('breedButton');
+    const btnLarge = document.getElementById('breedButtonLarge');
     const breedingPair = GameState.getBreedingPair();
 
-    if (breedingPair.left !== null && breedingPair.right !== null) {
-        btn.disabled = false;
-    } else {
-        btn.disabled = true;
+    const bothSelected = breedingPair.left !== null && breedingPair.right !== null;
+
+    if (btn) {
+        btn.disabled = !bothSelected;
     }
+    if (btnLarge) {
+        btnLarge.disabled = !bothSelected;
+    }
+}
+
+/**
+ * Update heart button state (active when both parents selected)
+ */
+export function updateHeartButton() {
+    const heartBtn = document.getElementById('heartButton');
+    const breedingPair = GameState.getBreedingPair();
+
+    if (heartBtn) {
+        if (breedingPair.left !== null && breedingPair.right !== null) {
+            heartBtn.classList.add('active');
+        } else {
+            heartBtn.classList.remove('active');
+        }
+    }
+}
+
+/**
+ * Update the breeding lab tab content
+ */
+export async function updateBreedingLab() {
+    await renderBreedingSlots();
+    updateBreedButton();
+
+    const breedingPair = GameState.getBreedingPair();
+    const parrots = GameState.getParrots();
+
+    // Show/hide compatibility and predictions sections
+    if (breedingPair.left !== null && breedingPair.right !== null) {
+        const leftParrot = parrots.find(p => p.id === breedingPair.left);
+        const rightParrot = parrots.find(p => p.id === breedingPair.right);
+
+        if (leftParrot && rightParrot) {
+            renderCompatibility(leftParrot, rightParrot);
+            renderPredictions(leftParrot, rightParrot);
+        }
+    } else {
+        document.getElementById('compatibilitySection').style.display = 'none';
+        document.getElementById('predictionsSection').style.display = 'none';
+    }
+}
+
+/**
+ * Render genetic compatibility information
+ */
+function renderCompatibility(leftParrot, rightParrot) {
+    const section = document.getElementById('compatibilitySection');
+    const info = document.getElementById('compatibilityInfo');
+
+    section.style.display = 'block';
+
+    // Calculate compatibility metrics
+    const diversityScore = calculateGeneticDiversity(leftParrot, rightParrot);
+    const generationDiff = Math.abs(leftParrot.generation - rightParrot.generation);
+
+    info.innerHTML = `
+        <div class="compatibility-stat">
+            <span class="compatibility-label">🧬 Genetic Diversity</span>
+            <span class="compatibility-value">${diversityScore}%</span>
+        </div>
+        <div class="compatibility-stat">
+            <span class="compatibility-label">🔄 Generation Difference</span>
+            <span class="compatibility-value">${generationDiff}</span>
+        </div>
+        <div class="compatibility-stat">
+            <span class="compatibility-label">👶 Offspring Generation</span>
+            <span class="compatibility-value">Gen ${Math.max(leftParrot.generation, rightParrot.generation) + 1}</span>
+        </div>
+    `;
+}
+
+/**
+ * Calculate genetic diversity between two parrots
+ */
+function calculateGeneticDiversity(parrot1, parrot2) {
+    let differences = 0;
+    let total = 0;
+
+    const bodyParts = ['wings', 'special_wing', 'body', 'head', 'tail', 'accents'];
+    const colors = ['red', 'green', 'blue'];
+
+    bodyParts.forEach(part => {
+        colors.forEach(color => {
+            for (let i = 0; i < 4; i++) {
+                if (parrot1.genes[part][color][i] !== parrot2.genes[part][color][i]) {
+                    differences++;
+                }
+                total++;
+            }
+        });
+        if (parrot1.genes[part].gradient !== parrot2.genes[part].gradient) {
+            differences++;
+        }
+        total++;
+    });
+
+    return Math.round((differences / total) * 100);
+}
+
+/**
+ * Render offspring predictions
+ */
+function renderPredictions(leftParrot, rightParrot) {
+    const section = document.getElementById('predictionsSection');
+    const info = document.getElementById('predictionsInfo');
+
+    section.style.display = 'block';
+
+    // Simple prediction calculations
+    const avgBeauty = Math.round((leftParrot.calculateBeauty() + rightParrot.calculateBeauty()) / 2);
+    const diversityScore = calculateGeneticDiversity(leftParrot, rightParrot);
+    const mutationChance = GameState.getMutationsEnabled() ? 15 : 0;
+
+    info.innerHTML = `
+        <div class="predictions-grid">
+            <div class="prediction-card">
+                <div class="prediction-label">Expected Beauty</div>
+                <div class="prediction-value">${avgBeauty}/100</div>
+            </div>
+            <div class="prediction-card">
+                <div class="prediction-label">Diversity</div>
+                <div class="prediction-value">${diversityScore > 50 ? 'High' : diversityScore > 25 ? 'Medium' : 'Low'}</div>
+            </div>
+            <div class="prediction-card">
+                <div class="prediction-label">Mutation Chance</div>
+                <div class="prediction-value">${mutationChance}%</div>
+            </div>
+        </div>
+        <p style="margin-top: 15px; color: #666; font-size: 0.9em; text-align: center;">
+            💡 Higher genetic diversity increases chances of unique offspring traits
+        </p>
+    `;
 }
 
 /**
