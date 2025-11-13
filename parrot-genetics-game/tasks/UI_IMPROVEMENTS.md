@@ -1153,6 +1153,13 @@ public/js/
 - [x] All three offspring action buttons have consistent width
 - [x] Offspring accumulate correctly when breeding multiple times
 - [x] Toast shows total offspring count after each breeding
+- [x] Offspring in breeding lab are selectable
+- [x] Lock/unlock button appears in action buttons
+- [x] Lock indicator displays at top center of parrot card
+- [x] Locked parrots cannot be sold (error toast shown)
+- [x] Locked parrots cannot be freed (error toast shown)
+- [x] Lock status persists across game sessions
+- [x] Lock status clears on new game
 
 ### Edge Cases Handled
 1. Insufficient coins for breeding
@@ -1172,6 +1179,11 @@ public/js/
 15. Button hover states consistent across all button types
 16. Breeding multiple times without managing offspring (offspring now accumulate)
 17. Large numbers of accumulated offspring (grid layout scales properly)
+18. Attempting to sell locked parrots (prevented with error toast)
+19. Attempting to free locked parrots (prevented with error toast)
+20. Toggling lock status multiple times (state updates correctly)
+21. Lock status on offspring before moving to collection (works correctly)
+22. Lock state persistence across game reload (saved and loaded correctly)
 
 ---
 
@@ -1237,6 +1249,16 @@ All commits on branch: `claude/parrot-game-improvements-011CV5R35qFu7t8vpMAiBgX4
    - Updated toast to show total offspring count (e.g., "8 total waiting")
    - Allows players to breed multiple times without losing parrots
 
+11. **8a90a7a** - "feat: Add parrot lock feature and make offspring selectable"
+   - Made offspring in breeding lab selectable for actions
+   - Added lock/unlock system to protect parrots from selling/freeing
+   - Lock indicator displayed as orange badge at top center of card
+   - Lock/unlock button added to action buttons section
+   - Sell and free functions check lock status and prevent actions
+   - Lock state persisted in save/load system
+   - Added lockedParrots Set to game state with management functions
+   - Reset function clears locked parrots on new game
+
 ---
 
 ## Future Enhancement Opportunities
@@ -1281,6 +1303,172 @@ All commits on branch: `claude/parrot-game-improvements-011CV5R35qFu7t8vpMAiBgX4
 
 ---
 
+### Feature: Parrot Lock System
+**Status**: ✅ Complete
+
+**Implementation**: Added a lock/unlock feature to protect valuable parrots from accidental selling or releasing to the wild.
+
+**Functionality**:
+- Lock/unlock button added to parrot action buttons section
+- Locked parrots display an orange lock badge (🔒) at top center of card
+- Attempting to sell or free a locked parrot shows error toast
+- Lock status persisted across game sessions
+- Made offspring in breeding lab selectable for actions
+
+**Visual Indicator**:
+```css
+.lock-indicator {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff9800 0%, #ff6f00 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9em;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+}
+```
+
+**Lock/Unlock Action**:
+```javascript
+export function toggleLockParrot(parrotId, saveGameFn) {
+    const parrots = GameState.getParrots();
+    const parrot = parrots.find(p => p.id === parrotId);
+    if (!parrot) return;
+
+    const isCurrentlyLocked = GameState.isParrotLocked(parrotId);
+
+    if (isCurrentlyLocked) {
+        GameState.removeLockedParrot(parrotId);
+        showToast(
+            `${parrot.name} unlocked`,
+            `Can now be sold or released`,
+            'info'
+        );
+    } else {
+        GameState.addLockedParrot(parrotId);
+        showToast(
+            `${parrot.name} locked`,
+            `Protected from selling and releasing`,
+            'success'
+        );
+    }
+
+    UI.updateUI();
+    if (saveGameFn) saveGameFn();
+}
+```
+
+**Protection Logic**:
+```javascript
+// In freeParrot function
+if (GameState.isParrotLocked(parrotId)) {
+    showToast(
+        `${parrot.name} is locked`,
+        `Unlock the parrot first to release it`,
+        'error',
+        3000
+    );
+    return;
+}
+
+// In startSellHold function
+if (GameState.isParrotLocked(parrotId)) {
+    showToast(
+        `${parrot.name} is locked`,
+        `Unlock the parrot first to sell it`,
+        'error',
+        3000
+    );
+    return;
+}
+```
+
+**State Management**:
+```javascript
+// In gameState.js
+export let lockedParrots = new Set();
+
+export function addLockedParrot(parrotId) {
+    lockedParrots.add(parrotId);
+}
+
+export function removeLockedParrot(parrotId) {
+    lockedParrots.delete(parrotId);
+}
+
+export function isParrotLocked(parrotId) {
+    return lockedParrots.has(parrotId);
+}
+
+export function getLockedParrots() {
+    return lockedParrots;
+}
+
+export function setLockedParrots(lockedSet) {
+    lockedParrots = lockedSet;
+}
+```
+
+**Persistence**:
+```javascript
+// In storage.js - saveGame()
+lockedParrots: Array.from(GameState.getLockedParrots())
+
+// In storage.js - loadGame()
+const lockedSet = new Set(gameStateData.lockedParrots || []);
+GameState.setLockedParrots(lockedSet);
+```
+
+**UI Changes**:
+- Added lock/unlock button to action buttons (after contest button)
+- Button shows 🔒 "Lock Parrot" when unlocked
+- Button shows 🔓 "Unlock Parrot" when locked
+- Button uses `btn-lab` style when unlocked (blue)
+- Button uses `btn-free` style when locked (gray)
+- Made offspring cards selectable by passing `true` to `createParrotCard(parrot, true)`
+
+**Files Modified**:
+- `public/breeding-game.css:954-971` - Lock indicator styling
+- `public/js/ui.js:142-146` - Lock indicator rendering in parrot cards
+- `public/js/ui.js:354` - Made offspring cards selectable
+- `public/js/ui.js:525-527` - Added lock/unlock button to action buttons
+- `public/js/actions.js:367-376` - Added lock check to freeParrot()
+- `public/js/actions.js:288-297` - Added lock check to startSellHold()
+- `public/js/actions.js:392-422` - Added toggleLockParrot() function
+- `public/js/gameState.js:19` - Added lockedParrots Set
+- `public/js/gameState.js:174-192` - Added lock management functions
+- `public/js/gameState.js:390` - Added lock reset to resetGameState()
+- `public/js/main.js:334` - Added toggleLockParrotHandler window handler
+- `public/js/storage.js:29` - Added lockedParrots to save data
+- `public/js/storage.js:86-88` - Added lockedParrots to load logic
+
+**Benefits**:
+1. Prevents accidental loss of valuable parrots (rare, high beauty, contest winners)
+2. Visual indicator makes it clear which parrots are protected
+3. Easy toggle between locked and unlocked states
+4. Clear error messages when attempting actions on locked parrots
+5. Offspring can now be selected and locked before moving to collection
+6. State persists across game sessions
+
+**Use Cases**:
+- Lock contest-winning parrots to prevent accidental release
+- Lock breeding stock with rare genetic combinations
+- Lock parrots with maximum beauty scores
+- Lock rare mutation carriers
+- Protect parrots being used in achievement progress
+
+**Commit**: `8a90a7a` - "feat: Add parrot lock feature and make offspring selectable"
+
+---
+
 ## Conclusion
 
 This task successfully transformed the ChromaWing parrot breeding game from a functional but utilitarian interface into a polished, user-friendly experience. The additions of the splash screen, dedicated breeding lab, auto-examination system, and various visual indicators significantly improve both the aesthetic appeal and usability of the game.
@@ -1288,10 +1476,10 @@ This task successfully transformed the ChromaWing parrot breeding game from a fu
 All implementations maintain the existing genetic breeding mechanics while enhancing the presentation and user interaction patterns. The codebase remains modular and maintainable, with clear separation of concerns across the module structure.
 
 **Total Files Modified**: 8
-**Total Lines Changed**: ~760+ lines added/modified
+**Total Lines Changed**: ~880+ lines added/modified
 **Bugs Fixed**: 11 major issues
-**New Features Added**: 11+ enhancements
-**Commits**: 10 commits total
+**New Features Added**: 12+ enhancements
+**Commits**: 11 commits total
 
 **Status**: All objectives complete and tested ✅
 
@@ -1308,3 +1496,11 @@ All implementations maintain the existing genetic breeding mechanics while enhan
 - Added comprehensive validation for coin transactions
 - Added total offspring count to breeding toast notifications
 - Lab now works on parrots in both collection and breeding lab
+
+**Recent Session Additions** (Session 3):
+- Made offspring in breeding lab selectable for actions
+- Added parrot lock/unlock system to prevent selling/freeing
+- Lock indicator displayed as orange badge at top center of card
+- Lock status persisted in save/load system
+- Sell and free functions now check lock status before allowing actions
+- Clear error toasts when attempting to sell/free locked parrots
