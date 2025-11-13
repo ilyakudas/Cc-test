@@ -312,10 +312,6 @@ export function getCurrentTab() {
     return currentTab;
 }
 
-export function getExaminedParrots() {
-    return examinedParrots;
-}
-
 export function getCoins() {
     return coins;
 }
