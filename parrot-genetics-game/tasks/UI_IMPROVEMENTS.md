@@ -800,6 +800,65 @@ grid.appendChild(cardsContainer);
 
 ---
 
+### Bug #9: Lab Examination Button Not Working for Recent Offspring
+**Issue**: Clicking the examination button on recent offspring in the breeding lab did nothing - the modal wouldn't open or the button wouldn't respond.
+
+**Root Cause**: Both `openLaboratory()` and `performExamination()` only searched for parrots in the main collection using `GameState.getParrots()`. However, recent offspring are stored in a separate array (`GameState.getRecentOffspring()`) until the user explicitly moves them to the main collection. When these functions couldn't find the parrot, they returned early without any action.
+
+**Flow of the Bug**:
+1. User breeds parrots → offspring added to `recentOffspring` array
+2. User clicks "Examine" on an offspring card
+3. `openLaboratory(parrotId)` is called
+4. Function searches only in `parrots` array
+5. Parrot not found → returns early (line 397)
+6. Nothing happens, modal doesn't open
+
+**Fix**: Modified both functions to search in both the main collection AND recent offspring arrays using logical OR operator.
+
+**Before**:
+```javascript
+export async function openLaboratory(parrotId) {
+    const parrots = GameState.getParrots();
+    const parrot = parrots.find(p => p.id === parrotId);
+    if (!parrot) return; // Returns early if not in main collection
+    // ...
+}
+
+export async function performExamination(parrotId, saveGameFn) {
+    const parrots = GameState.getParrots();
+    const parrot = parrots.find(p => p.id === parrotId);
+    if (!parrot) return; // Returns early if not in main collection
+    // ...
+}
+```
+
+**After**:
+```javascript
+export async function openLaboratory(parrotId) {
+    const parrots = GameState.getParrots();
+    const recentOffspring = GameState.getRecentOffspring();
+    const parrot = parrots.find(p => p.id === parrotId) || recentOffspring.find(p => p.id === parrotId);
+    if (!parrot) return; // Now checks both arrays
+    // ...
+}
+
+export async function performExamination(parrotId, saveGameFn) {
+    const parrots = GameState.getParrots();
+    const recentOffspring = GameState.getRecentOffspring();
+    const parrot = parrots.find(p => p.id === parrotId) || recentOffspring.find(p => p.id === parrotId);
+    if (!parrot) return; // Now checks both arrays
+    // ...
+}
+```
+
+**Files Modified**:
+- `public/js/actions.js:394-398` - `openLaboratory()`
+- `public/js/actions.js:734-738` - `performExamination()`
+
+**Commit**: `fb03846` - "fix: Lab examination button now works for recent offspring"
+
+---
+
 ## State Management Changes
 
 ### GameState Module Additions
@@ -917,6 +976,8 @@ public/js/
 - [x] Lab examination doesn't double-charge for same parrot
 - [x] Breeding tab scrolls properly when content overflows
 - [x] Offspring display in responsive grid, not vertical column
+- [x] Lab examination works for recent offspring in breeding lab
+- [x] Lab examination works for parrots in main collection
 
 ### Edge Cases Handled
 1. Insufficient coins for breeding
@@ -929,6 +990,8 @@ public/js/
 8. Singular vs plural text ("1 chick" vs "4 chicks")
 9. Breeding tab content overflow (scrolling enabled)
 10. Offspring grid layout with mixed content (header, buttons, cards)
+11. Lab examination on offspring before moving to collection
+12. Lab examination on parrots across different storage locations (collection vs offspring)
 
 ---
 
@@ -971,6 +1034,11 @@ All commits on branch: `claude/parrot-game-improvements-011CV5R35qFu7t8vpMAiBgX4
    - Fixed breeding tab scrolling by simplifying flex layout
    - Fixed offspring grid display (was showing vertically instead of grid)
    - All fixes address critical user-reported issues
+
+7. **fb03846** - "fix: Lab examination button now works for recent offspring"
+   - Fixed lab examination to work on offspring in breeding lab
+   - Both openLaboratory() and performExamination() now check recentOffspring array
+   - Allows examining parrots before moving them to main collection
 
 ---
 
@@ -1024,10 +1092,10 @@ This task successfully transformed the ChromaWing parrot breeding game from a fu
 All implementations maintain the existing genetic breeding mechanics while enhancing the presentation and user interaction patterns. The codebase remains modular and maintainable, with clear separation of concerns across the module structure.
 
 **Total Files Modified**: 8
-**Total Lines Changed**: ~700+ lines added/modified
-**Bugs Fixed**: 8 major issues
+**Total Lines Changed**: ~710+ lines added/modified
+**Bugs Fixed**: 9 major issues
 **New Features Added**: 10+ enhancements
-**Commits**: 6 commits total
+**Commits**: 7 commits total
 
 **Status**: All objectives complete and tested ✅
 
@@ -1035,4 +1103,6 @@ All implementations maintain the existing genetic breeding mechanics while enhan
 - Prevented negative balance in lab examinations
 - Fixed breeding tab not scrolling
 - Fixed offspring displaying vertically instead of grid
+- Fixed lab examination button not working for recent offspring
 - Added comprehensive validation for coin transactions
+- Lab now works on parrots in both collection and breeding lab
