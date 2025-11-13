@@ -139,6 +139,12 @@ export async function createParrotCard(parrot, isStore) {
         examinedIndicator = '<div class="examined-indicator" title="Lab Examined">🔬</div>';
     }
 
+    // Check if parrot is locked
+    let lockIndicator = '';
+    if (!isStore && GameState.isParrotLocked(parrot.id)) {
+        lockIndicator = '<div class="lock-indicator" title="Locked">🔒</div>';
+    }
+
     const rarityInfo = RARITY_CONFIG[rarity];
 
     // Calculate beauty score for display
@@ -173,6 +179,7 @@ export async function createParrotCard(parrot, isStore) {
         ${isStore ? `<div class="price">${price}💰</div>` : ''}
         ${breedingIndicator}
         ${examinedIndicator}
+        ${lockIndicator}
         <div class="parrot-mini">${svg}</div>
         <div class="parrot-name">${parrot.name}</div>
         <div class="parrot-gen">Gen ${parrot.generation}</div>
@@ -346,12 +353,12 @@ async function renderRecentOffspring() {
     `;
     grid.appendChild(actionBar);
 
-    // Render offspring cards
+    // Render offspring cards (selectable)
     const cardsContainer = document.createElement('div');
     cardsContainer.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px;';
 
     for (const parrot of offspring) {
-        const card = await createParrotCard(parrot, false);
+        const card = await createParrotCard(parrot, true);  // Make selectable
         cardsContainer.appendChild(card);
     }
 
@@ -514,6 +521,9 @@ export async function updatePreview() {
             </button>
             <button class="btn btn-contest" onclick="window.switchTabHandler('contests')">
                 🏆 Enter Beauty Contest
+            </button>
+            <button class="btn ${GameState.isParrotLocked(parrot.id) ? 'btn-free' : 'btn-lab'}" onclick="window.toggleLockParrotHandler(${parrot.id})">
+                ${GameState.isParrotLocked(parrot.id) ? '🔓 Unlock Parrot' : '🔒 Lock Parrot'}
             </button>
             <button class="btn btn-sell"
                     onmousedown="window.startSellHoldHandler(${parrot.id})"

@@ -26,6 +26,7 @@ export function saveGame() {
         generation: GameState.getGeneration(),
         usedNames: Array.from(GameState.getUsedNames()),
         examinedParrots: Array.from(GameState.examinedParrots),
+        lockedParrots: Array.from(GameState.getLockedParrots()),
         contestProgress: GameState.getContestProgress(),
         parrotTrophies: GameState.getParrotTrophies(),
         achievements: GameState.getAchievements(),
@@ -81,6 +82,10 @@ export function loadGame() {
                 // Restore examined parrots
                 const examinedSet = new Set(gameStateData.examinedParrots || []);
                 GameState.setExaminedParrots(examinedSet);
+
+                // Restore locked parrots
+                const lockedSet = new Set(gameStateData.lockedParrots || []);
+                GameState.setLockedParrots(lockedSet);
 
                 GameState.setContestProgress(gameStateData.contestProgress || {});
                 GameState.setParrotTrophies(gameStateData.parrotTrophies || {});

@@ -331,6 +331,7 @@ window.startSellHoldHandler = (parrotId) => {
 };
 window.cancelSellHoldHandler = () => Actions.cancelSellHold();
 window.freeParrotHandler = (parrotId) => Actions.freeParrot(parrotId, saveGame);
+window.toggleLockParrotHandler = (parrotId) => Actions.toggleLockParrot(parrotId, saveGame);
 window.openLaboratoryHandler = (parrotId) => Actions.openLaboratory(parrotId);
 window.performExaminationHandler = (parrotId) => Actions.performExamination(parrotId, saveGame);
 window.closeModalHandler = () => Actions.closeModal();

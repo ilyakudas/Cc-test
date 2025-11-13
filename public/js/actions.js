@@ -285,6 +285,17 @@ export function startSellHold(parrotId, event, saveGameFn) {
     const parrot = parrots.find(p => p.id === parrotId);
     if (!parrot) return;
 
+    // Check if parrot is locked
+    if (GameState.isParrotLocked(parrotId)) {
+        showToast(
+            `${parrot.name} is locked`,
+            `Unlock the parrot first to sell it`,
+            'error',
+            3000
+        );
+        return;
+    }
+
     const button = event.target;
     const sellValue = Math.floor(parrot.getValue() * 0.7);
     const holdDuration = 1000; // 1 second
@@ -364,6 +375,17 @@ export function freeParrot(parrotId, saveGameFn) {
     const parrot = parrots.find(p => p.id === parrotId);
     if (!parrot) return;
 
+    // Check if parrot is locked
+    if (GameState.isParrotLocked(parrotId)) {
+        showToast(
+            `${parrot.name} is locked`,
+            `Unlock the parrot first to release it`,
+            'error',
+            3000
+        );
+        return;
+    }
+
     if (!confirm(`Release ${parrot.name} to the wild? You won't get any coins.`)) return;
 
     GameState.removeParrot(parrotId);
@@ -387,6 +409,38 @@ export function freeParrot(parrotId, saveGameFn) {
         `Set free to the wild`,
         'info'
     );
+}
+
+/**
+ * Toggle lock status of a parrot to prevent selling/freeing
+ * @param {number} parrotId - Parrot ID
+ * @param {Function} saveGameFn - Save game function
+ */
+export function toggleLockParrot(parrotId, saveGameFn) {
+    const parrots = GameState.getParrots();
+    const parrot = parrots.find(p => p.id === parrotId);
+    if (!parrot) return;
+
+    const isCurrentlyLocked = GameState.isParrotLocked(parrotId);
+
+    if (isCurrentlyLocked) {
+        GameState.removeLockedParrot(parrotId);
+        showToast(
+            `${parrot.name} unlocked`,
+            `Can now be sold or released`,
+            'info'
+        );
+    } else {
+        GameState.addLockedParrot(parrotId);
+        showToast(
+            `${parrot.name} locked`,
+            `Protected from selling and releasing`,
+            'success'
+        );
+    }
+
+    UI.updateUI();
+    if (saveGameFn) saveGameFn();
 }
 
 /**

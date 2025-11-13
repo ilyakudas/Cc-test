@@ -16,6 +16,7 @@ export let generation = 1;
 export let svgCache = null;
 export let gradientIdCounter = 0;
 export let examinedParrots = new Set();
+export let lockedParrots = new Set();  // Parrots locked from selling/freeing
 
 // Contest state
 export let contestProgress = {};
@@ -164,6 +165,30 @@ export function addExaminedParrot(parrotId) {
 
 export function hasExaminedParrot(parrotId) {
     return examinedParrots.has(parrotId);
+}
+
+export function getExaminedParrots() {
+    return examinedParrots;
+}
+
+export function addLockedParrot(parrotId) {
+    lockedParrots.add(parrotId);
+}
+
+export function removeLockedParrot(parrotId) {
+    lockedParrots.delete(parrotId);
+}
+
+export function isParrotLocked(parrotId) {
+    return lockedParrots.has(parrotId);
+}
+
+export function getLockedParrots() {
+    return lockedParrots;
+}
+
+export function setLockedParrots(lockedSet) {
+    lockedParrots = lockedSet;
 }
 
 export function setContestProgress(parrotIdOrProgress, tierIndex, progressData) {
@@ -362,6 +387,7 @@ export function resetGameState() {
     svgCache = null;
     gradientIdCounter = 0;
     examinedParrots = new Set();
+    lockedParrots = new Set();
     contestProgress = {};
     parrotTrophies = {};
     achievements = {
