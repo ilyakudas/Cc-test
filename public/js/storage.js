@@ -73,11 +73,21 @@ export function saveGame() {
  */
 export function loadGame() {
     const cookies = document.cookie.split(';');
+    console.log('Loading game... found cookies:', cookies.length);
+
     for (let cookie of cookies) {
         const [name, value] = cookie.trim().split('=');
+        console.log('Checking cookie:', name);
+
         if (name === 'chromawing_save') {
+            console.log('Found chromawing_save cookie, length:', value.length);
+
             try {
                 const gameStateData = JSON.parse(decodeURIComponent(value));
+                console.log('Parsed save data - Parrots:', gameStateData.parrots?.length,
+                            'Store:', gameStateData.storeParrots?.length,
+                            'Offspring:', gameStateData.recentOffspring?.length,
+                            'Coins:', gameStateData.coins);
 
                 // Restore parrots
                 const restoredParrots = gameStateData.parrots.map(p => {

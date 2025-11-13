@@ -382,7 +382,14 @@ window.addEventListener('load', async () => {
 
     if (loaded) {
         // Game loaded from save
-        await generateStore();
+        console.log('Game loaded - Store has', GameState.getStoreParrots().length, 'parrots');
+
+        // Only generate store if it's empty (for old saves without store data)
+        if (GameState.getStoreParrots().length === 0) {
+            console.log('Store is empty, generating new store parrots');
+            await generateStore();
+        }
+
         await UI.updateUI();
     } else {
         // New game
