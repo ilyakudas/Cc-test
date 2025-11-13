@@ -94,7 +94,7 @@ export async function breedParrots(saveGameFn, checkAchievementsFn) {
 
     // Check if player has enough coins (breeding costs 50 coins)
     const BREEDING_COST = 50;
-    const coins = GameState.getCoins();
+    let coins = GameState.getCoins();
     if (coins < BREEDING_COST) {
         showToast(
             `Not enough coins!`,
@@ -105,8 +105,15 @@ export async function breedParrots(saveGameFn, checkAchievementsFn) {
         return;
     }
 
+    // Disable breed button to prevent double-clicking
+    const breedBtn = document.getElementById('breedButton');
+    const breedBtnLarge = document.getElementById('breedButtonLarge');
+    if (breedBtn) breedBtn.disabled = true;
+    if (breedBtnLarge) breedBtnLarge.disabled = true;
+
     // Deduct breeding cost
     GameState.addCoins(-BREEDING_COST);
+    coins = GameState.getCoins(); // Update coins after breeding cost
 
     // Generate 4 offspring
     const offspring = [];
@@ -135,8 +142,7 @@ export async function breedParrots(saveGameFn, checkAchievementsFn) {
     let examineCount = 0;
     let examineMessage = '';
 
-    if (autoExamineEnabled) {
-        const coins = GameState.getCoins();
+    if (autoExamineEnabled && offspring.length > 0) {
         const maxExaminations = Math.min(offspring.length, Math.floor(coins / EXAM_COST));
 
         for (let i = 0; i < maxExaminations; i++) {
@@ -146,9 +152,9 @@ export async function breedParrots(saveGameFn, checkAchievementsFn) {
         }
 
         if (examineCount > 0) {
-            examineMessage = ` ${examineCount} automatically examined (-${examineCount * EXAM_COST} coins).`;
-        } else if (offspring.length > 0) {
-            examineMessage = ` Not enough coins to auto-examine (${EXAM_COST} each).`;
+            examineMessage = ` ${examineCount} examined (-${examineCount * EXAM_COST} coins).`;
+        } else {
+            examineMessage = ` Auto-exam: Need ${EXAM_COST} coins per chick.`;
         }
     }
 
@@ -158,6 +164,7 @@ export async function breedParrots(saveGameFn, checkAchievementsFn) {
     // Clear breeding pair
     GameState.setBreedingPair({ left: null, right: null });
 
+    // Update UI
     await UI.updateUI();
 
     // Update breeding lab if we're on the breeding tab
@@ -165,17 +172,22 @@ export async function breedParrots(saveGameFn, checkAchievementsFn) {
         await UI.updateBreedingLab();
     }
 
+    // Re-enable breed buttons
+    if (breedBtn) breedBtn.disabled = false;
+    if (breedBtnLarge) breedBtnLarge.disabled = false;
+
     if (saveGameFn) saveGameFn();
     if (checkAchievementsFn) checkAchievementsFn(saveGameFn);
 
     // Show success toast
-    const offspringNames = offspring.map(p => p.name).join(', ');
     showToast(
         `Breeding successful!`,
         `4 new chicks born!${examineMessage} Check the Breeding Lab.`,
         'success',
         6000
     );
+
+    console.log('Breeding complete:', offspring.length, 'offspring created, examined:', examineCount);
 }
 
 /**
@@ -724,8 +736,9 @@ export async function performExamination(parrotId, saveGameFn) {
     if (!parrot) return;
 
     GameState.addCoins(-100);
-    GameState.addExaminedParrot(parrotId);
-    UI.updateStats();
+    GameState.markParrotExamined(parrotId);
+    await UI.updateStats();
+    await UI.renderParrotGrid(); // Refresh cards to show examined badge immediately
     if (saveGameFn) saveGameFn();
 
     // Show info toast

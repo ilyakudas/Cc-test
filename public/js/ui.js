@@ -315,6 +315,8 @@ async function renderRecentOffspring() {
     const grid = document.getElementById('recentOffspringGrid');
     const offspring = GameState.getRecentOffspring();
 
+    console.log('Rendering recent offspring:', offspring.length);
+
     if (offspring.length === 0) {
         grid.innerHTML = '<div class="empty-state">Breed parrots to see your offspring here!</div>';
         return;
@@ -322,15 +324,21 @@ async function renderRecentOffspring() {
 
     grid.innerHTML = '';
 
+    // Add header with count
+    const headerDiv = document.createElement('div');
+    headerDiv.style.cssText = 'margin-bottom: 10px; font-weight: 600; color: #667eea;';
+    headerDiv.textContent = `${offspring.length} chick${offspring.length !== 1 ? 's' : ''} waiting`;
+    grid.appendChild(headerDiv);
+
     // Add button to move all to collection
     const actionBar = document.createElement('div');
     actionBar.style.cssText = 'margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap;';
     actionBar.innerHTML = `
-        <button class="btn btn-breed" style="flex: 1; min-width: 150px;" onclick="window.moveOffspringToCollectionHandler()">
-            📦 Move All to Collection
+        <button class="btn btn-breed" style="flex: 1; min-width: 150px; font-size: 0.9em;" onclick="window.moveOffspringToCollectionHandler()">
+            📦 Move All (${offspring.length}) to Collection
         </button>
-        <button class="btn btn-free" style="flex: 1; min-width: 150px;" onclick="window.dismissOffspringHandler()">
-            ✖️ Dismiss All
+        <button class="btn btn-free" style="flex: 1; min-width: 150px; font-size: 0.9em;" onclick="window.dismissOffspringHandler()">
+            ✖️ Dismiss All (${offspring.length})
         </button>
     `;
     grid.appendChild(actionBar);
