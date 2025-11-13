@@ -147,7 +147,7 @@ export async function breedParrots(saveGameFn, checkAchievementsFn) {
 
         for (let i = 0; i < maxExaminations; i++) {
             GameState.addCoins(-EXAM_COST);
-            GameState.markParrotExamined(offspring[i].id);
+            GameState.addExaminedParrot(offspring[i].id);
             examineCount++;
         }
 
@@ -759,7 +759,7 @@ export async function performExamination(parrotId, saveGameFn) {
     }
 
     GameState.addCoins(-EXAM_COST);
-    GameState.markParrotExamined(parrotId);
+    GameState.addExaminedParrot(parrotId);
     await UI.updateStats();
     await UI.renderParrotGrid(); // Refresh cards to show examined badge immediately
     if (saveGameFn) saveGameFn();
