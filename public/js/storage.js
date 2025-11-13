@@ -22,10 +22,10 @@ export function saveGame() {
             description: p.description
         })),
         coins: GameState.getCoins(),
-        parrotIdCounter: GameState.parrotIdCounter,
+        parrotIdCounter: GameState.getParrotIdCounter(),
         generation: GameState.getGeneration(),
         usedNames: Array.from(GameState.getUsedNames()),
-        examinedParrots: Array.from(GameState.examinedParrots),
+        examinedParrots: Array.from(GameState.getExaminedParrots()),
         lockedParrots: Array.from(GameState.getLockedParrots()),
         contestProgress: GameState.getContestProgress(),
         parrotTrophies: GameState.getParrotTrophies(),

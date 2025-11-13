@@ -475,9 +475,17 @@ export async function updatePreview() {
     // Find the parrot
     const parrots = GameState.getParrots();
     const storeParrots = GameState.getStoreParrots();
-    const parrot = currentTab === 'collection'
-        ? parrots.find(p => p.id === selectedParrotId)
-        : storeParrots.find(p => p.id === selectedParrotId);
+    const recentOffspring = GameState.getRecentOffspring();
+
+    let parrot = null;
+    if (currentTab === 'collection') {
+        parrot = parrots.find(p => p.id === selectedParrotId);
+    } else if (currentTab === 'store') {
+        parrot = storeParrots.find(p => p.id === selectedParrotId);
+    } else if (currentTab === 'breeding') {
+        // Check both collection and recent offspring for breeding tab
+        parrot = parrots.find(p => p.id === selectedParrotId) || recentOffspring.find(p => p.id === selectedParrotId);
+    }
 
     if (!parrot) return;
 
@@ -508,36 +516,55 @@ export async function updatePreview() {
             </button>
         `;
     } else {
-        const sellValue = Math.floor(parrot.getValue() * 0.7);
-        actionButtons.innerHTML = `
-            <button class="btn btn-breed-left" onclick="window.breedOnLeftHandler(${parrot.id})">
-                💕 Breed on Left
-            </button>
-            <button class="btn btn-breed-right" onclick="window.breedOnRightHandler(${parrot.id})">
-                💕 Breed on Right
-            </button>
-            <button class="btn btn-lab" onclick="window.openLaboratoryHandler(${parrot.id})">
-                🔬 Examine in Laboratory
-            </button>
-            <button class="btn btn-contest" onclick="window.switchTabHandler('contests')">
-                🏆 Enter Beauty Contest
-            </button>
-            <button class="btn ${GameState.isParrotLocked(parrot.id) ? 'btn-free' : 'btn-lab'}" onclick="window.toggleLockParrotHandler(${parrot.id})">
-                ${GameState.isParrotLocked(parrot.id) ? '🔓 Unlock Parrot' : '🔒 Lock Parrot'}
-            </button>
-            <button class="btn btn-sell"
-                    onmousedown="window.startSellHoldHandler(${parrot.id})"
-                    onmouseup="window.cancelSellHoldHandler()"
-                    onmouseleave="window.cancelSellHoldHandler()"
-                    ontouchstart="window.startSellHoldHandler(${parrot.id})"
-                    ontouchend="window.cancelSellHoldHandler()"
-                    ontouchcancel="window.cancelSellHoldHandler()">
-                💰 Hold to Sell (${sellValue} coins)
-            </button>
-            <button class="btn btn-free" onclick="window.freeParrotHandler(${parrot.id})">
-                🕊️ Release to Wild
-            </button>
-        `;
+        // Check if parrot is in recent offspring (not yet in collection)
+        const isOffspring = recentOffspring.find(p => p.id === selectedParrotId);
+
+        if (isOffspring) {
+            // Limited actions for offspring (not yet in collection)
+            actionButtons.innerHTML = `
+                <button class="btn btn-lab" onclick="window.openLaboratoryHandler(${parrot.id})">
+                    🔬 Examine in Laboratory
+                </button>
+                <button class="btn ${GameState.isParrotLocked(parrot.id) ? 'btn-free' : 'btn-lab'}" onclick="window.toggleLockParrotHandler(${parrot.id})">
+                    ${GameState.isParrotLocked(parrot.id) ? '🔓 Unlock Parrot' : '🔒 Lock Parrot'}
+                </button>
+                <p style="color: #666; margin-top: 10px; font-size: 0.9em;">
+                    💡 Use "Move All to Collection" to enable breeding and contests
+                </p>
+            `;
+        } else {
+            // Full actions for collection parrots
+            const sellValue = Math.floor(parrot.getValue() * 0.7);
+            actionButtons.innerHTML = `
+                <button class="btn btn-breed-left" onclick="window.breedOnLeftHandler(${parrot.id})">
+                    💕 Breed on Left
+                </button>
+                <button class="btn btn-breed-right" onclick="window.breedOnRightHandler(${parrot.id})">
+                    💕 Breed on Right
+                </button>
+                <button class="btn btn-lab" onclick="window.openLaboratoryHandler(${parrot.id})">
+                    🔬 Examine in Laboratory
+                </button>
+                <button class="btn btn-contest" onclick="window.switchTabHandler('contests')">
+                    🏆 Enter Beauty Contest
+                </button>
+                <button class="btn ${GameState.isParrotLocked(parrot.id) ? 'btn-free' : 'btn-lab'}" onclick="window.toggleLockParrotHandler(${parrot.id})">
+                    ${GameState.isParrotLocked(parrot.id) ? '🔓 Unlock Parrot' : '🔒 Lock Parrot'}
+                </button>
+                <button class="btn btn-sell"
+                        onmousedown="window.startSellHoldHandler(${parrot.id})"
+                        onmouseup="window.cancelSellHoldHandler()"
+                        onmouseleave="window.cancelSellHoldHandler()"
+                        ontouchstart="window.startSellHoldHandler(${parrot.id})"
+                        ontouchend="window.cancelSellHoldHandler()"
+                        ontouchcancel="window.cancelSellHoldHandler()">
+                    💰 Hold to Sell (${sellValue} coins)
+                </button>
+                <button class="btn btn-free" onclick="window.freeParrotHandler(${parrot.id})">
+                    🕊️ Release to Wild
+                </button>
+            `;
+        }
     }
 }
 

@@ -418,7 +418,8 @@ export function freeParrot(parrotId, saveGameFn) {
  */
 export function toggleLockParrot(parrotId, saveGameFn) {
     const parrots = GameState.getParrots();
-    const parrot = parrots.find(p => p.id === parrotId);
+    const recentOffspring = GameState.getRecentOffspring();
+    const parrot = parrots.find(p => p.id === parrotId) || recentOffspring.find(p => p.id === parrotId);
     if (!parrot) return;
 
     const isCurrentlyLocked = GameState.isParrotLocked(parrotId);
