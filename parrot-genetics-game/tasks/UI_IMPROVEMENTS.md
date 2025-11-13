@@ -630,6 +630,176 @@ console.log('Breeding complete:', offspring.length, 'offspring created, examined
 
 ---
 
+### Bug #6: Lab Examination Button Taking Money Incorrectly
+**Issue**: Laboratory examination button would deduct 100 coins even if parrot was already examined or if player didn't have enough coins, causing negative balance.
+
+**Root Cause**: The `performExamination()` function didn't validate:
+1. Whether the parrot was already examined (double charging)
+2. Whether player had sufficient coins (allowing negative balance)
+
+**Fix**: Added validation checks before deducting coins.
+
+**Before**:
+```javascript
+export async function performExamination(parrotId, saveGameFn) {
+    const parrots = GameState.getParrots();
+    const parrot = parrots.find(p => p.id === parrotId);
+    if (!parrot) return;
+
+    GameState.addCoins(-100); // Always deducts, no checks!
+    GameState.markParrotExamined(parrotId);
+    // ... rest of function
+}
+```
+
+**After**:
+```javascript
+export async function performExamination(parrotId, saveGameFn) {
+    const parrots = GameState.getParrots();
+    const parrot = parrots.find(p => p.id === parrotId);
+    if (!parrot) return;
+
+    // Check if already examined
+    const examinedParrots = GameState.getExaminedParrots();
+    if (examinedParrots.has(parrotId)) {
+        openLaboratory(parrotId); // Just show the lab
+        return;
+    }
+
+    // Check if player has enough coins
+    const EXAM_COST = 100;
+    const coins = GameState.getCoins();
+    if (coins < EXAM_COST) {
+        showToast(
+            'Not enough coins!',
+            `Laboratory examination costs ${EXAM_COST} coins. You have ${coins}.`,
+            'error',
+            3000
+        );
+        return;
+    }
+
+    GameState.addCoins(-EXAM_COST);
+    GameState.markParrotExamined(parrotId);
+    // ... rest of function
+}
+```
+
+**Files Modified**: `public/js/actions.js:733-774`
+
+**Commit**: `316d923` - "fix: Prevent negative balance and fix breeding tab UI issues"
+
+---
+
+### Bug #7: Breeding Tab Not Scrolling
+**Issue**: Breeding tab content would overflow viewport without showing scrollbar, making content inaccessible.
+
+**Root Cause**: CSS had nested flex containers with `overflow: hidden` on parent (#breedingTab) and `overflow-y: auto` on child (.breeding-lab-container), preventing proper scroll behavior.
+
+**Fix**: Simplified flex layout by moving `overflow-y: auto` directly to #breedingTab, matching the pattern used by other tabs (.parrot-grid).
+
+**Before**:
+```css
+#breedingTab {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Parent hides overflow */
+}
+
+.breeding-lab-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: auto; /* Child tries to scroll */
+    padding: 10px;
+    flex: 1;
+}
+```
+
+**After**:
+```css
+#breedingTab {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto; /* Tab itself scrolls */
+    padding: 5px;
+}
+
+.breeding-lab-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 10px;
+    /* No flex or overflow - just a content container */
+}
+```
+
+**Files Modified**: `public/breeding-game.css:619-634`
+
+**Commit**: `316d923` - "fix: Prevent negative balance and fix breeding tab UI issues"
+
+---
+
+### Bug #8: Offspring Displaying Vertically Instead of Grid
+**Issue**: Recent offspring cards displayed in a single vertical column instead of a responsive grid layout.
+
+**Root Cause**: CSS applied grid layout to `.recent-offspring-grid` parent element, but JavaScript was also creating a `cardsContainer` child element with grid styles. This caused the parent to lay out its children (header, buttons, cardsContainer) in a grid, rather than laying out the actual cards.
+
+**Structure Issue**:
+```html
+<div class="recent-offspring-grid" id="recentOffspringGrid"> <!-- Has grid CSS -->
+  <div>Header</div>                                          <!-- Grid item 1 -->
+  <div>Action Buttons</div>                                  <!-- Grid item 2 -->
+  <div style="display: grid;">                               <!-- Grid item 3 -->
+    <div>Card 1</div>                                        <!-- Should be grid items -->
+    <div>Card 2</div>
+    ...
+  </div>
+</div>
+```
+
+**Fix**: Removed grid CSS from `.recent-offspring-grid` parent element since JavaScript creates a proper `cardsContainer` with grid styles.
+
+**Before**:
+```css
+.recent-offspring-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    margin-top: 10px;
+}
+```
+
+**After**:
+```css
+.recent-offspring-grid {
+    /* Grid display is applied to cardsContainer in JavaScript */
+    margin-top: 10px;
+}
+```
+
+**JavaScript (unchanged but relevant)**:
+```javascript
+// In ui.js renderRecentOffspring():
+const cardsContainer = document.createElement('div');
+cardsContainer.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px;';
+for (const parrot of offspring) {
+    const card = await createParrotCard(parrot, false);
+    cardsContainer.appendChild(card);
+}
+grid.appendChild(cardsContainer);
+```
+
+**Files Modified**: `public/breeding-game.css:803-806`
+
+**Commit**: `316d923` - "fix: Prevent negative balance and fix breeding tab UI issues"
+
+---
+
 ## State Management Changes
 
 ### GameState Module Additions
@@ -737,20 +907,28 @@ public/js/
 - [x] L/R badges appear immediately on selection
 - [x] Breeding costs 50 coins
 - [x] Auto-examine works with correct coin calculations
-- [x] All 4 offspring display in breeding lab
+- [x] All 4 offspring display in breeding lab (grid layout)
 - [x] Offspring can be moved to collection
 - [x] Offspring can be dismissed
 - [x] Button counts update correctly
 - [x] Double-clicking breed button doesn't cause issues
 - [x] Settings persist across game sessions
+- [x] Lab examination prevents negative balance
+- [x] Lab examination doesn't double-charge for same parrot
+- [x] Breeding tab scrolls properly when content overflows
+- [x] Offspring display in responsive grid, not vertical column
 
 ### Edge Cases Handled
 1. Insufficient coins for breeding
 2. Insufficient coins for auto-examination
-3. Auto-examine with 0 offspring (shouldn't happen)
-4. Rapid clicking on breed button
-5. Empty offspring list display
-6. Singular vs plural text ("1 chick" vs "4 chicks")
+3. Insufficient coins for lab examination (prevents negative balance)
+4. Double examination of same parrot (prevents double charging)
+5. Auto-examine with 0 offspring (shouldn't happen)
+6. Rapid clicking on breed button (disabled during operation)
+7. Empty offspring list display
+8. Singular vs plural text ("1 chick" vs "4 chicks")
+9. Breeding tab content overflow (scrolling enabled)
+10. Offspring grid layout with mixed content (header, buttons, cards)
 
 ---
 
@@ -786,6 +964,13 @@ All commits on branch: `claude/parrot-game-improvements-011CV5R35qFu7t8vpMAiBgX4
    - Fixed button text clarity
    - Added double-click prevention
    - Added debugging console logs
+
+6. **316d923** - "fix: Prevent negative balance and fix breeding tab UI issues"
+   - Fixed lab examination to prevent negative balance
+   - Added validation to prevent double-charging for examinations
+   - Fixed breeding tab scrolling by simplifying flex layout
+   - Fixed offspring grid display (was showing vertically instead of grid)
+   - All fixes address critical user-reported issues
 
 ---
 
@@ -839,8 +1024,15 @@ This task successfully transformed the ChromaWing parrot breeding game from a fu
 All implementations maintain the existing genetic breeding mechanics while enhancing the presentation and user interaction patterns. The codebase remains modular and maintainable, with clear separation of concerns across the module structure.
 
 **Total Files Modified**: 8
-**Total Lines Changed**: ~600+ lines added/modified
-**Bugs Fixed**: 5 major issues
+**Total Lines Changed**: ~700+ lines added/modified
+**Bugs Fixed**: 8 major issues
 **New Features Added**: 10+ enhancements
+**Commits**: 6 commits total
 
 **Status**: All objectives complete and tested ✅
+
+**Recent Session Fixes** (Session 2):
+- Prevented negative balance in lab examinations
+- Fixed breeding tab not scrolling
+- Fixed offspring displaying vertically instead of grid
+- Added comprehensive validation for coin transactions
