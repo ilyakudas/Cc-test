@@ -90,6 +90,10 @@ export function clearRecentOffspring() {
     recentOffspring = [];
 }
 
+export function removeRecentOffspring(parrotId) {
+    recentOffspring = recentOffspring.filter(p => p.id !== parrotId);
+}
+
 export function moveRecentOffspringToCollection() {
     recentOffspring.forEach(parrot => parrots.push(parrot));
     recentOffspring = [];

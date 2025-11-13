@@ -914,52 +914,94 @@ export async function moveOffspringToCollection(saveGameFn) {
 }
 
 /**
- * Sell all recent offspring
+ * Sell all recent offspring (excluding locked ones)
  */
 export async function sellAllOffspring(saveGameFn) {
     const offspring = GameState.getRecentOffspring();
     if (offspring.length === 0) return;
 
-    // Calculate total value
+    // Separate locked and unlocked offspring
+    const unlockedOffspring = offspring.filter(p => !GameState.isParrotLocked(p.id));
+    const lockedCount = offspring.length - unlockedOffspring.length;
+
+    if (unlockedOffspring.length === 0) {
+        showToast(
+            'Cannot sell offspring',
+            `All ${offspring.length} offspring are locked. Unlock them first to sell.`,
+            'error',
+            3000
+        );
+        return;
+    }
+
+    // Calculate total value of unlocked offspring
     let totalValue = 0;
-    offspring.forEach(parrot => {
+    unlockedOffspring.forEach(parrot => {
         totalValue += parrot.getValue();
     });
 
-    // Add coins and clear offspring
+    // Add coins
     GameState.addCoins(totalValue);
-    const count = offspring.length;
-    GameState.clearRecentOffspring();
+
+    // Remove only the unlocked offspring
+    unlockedOffspring.forEach(parrot => {
+        GameState.removeRecentOffspring(parrot.id);
+    });
 
     await UI.updateStats();
     await UI.updateBreedingLab();
 
     if (saveGameFn) saveGameFn();
 
+    const message = lockedCount > 0
+        ? `${unlockedOffspring.length} sold for ${totalValue} coins. ${lockedCount} locked offspring kept.`
+        : `${unlockedOffspring.length} parrot${unlockedOffspring.length !== 1 ? 's' : ''} sold for ${totalValue} coins`;
+
     showToast(
         `Offspring sold!`,
-        `${count} parrot${count !== 1 ? 's' : ''} sold for ${totalValue} coins`,
+        message,
         'success',
-        3000
+        4000
     );
 }
 
 /**
- * Dismiss all recent offspring
+ * Dismiss all recent offspring (excluding locked ones)
  */
 export async function dismissOffspring(saveGameFn) {
     const offspring = GameState.getRecentOffspring();
     if (offspring.length === 0) return;
 
-    const count = offspring.length;
-    GameState.clearRecentOffspring();
+    // Separate locked and unlocked offspring
+    const unlockedOffspring = offspring.filter(p => !GameState.isParrotLocked(p.id));
+    const lockedCount = offspring.length - unlockedOffspring.length;
+
+    if (unlockedOffspring.length === 0) {
+        showToast(
+            'Cannot dismiss offspring',
+            `All ${offspring.length} offspring are locked. Unlock them first to dismiss.`,
+            'error',
+            3000
+        );
+        return;
+    }
+
+    // Remove only the unlocked offspring
+    unlockedOffspring.forEach(parrot => {
+        GameState.removeRecentOffspring(parrot.id);
+    });
+
     await UI.updateBreedingLab();
 
     if (saveGameFn) saveGameFn();
 
+    const message = lockedCount > 0
+        ? `${unlockedOffspring.length} dismissed. ${lockedCount} locked offspring kept.`
+        : `${unlockedOffspring.length} parrot${unlockedOffspring.length !== 1 ? 's' : ''} released into the wild`;
+
     showToast(
         `Offspring dismissed`,
-        `${count} parrots released into the wild`,
+        message,
         'info',
         3000
     );

@@ -358,7 +358,7 @@ async function renderRecentOffspring() {
     cardsContainer.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px;';
 
     for (const parrot of offspring) {
-        const card = await createParrotCard(parrot, true);  // Make selectable
+        const card = await createParrotCard(parrot, false);  // false = not store, show badges
         cardsContainer.appendChild(card);
     }
 
