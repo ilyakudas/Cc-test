@@ -1,6 +1,6 @@
 {
   "name": "parrot-genetics-game",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "**ChromaWing** is a genetics-based breeding simulation game where players breed beautiful parrots to explore themes of genetics, beauty, competition, and perfection. Players manage a parrot sanctuary, breeding parrots with various genetic traits, competing in different events, and pursuing their own definition of the \"perfect\" specimen.",
   "main": "index.js",
   "directories": {

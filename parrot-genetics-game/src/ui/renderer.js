@@ -312,6 +312,11 @@ function buyParrot(parrotId) {
     }
 
     updateUI();
+
+    // Check achievements
+    if (window.checkAchievements) {
+        window.checkAchievements();
+    }
 }
 
 // Export for window

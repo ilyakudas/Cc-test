@@ -2,6 +2,7 @@
 // v3.0
 
 import { state, setCurrentTab, toggleMutations as stateMutations } from '../game/gameState.js';
+import { renderContestsTab } from '../game/contests.js';
 
 // Switch tabs
 export function switchTab(tab) {
@@ -16,6 +17,11 @@ export function switchTab(tab) {
     document.getElementById('collectionTab').style.display = tab === 'collection' ? 'grid' : 'none';
     document.getElementById('storeTab').style.display = tab === 'store' ? 'grid' : 'none';
     document.getElementById('contestsTab').style.display = tab === 'contests' ? 'block' : 'none';
+
+    // Render contests tab content if switching to contests
+    if (tab === 'contests') {
+        renderContestsTab();
+    }
 
     // Update panel title
     const titles = {

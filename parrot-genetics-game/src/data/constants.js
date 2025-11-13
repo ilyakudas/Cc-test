@@ -106,4 +106,207 @@ export const CONTEST_TIERS = [
     }
 ];
 
+// Rare contest parrot templates
+export const RARE_CONTEST_PARROTS = {
+    // Tier 0: Beginner Beauty Show
+    0: {
+        1: {
+            name: 'Golden Dawn',
+            description: 'Warm golden tones perfect for rainbow showcases',
+            genes: {
+                wings: { red: [true, true, true, false], green: [true, true, false, false], blue: [false, false, false, false], gradient: false },
+                special_wing: { red: [true, true, true, true], green: [true, true, true, false], blue: [false, false, false, false], gradient: false },
+                body: { red: [true, true, true, true], green: [true, false, false, false], blue: [false, false, false, false], gradient: false },
+                head: { red: [true, true, true, true], green: [true, true, false, false], blue: [false, false, false, false], gradient: false },
+                tail: { red: [true, true, true, false], green: [true, true, true, false], blue: [false, false, false, false], gradient: false },
+                accents: { red: [true, true, true, false], green: [true, false, false, false], blue: [false, false, false, false], gradient: false }
+            }
+        },
+        2: {
+            name: 'Silver Mist',
+            description: 'Cool silvery blues perfect for rainbow showcases',
+            genes: {
+                wings: { red: [false, false, false, false], green: [true, true, true, false], blue: [true, true, true, true], gradient: false },
+                special_wing: { red: [true, true, true, false], green: [true, true, true, true], blue: [true, true, true, true], gradient: false },
+                body: { red: [false, false, false, false], green: [false, false, false, false], blue: [true, true, true, true], gradient: false },
+                head: { red: [true, true, true, false], green: [true, true, true, false], blue: [true, true, true, false], gradient: false },
+                tail: { red: [false, false, false, false], green: [true, true, true, false], blue: [true, true, true, false], gradient: false },
+                accents: { red: [true, true, false, false], green: [true, true, false, false], blue: [true, true, false, false], gradient: false }
+            }
+        },
+        3: {
+            name: 'Bronze Gleam',
+            description: 'Earthy bronze tones with a metallic sheen',
+            genes: {
+                wings: { red: [true, true, false, false], green: [true, false, false, false], blue: [false, false, false, false], gradient: false },
+                special_wing: { red: [true, true, true, false], green: [true, true, false, false], blue: [false, false, false, false], gradient: false },
+                body: { red: [true, true, false, false], green: [true, false, false, false], blue: [false, false, false, false], gradient: false },
+                head: { red: [true, true, true, false], green: [true, false, false, false], blue: [false, false, false, false], gradient: false },
+                tail: { red: [true, true, false, false], green: [true, false, false, false], blue: [false, false, false, false], gradient: false },
+                accents: { red: [true, false, false, false], green: [false, false, false, false], blue: [false, false, false, false], gradient: false }
+            }
+        }
+    },
+
+    // Tier 1: Rainbow Showcase (rewards have gradients)
+    1: {
+        1: {
+            name: 'Prismatic Pride',
+            description: 'A dazzling display of the full color spectrum',
+            genes: {
+                wings: { red: [true, true, false, false], green: [true, true, true, true], blue: [true, true, true, false], gradient: true },
+                special_wing: { red: [false, false, true, true], green: [false, false, true, true], blue: [true, true, true, true], gradient: true },
+                body: { red: [false, false, false, false], green: [true, true, true, true], blue: [false, false, false, false], gradient: false },
+                head: { red: [true, true, true, true], green: [false, false, false, false], blue: [false, false, false, false], gradient: false },
+                tail: { red: [false, false, false, false], green: [true, true, false, false], blue: [true, true, true, true], gradient: false },
+                accents: { red: [true, true, true, true], green: [true, true, true, true], blue: [false, false, false, false], gradient: false }
+            }
+        },
+        2: {
+            name: 'Chromatic Dream',
+            description: 'A harmonious blend of vivid hues',
+            genes: {
+                wings: { red: [false, false, false, false], green: [true, true, true, true], blue: [false, false, true, true], gradient: true },
+                special_wing: { red: [true, true, true, true], green: [false, false, false, false], blue: [false, false, false, false], gradient: false },
+                body: { red: [false, false, false, false], green: [false, false, false, false], blue: [true, true, true, true], gradient: false },
+                head: { red: [true, true, true, true], green: [true, true, true, true], blue: [false, false, false, false], gradient: false },
+                tail: { red: [true, true, false, false], green: [false, false, true, true], blue: [true, true, true, true], gradient: false },
+                accents: { red: [false, false, false, false], green: [true, true, true, true], blue: [true, true, false, false], gradient: false }
+            }
+        },
+        3: {
+            name: 'Spectrum Wing',
+            description: 'Every color of the rainbow in perfect harmony',
+            genes: {
+                wings: { red: [true, true, true, true], green: [false, false, false, false], blue: [false, false, false, false], gradient: false },
+                special_wing: { red: [true, true, true, true], green: [true, true, false, false], blue: [false, false, false, false], gradient: false },
+                body: { red: [true, true, true, true], green: [true, true, true, true], blue: [false, false, false, false], gradient: false },
+                head: { red: [false, false, false, false], green: [true, true, true, true], blue: [false, false, false, false], gradient: false },
+                tail: { red: [false, false, false, false], green: [false, false, false, false], blue: [true, true, true, true], gradient: false },
+                accents: { red: [true, true, false, false], green: [false, false, false, false], blue: [true, true, true, true], gradient: false }
+            }
+        }
+    },
+
+    // Tier 2: Gradient Masters (rewards have complementary colors)
+    2: {
+        1: {
+            name: 'Aurora Cascade',
+            description: 'Flowing colors like the northern lights',
+            genes: {
+                wings: { red: [false, false, true, true], green: [true, true, true, true], blue: [true, true, false, false], gradient: true },
+                special_wing: { red: [true, true, true, true], green: [false, false, true, true], blue: [true, true, true, true], gradient: true },
+                body: { red: [false, false, true, true], green: [true, true, false, false], blue: [true, true, true, true], gradient: true },
+                head: { red: [true, true, false, false], green: [true, true, true, true], blue: [false, false, true, true], gradient: true },
+                tail: { red: [true, true, true, true], green: [true, true, false, false], blue: [false, false, true, true], gradient: true },
+                accents: { red: [false, false, true, true], green: [true, true, true, true], blue: [true, true, true, true], gradient: true }
+            }
+        },
+        2: {
+            name: 'Twilight Flow',
+            description: 'Sunset colors in graceful transitions',
+            genes: {
+                wings: { red: [true, true, true, true], green: [false, false, true, true], blue: [true, true, true, true], gradient: true },
+                special_wing: { red: [true, true, false, false], green: [false, false, true, true], blue: [true, true, false, false], gradient: true },
+                body: { red: [true, true, true, true], green: [true, true, false, false], blue: [false, false, true, true], gradient: true },
+                head: { red: [true, true, true, true], green: [false, false, false, false], blue: [true, true, false, false], gradient: false },
+                tail: { red: [true, true, false, false], green: [false, false, false, false], blue: [true, true, true, true], gradient: false },
+                accents: { red: [true, true, true, true], green: [true, true, true, true], blue: [true, true, false, false], gradient: false }
+            }
+        },
+        3: {
+            name: 'Ocean Drift',
+            description: 'Sea blues meet warm sunset hints',
+            genes: {
+                wings: { red: [false, false, false, false], green: [false, false, true, true], blue: [true, true, true, true], gradient: true },
+                special_wing: { red: [false, false, false, false], green: [true, true, true, true], blue: [true, true, false, false], gradient: true },
+                body: { red: [false, false, false, false], green: [true, true, false, false], blue: [true, true, true, true], gradient: false },
+                head: { red: [true, true, true, false], green: [true, true, false, false], blue: [false, false, false, false], gradient: false },
+                tail: { red: [true, true, false, false], green: [true, false, false, false], blue: [false, false, false, false], gradient: false },
+                accents: { red: [false, false, false, false], green: [true, true, true, true], blue: [true, true, true, false], gradient: false }
+            }
+        }
+    },
+
+    // Tier 3: Contrast Championship (rewards have gradients + complementary)
+    3: {
+        1: {
+            name: 'Ember & Ice',
+            description: 'Fire and frost in perfect opposition',
+            genes: {
+                wings: { red: [true, true, false, false], green: [false, false, false, false], blue: [false, false, true, true], gradient: true },
+                special_wing: { red: [true, true, true, true], green: [false, false, true, true], blue: [false, false, true, true], gradient: true },
+                body: { red: [true, true, true, true], green: [true, true, false, false], blue: [false, false, false, false], gradient: true },
+                head: { red: [false, false, false, false], green: [true, true, true, true], blue: [true, true, true, true], gradient: false },
+                tail: { red: [true, true, true, true], green: [false, false, false, false], blue: [false, false, false, false], gradient: false },
+                accents: { red: [false, false, false, false], green: [false, false, true, true], blue: [true, true, true, true], gradient: false }
+            }
+        },
+        2: {
+            name: 'Sunset Contrast',
+            description: 'Bold orange skies meet deep ocean blues',
+            genes: {
+                wings: { red: [true, true, true, true], green: [true, true, false, false], blue: [false, false, true, true], gradient: true },
+                special_wing: { red: [true, true, true, true], green: [true, true, true, true], blue: [false, false, false, false], gradient: true },
+                body: { red: [false, false, false, false], green: [false, false, false, false], blue: [true, true, true, true], gradient: false },
+                head: { red: [true, true, true, true], green: [true, true, false, false], blue: [false, false, false, false], gradient: false },
+                tail: { red: [false, false, false, false], green: [true, true, false, false], blue: [true, true, true, true], gradient: false },
+                accents: { red: [true, true, true, true], green: [true, true, true, false], blue: [false, false, false, false], gradient: false }
+            }
+        },
+        3: {
+            name: 'Forest Fire',
+            description: 'Vibrant greens clash with burning reds',
+            genes: {
+                wings: { red: [true, true, true, true], green: [false, false, true, true], blue: [false, false, false, false], gradient: true },
+                special_wing: { red: [false, false, false, false], green: [true, true, true, true], blue: [false, false, false, false], gradient: false },
+                body: { red: [true, true, true, true], green: [false, false, false, false], blue: [false, false, false, false], gradient: false },
+                head: { red: [true, true, false, false], green: [true, true, true, true], blue: [false, false, false, false], gradient: false },
+                tail: { red: [true, true, true, false], green: [true, true, false, false], blue: [false, false, false, false], gradient: false },
+                accents: { red: [false, false, false, false], green: [true, true, false, false], blue: [false, false, false, false], gradient: false }
+            }
+        }
+    },
+
+    // Tier 4: Elite Grand Prix (ultimate parrots with perfect genes)
+    4: {
+        1: {
+            name: 'Celestial Perfection',
+            description: 'The pinnacle of chromatic beauty - required for endgame',
+            genes: {
+                wings: { red: [true, true, false, false], green: [false, false, true, true], blue: [true, true, true, true], gradient: true },
+                special_wing: { red: [true, true, true, true], green: [true, true, false, false], blue: [false, false, true, true], gradient: true },
+                body: { red: [true, true, true, true], green: [false, false, true, true], blue: [true, true, true, true], gradient: true },
+                head: { red: [false, false, true, true], green: [true, true, true, true], blue: [false, false, true, true], gradient: true },
+                tail: { red: [true, true, false, false], green: [true, true, true, true], blue: [false, false, true, true], gradient: true },
+                accents: { red: [true, true, true, true], green: [false, false, false, false], blue: [true, true, true, true], gradient: true }
+            }
+        },
+        2: {
+            name: 'Royal Spectrum',
+            description: 'Majestic beauty fit for royalty',
+            genes: {
+                wings: { red: [true, true, true, true], green: [false, false, true, true], blue: [true, true, true, true], gradient: true },
+                special_wing: { red: [true, true, false, false], green: [true, true, true, true], blue: [false, false, true, true], gradient: true },
+                body: { red: [true, true, true, true], green: [true, true, false, false], blue: [false, false, true, true], gradient: true },
+                head: { red: [false, false, true, true], green: [false, false, true, true], blue: [true, true, true, true], gradient: true },
+                tail: { red: [true, true, true, true], green: [true, true, true, true], blue: [false, false, false, false], gradient: true },
+                accents: { red: [true, true, false, false], green: [false, false, false, false], blue: [true, true, true, true], gradient: false }
+            }
+        },
+        3: {
+            name: 'Noble Radiance',
+            description: 'Dignified elegance with stunning color play',
+            genes: {
+                wings: { red: [true, true, true, true], green: [true, true, false, false], blue: [false, false, true, true], gradient: true },
+                special_wing: { red: [false, false, true, true], green: [true, true, true, true], blue: [true, true, false, false], gradient: true },
+                body: { red: [true, true, false, false], green: [false, false, true, true], blue: [true, true, true, true], gradient: true },
+                head: { red: [true, true, true, true], green: [true, true, true, true], blue: [false, false, true, true], gradient: true },
+                tail: { red: [true, true, true, true], green: [false, false, false, false], blue: [true, true, false, false], gradient: false },
+                accents: { red: [false, false, false, false], green: [true, true, true, true], blue: [true, true, true, true], gradient: false }
+            }
+        }
+    }
+};
+
 export const MUTATION_RATE = 0.05; // 5% chance per allele

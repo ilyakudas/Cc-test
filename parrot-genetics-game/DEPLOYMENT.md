@@ -1,8 +1,8 @@
 # ChromaWing Deployment Guide
 
-## ✅ REFACTORING COMPLETE
+## ✅ v2.0.0 MIGRATION COMPLETE
 
-The game has been successfully refactored from a monolithic 3,208-line file into **13 clean ES6 modules** in `/public/js/`. See `tasks/REFACTORING_COMPLETE.md` for full details.
+The game has been successfully migrated to Vite-based build system with full achievements and contests functionality. All v4.0 features from `/public/js/` have been integrated into the `src/` structure.
 
 ---
 

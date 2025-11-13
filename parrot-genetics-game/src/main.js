@@ -11,9 +11,17 @@ import { generateParrotSVG } from './rendering/svgRenderer.js';
 import { initGame, newGame, generateStore } from './game/init.js';
 import { breedParrots, sellParrot } from './game/breeding.js';
 import { updateUI, updateStats, breedOnLeft, breedOnRight, buyParrot, removeFromSlot } from './ui/renderer.js';
-import { switchTab, toggleMutations, openLaboratory, closeModal, closeContestModal } from './ui/events.js';
+import { switchTab, toggleMutations, openLaboratory, closeModal } from './ui/events.js';
 import { showToast, dismissToast, toggleNotificationHistory, clearNotificationHistory } from './ui/notifications.js';
 import { saveGame, loadGame, exportSaveData, importSaveData, getSaveInfo } from './game/saveLoad.js';
+import { checkAchievements, closeWinModal } from './game/achievements.js';
+import {
+    renderContestsTab,
+    enterContest,
+    takeCoinsReward,
+    takeParrotReward,
+    closeContestModal
+} from './game/contests.js';
 
 // Expose to window for HTML onclick handlers
 window.Parrot = Parrot;
@@ -60,6 +68,17 @@ window.exportSaveData = exportSaveData;
 window.importSaveData = importSaveData;
 window.getSaveInfo = getSaveInfo;
 
+// Achievements system
+window.checkAchievements = () => checkAchievements(saveGame);
+window.closeWinModal = closeWinModal;
+
+// Contest system
+window.enterContestHandler = (tierIndex) => enterContest(tierIndex, saveGame, updateStats, checkAchievements);
+window.takeCoinsRewardHandler = (tier, place, coins) => takeCoinsReward(tier, place, coins, saveGame, updateStats, checkAchievements);
+window.takeParrotRewardHandler = (tier, place) => takeParrotReward(tier, place, saveGame, updateStats, checkAchievements);
+window.closeContestModalHandler = closeContestModal;
+window.switchTabHandler = switchTab;
+
 console.log('ChromaWing v3.0 - Modular version loaded');
 console.log('Modules loaded:', {
     Parrot: !!Parrot,
@@ -76,6 +95,10 @@ async function initialize() {
     try {
         await initGame();
         await updateUI();
+
+        // Check achievements on load
+        checkAchievements(saveGame);
+
         console.log('Game initialized successfully!');
     } catch (error) {
         console.error('Error initializing game:', error);

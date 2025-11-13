@@ -73,6 +73,11 @@ export async function breedParrots() {
         await window.updateUI();
     }
 
+    // Check achievements
+    if (window.checkAchievements) {
+        window.checkAchievements();
+    }
+
     return offspring;
 }
 
