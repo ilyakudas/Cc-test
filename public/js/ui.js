@@ -535,9 +535,19 @@ export async function updatePreview() {
         } else {
             // Full actions for collection parrots
             const sellValue = Math.floor(parrot.getValue() * 0.7);
+            const breedingPair = GameState.getBreedingPair();
+            const canBreed = breedingPair.left !== null && breedingPair.right !== null;
+
             actionButtons.innerHTML = `
                 <button class="btn btn-breed-left" onclick="window.breedOnLeftHandler(${parrot.id})">
                     💕 Breed on Left
+                </button>
+                <button class="btn ${canBreed ? 'btn-breed active' : 'btn-breed'}"
+                        onclick="window.switchTabHandler('breeding')"
+                        ${!canBreed ? 'disabled' : ''}
+                        title="${canBreed ? 'Go to Breeding Lab' : 'Select both parents first'}"
+                        style="font-size: 1.5em; padding: 8px 16px;">
+                    💕
                 </button>
                 <button class="btn btn-breed-right" onclick="window.breedOnRightHandler(${parrot.id})">
                     💕 Breed on Right
