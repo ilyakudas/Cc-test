@@ -331,6 +331,7 @@ window.startSellHoldHandler = (parrotId) => {
 };
 window.cancelSellHoldHandler = () => Actions.cancelSellHold();
 window.freeParrotHandler = (parrotId) => Actions.freeParrot(parrotId, saveGame);
+window.toggleLockParrotHandler = (parrotId) => Actions.toggleLockParrot(parrotId, saveGame);
 window.openLaboratoryHandler = (parrotId) => Actions.openLaboratory(parrotId);
 window.performExaminationHandler = (parrotId) => Actions.performExamination(parrotId, saveGame);
 window.closeModalHandler = () => Actions.closeModal();
@@ -349,6 +350,16 @@ window.takeParrotRewardHandler = (tierIndex, placement) => {
     Contests.takeParrotReward(tierIndex, placement, saveGame, UI.updateStats, checkAchievements);
 };
 window.closeContestModalHandler = () => Contests.closeContestModal();
+window.closeSplashScreen = () => {
+    const splash = document.getElementById('splashScreen');
+    if (splash) {
+        splash.classList.remove('active');
+    }
+};
+window.moveOffspringToCollectionHandler = () => Actions.moveOffspringToCollection(saveGame);
+window.sellAllOffspringHandler = () => Actions.sellAllOffspring(saveGame);
+window.dismissOffspringHandler = () => Actions.dismissOffspring(saveGame);
+window.toggleAutoExamineHandler = () => Actions.toggleAutoExamine(saveGame);
 
 // ===== INITIALIZATION =====
 
@@ -358,7 +369,14 @@ window.addEventListener('load', async () => {
 
     if (loaded) {
         // Game loaded from save
-        await generateStore();
+        console.log('Game loaded - Store has', GameState.getStoreParrots().length, 'parrots');
+
+        // Only generate store if it's empty (for old saves without store data)
+        if (GameState.getStoreParrots().length === 0) {
+            console.log('Store is empty, generating new store parrots');
+            await generateStore();
+        }
+
         await UI.updateUI();
     } else {
         // New game

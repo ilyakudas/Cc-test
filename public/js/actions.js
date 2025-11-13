@@ -18,9 +18,11 @@ let sellHoldTimer = null;
  * Select a parrot for viewing
  * @param {number} parrotId - Parrot ID
  */
-export function selectParrot(parrotId) {
+export async function selectParrot(parrotId) {
     GameState.setSelectedParrotId(parrotId);
-    UI.updateUI();
+    await UI.updateUI();
+    // Ensure action buttons reflect current breeding state
+    await UI.updatePreview();
 }
 
 /**
@@ -40,7 +42,11 @@ export async function breedOnLeft(parrotId) {
 
     GameState.setBreedingPair({ ...breedingPair, left: parrotId });
     await UI.renderBreedingSlots();
+    await UI.renderParrotGrid(); // Refresh cards to show L/R badges immediately
     UI.updateBreedButton();
+
+    // Refresh action buttons to update heart button state
+    await UI.updatePreview();
 }
 
 /**
@@ -60,7 +66,11 @@ export async function breedOnRight(parrotId) {
 
     GameState.setBreedingPair({ ...breedingPair, right: parrotId });
     await UI.renderBreedingSlots();
+    await UI.renderParrotGrid(); // Refresh cards to show L/R badges immediately
     UI.updateBreedButton();
+
+    // Refresh action buttons to update heart button state
+    await UI.updatePreview();
 }
 
 /**
@@ -73,6 +83,9 @@ export async function removeFromSlot(slot) {
     GameState.setBreedingPair(breedingPair);
     await UI.renderBreedingSlots();
     UI.updateBreedButton();
+
+    // Refresh action buttons to update heart button state
+    await UI.updatePreview();
 }
 
 /**
@@ -89,6 +102,29 @@ export async function breedParrots(saveGameFn, checkAchievementsFn) {
     const parent2 = parrots.find(p => p.id === breedingPair.right);
 
     if (!parent1 || !parent2) return;
+
+    // Check if player has enough coins (breeding costs 50 coins)
+    const BREEDING_COST = 50;
+    let coins = GameState.getCoins();
+    if (coins < BREEDING_COST) {
+        showToast(
+            `Not enough coins!`,
+            `Breeding costs ${BREEDING_COST} coins. You have ${coins}.`,
+            'error',
+            3000
+        );
+        return;
+    }
+
+    // Disable breed button to prevent double-clicking
+    const breedBtn = document.getElementById('breedButton');
+    const breedBtnLarge = document.getElementById('breedButtonLarge');
+    if (breedBtn) breedBtn.disabled = true;
+    if (breedBtnLarge) breedBtnLarge.disabled = true;
+
+    // Deduct breeding cost
+    GameState.addCoins(-BREEDING_COST);
+    coins = GameState.getCoins(); // Update coins after breeding cost
 
     // Generate 4 offspring
     const offspring = [];
@@ -111,26 +147,60 @@ export async function breedParrots(saveGameFn, checkAchievementsFn) {
         offspring.push(child);
     }
 
-    // Auto-adopt all offspring
-    offspring.forEach(chick => {
-        GameState.addParrot(chick);
-    });
+    // Auto-examine offspring if enabled
+    const autoExamineEnabled = GameState.getAutoExamineEnabled();
+    const EXAM_COST = 100;
+    let examineCount = 0;
+    let examineMessage = '';
+
+    if (autoExamineEnabled && offspring.length > 0) {
+        const maxExaminations = Math.min(offspring.length, Math.floor(coins / EXAM_COST));
+
+        for (let i = 0; i < maxExaminations; i++) {
+            GameState.addCoins(-EXAM_COST);
+            GameState.addExaminedParrot(offspring[i].id);
+            examineCount++;
+        }
+
+        if (examineCount > 0) {
+            examineMessage = ` ${examineCount} examined (-${examineCount * EXAM_COST} coins).`;
+        } else {
+            examineMessage = ` Auto-exam: Need ${EXAM_COST} coins per chick.`;
+        }
+    }
+
+    // Add offspring to recent offspring list (shown in breeding lab)
+    // Append to existing offspring instead of replacing them
+    offspring.forEach(child => GameState.addRecentOffspring(child));
 
     // Clear breeding pair
     GameState.setBreedingPair({ left: null, right: null });
 
+    // Update UI
     await UI.updateUI();
+
+    // Update breeding lab if we're on the breeding tab
+    if (GameState.getCurrentTab() === 'breeding') {
+        await UI.updateBreedingLab();
+    }
+
+    // Re-enable breed buttons
+    if (breedBtn) breedBtn.disabled = false;
+    if (breedBtnLarge) breedBtnLarge.disabled = false;
+
     if (saveGameFn) saveGameFn();
     if (checkAchievementsFn) checkAchievementsFn(saveGameFn);
 
-    // Show success toast
-    const offspringNames = offspring.map(p => p.name).join(', ');
+    // Show success toast with total offspring count
+    const totalOffspring = GameState.getRecentOffspring().length;
     showToast(
         `Breeding successful!`,
-        `4 new parrots: ${offspringNames}`,
+        `4 new chicks born!${examineMessage} ${totalOffspring} total waiting in Breeding Lab.`,
         'success',
-        5000
+        6000
     );
+
+    console.log('Breeding complete:', offspring.length, 'offspring created, examined:', examineCount, 'total waiting:', totalOffspring);
 }
 
 /**
@@ -226,6 +296,17 @@ export function startSellHold(parrotId, event, saveGameFn) {
     const parrot = parrots.find(p => p.id === parrotId);
     if (!parrot) return;
 
+    // Check if parrot is locked
+    if (GameState.isParrotLocked(parrotId)) {
+        showToast(
+            `${parrot.name} is locked`,
+            `Unlock the parrot first to sell it`,
+            'error',
+            3000
+        );
+        return;
+    }
+
     const button = event.target;
     const sellValue = Math.floor(parrot.getValue() * 0.7);
     const holdDuration = 1000; // 1 second
@@ -305,6 +386,17 @@ export function freeParrot(parrotId, saveGameFn) {
     const parrot = parrots.find(p => p.id === parrotId);
     if (!parrot) return;
 
+    // Check if parrot is locked
+    if (GameState.isParrotLocked(parrotId)) {
+        showToast(
+            `${parrot.name} is locked`,
+            `Unlock the parrot first to release it`,
+            'error',
+            3000
+        );
+        return;
+    }
+
     if (!confirm(`Release ${parrot.name} to the wild? You won't get any coins.`)) return;
 
     GameState.removeParrot(parrotId);
@@ -331,12 +423,52 @@ export function freeParrot(parrotId, saveGameFn) {
 }
 
 /**
+ * Toggle lock status of a parrot to prevent selling/freeing
+ * @param {number} parrotId - Parrot ID
+ * @param {Function} saveGameFn - Save game function
+ */
+export async function toggleLockParrot(parrotId, saveGameFn) {
+    const parrots = GameState.getParrots();
+    const recentOffspring = GameState.getRecentOffspring();
+    const parrot = parrots.find(p => p.id === parrotId) || recentOffspring.find(p => p.id === parrotId);
+    if (!parrot) return;
+
+    const isCurrentlyLocked = GameState.isParrotLocked(parrotId);
+
+    if (isCurrentlyLocked) {
+        GameState.removeLockedParrot(parrotId);
+        showToast(
+            `${parrot.name} unlocked`,
+            `Can now be sold or released`,
+            'info'
+        );
+    } else {
+        GameState.addLockedParrot(parrotId);
+        showToast(
+            `${parrot.name} locked`,
+            `Protected from selling and releasing`,
+            'success'
+        );
+    }
+
+    await UI.updateUI();
+
+    // Also update breeding lab if we're on that tab
+    if (GameState.getCurrentTab() === 'breeding') {
+        await UI.updateBreedingLab();
+    }
+
+    if (saveGameFn) saveGameFn();
+}
+
+/**
  * Open laboratory modal for parrot examination
  * @param {number} parrotId - Parrot ID
  */
 export async function openLaboratory(parrotId) {
     const parrots = GameState.getParrots();
-    const parrot = parrots.find(p => p.id === parrotId);
+    const recentOffspring = GameState.getRecentOffspring();
+    const parrot = parrots.find(p => p.id === parrotId) || recentOffspring.find(p => p.id === parrotId);
     if (!parrot) return;
 
     const modal = document.getElementById('laboratoryModal');
@@ -355,29 +487,28 @@ export async function openLaboratory(parrotId) {
             <h3>🔬 Laboratory Analysis: ${parrot.name}</h3>
             <p style="color: #666; margin-bottom: 20px;">Generation ${parrot.generation}</p>
 
-            <div style="text-align: center; margin: 30px 0;">
-                <div style="width: 300px; height: 300px; margin: 0 auto; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+            <div style="text-align: center; margin: 20px 0;">
+                <button class="btn btn-lab" onclick="window.performExaminationHandler(${parrotId})" ${coins < examCost ? 'disabled' : ''} style="font-size: 1.1em; padding: 15px 30px; width: 100%; max-width: 400px;">
+                    ${coins < examCost ? '❌ Not Enough Coins' : `💰 Pay ${examCost} Coins & Examine`}
+                </button>
+                ${coins < examCost ? `<p style="color: #dc3545; margin-top: 10px;">You need ${examCost - coins} more coins</p>` : ''}
+            </div>
+
+            <div style="text-align: center; margin: 20px 0;">
+                <div style="width: 250px; height: 250px; margin: 0 auto; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
                     ${svg}
                 </div>
             </div>
 
-            <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; border-radius: 8px; margin: 20px 0;">
-                <h4 style="margin: 0 0 10px 0;">🔬 Detailed Genetic Analysis Available</h4>
-                <p style="margin: 0;">Unlock comprehensive analysis including:</p>
-                <ul style="margin: 10px 0;">
+            <div style="background: #e7f3ff; border-left: 4px solid #2196f3; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                <h4 style="margin: 0 0 10px 0; color: #1976d2;">🔬 Analysis Includes:</h4>
+                <ul style="margin: 10px 0; padding-left: 20px;">
                     <li>78 Gene Breakdown (6 body parts × 13 genes)</li>
                     <li>Rarity Analysis with detailed scoring</li>
                     <li>Beauty Assessment with color harmony</li>
                     <li>RGB values for each body part</li>
                 </ul>
-                <p style="margin: 10px 0 0 0; font-weight: bold; color: #ff6b00;">Cost: ${examCost} coins (one-time fee per parrot)</p>
-            </div>
-
-            <div style="text-align: center; margin-top: 20px;">
-                <button class="btn btn-lab" onclick="window.performExaminationHandler(${parrotId})" ${coins < examCost ? 'disabled' : ''} style="font-size: 1.1em; padding: 15px 30px;">
-                    ${coins < examCost ? '❌ Not Enough Coins' : `💰 Pay ${examCost} Coins & Examine`}
-                </button>
-                ${coins < examCost ? `<p style="color: #dc3545; margin-top: 10px;">You need ${examCost - coins} more coins</p>` : ''}
+                <p style="margin: 10px 0 0 0; font-weight: bold; color: #1976d2;">💰 One-time cost: ${examCost} coins per parrot</p>
             </div>
         `;
         modal.classList.add('active');
@@ -676,18 +807,41 @@ export async function openLaboratory(parrotId) {
  */
 export async function performExamination(parrotId, saveGameFn) {
     const parrots = GameState.getParrots();
-    const parrot = parrots.find(p => p.id === parrotId);
+    const recentOffspring = GameState.getRecentOffspring();
+    const parrot = parrots.find(p => p.id === parrotId) || recentOffspring.find(p => p.id === parrotId);
     if (!parrot) return;
 
-    GameState.addCoins(-100);
+    // Check if already examined
+    const examinedParrots = GameState.getExaminedParrots();
+    if (examinedParrots.has(parrotId)) {
+        // Already examined, just show the lab
+        openLaboratory(parrotId);
+        return;
+    }
+
+    // Check if player has enough coins
+    const EXAM_COST = 100;
+    const coins = GameState.getCoins();
+    if (coins < EXAM_COST) {
+        showToast(
+            'Not enough coins!',
+            `Laboratory examination costs ${EXAM_COST} coins. You have ${coins}.`,
+            'error',
+            3000
+        );
+        return;
+    }
+
+    GameState.addCoins(-EXAM_COST);
     GameState.addExaminedParrot(parrotId);
-    UI.updateStats();
+    await UI.updateStats();
+    await UI.renderParrotGrid(); // Refresh cards to show examined badge immediately
     if (saveGameFn) saveGameFn();
 
     // Show info toast
     showToast(
         `Laboratory analysis complete`,
-        `${parrot.name} examined • -100 coins`,
+        `${parrot.name} examined • -${EXAM_COST} coins`,
         'info'
     );
 
@@ -727,4 +881,145 @@ export function toggleMutations(saveGameFn) {
     }
 
     if (saveGameFn) saveGameFn();
+}
+
+/**
+ * Toggle auto-examine setting
+ * @param {Function} saveGameFn - Save game function
+ */
+export function toggleAutoExamine(saveGameFn) {
+    const enabled = GameState.toggleAutoExamineEnabled();
+
+    // Update UI
+    const statusEl = document.getElementById('autoExamineStatus');
+    const iconEl = document.getElementById('autoExamineIcon');
+
+    if (enabled) {
+        statusEl.textContent = 'ON';
+        statusEl.style.color = '#4caf50';
+        iconEl.textContent = '🔬';
+        showToast('Auto-Examine Enabled', 'New offspring will be automatically examined if you have enough coins', 'success', 3000);
+    } else {
+        statusEl.textContent = 'OFF';
+        statusEl.style.color = '#dc3545';
+        iconEl.textContent = '🔒';
+        showToast('Auto-Examine Disabled', 'You must manually examine offspring', 'info', 3000);
+    }
+
+    if (saveGameFn) saveGameFn();
+}
+
+/**
+ * Move all recent offspring to collection
+ */
+export async function moveOffspringToCollection(saveGameFn) {
+    const offspring = GameState.getRecentOffspring();
+    if (offspring.length === 0) return;
+
+    GameState.moveRecentOffspringToCollection();
+    await UI.updateUI();
+    await UI.updateBreedingLab();
+
+    if (saveGameFn) saveGameFn();
+
+    showToast(
+        `Moved to collection!`,
+        `${offspring.length} parrots added to your collection`,
+        'success',
+        3000
+    );
+}
+
+/**
+ * Sell all recent offspring (excluding locked ones)
+ */
+export async function sellAllOffspring(saveGameFn) {
+    const offspring = GameState.getRecentOffspring();
+    if (offspring.length === 0) return;
+
+    // Separate locked and unlocked offspring
+    const unlockedOffspring = offspring.filter(p => !GameState.isParrotLocked(p.id));
+    const lockedCount = offspring.length - unlockedOffspring.length;
+
+    if (unlockedOffspring.length === 0) {
+        showToast(
+            'Cannot sell offspring',
+            `All ${offspring.length} offspring are locked. Unlock them first to sell.`,
+            'error',
+            3000
+        );
+        return;
+    }
+
+    // Calculate total value of unlocked offspring
+    let totalValue = 0;
+    unlockedOffspring.forEach(parrot => {
+        totalValue += parrot.getValue();
+    });
+
+    // Add coins
+    GameState.addCoins(totalValue);
+
+    // Remove only the unlocked offspring
+    unlockedOffspring.forEach(parrot => {
+        GameState.removeRecentOffspring(parrot.id);
+    });
+
+    await UI.updateStats();
+    await UI.updateBreedingLab();
+
+    if (saveGameFn) saveGameFn();
+
+    const message = lockedCount > 0
+        ? `${unlockedOffspring.length} sold for ${totalValue} coins. ${lockedCount} locked offspring kept.`
+        : `${unlockedOffspring.length} parrot${unlockedOffspring.length !== 1 ? 's' : ''} sold for ${totalValue} coins`;
+
+    showToast(
+        `Offspring sold!`,
+        message,
+        'success',
+        4000
+    );
+}
+
+/**
+ * Dismiss all recent offspring (excluding locked ones)
+ */
+export async function dismissOffspring(saveGameFn) {
+    const offspring = GameState.getRecentOffspring();
+    if (offspring.length === 0) return;
+
+    // Separate locked and unlocked offspring
+    const unlockedOffspring = offspring.filter(p => !GameState.isParrotLocked(p.id));
+    const lockedCount = offspring.length - unlockedOffspring.length;
+
+    if (unlockedOffspring.length === 0) {
+        showToast(
+            'Cannot dismiss offspring',
+            `All ${offspring.length} offspring are locked. Unlock them first to dismiss.`,
+            'error',
+            3000
+        );
+        return;
+    }
+
+    // Remove only the unlocked offspring
+    unlockedOffspring.forEach(parrot => {
+        GameState.removeRecentOffspring(parrot.id);
+    });
+
+    await UI.updateBreedingLab();
+
+    if (saveGameFn) saveGameFn();
+
+    const message = lockedCount > 0
+        ? `${unlockedOffspring.length} dismissed. ${lockedCount} locked offspring kept.`
+        : `${unlockedOffspring.length} parrot${unlockedOffspring.length !== 1 ? 's' : ''} released into the wild`;
+
+    showToast(
+        `Offspring dismissed`,
+        message,
+        'info',
+        3000
+    );
 }
