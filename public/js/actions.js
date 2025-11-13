@@ -159,7 +159,8 @@ export async function breedParrots(saveGameFn, checkAchievementsFn) {
     }
 
     // Add offspring to recent offspring list (shown in breeding lab)
-    GameState.setRecentOffspring(offspring);
+    // Append to existing offspring instead of replacing them
+    offspring.forEach(child => GameState.addRecentOffspring(child));
 
     // Clear breeding pair
     GameState.setBreedingPair({ left: null, right: null });
@@ -179,15 +180,16 @@ export async function breedParrots(saveGameFn, checkAchievementsFn) {
     if (saveGameFn) saveGameFn();
     if (checkAchievementsFn) checkAchievementsFn(saveGameFn);
 
-    // Show success toast
+    // Show success toast with total offspring count
+    const totalOffspring = GameState.getRecentOffspring().length;
     showToast(
         `Breeding successful!`,
-        `4 new chicks born!${examineMessage} Check the Breeding Lab.`,
+        `4 new chicks born!${examineMessage} ${totalOffspring} total waiting in Breeding Lab.`,
         'success',
         6000
     );
 
-    console.log('Breeding complete:', offspring.length, 'offspring created, examined:', examineCount);
+    console.log('Breeding complete:', offspring.length, 'offspring created, examined:', examineCount, 'total waiting:', totalOffspring);
 }
 
 /**
