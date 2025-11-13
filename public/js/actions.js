@@ -42,6 +42,9 @@ export async function breedOnLeft(parrotId) {
     await UI.renderBreedingSlots();
     await UI.renderParrotGrid(); // Refresh cards to show L/R badges immediately
     UI.updateBreedButton();
+
+    // Refresh action buttons to update heart button state
+    await UI.showParrotActions();
 }
 
 /**
@@ -63,6 +66,9 @@ export async function breedOnRight(parrotId) {
     await UI.renderBreedingSlots();
     await UI.renderParrotGrid(); // Refresh cards to show L/R badges immediately
     UI.updateBreedButton();
+
+    // Refresh action buttons to update heart button state
+    await UI.showParrotActions();
 }
 
 /**
@@ -75,6 +81,9 @@ export async function removeFromSlot(slot) {
     GameState.setBreedingPair(breedingPair);
     await UI.renderBreedingSlots();
     UI.updateBreedButton();
+
+    // Refresh action buttons to update heart button state
+    await UI.showParrotActions();
 }
 
 /**
