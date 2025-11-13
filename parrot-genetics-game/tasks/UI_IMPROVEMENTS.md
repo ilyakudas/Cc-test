@@ -971,6 +971,63 @@ export async function sellAllOffspring(saveGameFn) {
 
 ---
 
+### Bug #11: Offspring Lost When Breeding Multiple Times
+**Issue**: If player bred parrots multiple times without moving/selling/dismissing previous offspring, the previous offspring were completely lost and replaced by new ones.
+
+**Root Cause**: The breeding function used `GameState.setRecentOffspring(offspring)` which **replaces** the entire array instead of appending to it. The `setRecentOffspring()` function in gameState.js simply does `recentOffspring = offspring`, overwriting any existing offspring.
+
+**Example of Bug**:
+1. Breed parrots → 4 chicks waiting in breeding lab
+2. Breed again without managing them → Previous 4 chicks **completely lost**, only new 4 remain
+3. Player loses parrots without realizing it
+
+**Fix**: Changed breeding logic to append new offspring to existing array instead of replacing it.
+
+**Before**:
+```javascript
+// Add offspring to recent offspring list (shown in breeding lab)
+GameState.setRecentOffspring(offspring);  // Replaces entire array!
+```
+
+**After**:
+```javascript
+// Add offspring to recent offspring list (shown in breeding lab)
+// Append to existing offspring instead of replacing them
+offspring.forEach(child => GameState.addRecentOffspring(child));
+```
+
+**Toast Notification Enhancement**:
+Updated breeding success message to show total offspring count so players are aware of accumulation:
+```javascript
+const totalOffspring = GameState.getRecentOffspring().length;
+showToast(
+    `Breeding successful!`,
+    `4 new chicks born!${examineMessage} ${totalOffspring} total waiting in Breeding Lab.`,
+    'success',
+    6000
+);
+```
+
+**Example After Fix**:
+1. Breed parrots → 4 chicks waiting (Toast: "4 total waiting in Breeding Lab")
+2. Breed again → 8 chicks waiting (Toast: "8 total waiting in Breeding Lab")
+3. Breed again → 12 chicks waiting (Toast: "12 total waiting in Breeding Lab")
+4. All offspring preserved until player chooses to move/sell/dismiss them
+
+**Benefits**:
+1. No accidental loss of parrots
+2. Players can breed multiple times in succession
+3. Flexible workflow - manage offspring when convenient
+4. Clear feedback on total offspring count
+
+**Files Modified**:
+- `public/js/actions.js:161-163` - Changed to append offspring
+- `public/js/actions.js:183-192` - Added total count to toast and console log
+
+**Commit**: `45a23fd` - "fix: Prevent offspring loss when breeding multiple times"
+
+---
+
 ## State Management Changes
 
 ### GameState Module Additions
@@ -1094,6 +1151,8 @@ public/js/
 - [x] Lab button has proper hover animation
 - [x] Sell all offspring button works and calculates correct total
 - [x] All three offspring action buttons have consistent width
+- [x] Offspring accumulate correctly when breeding multiple times
+- [x] Toast shows total offspring count after each breeding
 
 ### Edge Cases Handled
 1. Insufficient coins for breeding
@@ -1111,6 +1170,8 @@ public/js/
 13. Button text blocking clicks (pointer-events management)
 14. Selling offspring with 0 offspring (early return)
 15. Button hover states consistent across all button types
+16. Breeding multiple times without managing offspring (offspring now accumulate)
+17. Large numbers of accumulated offspring (grid layout scales properly)
 
 ---
 
@@ -1170,6 +1231,12 @@ All commits on branch: `claude/parrot-game-improvements-011CV5R35qFu7t8vpMAiBgX4
    - Added "Sell All" button for offspring in breeding lab
    - Calculates total value and adds to player's coins
 
+10. **45a23fd** - "fix: Prevent offspring loss when breeding multiple times"
+   - Fixed offspring being lost when breeding without managing previous offspring
+   - Changed from replacing offspring array to appending new offspring
+   - Updated toast to show total offspring count (e.g., "8 total waiting")
+   - Allows players to breed multiple times without losing parrots
+
 ---
 
 ## Future Enhancement Opportunities
@@ -1221,10 +1288,10 @@ This task successfully transformed the ChromaWing parrot breeding game from a fu
 All implementations maintain the existing genetic breeding mechanics while enhancing the presentation and user interaction patterns. The codebase remains modular and maintainable, with clear separation of concerns across the module structure.
 
 **Total Files Modified**: 8
-**Total Lines Changed**: ~750+ lines added/modified
-**Bugs Fixed**: 10 major issues
+**Total Lines Changed**: ~760+ lines added/modified
+**Bugs Fixed**: 11 major issues
 **New Features Added**: 11+ enhancements
-**Commits**: 9 commits total
+**Commits**: 10 commits total
 
 **Status**: All objectives complete and tested ✅
 
@@ -1236,6 +1303,8 @@ All implementations maintain the existing genetic breeding mechanics while enhan
 - Fixed lab button click area (pointer-events issue)
 - Fixed lab button hover animation
 - Fixed function name error (markParrotExamined → addExaminedParrot)
+- Fixed offspring being lost when breeding multiple times
 - Added "Sell All" button for offspring
 - Added comprehensive validation for coin transactions
+- Added total offspring count to breeding toast notifications
 - Lab now works on parrots in both collection and breeding lab
