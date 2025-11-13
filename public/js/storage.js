@@ -55,7 +55,22 @@ export function saveGame() {
 
     try {
         const gameData = JSON.stringify(gameStateData);
-        document.cookie = `chromawing_save=${encodeURIComponent(gameData)};max-age=31536000;path=/`;
+        const cookieValue = `chromawing_save=${encodeURIComponent(gameData)};max-age=31536000;path=/`;
+
+        console.log('Saving to cookie...');
+        console.log('- Data length:', gameData.length);
+        console.log('- Encoded length:', encodeURIComponent(gameData).length);
+        console.log('- Cookie will expire in:', 31536000, 'seconds (1 year)');
+
+        document.cookie = cookieValue;
+
+        // Verify it was saved
+        const verification = document.cookie.includes('chromawing_save');
+        console.log('Cookie save verification:', verification ? 'SUCCESS' : 'FAILED');
+        if (!verification) {
+            console.error('Cookie was not saved! document.cookie:', document.cookie);
+        }
+
         console.log('Game saved successfully - Parrots:', gameStateData.parrots.length,
                     'Store:', gameStateData.storeParrots.length,
                     'Offspring:', gameStateData.recentOffspring.length,
@@ -72,15 +87,24 @@ export function saveGame() {
  * @returns {boolean} True if load successful
  */
 export function loadGame() {
+    console.log('Loading game...');
+    console.log('Raw document.cookie:', document.cookie);
+    console.log('Cookie length:', document.cookie.length);
+
+    if (!document.cookie || document.cookie.length === 0) {
+        console.log('No cookies found - starting new game');
+        return false;
+    }
+
     const cookies = document.cookie.split(';');
-    console.log('Loading game... found cookies:', cookies.length);
+    console.log('Split into', cookies.length, 'cookies');
 
     for (let cookie of cookies) {
         const [name, value] = cookie.trim().split('=');
-        console.log('Checking cookie:', name);
+        console.log('Checking cookie - name:', name, ', value length:', value?.length || 0);
 
         if (name === 'chromawing_save') {
-            console.log('Found chromawing_save cookie, length:', value.length);
+            console.log('Found chromawing_save cookie, value length:', value.length);
 
             try {
                 const gameStateData = JSON.parse(decodeURIComponent(value));
