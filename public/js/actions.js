@@ -18,9 +18,11 @@ let sellHoldTimer = null;
  * Select a parrot for viewing
  * @param {number} parrotId - Parrot ID
  */
-export function selectParrot(parrotId) {
+export async function selectParrot(parrotId) {
     GameState.setSelectedParrotId(parrotId);
-    UI.updateUI();
+    await UI.updateUI();
+    // Ensure action buttons reflect current breeding state
+    await UI.showParrotActions();
 }
 
 /**
