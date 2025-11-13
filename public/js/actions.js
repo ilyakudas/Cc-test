@@ -393,7 +393,8 @@ export function freeParrot(parrotId, saveGameFn) {
  */
 export async function openLaboratory(parrotId) {
     const parrots = GameState.getParrots();
-    const parrot = parrots.find(p => p.id === parrotId);
+    const recentOffspring = GameState.getRecentOffspring();
+    const parrot = parrots.find(p => p.id === parrotId) || recentOffspring.find(p => p.id === parrotId);
     if (!parrot) return;
 
     const modal = document.getElementById('laboratoryModal');
@@ -732,7 +733,8 @@ export async function openLaboratory(parrotId) {
  */
 export async function performExamination(parrotId, saveGameFn) {
     const parrots = GameState.getParrots();
-    const parrot = parrots.find(p => p.id === parrotId);
+    const recentOffspring = GameState.getRecentOffspring();
+    const parrot = parrots.find(p => p.id === parrotId) || recentOffspring.find(p => p.id === parrotId);
     if (!parrot) return;
 
     // Check if already examined
