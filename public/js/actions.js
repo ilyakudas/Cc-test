@@ -22,7 +22,7 @@ export async function selectParrot(parrotId) {
     GameState.setSelectedParrotId(parrotId);
     await UI.updateUI();
     // Ensure action buttons reflect current breeding state
-    await UI.showParrotActions();
+    await UI.updatePreview();
 }
 
 /**
@@ -46,7 +46,7 @@ export async function breedOnLeft(parrotId) {
     UI.updateBreedButton();
 
     // Refresh action buttons to update heart button state
-    await UI.showParrotActions();
+    await UI.updatePreview();
 }
 
 /**
@@ -70,7 +70,7 @@ export async function breedOnRight(parrotId) {
     UI.updateBreedButton();
 
     // Refresh action buttons to update heart button state
-    await UI.showParrotActions();
+    await UI.updatePreview();
 }
 
 /**
@@ -85,7 +85,7 @@ export async function removeFromSlot(slot) {
     UI.updateBreedButton();
 
     // Refresh action buttons to update heart button state
-    await UI.showParrotActions();
+    await UI.updatePreview();
 }
 
 /**
