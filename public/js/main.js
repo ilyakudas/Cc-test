@@ -349,6 +349,12 @@ window.takeParrotRewardHandler = (tierIndex, placement) => {
     Contests.takeParrotReward(tierIndex, placement, saveGame, UI.updateStats, checkAchievements);
 };
 window.closeContestModalHandler = () => Contests.closeContestModal();
+window.closeSplashScreen = () => {
+    const splash = document.getElementById('splashScreen');
+    if (splash) {
+        splash.classList.remove('active');
+    }
+};
 
 // ===== INITIALIZATION =====
 
