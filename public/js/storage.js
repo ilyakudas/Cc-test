@@ -21,6 +21,24 @@ export function saveGame() {
             rareSource: p.rareSource,
             description: p.description
         })),
+        storeParrots: GameState.getStoreParrots().map(p => ({
+            id: p.id,
+            name: p.name,
+            genes: p.genes,
+            generation: p.generation,
+            isRare: p.isRare,
+            rareSource: p.rareSource,
+            description: p.description
+        })),
+        recentOffspring: GameState.getRecentOffspring().map(p => ({
+            id: p.id,
+            name: p.name,
+            genes: p.genes,
+            generation: p.generation,
+            isRare: p.isRare,
+            rareSource: p.rareSource,
+            description: p.description
+        })),
         coins: GameState.getCoins(),
         parrotIdCounter: GameState.getParrotIdCounter(),
         generation: GameState.getGeneration(),
@@ -38,7 +56,10 @@ export function saveGame() {
     try {
         const gameData = JSON.stringify(gameStateData);
         document.cookie = `chromawing_save=${encodeURIComponent(gameData)};max-age=31536000;path=/`;
-        console.log('Game saved successfully');
+        console.log('Game saved successfully - Parrots:', gameStateData.parrots.length,
+                    'Store:', gameStateData.storeParrots.length,
+                    'Offspring:', gameStateData.recentOffspring.length,
+                    'Coins:', gameStateData.coins);
         return true;
     } catch (e) {
         console.error('Failed to save game:', e);
@@ -69,6 +90,30 @@ export function loadGame() {
                     return parrot;
                 });
                 GameState.setParrots(restoredParrots);
+
+                // Restore store parrots
+                const restoredStoreParrots = (gameStateData.storeParrots || []).map(p => {
+                    const parrot = new Parrot(p.name, p.genes, p.generation, p.id);
+                    if (p.isRare) {
+                        parrot.isRare = p.isRare;
+                        parrot.rareSource = p.rareSource;
+                        parrot.description = p.description;
+                    }
+                    return parrot;
+                });
+                GameState.setStoreParrots(restoredStoreParrots);
+
+                // Restore recent offspring
+                const restoredOffspring = (gameStateData.recentOffspring || []).map(p => {
+                    const parrot = new Parrot(p.name, p.genes, p.generation, p.id);
+                    if (p.isRare) {
+                        parrot.isRare = p.isRare;
+                        parrot.rareSource = p.rareSource;
+                        parrot.description = p.description;
+                    }
+                    return parrot;
+                });
+                GameState.setRecentOffspring(restoredOffspring);
 
                 // Restore other state
                 GameState.setCoins(gameStateData.coins);
@@ -125,7 +170,10 @@ export function loadGame() {
                     });
                 }
 
-                console.log('Game loaded successfully');
+                console.log('Game loaded successfully - Parrots:', restoredParrots.length,
+                            'Store:', restoredStoreParrots.length,
+                            'Offspring:', restoredOffspring.length,
+                            'Coins:', gameStateData.coins);
                 return true;
             } catch (e) {
                 console.error('Failed to load game:', e);
