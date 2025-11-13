@@ -352,7 +352,11 @@ Your Parrot: "Crimson" (Beauty: ⭐⭐⭐⭐)
 
 ## 6. UI/UX Design
 
-### Gene Pool Dashboard
+### Gene Pool Dashboard - Visual Representation
+
+**Primary View: The "Average Wild Parrot"**
+
+Instead of showing bars and numbers, display a **living visual representation** of the gene pool:
 
 ```
 ╔══════════════════════════════════════════════╗
@@ -361,34 +365,82 @@ Your Parrot: "Crimson" (Beauty: ⭐⭐⭐⭐)
 
 Conservation Credits: 🌿 145
 Total Parrots Released: 23
+
+┌─────────────────────────────────────────────┐
+│                                             │
+│         [AVERAGE WILD PARROT]               │
+│                                             │
+│    This parrot shows the "average"          │
+│    appearance based on all genes            │
+│    released to the wild pool.               │
+│                                             │
+│    Wings: Reddish (78% red dominant)       │
+│    Body: Bright Green (92% green dominant)  │
+│    Head: Moderate Blue (58% blue)           │
+│    Tail: Yellow-Brown gradient              │
+│    Accents: Light green                     │
+│                                             │
+└─────────────────────────────────────────────┘
+
 Pool Quality: ⭐⭐⭐⭐ (72/100)
 Diversity Score: 64% (HEALTHY)
+Performance: Speed ⭐⭐⭐ | Agility ⭐⭐⭐⭐ | Stamina ⭐⭐⭐
 
 Last Release: 2 days ago
 Decay Rate: -5% per week
 
-┌─────────────────────────────────────────────┐
-│ WINGS                                       │
-├─────────────────────────────────────────────┤
-│ Red Genes:   ████████░░ 0.78 🟢 Abundant   │
-│ Green Genes: ████░░░░░░ 0.35 🟠 Rare       │
-│ Blue Genes:  ██████░░░░ 0.58 🟡 Common     │
-│ ... (10 more genes)                         │
-└─────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────┐
-│ BODY                                        │
-├─────────────────────────────────────────────┤
-│ Red Genes:   ███░░░░░░░ 0.25 🟠 Rare       │
-│ Green Genes: █████████░ 0.92 🔵 Dominant   │
-│ Blue Genes:  █████░░░░░ 0.50 🟡 Common     │
-│ ... (10 more genes)                         │
-└─────────────────────────────────────────────┘
-
-[View All Body Parts] [Release History]
+[View Detailed Stats] [Release History]
 
 ⚠️ WARNING: Red genes in BODY are declining!
    Consider releasing red-bodied parrots soon.
+```
+
+**How the Average Parrot is Calculated:**
+
+For each body part and each color channel:
+```javascript
+// For Wings Red channel:
+wingRedFrequency = 0.78 (78% dominant in pool)
+
+// Convert to RGB value:
+// 0.78 frequency means "on average, 78% of genes are dominant"
+// Display color: rgb(78% of 255, ..., ...)
+
+averageWingsColor = rgb(
+  wingRedFreq × 255,    // 199
+  wingGreenFreq × 255,  // 89 (35% frequency)
+  wingBlueFreq × 255    // 148 (58% frequency)
+)
+// Result: Reddish-purple wings
+```
+
+**Interactive Features:**
+- Click body part → See detailed gene breakdown
+- Hover → See exact frequency percentages
+- Toggle between "Average View" and "Stats View"
+- Compare your parrot to the average
+
+**Secondary View: Detailed Stats (Toggle)**
+
+```
+┌─────────────────────────────────────────────┐
+│ WINGS - Detailed Gene Frequencies           │
+├─────────────────────────────────────────────┤
+│ COLOR GENES:                                │
+│ Red:     ████████░░ 0.78 🟢 Abundant       │
+│ Green:   ████░░░░░░ 0.35 🟠 Rare           │
+│ Blue:    ██████░░░░ 0.58 🟡 Common         │
+│ Gradient: ███░░░░░░░ 0.25 🟠 Rare          │
+│                                             │
+│ PERFORMANCE GENES:                          │
+│ Speed:    █████░░░░░ 0.48 🟡 Common        │
+│ Agility:  ███████░░░ 0.72 🟢 Abundant      │
+│ Stamina:  ████░░░░░░ 0.41 🟡 Common        │
+│                                             │
+│ SPECIAL GENES:                              │
+│ Fertility: █████████░ 0.85 🔵 Dominant     │
+│ Intelligence: ██████░░░░ 0.55 🟡 Common    │
+└─────────────────────────────────────────────┘
 ```
 
 ### Mate Finding Interface
@@ -453,6 +505,499 @@ Choose one mate for "Sapphire":
 [Reject All & Search Again] (Cost: 🌿 30)
 [Cancel] (Refund: 🌿 10)
 ```
+
+## 6B. Performance Genes in Mate Finding
+
+**THE BIG PROBLEM**: Speed, Agility, Intelligence, and Stamina genes have no gameplay purpose yet (competitions not implemented).
+
+**THE SOLUTION**: Use them in the Wild Mate Finding system!
+
+### How Performance Genes Affect Mate Finding
+
+Each performance gene gives your parrot advantages when searching for wild mates:
+
+#### 1. **Agility** - Number of Mate Options
+
+**Mechanic**: More agile parrots can attract and evaluate more potential mates.
+
+```
+Base Mates Shown: 3
+
+Agility Bonus:
+- Low Agility (aa):   3 mates
+- Medium Agility (Aa): 4 mates
+- High Agility (AA):   5 mates
+```
+
+**Why This Makes Sense**:
+- Agile parrots can fly to more locations
+- Can approach more potential mates
+- Better at courtship displays
+- More options = better chance of finding good match
+
+**Gameplay Impact**:
+- High agility parrot → See 5 options → Better selection
+- Low agility parrot → See 3 options → Limited choice
+- Makes agility valuable even without competitions
+
+#### 2. **Intelligence** - Re-roll Ability
+
+**Mechanic**: Intelligent parrots can "remember" locations and return for additional searches at reduced cost.
+
+```
+Re-roll Cost Multiplier:
+- Low Intelligence (nn):   2.0× cost (40 credits on retry)
+- Medium Intelligence (Nn): 1.5× cost (30 credits on retry)
+- High Intelligence (NN):   1.0× cost (20 credits on retry)
+
+PLUS: Intelligent parrots get ONE FREE RE-ROLL per search
+```
+
+**Example**:
+```
+Normal parrot (nn):
+- First search: 20 credits → 3 mates shown
+- Reject all: 40 credits for retry (2× cost)
+
+Intelligent parrot (NN):
+- First search: 20 credits → 3 mates shown
+- Reject all: FREE RETRY (once)
+- Reject again: 20 credits (1× cost, not 2×)
+```
+
+**Why This Makes Sense**:
+- Smart parrots remember good spots
+- Can evaluate mates better
+- Learn from previous searches
+- Return to successful locations
+
+**Gameplay Impact**:
+- High intelligence = More attempts without breaking the bank
+- Can be picky about mate selection
+- Intelligence becomes highly valuable
+
+#### 3. **Stamina** - Search Success Rate
+
+**Mechanic**: Higher stamina parrots have better success finding *any* mates, and better base quality.
+
+```
+Search Success Modifier:
+- Low Stamina (ee):   -10% to all mate quality rolls
+- Medium Stamina (Ee): No modifier
+- High Stamina (EE):   +10% to all mate quality rolls
+
+PLUS: Chance of finding BONUS mate:
+- Low Stamina (ee):   0% chance
+- Medium Stamina (Ee): 10% chance of +1 extra mate
+- High Stamina (EE):   25% chance of +1 extra mate
+```
+
+**Example**:
+```
+Scenario: Gene pool has 60% red frequency, your parrot has 80 beauty
+
+Normal calculation: 60% + (80 × 0.4) = 92% chance dominant
+
+With low stamina (ee):  92% - 10% = 82% chance
+With high stamina (EE): 92% + 10% = 100% chance (capped)
+
+PLUS: High stamina might find 4 mates instead of 3 (25% chance)
+```
+
+**Why This Makes Sense**:
+- Stamina = Can search longer distances
+- Don't give up easily
+- Have energy for courtship displays
+- Can pursue more potential mates
+
+**Gameplay Impact**:
+- High stamina = Better quality mates + more options
+- Makes stamina desirable for breeding programs
+- Stacks with other genes for best results
+
+#### 4. **Speed** - Search Time & Cost Reduction
+
+**Mechanic**: Faster parrots complete searches more efficiently, reducing costs.
+
+```
+Cost Reduction:
+- Low Speed (vv):   +5 credits (25 total base cost)
+- Medium Speed (Vv): Standard cost (20 credits)
+- High Speed (VV):   -5 credits (15 total base cost)
+
+Search "Cooldown":
+If we implement time-based mechanics:
+- Low Speed (vv):   24 hours between searches
+- Medium Speed (Vv): 12 hours between searches
+- High Speed (VV):   6 hours between searches
+```
+
+**Why This Makes Sense**:
+- Fast parrots cover more ground quickly
+- Less energy/resources needed
+- Can search multiple locations in same time
+- Efficiency = lower cost
+
+**Gameplay Impact**:
+- Speed makes mate finding more affordable
+- Can do more searches with same credits
+- Useful for players who do lots of breeding
+
+### Combined Performance Gene Effects
+
+**Example Scenarios:**
+
+**Scenario A: The Perfect Mate Finder**
+```
+Parrot: "Swift Scout"
+- Agility: AA (High) → 5 mate options
+- Intelligence: NN (High) → Free re-roll + cheap retries
+- Stamina: EE (High) → +10% quality, 25% bonus mate
+- Speed: VV (Fast) → 15 credits per search
+
+Result:
+- 5-6 mate options (maybe bonus)
+- All mates +10% quality
+- Can retry for free once
+- Only costs 15 credits
+- This parrot is VALUABLE for breeding program!
+```
+
+**Scenario B: The Struggling Parrot**
+```
+Parrot: "Slowpoke"
+- Agility: aa (Low) → 3 mate options only
+- Intelligence: nn (Low) → No free retry, 2× cost retries
+- Stamina: ee (Low) → -10% quality on all mates
+- Speed: vv (Slow) → 25 credits per search
+
+Result:
+- Only 3 mates shown
+- All mates -10% quality (worse genes)
+- Retry costs 50 credits!
+- Expensive and limited options
+- Might want to just breed this one in sanctuary
+```
+
+**Scenario C: The Specialist**
+```
+Parrot: "Smart but Lazy"
+- Agility: aa (Low) → 3 mate options
+- Intelligence: NN (High) → Free re-roll
+- Stamina: ee (Low) → -10% quality
+- Speed: Vv (Medium) → 20 credits
+
+Result:
+- Limited options (3) but can retry free
+- Quality penalty but can search multiple times
+- Break-even cost
+- Strategy: Use free re-roll to overcome limited options
+```
+
+### Strategic Implications
+
+**Breeding for Wild Mate Finding**:
+1. Create a "perfect finder" parrot with AA/NN/EE/VV performance genes
+2. Use this parrot to find the best wild mates
+3. Breed found mate with your other specialized parrots
+4. Creates a new breeding strategy: "The Scout"
+
+**The Scout Strategy**:
+```
+Step 1: Breed a parrot optimized for mate finding
+        (High performance genes, beauty is secondary)
+
+Step 2: Use this "scout" to find exceptional wild mates
+        (Benefits from all performance gene bonuses)
+
+Step 3: Breed the found mate with your beauty/color specialists
+        (Combining wild diversity with your specializations)
+
+Step 4: Keep the scout for future mate finding
+        (Each parrot only finds ONE mate, so make it count!)
+```
+
+**Performance Genes Now Have Purpose!**:
+- ✅ Agility: More mate options
+- ✅ Intelligence: Free retries, cheaper re-rolls
+- ✅ Stamina: Better quality, bonus mates
+- ✅ Speed: Lower costs, faster searches
+- ✅ All genes valuable even without competitions!
+
+## 6C. Fertility Gene System
+
+**CRITICAL OVERSIGHT**: We forgot fertility! Essential for a breeding game!
+
+### Fertility Gene (F/f)
+
+**Inheritance**: Standard Mendelian (Dominant/Recessive)
+
+**Genotypes**:
+- **FF** (Homozygous Dominant) = High Fertility
+- **Ff** (Heterozygous) = Normal Fertility
+- **ff** (Homozygous Recessive) = Low Fertility
+
+### Fertility Effects
+
+#### 1. **Offspring Count**
+
+```
+High Fertility (FF):
+- 80% chance: 2 offspring
+- 20% chance: 3 offspring
+- Average: 2.2 offspring per breeding
+
+Normal Fertility (Ff):
+- 100% chance: 1 offspring
+- (Sometimes can be 2 with both parents Ff: 10% chance)
+- Average: 1.1 offspring per breeding
+
+Low Fertility (ff):
+- 70% chance: 1 offspring
+- 30% chance: 0 offspring (failed breeding)
+- Average: 0.7 offspring per breeding
+```
+
+**Breeding Pair Combined Effects**:
+```
+FF × FF = Guaranteed 2-3 offspring (2.2 average)
+FF × Ff = Good chance 2 offspring (1.6 average)
+FF × ff = Reliable 1 offspring (1.2 average)
+Ff × Ff = Usually 1 offspring (1.1 average)
+Ff × ff = Often 1, sometimes fails (0.8 average)
+ff × ff = High failure rate (0.4 average) ⚠️
+```
+
+#### 2. **Breeding Cooldown**
+
+```
+High Fertility (FF):   3 days cooldown
+Normal Fertility (Ff): 5 days cooldown
+Low Fertility (ff):    7 days cooldown
+```
+
+**Why**: Fertile parrots recover faster between breedings.
+
+#### 3. **Egg Quality**
+
+```
+High Fertility (FF):   +5% to offspring stat quality
+Normal Fertility (Ff):  No modifier
+Low Fertility (ff):    -5% to offspring stat quality
+```
+
+**Explanation**: Healthier reproductive system = healthier offspring.
+
+#### 4. **Wild Mate Finding Bonus**
+
+```
+High Fertility (FF):   Wild mates more likely to also have high fertility
+                       +15% chance mate has F alleles
+
+Normal Fertility (Ff):  Standard wild mate fertility distribution
+
+Low Fertility (ff):    Wild mates may avoid (survival instinct)
+                       -15% chance mate has F alleles
+```
+
+**Why**: In nature, fertile individuals attract fertile mates (reproductive fitness).
+
+### Fertility in Gameplay
+
+#### Early Game Challenge
+
+**Starter Parrots**: Give mix of Ff and ff
+- Players experience breeding failures
+- Learn that fertility matters
+- Creates goal: "breed high fertility line"
+
+#### Mid Game Strategy
+
+**The Fertility Farm**:
+1. Identify FF parrots (2-3 offspring consistently)
+2. Breed FF × FF to guarantee FF offspring
+3. Use FF parrots for high-volume breeding
+4. Save ff parrots for special projects (not breeding stock)
+
+#### Late Game Optimization
+
+**Balancing Act**:
+```
+Scenario: Perfect color genes but ff fertility
+Decision:
+- Use once to get genes into population
+- Breed offspring (which are Ff) to improve fertility
+- Or: Accept low output for rare genetics
+```
+
+### Fertility Gene Pool Tracking
+
+**Wild Pool Fertility**:
+- Tracked like other genes
+- Frequency affects wild mate fertility
+- Low wild fertility = fewer offspring from wild mates
+- Incentive to release FF parrots
+
+**Dashboard Display**:
+```
+Fertility Gene Pool: 🔵 0.85 (Dominant)
+↳ Most wild mates will have good fertility (FF or Ff)
+↳ Low risk of breeding failures with wild mates
+```
+
+### UI Indicators
+
+**Parrot Card Fertility Display**:
+```
+┌────────────────────────┐
+│ "Sunrise" 🦜           │
+│ Beauty: ⭐⭐⭐⭐        │
+│ Fertility: 🥚🥚🥚 (FF) │ ← NEW
+│ Performance: ⚡⭐⭐     │
+└────────────────────────┘
+```
+
+**Breeding Preview**:
+```
+Parent 1: "Ruby" (FF)
+Parent 2: "Sky" (Ff)
+
+Expected Offspring:
+- 100% will have F gene (all FF or Ff)
+- 70% chance of 2 offspring
+- 30% chance of 1 offspring
+- Average: 1.7 offspring
+
+Fertility Outlook: 🟢 EXCELLENT
+```
+
+### Strategic Depth
+
+**The Fertility Trade-off**:
+
+**High Fertility Line**:
+- ✅ Many offspring quickly
+- ✅ Fast breeding cycles
+- ✅ Better offspring quality
+- ❌ Need to maintain FF genes
+- ❌ Might sacrifice other traits
+
+**Low Fertility Rare Line**:
+- ✅ Can preserve rare genetics
+- ✅ Fewer offspring = more special
+- ✅ Challenge factor
+- ❌ Slow progress
+- ❌ Risk of breeding failures
+- ❌ Need careful planning
+
+**Hybrid Strategy**:
+1. Maintain FF "production line" for volume
+2. Keep rare ff parrots for special projects
+3. Breed rare (ff) × production (FF) = Ff offspring
+4. Gradually improve fertility while keeping rare traits
+
+## 6D. Addressing "Genes Without Purpose"
+
+**THE FUNDAMENTAL PROBLEM**:
+
+Current game has genetics for:
+- ✅ **Color genes** - Have purpose (visual beauty)
+- ❌ **Performance genes** - No purpose (no competitions yet)
+- ❌ **Fertility** - Was missing entirely!
+
+**THE SOLUTION FRAMEWORK**:
+
+### Option 1: Give Genes Immediate Purpose (Our Approach)
+
+**What we just did**:
+- Performance genes → Affect wild mate finding ✅
+- Fertility gene → Affects breeding output ✅
+- All genes now have gameplay impact
+- No need to implement competitions yet
+
+**Benefits**:
+- Immediate value to all genetics
+- Works with current game state
+- Creates diverse breeding strategies
+- Can add competitions later as bonus
+
+### Option 2: Simplified Genetics (Alternative)
+
+**If genes remain purposeless**:
+- Remove performance genes entirely
+- Focus only on color genetics
+- Add them back when competitions ready
+- Simpler system, clearer purpose
+
+**Trade-offs**:
+- ✅ Clearer for players
+- ✅ Less overwhelming
+- ❌ Less genetic diversity
+- ❌ Less strategic depth
+- ❌ Less educational value
+
+### Option 3: Placeholder Mechanics (Compromise)
+
+**Minimal implementations**:
+- Speed → Affects animation speed (cosmetic)
+- Agility → Affects idle animations (cosmetic)
+- Intelligence → Affects tricks/responses (cosmetic)
+- Stamina → Affects energy regen (minor)
+
+**Trade-offs**:
+- ✅ Some purpose better than none
+- ✅ Easy to implement
+- ❌ Feels shallow
+- ❌ Not strategic enough
+
+### Our Chosen Solution: Multi-Purpose Genes
+
+**Every gene now affects multiple systems**:
+
+**Color Genes**:
+1. Visual appearance (primary)
+2. Beauty score for mate finding
+3. Gene pool contribution
+4. Rarity calculations
+
+**Performance Genes** (NEW PURPOSE):
+1. Wild mate finding bonuses
+2. Breeding efficiency
+3. Future: Competitions
+4. Strategic breeding choices
+
+**Fertility Gene** (NEW):
+1. Offspring count
+2. Breeding cooldown
+3. Offspring quality
+4. Wild mate attraction
+
+**Result**: No gene is purposeless! Every gene has immediate gameplay value.
+
+### Future: When Competitions Are Added
+
+**Performance genes will have DUAL purpose**:
+
+**Current** (Mate Finding):
+- Agility → More mate options
+- Intelligence → Free re-rolls
+- Stamina → Better mate quality
+- Speed → Lower costs
+
+**Future** (Competitions):
+- Agility → Win agility courses
+- Intelligence → Win puzzle challenges
+- Stamina → Win endurance trials
+- Speed → Win races
+
+**Strategic Depth**:
+Players must choose:
+- Breed for mate finding efficiency? (AA/NN/EE/VV)
+- Breed for competition success? (same genes!)
+- Breed for color beauty? (Different genes)
+- Breed balanced parrots? (Compromise)
+
+This creates **meaningful choices** - the core of good game design!
 
 ## 7. Balance Considerations
 
@@ -657,20 +1202,63 @@ const CONFIG = {
 
 ## Summary
 
-The Wild Mate Finding System creates a virtuous cycle:
+The Wild Mate Finding System creates a virtuous cycle with deep strategic gameplay:
 
-1. **Breed parrots** → Generate offspring
-2. **Release quality parrots** → Earn credits + improve pool
-3. **Build gene pool** → Better genes available
-4. **Find wild mates** → Access unique combinations
-5. **Breed with mates** → Create new lines
-6. **Repeat** → Continuous progression
+### Core Loop
 
-**Key Principles**:
+1. **Breed parrots** → Generate offspring with diverse genetics
+2. **Release quality parrots** → Earn Conservation Credits + improve gene pool
+3. **Build gene pool** → Better genes available (visual as "Average Wild Parrot")
+4. **Use performance genes** → Scout parrots find better mates (AA/NN/EE/VV)
+5. **Find wild mates** → Access unique combinations, one mate per parrot
+6. **Breed with mates** → Create new lines with wild diversity
+7. **Leverage fertility** → FF parrots produce more offspring faster
+8. **Repeat** → Continuous progression and optimization
+
+### Key Innovations
+
+**Visual Gene Pool** 🎨:
+- See the gene pool as a living "Average Wild Parrot"
+- Intuitive representation of gene frequencies
+- Click body parts for detailed stats
+- Compare your parrots to the average
+
+**Performance Genes Have Purpose** ⚡:
+- **Agility (AA)**: Find 5 mate options instead of 3
+- **Intelligence (NN)**: Free re-roll + reduced retry costs
+- **Stamina (EE)**: +10% mate quality + bonus mate chance
+- **Speed (VV)**: 25% cost reduction (15 credits vs 20)
+- Creates "Scout" breeding strategy
+
+**Fertility System** 🥚:
+- **FF**: 2-3 offspring per breeding, fast cooldown
+- **Ff**: 1 offspring usually, normal cooldown
+- **ff**: 0-1 offspring (failures possible), slow cooldown
+- Tracked in gene pool, affects wild mate quality
+
+**Strategic Depth** 🎯:
+- Can't release garbage and expect treasure ✅
+- One mate per parrot = meaningful choices ✅
+- Performance genes = Better mate finding ✅
+- Gene pool decays = Ongoing investment ✅
+- Multiple breeding strategies viable ✅
+
+### Key Principles
+
 - 🎯 **Strategic Investment**: Release quality to get quality
 - 🔄 **Dynamic System**: Pool evolves, requires maintenance
-- ⚖️ **Fair Rewards**: Beauty + pool both matter
+- ⚖️ **Fair Rewards**: Beauty + pool + performance all matter
 - 🎲 **Controlled Randomness**: Better inputs = better odds
 - 🌱 **Long-term Play**: Build something meaningful over time
+- 🧬 **All Genes Matter**: Every gene has immediate gameplay value
+- 🦜 **Visual Feedback**: See the gene pool as a living parrot
 
-This system adds depth, replay value, and strategic decision-making while maintaining the educational genetics focus of ChromaWing.
+### Solved Problems
+
+✅ **Performance genes were useless** → Now affect mate finding
+✅ **No fertility mechanic** → Added with breeding impact
+✅ **Gene pool was abstract** → Now visualized as average parrot
+✅ **Limited breeding options** → Wild mates add diversity
+✅ **No resource sink** → Conservation Credits create economy
+
+This system adds depth, replay value, and strategic decision-making while maintaining the educational genetics focus of ChromaWing. Every gene matters, every choice counts, and the gene pool is a living, visual investment that players can see evolve.
