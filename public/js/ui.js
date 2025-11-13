@@ -184,58 +184,10 @@ export async function createParrotCard(parrot, isStore) {
  * Render breeding slots (left and right parents)
  */
 export async function renderBreedingSlots() {
-    const leftSlot = document.getElementById('breedSlotLeft');
-    const rightSlot = document.getElementById('breedSlotRight');
     const leftSlotLarge = document.getElementById('breedSlotLeftLarge');
     const rightSlotLarge = document.getElementById('breedSlotRightLarge');
     const breedingPair = GameState.getBreedingPair();
     const parrots = GameState.getParrots();
-
-    // Render left slot (small - right panel)
-    if (leftSlot) {
-        if (breedingPair.left !== null) {
-            const parrot = parrots.find(p => p.id === breedingPair.left);
-            if (parrot) {
-                const svg = await generateParrotSVG(parrot);
-                leftSlot.className = 'breeding-slot filled';
-                leftSlot.innerHTML = `
-                    <div class="slot-label">Left Parent</div>
-                    <button class="remove-btn" onclick="window.removeFromSlotHandler('left')">×</button>
-                    <div class="parrot-mini-breed">${svg}</div>
-                    <div class="parrot-name-small">${parrot.name}</div>
-                `;
-            }
-        } else {
-            leftSlot.className = 'breeding-slot';
-            leftSlot.innerHTML = `
-                <div class="slot-label">Left Parent</div>
-                <div style="color: #ccc; font-size: 0.9em;">Empty</div>
-            `;
-        }
-    }
-
-    // Render right slot (small - right panel)
-    if (rightSlot) {
-        if (breedingPair.right !== null) {
-            const parrot = parrots.find(p => p.id === breedingPair.right);
-            if (parrot) {
-                const svg = await generateParrotSVG(parrot);
-                rightSlot.className = 'breeding-slot filled';
-                rightSlot.innerHTML = `
-                    <div class="slot-label">Right Parent</div>
-                    <button class="remove-btn" onclick="window.removeFromSlotHandler('right')">×</button>
-                    <div class="parrot-mini-breed">${svg}</div>
-                    <div class="parrot-name-small">${parrot.name}</div>
-                `;
-            }
-        } else {
-            rightSlot.className = 'breeding-slot';
-            rightSlot.innerHTML = `
-                <div class="slot-label">Right Parent</div>
-                <div style="color: #ccc; font-size: 0.9em;">Empty</div>
-            `;
-        }
-    }
 
     // Render left slot (large - breeding tab)
     if (leftSlotLarge) {
