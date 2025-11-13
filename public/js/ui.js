@@ -133,6 +133,12 @@ export async function createParrotCard(parrot, isStore) {
         breedingIndicator = '<div class="breeding-indicator breeding-right">R</div>';
     }
 
+    // Check if parrot has been examined
+    let examinedIndicator = '';
+    if (!isStore && GameState.hasExaminedParrot(parrot.id)) {
+        examinedIndicator = '<div class="examined-indicator" title="Lab Examined">🔬</div>';
+    }
+
     const rarityInfo = RARITY_CONFIG[rarity];
 
     // Calculate beauty score for display
@@ -166,6 +172,7 @@ export async function createParrotCard(parrot, isStore) {
     card.innerHTML = `
         ${isStore ? `<div class="price">${price}💰</div>` : ''}
         ${breedingIndicator}
+        ${examinedIndicator}
         <div class="parrot-mini">${svg}</div>
         <div class="parrot-name">${parrot.name}</div>
         <div class="parrot-gen">Gen ${parrot.generation}</div>
@@ -296,6 +303,48 @@ export async function updateBreedingLab() {
         document.getElementById('compatibilitySection').style.display = 'none';
         document.getElementById('predictionsSection').style.display = 'none';
     }
+
+    // Render recent offspring
+    await renderRecentOffspring();
+}
+
+/**
+ * Render recent offspring in the breeding lab
+ */
+async function renderRecentOffspring() {
+    const grid = document.getElementById('recentOffspringGrid');
+    const offspring = GameState.getRecentOffspring();
+
+    if (offspring.length === 0) {
+        grid.innerHTML = '<div class="empty-state">Breed parrots to see your offspring here!</div>';
+        return;
+    }
+
+    grid.innerHTML = '';
+
+    // Add button to move all to collection
+    const actionBar = document.createElement('div');
+    actionBar.style.cssText = 'margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap;';
+    actionBar.innerHTML = `
+        <button class="btn btn-breed" style="flex: 1; min-width: 150px;" onclick="window.moveOffspringToCollectionHandler()">
+            📦 Move All to Collection
+        </button>
+        <button class="btn btn-free" style="flex: 1; min-width: 150px;" onclick="window.dismissOffspringHandler()">
+            ✖️ Dismiss All
+        </button>
+    `;
+    grid.appendChild(actionBar);
+
+    // Render offspring cards
+    const cardsContainer = document.createElement('div');
+    cardsContainer.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px;';
+
+    for (const parrot of offspring) {
+        const card = await createParrotCard(parrot, false);
+        cardsContainer.appendChild(card);
+    }
+
+    grid.appendChild(cardsContainer);
 }
 
 /**

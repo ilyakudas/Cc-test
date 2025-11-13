@@ -6,6 +6,7 @@
 // Core game state
 export let parrots = [];
 export let storeParrots = [];
+export let recentOffspring = []; // Parrots from last breeding, shown in Breeding Lab
 export let selectedParrotId = null;
 export let breedingPair = { left: null, right: null };
 export let currentTab = 'collection';
@@ -29,6 +30,9 @@ export let achievements = {
 // Mutation system state
 export let mutationsEnabled = true;
 export let mutationRate = 0.05;
+
+// Auto-examine system state
+export let autoExamineEnabled = false;
 
 // Parrot names tracking
 export let usedNames = new Set();
@@ -67,6 +71,27 @@ export function removeStoreParrot(parrotId) {
 
 export function clearStoreParrots() {
     storeParrots = [];
+}
+
+export function getRecentOffspring() {
+    return recentOffspring;
+}
+
+export function setRecentOffspring(offspring) {
+    recentOffspring = offspring;
+}
+
+export function addRecentOffspring(parrot) {
+    recentOffspring.push(parrot);
+}
+
+export function clearRecentOffspring() {
+    recentOffspring = [];
+}
+
+export function moveRecentOffspringToCollection() {
+    recentOffspring.forEach(parrot => parrots.push(parrot));
+    recentOffspring = [];
 }
 
 export function setSelectedParrotId(id) {
@@ -284,6 +309,19 @@ export function getMutationsEnabled() {
 
 export function getMutationRate() {
     return mutationRate;
+}
+
+export function getAutoExamineEnabled() {
+    return autoExamineEnabled;
+}
+
+export function setAutoExamineEnabled(enabled) {
+    autoExamineEnabled = enabled;
+}
+
+export function toggleAutoExamineEnabled() {
+    autoExamineEnabled = !autoExamineEnabled;
+    return autoExamineEnabled;
 }
 
 export function getUsedNames() {

@@ -30,7 +30,8 @@ export function saveGame() {
         parrotTrophies: GameState.getParrotTrophies(),
         achievements: GameState.getAchievements(),
         mutationsEnabled: GameState.getMutationsEnabled(),
-        mutationRate: GameState.getMutationRate()
+        mutationRate: GameState.getMutationRate(),
+        autoExamineEnabled: GameState.getAutoExamineEnabled()
     };
 
     try {
@@ -86,6 +87,22 @@ export function loadGame() {
                 GameState.setAchievements(gameStateData.achievements || { unlocked: [], progress: {} });
                 GameState.setMutationsEnabled(gameStateData.mutationsEnabled !== undefined ? gameStateData.mutationsEnabled : true);
                 GameState.setMutationRate(gameStateData.mutationRate || 0.05);
+                GameState.setAutoExamineEnabled(gameStateData.autoExamineEnabled !== undefined ? gameStateData.autoExamineEnabled : false);
+
+                // Update auto-examine UI
+                const autoExamineStatusEl = document.getElementById('autoExamineStatus');
+                const autoExamineIconEl = document.getElementById('autoExamineIcon');
+                if (autoExamineStatusEl && autoExamineIconEl) {
+                    if (GameState.getAutoExamineEnabled()) {
+                        autoExamineStatusEl.textContent = 'ON';
+                        autoExamineStatusEl.style.color = '#4caf50';
+                        autoExamineIconEl.textContent = '🔬';
+                    } else {
+                        autoExamineStatusEl.textContent = 'OFF';
+                        autoExamineStatusEl.style.color = '#dc3545';
+                        autoExamineIconEl.textContent = '🔒';
+                    }
+                }
 
                 // Restore contest tier unlock status
                 if (gameStateData.contestProgress) {

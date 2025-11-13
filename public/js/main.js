@@ -368,6 +368,9 @@ window.goToBreedingTabHandler = () => {
         });
     }
 };
+window.moveOffspringToCollectionHandler = () => Actions.moveOffspringToCollection(saveGame);
+window.dismissOffspringHandler = () => Actions.dismissOffspring(saveGame);
+window.toggleAutoExamineHandler = () => Actions.toggleAutoExamine(saveGame);
 
 // ===== INITIALIZATION =====
 
