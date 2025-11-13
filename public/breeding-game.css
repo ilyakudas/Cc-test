@@ -622,16 +622,15 @@ header h1 {
     min-height: 0;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow-y: auto;
+    padding: 5px;
 }
 
 .breeding-lab-container {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    overflow-y: auto;
     padding: 10px;
-    flex: 1;
 }
 
 .breeding-pair-section,
@@ -801,9 +800,7 @@ header h1 {
 }
 
 .recent-offspring-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 12px;
+    /* Grid display is applied to cardsContainer in JavaScript */
     margin-top: 10px;
 }
 

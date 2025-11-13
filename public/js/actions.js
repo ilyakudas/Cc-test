@@ -735,7 +735,28 @@ export async function performExamination(parrotId, saveGameFn) {
     const parrot = parrots.find(p => p.id === parrotId);
     if (!parrot) return;
 
-    GameState.addCoins(-100);
+    // Check if already examined
+    const examinedParrots = GameState.getExaminedParrots();
+    if (examinedParrots.has(parrotId)) {
+        // Already examined, just show the lab
+        openLaboratory(parrotId);
+        return;
+    }
+
+    // Check if player has enough coins
+    const EXAM_COST = 100;
+    const coins = GameState.getCoins();
+    if (coins < EXAM_COST) {
+        showToast(
+            'Not enough coins!',
+            `Laboratory examination costs ${EXAM_COST} coins. You have ${coins}.`,
+            'error',
+            3000
+        );
+        return;
+    }
+
+    GameState.addCoins(-EXAM_COST);
     GameState.markParrotExamined(parrotId);
     await UI.updateStats();
     await UI.renderParrotGrid(); // Refresh cards to show examined badge immediately
@@ -744,7 +765,7 @@ export async function performExamination(parrotId, saveGameFn) {
     // Show info toast
     showToast(
         `Laboratory analysis complete`,
-        `${parrot.name} examined • -100 coins`,
+        `${parrot.name} examined • -${EXAM_COST} coins`,
         'info'
     );
 
