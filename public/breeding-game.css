@@ -329,6 +329,11 @@ header h1 {
     font-size: 0.95em;
     font-weight: 600;
     transition: all 0.3s ease;
+    pointer-events: auto;
+}
+
+.btn * {
+    pointer-events: none;
 }
 
 .btn:disabled {
@@ -380,6 +385,8 @@ header h1 {
 
 .btn-lab:hover:not(:disabled) {
     background: linear-gradient(135deg, #138496, #117a8b);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(23, 162, 184, 0.4);
 }
 
 .breeding-preview {

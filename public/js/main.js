@@ -369,6 +369,7 @@ window.goToBreedingTabHandler = () => {
     }
 };
 window.moveOffspringToCollectionHandler = () => Actions.moveOffspringToCollection(saveGame);
+window.sellAllOffspringHandler = () => Actions.sellAllOffspring(saveGame);
 window.dismissOffspringHandler = () => Actions.dismissOffspring(saveGame);
 window.toggleAutoExamineHandler = () => Actions.toggleAutoExamine(saveGame);
 

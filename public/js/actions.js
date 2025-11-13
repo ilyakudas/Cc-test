@@ -857,6 +857,37 @@ export async function moveOffspringToCollection(saveGameFn) {
 }
 
 /**
+ * Sell all recent offspring
+ */
+export async function sellAllOffspring(saveGameFn) {
+    const offspring = GameState.getRecentOffspring();
+    if (offspring.length === 0) return;
+
+    // Calculate total value
+    let totalValue = 0;
+    offspring.forEach(parrot => {
+        totalValue += parrot.getValue();
+    });
+
+    // Add coins and clear offspring
+    GameState.addCoins(totalValue);
+    const count = offspring.length;
+    GameState.clearRecentOffspring();
+
+    await UI.updateStats();
+    await UI.updateBreedingLab();
+
+    if (saveGameFn) saveGameFn();
+
+    showToast(
+        `Offspring sold!`,
+        `${count} parrot${count !== 1 ? 's' : ''} sold for ${totalValue} coins`,
+        'success',
+        3000
+    );
+}
+
+/**
  * Dismiss all recent offspring
  */
 export async function dismissOffspring(saveGameFn) {

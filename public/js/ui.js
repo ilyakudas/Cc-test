@@ -334,10 +334,13 @@ async function renderRecentOffspring() {
     const actionBar = document.createElement('div');
     actionBar.style.cssText = 'margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap;';
     actionBar.innerHTML = `
-        <button class="btn btn-breed" style="flex: 1; min-width: 150px; font-size: 0.9em;" onclick="window.moveOffspringToCollectionHandler()">
+        <button class="btn btn-breed" style="flex: 1; min-width: 140px; font-size: 0.9em;" onclick="window.moveOffspringToCollectionHandler()">
             📦 Move All (${offspring.length}) to Collection
         </button>
-        <button class="btn btn-free" style="flex: 1; min-width: 150px; font-size: 0.9em;" onclick="window.dismissOffspringHandler()">
+        <button class="btn btn-sell" style="flex: 1; min-width: 140px; font-size: 0.9em;" onclick="window.sellAllOffspringHandler()">
+            💰 Sell All (${offspring.length})
+        </button>
+        <button class="btn btn-free" style="flex: 1; min-width: 140px; font-size: 0.9em;" onclick="window.dismissOffspringHandler()">
             ✖️ Dismiss All (${offspring.length})
         </button>
     `;
