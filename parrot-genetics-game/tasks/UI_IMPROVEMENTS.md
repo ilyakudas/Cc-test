@@ -1504,3 +1504,240 @@ All implementations maintain the existing genetic breeding mechanics while enhan
 - Lock status persisted in save/load system
 - Sell and free functions now check lock status before allowing actions
 - Clear error toasts when attempting to sell/free locked parrots
+
+---
+
+### Bug #12: Heart Button Not Updating Immediately
+**Issue**: Heart button (💕) between "Breed on Left" and "Breed on Right" didn't show active state immediately when selecting breeding parents. Required selecting/deselecting another parrot to see the state change.
+
+**Root Cause**: Manual state synchronization issue - `updatePreview()` wasn't being called after breeding pair changes, and when it was added, the function name was wrong (`showParrotActions()` instead of `updatePreview()`).
+
+**Ultimate Solution**: Migrated to **Alpine.js reactive framework** which automatically updates UI when state changes, eliminating the entire class of manual-update bugs.
+
+**User Impact Before Fix**:
+1. Select left parent → button stays inactive
+2. Select right parent → button stays inactive
+3. Click on another parrot → NOW button becomes active (wrong!)
+
+**User Impact After Fix**:
+1. Select left parent → no change (expected)
+2. Select right parent → button **immediately** becomes active with pink gradient and pulse animation ✨
+
+**Technical Implementation**:
+- Migrated breeding slots to Alpine.js reactive component
+- Component uses getters that Alpine automatically tracks
+- When `GameState.setBreedingPair()` is called, Alpine detects the change and updates UI
+- No more manual `updateUI()` or `updatePreview()` calls needed
+
+**Files Modified**:
+- Multiple attempts with manual updates (v1.0.5)
+- Final solution: Major refactoring to Alpine.js (v1.1.0-v1.1.1)
+
+**Commits**:
+- `79c249f` - "fix: Correct function name for heart button updates [v1.0.5]" (manual approach)
+- `1e0c83a` - "refactor: Major modular refactoring with Alpine.js integration [v1.1.0]" (reactive solution)
+- `82955bd` through `d6c67e7` - Alpine.js integration fixes
+
+---
+
+### Bug #13: Game Not Saving New Parrots
+**Issue**: Game state not persisting across page reloads - newly purchased parrots, bred offspring, and coin changes were lost on refresh.
+
+**Root Causes**:
+1. **Cookie size limit exceeded** - Cookies have 4KB max, game data was 6-8KB
+2. Store parrots and offspring weren't included in save data
+3. `generateStore()` was clearing loaded store data on initialization
+
+**Fix**: Complete migration from cookies to localStorage
+- localStorage has 5-10MB limit (vs 4KB cookies)
+- Added `storeParrots` and `recentOffspring` to saved data
+- Added conditional check: only generate store if empty after load
+- Automatic migration from old cookie-based saves
+- Enhanced logging to show data size in KB
+
+**User Impact**:
+- ✅ Game now saves reliably regardless of data size
+- ✅ Can accumulate large collections without save failures
+- ✅ Store inventory persists across sessions
+
+**Files Modified**:
+- `public/js/storage.js` - Complete rewrite of save/load system
+
+**Commit**: Multiple fixes in v1.0.x series
+
+---
+
+### Bug #14: Locked Offspring Being Sold/Dismissed
+**Issue**: "Sell All Offspring" and "Dismiss All Offspring" buttons would sell/dismiss locked offspring despite the lock protection.
+
+**Root Cause**: `sellAllOffspring()` and `dismissOffspring()` functions didn't check lock status before removing parrots.
+
+**Fix**: Added lock filtering to both functions
+- Filter offspring array to only include unlocked parrots
+- Show informative toast: "X sold. Y locked offspring kept."
+- Early return with error if all offspring are locked
+
+**User Impact**:
+- ✅ Locked offspring are safe from batch operations
+- ✅ Clear feedback about what was sold vs kept
+- ✅ Prevents accidental loss of valuable offspring
+
+**Files Modified**:
+- `public/js/actions.js` - Updated `sellAllOffspring()` and `dismissOffspring()`
+
+**Commit**: Part of lock system implementation
+
+---
+
+### Bug #15: Lock Badge Not Appearing on Offspring
+**Issue**: Lock indicator (🔒) didn't show on offspring cards even when locked.
+
+**Root Cause**: Offspring cards created with `isStore=true` parameter, which prevented badge rendering (badges only show when `!isStore`).
+
+**Fix**: Changed `createParrotCard(parrot, true)` to `createParrotCard(parrot, false)` for offspring rendering.
+
+**User Impact**:
+- ✅ Lock badges now visible on offspring cards
+- ✅ Can see lock status before moving to collection
+- ✅ Visual consistency across all parrot cards
+
+**Files Modified**:
+- `public/js/ui.js` - Offspring card rendering
+
+**Commit**: Part of lock system fixes
+
+---
+
+### Bug #16: Lock Badge Not Refreshing Immediately
+**Issue**: Lock badge didn't appear/disappear immediately when toggling lock status - required switching tabs to see the update.
+
+**Root Cause**: `toggleLockParrot()` wasn't refreshing the breeding lab view after state change.
+
+**Fix**:
+- Made `toggleLockParrot()` async
+- Added `updateBreedingLab()` call when on breeding tab
+- Ensures badge appears/disappears immediately
+
+**User Impact**:
+- ✅ Instant visual feedback when locking/unlocking
+- ✅ No need to switch tabs to see status change
+- ✅ Better user experience
+
+**Files Modified**:
+- `public/js/actions.js` - `toggleLockParrot()` function
+
+**Commit**: Part of lock system fixes
+
+---
+
+## Architecture Improvements (v1.1.0)
+
+**Status**: ✅ Complete
+
+### Code Organization Refactoring
+**Motivation**: Large monolithic files (1,025 lines for actions.js, 598 lines for ui.js) were difficult to navigate and maintain.
+
+**Implementation**: Split codebase into 25 focused modules organized by responsibility:
+```
+public/js/
+├── core/       - Game state, parrot class, genetics, storage (4 modules)
+├── actions/    - User action handlers (7 modules: breeding, selection, trading, etc.)
+├── ui/         - UI rendering (8 modules: tabs, stats, cards, slots, grid, preview, etc.)
+└── lib/        - Utilities (6 modules: notifications, svg, utils, constants, etc.)
+```
+
+**User-Facing Benefits**:
+- ✅ More stable - fewer bugs from code complexity
+- ✅ Faster development - easier to add features
+- ✅ Better performance - more efficient code organization
+
+**Technical Details**: See `parrot-genetics-game/docs/ARCHITECTURE.md` and `REFACTORING_V1.1.md`
+
+**Commits**:
+- `1e0c83a` - "refactor: Major modular refactoring with Alpine.js integration [v1.1.0]"
+
+---
+
+### Alpine.js Reactive Framework Integration
+**Motivation**: State-sync bugs (like heart button not updating) were recurring issues caused by manual UI updates.
+
+**Implementation**:
+- Integrated Alpine.js v3.13.3 (15KB, lightweight)
+- Created reactive breeding slots component
+- Automatic UI updates when game state changes
+- No more manual `updateUI()` calls needed
+
+**User-Facing Benefits**:
+- ✅ **Fixes heart button bug** - updates immediately when parents selected
+- ✅ **Smoother interactions** - UI always in sync with state
+- ✅ **Foundation for future features** - easier to add reactive components
+
+**Example - Before vs After**:
+```javascript
+// Before: Manual updates (error-prone)
+GameState.setBreedingPair({ left: parrotId });
+await UI.renderBreedingSlots();  // Forgot this? Bug!
+await UI.renderParrotGrid();     // Forgot this? Bug!
+UI.updateBreedButton();           // Forgot this? Bug!
+await UI.updatePreview();         // Forgot this? Bug! (happened multiple times)
+
+// After: Automatic updates (bug-free)
+GameState.setBreedingPair({ left: parrotId });
+// UI updates automatically via Alpine.js reactivity ✨
+```
+
+**Technical Details**: See `parrot-genetics-game/docs/ALPINE_MIGRATION.md`
+
+**Commits**:
+- `1e0c83a` through `d6c67e7` - Alpine.js integration and fixes
+
+---
+
+## Documentation (v1.1.0)
+
+**Status**: ✅ Complete
+
+Created comprehensive technical documentation in `parrot-genetics-game/docs/`:
+
+1. **ARCHITECTURE.md** - System architecture, module organization, design patterns
+2. **REFACTORING_V1.1.md** - Detailed refactoring guide, before/after comparisons
+3. **ALPINE_MIGRATION.md** - Alpine.js integration patterns and best practices
+4. **MODULE_STRUCTURE.md** - Complete module reference with all exports and dependencies
+
+These docs serve as reference for future development and onboarding.
+
+---
+
+## Updated Statistics
+
+**Total Files Modified**: 35+ (including refactoring)
+**Total Lines Changed**: ~4,000+ lines (refactoring adds ~2,400 net new lines)
+**Bugs Fixed**: 16 major issues
+**New Features Added**: 13+ enhancements
+**Total Commits**: 18+ commits
+**Architecture**: Modular (25 focused modules)
+**Framework**: Alpine.js for reactive UI
+**Version**: v1.1.1
+
+**Status**: All objectives complete and tested ✅
+
+---
+
+## Final Summary
+
+This task has evolved through multiple sessions from basic UI improvements to a complete architectural transformation:
+
+**Sessions 1-2**: Core features (splash screen, breeding lab, auto-examine, visual indicators)
+**Session 3**: Lock system and offspring selectability
+**Session 4**: Modular refactoring, Alpine.js integration, bug fixes
+
+The game now has:
+- ✅ Professional, polished UI with smooth animations
+- ✅ Comprehensive breeding lab with all features
+- ✅ Robust lock system to protect valuable parrots
+- ✅ Clean, maintainable codebase (25 focused modules)
+- ✅ Reactive UI framework (Alpine.js) preventing state-sync bugs
+- ✅ Extensive documentation for future development
+- ✅ Reliable save system (localStorage with 5-10MB capacity)
+
+All major UI/UX pain points have been addressed, and the codebase is now well-positioned for future enhancements.
