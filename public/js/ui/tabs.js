@@ -219,9 +219,9 @@ async function renderPredictions(leftParrot, rightParrot) {
     }
 
     // Calculate beauty statistics from predicted offspring
-    const beautyScores = predictions.map(p => p.calculateBeauty());
-    const maxBeauty = Math.max(...beautyScores);
-    const minBeauty = Math.min(...beautyScores);
+    const beautyScores = predictions.map(p => p.calculateBeauty().score);
+    const maxBeauty = Math.round(Math.max(...beautyScores));
+    const minBeauty = Math.round(Math.min(...beautyScores));
     const avgBeauty = Math.round(beautyScores.reduce((a, b) => a + b, 0) / beautyScores.length);
 
     const diversityScore = calculateGeneticDiversity(leftParrot, rightParrot);
