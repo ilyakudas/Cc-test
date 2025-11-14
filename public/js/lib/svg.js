@@ -117,9 +117,8 @@ export async function generateParrotSVG(parrot) {
         'body-yellow-4': EYE_BLACK,
         'accent-white-4': EYE_WHITE,
 
-        // Beak (detail-gray 1, 2, 3, 10)
+        // Beak (detail-gray 1, 3, 10)
         'detail-gray-1': BEAK_COLOR,
-        'detail-gray-2': BEAK_COLOR,
         'detail-gray-3': BEAK_COLOR,
         'detail-gray-10': BEAK_COLOR,
 
