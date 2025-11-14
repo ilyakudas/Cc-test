@@ -76,7 +76,7 @@
                 <span>ℹ️</span>
                 <div>
                     <div style="font-size: 0.75em; color: #666;">Version</div>
-                    <div class="value" style="font-size: 0.8em;">v1.1.0</div>
+                    <div class="value" style="font-size: 0.8em;">v1.1.1</div>
                 </div>
             </div>
         </div>
@@ -215,18 +215,32 @@
         </div>
     </div>
 
-    <!-- Defer Alpine initialization -->
-    <script>
-        // Prevent Alpine from auto-starting
-        window.deferLoadingAlpine = function (callback) {
-            window.alpineCallback = callback;
-        };
+    <!-- Main application module loads first -->
+    <script type="module">
+        import { createBreedingSlotsComponent } from './js/ui/breedingSlots.js';
+
+        // Make component factory globally available
+        window.breedingSlotsComponent = createBreedingSlotsComponent();
+        console.log('v1.1.1 - breedingSlotsComponent available:', !!window.breedingSlotsComponent);
     </script>
 
-    <!-- Alpine.js - Will not auto-start due to deferLoadingAlpine -->
+    <!-- Register Alpine component using the factory -->
+    <script>
+        document.addEventListener('alpine:init', () => {
+            console.log('v1.1.1 - alpine:init fired, breedingSlotsComponent:', !!window.breedingSlotsComponent);
+            if (window.breedingSlotsComponent) {
+                Alpine.data('breedingSlots', () => window.breedingSlotsComponent);
+                console.log('v1.1.1 - breedingSlots component registered');
+            } else {
+                console.error('v1.1.1 - breedingSlotsComponent not found!');
+            }
+        });
+    </script>
+
+    <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
 
-    <!-- Main application module - will start Alpine after loading -->
+    <!-- Main application module -->
     <script type="module" src="js/main.js"></script>
 </body>
 </html>

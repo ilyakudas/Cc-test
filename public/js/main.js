@@ -364,22 +364,9 @@ window.toggleAutoExamineHandler = () => Actions.toggleAutoExamine(saveGame);
 
 // ===== ALPINE.JS COMPONENTS =====
 
-// Wait for Alpine to be available, register components, then start it
-const startAlpine = () => {
-    if (window.alpineCallback && window.Alpine) {
-        // Register our components
-        window.Alpine.data('breedingSlots', createBreedingSlotsComponent);
-        // Start Alpine (alpineCallback IS the start function)
-        window.alpineCallback();
-        console.log('Alpine.js started with breedingSlots component');
-    } else {
-        // Retry after a short delay
-        setTimeout(startAlpine, 10);
-    }
-};
-
-// Start the process
-startAlpine();
+// Alpine component registration is handled in breeding-game-modular.html
+// Component is exported from ui/breedingSlots.js and registered via alpine:init event
+console.log('v1.1.1 - main.js loaded');
 
 // ===== INITIALIZATION =====
 
