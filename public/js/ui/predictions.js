@@ -67,11 +67,11 @@ export function createPredictionsComponent() {
         },
 
         get hasBothParents() {
-            return this.leftParentId !== null && this.rightParentId !== null;
+            return !!this.leftParrot && !!this.rightParrot;
         },
 
         get diversityScore() {
-            if (!this.hasBothParents) return 0;
+            if (!this.leftParrot || !this.rightParrot) return 0;
             return calculateGeneticDiversity(this.leftParrot, this.rightParrot);
         },
 
@@ -86,7 +86,13 @@ export function createPredictionsComponent() {
 
         // Methods
         async generatePredictions() {
-            if (!this.hasBothParents) return;
+            if (!this.leftParrot || !this.rightParrot) {
+                console.log('Cannot generate predictions: missing parrot objects', {
+                    leftParrot: !!this.leftParrot,
+                    rightParrot: !!this.rightParrot
+                });
+                return;
+            }
 
             this.isLoading = true;
             this.predictions = [];
@@ -163,15 +169,22 @@ export function createPredictionsComponent() {
             });
 
             // Watch for parent ID changes (reactive)
-            this.$watch('hasBothParents', (value) => {
-                console.log('hasBothParents changed:', value);
-                if (value && !this.hasGenerated) {
+            this.$watch('leftParentId', () => {
+                console.log('leftParentId changed:', this.leftParentId);
+                if (this.leftParrot && this.rightParrot && !this.hasGenerated) {
+                    this.generatePredictions();
+                }
+            });
+
+            this.$watch('rightParentId', () => {
+                console.log('rightParentId changed:', this.rightParentId);
+                if (this.leftParrot && this.rightParrot && !this.hasGenerated) {
                     this.generatePredictions();
                 }
             });
 
             // Generate immediately if both parents are selected
-            if (this.hasBothParents) {
+            if (this.leftParrot && this.rightParrot) {
                 console.log('Generating initial predictions...');
                 this.generatePredictions();
             }
@@ -182,7 +195,7 @@ export function createPredictionsComponent() {
                 const changed = this.updateBreedingPair();
 
                 // Generate predictions if we now have both parents
-                if (changed && this.hasBothParents && !this.hasGenerated) {
+                if (changed && this.leftParrot && this.rightParrot && !this.hasGenerated) {
                     this.generatePredictions();
                 }
             });
