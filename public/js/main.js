@@ -364,26 +364,22 @@ window.toggleAutoExamineHandler = () => Actions.toggleAutoExamine(saveGame);
 
 // ===== ALPINE.JS COMPONENTS =====
 
-// Register Alpine.js components and start Alpine
-if (window.alpineCallback) {
-    // Alpine is deferred and waiting for us
-    window.alpineCallback(() => {
-        // Register components before starting Alpine
+// Wait for Alpine to be available, register components, then start it
+const startAlpine = () => {
+    if (window.alpineCallback && window.Alpine) {
+        // Register our components
         window.Alpine.data('breedingSlots', createBreedingSlotsComponent);
-    });
-} else {
-    // Fallback: wait for Alpine to load
-    const checkAlpine = setInterval(() => {
-        if (window.Alpine) {
-            clearInterval(checkAlpine);
-            window.Alpine.data('breedingSlots', createBreedingSlotsComponent);
-            if (!window.Alpine.version) {
-                // Alpine hasn't started yet, start it
-                window.Alpine.start();
-            }
-        }
-    }, 50);
-}
+        // Start Alpine (alpineCallback IS the start function)
+        window.alpineCallback();
+        console.log('Alpine.js started with breedingSlots component');
+    } else {
+        // Retry after a short delay
+        setTimeout(startAlpine, 10);
+    }
+};
+
+// Start the process
+startAlpine();
 
 // ===== INITIALIZATION =====
 
