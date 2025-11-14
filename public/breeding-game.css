@@ -530,20 +530,8 @@ header h1 {
     font-weight: bold;
 }
 
-/* Badges row container */
-.badges-row {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    margin-top: 4px;
-}
-
-.gradient-badge {
-    text-align: center;
-    font-size: 1.1em;
-    padding: 2px 6px;
-    border-radius: 4px;
-    background: linear-gradient(135deg, #9c27b0 0%, #e91e63 100%);
+/* Gradient symbol in trophy indicator */
+.gradient-symbol {
     cursor: help;
 }
 
