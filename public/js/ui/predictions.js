@@ -67,7 +67,7 @@ export function createPredictionsComponent() {
         },
 
         get hasBothParents() {
-            return !!this.leftParrot && !!this.rightParrot;
+            return this.leftParentId !== null && this.rightParentId !== null;
         },
 
         get diversityScore() {
