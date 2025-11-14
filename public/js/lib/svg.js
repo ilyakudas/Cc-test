@@ -3,7 +3,7 @@
  * Handles SVG template loading and parrot visualization
  */
 
-import { getSvgCache, setSvgCache, getNextGradientId } from './gameState.js';
+import { getSvgCache, setSvgCache, getNextGradientId } from '../core/gameState.js';
 
 /**
  * Load SVG template from file

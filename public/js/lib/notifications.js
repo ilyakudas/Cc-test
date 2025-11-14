@@ -4,7 +4,7 @@
  */
 
 import { TOAST_ICONS } from './constants.js';
-import { getNextToastId, getNotificationHistory, addNotification, setNotificationHistory } from './gameState.js';
+import { getNextToastId, getNotificationHistory, addNotification, setNotificationHistory } from '../core/gameState.js';
 
 /**
  * Show a toast notification

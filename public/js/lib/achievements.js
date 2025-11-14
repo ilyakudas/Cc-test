@@ -3,7 +3,7 @@
  * Achievement system with win conditions
  */
 
-import * as GameState from './gameState.js';
+import * as GameState from '../core/gameState.js';
 import { showToast } from './notifications.js';
 
 /**

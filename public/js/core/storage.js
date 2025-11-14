@@ -4,7 +4,7 @@
  */
 
 import { Parrot } from './parrot.js';
-import { CONTEST_TIERS } from './constants.js';
+import { CONTEST_TIERS } from '../lib/constants.js';
 import * as GameState from './gameState.js';
 
 /**
