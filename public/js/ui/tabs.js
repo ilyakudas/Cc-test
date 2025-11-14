@@ -245,9 +245,11 @@ async function renderPredictions(leftParrot, rightParrot) {
         </div>
         <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; padding: 10px 0; margin-top: 15px;">
             ${svgs.map(svg => `
-                <div style="width: 100%; height: 100px; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
-                    <div style="max-width: 90%; max-height: 90%;">
-                        ${svg}
+                <div style="width: 100%; padding-bottom: 100%; position: relative; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: white;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                        <div style="max-width: 90%; max-height: 90%; display: flex; align-items: center; justify-content: center;">
+                            ${svg}
+                        </div>
                     </div>
                 </div>
             `).join('')}
