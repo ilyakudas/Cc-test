@@ -3,8 +3,8 @@
  * Contest system with tiers, rewards, and rare parrots
  */
 
-import * as GameState from './gameState.js';
-import { Parrot } from './parrot.js';
+import * as GameState from '../core/gameState.js';
+import { Parrot } from '../core/parrot.js';
 import { showToast } from './notifications.js';
 import { CONTEST_TIERS, RARE_CONTEST_PARROTS } from './constants.js';
 
