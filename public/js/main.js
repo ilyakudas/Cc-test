@@ -364,13 +364,26 @@ window.toggleAutoExamineHandler = () => Actions.toggleAutoExamine(saveGame);
 
 // ===== ALPINE.JS COMPONENTS =====
 
-// Register Alpine.js component for breeding slots (reactive UI)
-// Wait for Alpine to be available, then register component
-document.addEventListener('alpine:init', () => {
-    if (window.Alpine) {
+// Register Alpine.js components and start Alpine
+if (window.alpineCallback) {
+    // Alpine is deferred and waiting for us
+    window.alpineCallback(() => {
+        // Register components before starting Alpine
         window.Alpine.data('breedingSlots', createBreedingSlotsComponent);
-    }
-});
+    });
+} else {
+    // Fallback: wait for Alpine to load
+    const checkAlpine = setInterval(() => {
+        if (window.Alpine) {
+            clearInterval(checkAlpine);
+            window.Alpine.data('breedingSlots', createBreedingSlotsComponent);
+            if (!window.Alpine.version) {
+                // Alpine hasn't started yet, start it
+                window.Alpine.start();
+            }
+        }
+    }, 50);
+}
 
 // ===== INITIALIZATION =====
 
