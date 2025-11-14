@@ -28,6 +28,40 @@
     height: auto !important;
 }
 
+/* Regenerate Predictions Button */
+.btn-regenerate {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    width: 100%;
+}
+
+.btn-regenerate:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
+    background: linear-gradient(135deg, #5568d3 0%, #6a3d96 100%);
+}
+
+.btn-regenerate:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.4);
+}
+
+.btn-regenerate:disabled,
+.btn-regenerate.loading {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
