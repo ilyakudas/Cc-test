@@ -29,6 +29,7 @@
 **"What features exist?"**
 - [Breeding Lab](features/BREEDING_LAB.md) - Dedicated breeding interface with predictions
 - [Offspring Management](features/OFFSPRING.md) - Managing bred parrots
+- [Progressive Genetics](features/PROGRESSIVE_GENETICS.md) - Gradual complexity unlocking
 - [Auto-Examine](features/AUTO_EXAMINE.md) - Automatic gene examination
 - [Lock System](features/LOCK_SYSTEM.md) - Protecting valuable parrots
 - [Splash Screen](features/SPLASH_SCREEN.md) - Welcome experience
@@ -73,6 +74,7 @@
 |----------|-------------|
 | [Breeding Lab](features/BREEDING_LAB.md) | Enhanced breeding interface |
 | [Offspring Management](features/OFFSPRING.md) | Handling bred parrots |
+| [Progressive Genetics](features/PROGRESSIVE_GENETICS.md) | Gradual complexity unlocking |
 | [Auto-Examine](features/AUTO_EXAMINE.md) | Automatic examination |
 | [Lock System](features/LOCK_SYSTEM.md) | Parrot protection |
 | [Splash Screen](features/SPLASH_SCREEN.md) | Welcome screen |
