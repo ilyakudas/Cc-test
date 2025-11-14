@@ -155,12 +155,14 @@ export async function generateParrotSVG(parrot) {
         return match.replace(/fill="[^"]*"/, `fill="${tailTipFillValue}"`);
     });
 
-    // Apply accent color to detail-gray-2
+    // Apply accent color to detail-gray-2, detail-gray-9, and detail-gray-10
     const accentFillValue = accentColor.isGradient ? `url(#${gradientMap['accents']})` : accentColor.color;
-    const detailGray2Regex = new RegExp(`id="detail-gray-2"[^>]*fill="[^"]*"`, 'g');
-    svg = svg.replace(detailGray2Regex, match => {
-        return match.replace(/fill="[^"]*"/, `fill="${accentFillValue}"`);
-    });
+    for (const detailId of ['detail-gray-2', 'detail-gray-9', 'detail-gray-10']) {
+        const regex = new RegExp(`id="${detailId}"[^>]*fill="[^"]*"`, 'g');
+        svg = svg.replace(regex, match => {
+            return match.replace(/fill="[^"]*"/, `fill="${accentFillValue}"`);
+        });
+    }
 
     // Apply body part colors to feather groups
     const colorAssignments = {
