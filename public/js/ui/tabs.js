@@ -209,11 +209,6 @@ async function renderPredictions(leftParrot, rightParrot) {
 
     section.style.display = 'block';
 
-    // Simple prediction calculations
-    const avgBeauty = Math.round((leftParrot.calculateBeauty() + rightParrot.calculateBeauty()) / 2);
-    const diversityScore = calculateGeneticDiversity(leftParrot, rightParrot);
-    const mutationChance = GameState.getMutationsEnabled() ? 15 : 0;
-
     // Generate 10 predicted offspring
     const predictions = [];
     for (let i = 0; i < 10; i++) {
@@ -223,6 +218,15 @@ async function renderPredictions(leftParrot, rightParrot) {
         predictions.push(predictedParrot);
     }
 
+    // Calculate beauty statistics from predicted offspring
+    const beautyScores = predictions.map(p => p.calculateBeauty());
+    const maxBeauty = Math.max(...beautyScores);
+    const minBeauty = Math.min(...beautyScores);
+    const avgBeauty = Math.round(beautyScores.reduce((a, b) => a + b, 0) / beautyScores.length);
+
+    const diversityScore = calculateGeneticDiversity(leftParrot, rightParrot);
+    const mutationChance = GameState.getMutationsEnabled() ? 15 : 0;
+
     // Generate SVG for each prediction
     const svgPromises = predictions.map(parrot => generateParrotSVG(parrot));
     const svgs = await Promise.all(svgPromises);
@@ -231,16 +235,16 @@ async function renderPredictions(leftParrot, rightParrot) {
     info.innerHTML = `
         <div class="predictions-grid">
             <div class="prediction-card">
-                <div class="prediction-label">Expected Beauty</div>
+                <div class="prediction-label">Beauty Range</div>
+                <div class="prediction-value">${minBeauty}-${maxBeauty}</div>
+            </div>
+            <div class="prediction-card">
+                <div class="prediction-label">Average Beauty</div>
                 <div class="prediction-value">${avgBeauty}/100</div>
             </div>
             <div class="prediction-card">
                 <div class="prediction-label">Diversity</div>
                 <div class="prediction-value">${diversityScore > 50 ? 'High' : diversityScore > 25 ? 'Medium' : 'Low'}</div>
-            </div>
-            <div class="prediction-card">
-                <div class="prediction-label">Mutation Chance</div>
-                <div class="prediction-value">${mutationChance}%</div>
             </div>
         </div>
         <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; padding: 10px 0; margin-top: 15px;">
