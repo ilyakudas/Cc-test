@@ -132,9 +132,11 @@ export async function createParrotCard(parrot, isStore) {
         ${colorPalette}
         <div class="parrot-name">${parrot.name}</div>
         <div class="parrot-gen">Gen ${parrot.generation}</div>
-        <div class="rarity-badge" style="background: ${rarityInfo.color};">${rarityInfo.label}</div>
-        <div class="beauty-badge" style="background: ${beautyColor}; color: white; font-size: 0.8em; padding: 2px 6px; border-radius: 4px; margin-top: 4px;">Beauty: ${beautyScore}</div>
-        ${parrot.hasAnyGradients() ? '<div class="gradient-indicator">✨ Gradient</div>' : ''}
+        <div class="badges-row">
+            <div class="rarity-badge" style="background: ${rarityInfo.color};">${rarityInfo.label}</div>
+            <div class="beauty-badge" style="background: ${beautyColor}; color: white; font-size: 0.8em; padding: 2px 6px; border-radius: 4px;">Beauty: ${beautyScore}</div>
+            ${parrot.hasAnyGradients() ? '<div class="gradient-badge" title="Has gradient colors">✨</div>' : ''}
+        </div>
         ${trophyIndicator}
     `;
 
