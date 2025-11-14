@@ -45,7 +45,9 @@ function calculateGeneticDiversity(parrot1, parrot2) {
  */
 export function createPredictionsComponent() {
     return {
-        // State
+        // State - store parent IDs directly for reactivity
+        leftParentId: null,
+        rightParentId: null,
         predictions: [],
         beautyStats: null,
         isLoading: false,
@@ -53,19 +55,19 @@ export function createPredictionsComponent() {
 
         // Computed properties
         get leftParrot() {
-            const pair = GameState.getBreedingPair();
+            if (!this.leftParentId) return null;
             const parrots = GameState.getParrots();
-            return pair.left ? parrots.find(p => p.id === pair.left) : null;
+            return parrots.find(p => p.id === this.leftParentId);
         },
 
         get rightParrot() {
-            const pair = GameState.getBreedingPair();
+            if (!this.rightParentId) return null;
             const parrots = GameState.getParrots();
-            return pair.right ? parrots.find(p => p.id === pair.right) : null;
+            return parrots.find(p => p.id === this.rightParentId);
         },
 
         get hasBothParents() {
-            return this.leftParrot && this.rightParrot;
+            return this.leftParentId !== null && this.rightParentId !== null;
         },
 
         get diversityScore() {
@@ -126,15 +128,41 @@ export function createPredictionsComponent() {
             }
         },
 
-        // Initialize when parents change
-        init() {
-            console.log('Predictions component initialized', {
+        // Sync state with GameState
+        updateBreedingPair() {
+            const pair = GameState.getBreedingPair();
+            const changed = this.leftParentId !== pair.left || this.rightParentId !== pair.right;
+
+            this.leftParentId = pair.left;
+            this.rightParentId = pair.right;
+
+            console.log('Breeding pair synced:', {
+                left: this.leftParentId,
+                right: this.rightParentId,
                 hasBothParents: this.hasBothParents,
-                leftParrot: !!this.leftParrot,
-                rightParrot: !!this.rightParrot
+                changed
             });
 
-            // Watch for parent changes
+            // Reset hasGenerated flag when parents change
+            if (changed) {
+                this.hasGenerated = false;
+            }
+
+            return changed;
+        },
+
+        // Initialize when parents change
+        init() {
+            // Initial sync
+            this.updateBreedingPair();
+
+            console.log('Predictions component initialized', {
+                hasBothParents: this.hasBothParents,
+                leftParentId: this.leftParentId,
+                rightParentId: this.rightParentId
+            });
+
+            // Watch for parent ID changes (reactive)
             this.$watch('hasBothParents', (value) => {
                 console.log('hasBothParents changed:', value);
                 if (value && !this.hasGenerated) {
@@ -151,12 +179,12 @@ export function createPredictionsComponent() {
             // Listen for breeding pair changes from outside Alpine
             document.addEventListener('breeding-pair-changed', () => {
                 console.log('breeding-pair-changed event received');
-                // Force re-evaluation of computed properties
-                this.$nextTick(() => {
-                    if (this.hasBothParents && !this.hasGenerated) {
-                        this.generatePredictions();
-                    }
-                });
+                const changed = this.updateBreedingPair();
+
+                // Generate predictions if we now have both parents
+                if (changed && this.hasBothParents && !this.hasGenerated) {
+                    this.generatePredictions();
+                }
             });
         }
     };
