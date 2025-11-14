@@ -76,7 +76,7 @@
                 <span>ℹ️</span>
                 <div>
                     <div style="font-size: 0.75em; color: #666;">Version</div>
-                    <div class="value" style="font-size: 0.8em;">v1.0.5</div>
+                    <div class="value" style="font-size: 0.8em;">v1.1.1</div>
                 </div>
             </div>
         </div>
@@ -112,8 +112,8 @@
                 <div id="breedingTab" style="display: none;">
                     <!-- Breeding Lab Content -->
                     <div class="breeding-lab-container">
-                        <!-- Breeding Pair Selection -->
-                        <div class="breeding-pair-section">
+                        <!-- Breeding Pair Selection (Alpine.js Reactive) -->
+                        <div class="breeding-pair-section" x-data="breedingSlots">
                             <h3>👨‍👩‍👧 Select Parents</h3>
                             <div class="breeding-slots-large">
                                 <div class="breeding-slot-large" id="breedSlotLeftLarge">
@@ -126,7 +126,11 @@
                                     <div style="color: #ccc; font-size: 0.9em;">Empty</div>
                                 </div>
                             </div>
-                            <button class="btn btn-breed-large" id="breedButtonLarge" onclick="breedParrotsHandler()" disabled>
+                            <button class="btn btn-breed-large"
+                                    id="breedButtonLarge"
+                                    :class="{ 'active': canBreed }"
+                                    :disabled="!canBreed"
+                                    onclick="breedParrotsHandler()">
                                 💕 Breed Parrots (Cost: 50 coins)
                             </button>
                         </div>
@@ -211,6 +215,32 @@
         </div>
     </div>
 
+    <!-- Main application module loads first -->
+    <script type="module">
+        import { createBreedingSlotsComponent } from './js/ui/breedingSlots.js';
+
+        // Make component factory globally available
+        window.breedingSlotsComponent = createBreedingSlotsComponent();
+        console.log('v1.1.1 - breedingSlotsComponent available:', !!window.breedingSlotsComponent);
+    </script>
+
+    <!-- Register Alpine component using the factory -->
+    <script>
+        document.addEventListener('alpine:init', () => {
+            console.log('v1.1.1 - alpine:init fired, breedingSlotsComponent:', !!window.breedingSlotsComponent);
+            if (window.breedingSlotsComponent) {
+                Alpine.data('breedingSlots', () => window.breedingSlotsComponent);
+                console.log('v1.1.1 - breedingSlots component registered');
+            } else {
+                console.error('v1.1.1 - breedingSlotsComponent not found!');
+            }
+        });
+    </script>
+
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+
+    <!-- Main application module -->
     <script type="module" src="js/main.js"></script>
 </body>
 </html>

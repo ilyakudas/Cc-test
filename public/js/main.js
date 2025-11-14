@@ -3,15 +3,16 @@
  * Initialization, game loop, and global handlers
  */
 
-import * as GameState from './gameState.js';
-import { Parrot } from './parrot.js';
-import { getRandomName, createParrotWithPurity } from './utils.js';
+import * as GameState from './core/gameState.js';
+import { Parrot } from './core/parrot.js';
+import { getRandomName, createParrotWithPurity } from './lib/utils.js';
 import * as UI from './ui.js';
 import * as Actions from './actions.js';
-import * as Contests from './contests.js';
-import { saveGame, loadGame } from './storage.js';
-import { checkAchievements } from './achievements.js';
-import { CONTEST_TIERS } from './constants.js';
+import * as Contests from './lib/contests.js';
+import { saveGame, loadGame } from './core/storage.js';
+import { checkAchievements } from './lib/achievements.js';
+import { CONTEST_TIERS } from './lib/constants.js';
+import { createBreedingSlotsComponent } from './ui/breedingSlots.js';
 
 /**
  * Initialize a new game with starter parrots
@@ -360,6 +361,12 @@ window.moveOffspringToCollectionHandler = () => Actions.moveOffspringToCollectio
 window.sellAllOffspringHandler = () => Actions.sellAllOffspring(saveGame);
 window.dismissOffspringHandler = () => Actions.dismissOffspring(saveGame);
 window.toggleAutoExamineHandler = () => Actions.toggleAutoExamine(saveGame);
+
+// ===== ALPINE.JS COMPONENTS =====
+
+// Alpine component registration is handled in breeding-game-modular.html
+// Component is exported from ui/breedingSlots.js and registered via alpine:init event
+console.log('v1.1.1 - main.js loaded');
 
 // ===== INITIALIZATION =====
 

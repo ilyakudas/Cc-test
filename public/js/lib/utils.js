@@ -4,7 +4,7 @@
  */
 
 import { PARROT_NAMES } from './constants.js';
-import { getUsedNames, addUsedName, clearUsedNames } from './gameState.js';
+import { getUsedNames, addUsedName, clearUsedNames } from '../core/gameState.js';
 
 /**
  * Get a random unused parrot name
