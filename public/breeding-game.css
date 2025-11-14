@@ -206,6 +206,59 @@ header h1 {
     text-align: center;
 }
 
+/* Color Palette - Shows actual parrot colors */
+.color-palette {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 3px;
+    margin: 6px 0;
+    padding: 0 4px;
+}
+
+.color-square {
+    aspect-ratio: 1;
+    border-radius: 3px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    cursor: help;
+    transition: transform 0.2s ease;
+}
+
+.color-square:hover {
+    transform: scale(1.15);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    z-index: 5;
+}
+
+/* Gradient squares with animation */
+.gradient-square {
+    background: linear-gradient(135deg, var(--start-color) 0%, var(--end-color) 100%);
+    animation: gradientShift 3s ease-in-out infinite;
+}
+
+/* Special animation for same-color gradients (helps distinguish them) */
+.gradient-square.same-color {
+    animation: subtleShift 2s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% {
+        background: linear-gradient(135deg, var(--start-color) 0%, var(--end-color) 100%);
+    }
+    50% {
+        background: linear-gradient(135deg, var(--end-color) 0%, var(--start-color) 100%);
+    }
+}
+
+@keyframes subtleShift {
+    0%, 100% {
+        filter: brightness(1) hue-rotate(0deg);
+    }
+    50% {
+        filter: brightness(1.1) hue-rotate(5deg);
+    }
+}
+
 .parrot-card .price {
     position: absolute;
     top: 8px;

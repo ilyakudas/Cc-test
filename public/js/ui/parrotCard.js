@@ -70,6 +70,43 @@ export async function createParrotCard(parrot, isStore) {
     else if (beautyScore >= 80) beautyColor = '#ffc107'; // Medium: Amber
     else if (beautyScore >= 40) beautyColor = '#00bcd4'; // Medium-low: Cyan
 
+    // Extract colors for all body parts
+    const bodyParts = ['wings', 'special_wing', 'body', 'head', 'tail', 'accents'];
+    const partLabels = {
+        'wings': 'Wings',
+        'special_wing': 'Special Wing',
+        'body': 'Body',
+        'head': 'Head',
+        'tail': 'Tail',
+        'accents': 'Accents'
+    };
+
+    let colorPalette = '<div class="color-palette">';
+    bodyParts.forEach(partName => {
+        const colorData = parrot.calculateBodyPartColor(partName);
+        const label = partLabels[partName];
+
+        if (colorData.isGradient) {
+            // For gradients, create animated gradient square
+            const isSameColor = colorData.startColor === colorData.endColor;
+            colorPalette += `
+                <div class="color-square gradient-square${isSameColor ? ' same-color' : ''}"
+                     title="${label}: Gradient"
+                     style="--start-color: ${colorData.startColor}; --end-color: ${colorData.endColor};">
+                </div>
+            `;
+        } else {
+            // For solid colors, just show the color
+            colorPalette += `
+                <div class="color-square"
+                     title="${label}"
+                     style="background: ${colorData.color};">
+                </div>
+            `;
+        }
+    });
+    colorPalette += '</div>';
+
     // Trophy/contest indicators
     let trophyIndicator = '';
     if (!isStore) {
@@ -93,6 +130,7 @@ export async function createParrotCard(parrot, isStore) {
         ${examinedIndicator}
         ${lockIndicator}
         <div class="parrot-mini">${svg}</div>
+        ${colorPalette}
         <div class="parrot-name">${parrot.name}</div>
         <div class="parrot-gen">Gen ${parrot.generation}</div>
         <div class="rarity-badge" style="background: ${rarityInfo.color};">${rarityInfo.label}</div>
