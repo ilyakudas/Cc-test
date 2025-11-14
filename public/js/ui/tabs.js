@@ -3,11 +3,11 @@
  * Tab navigation and breeding lab functionality
  */
 
-import * as GameState from '../gameState.js';
+import * as GameState from '../core/gameState.js';
 import { updateUI } from './core.js';
 import { renderBreedingSlots, updateBreedButton } from './breedingSlots.js';
 import { createParrotCard } from './parrotCard.js';
-import { generateParrotSVG } from '../svg.js';
+import { generateParrotSVG } from '../lib/svg.js';
 
 /**
  * Switch between tabs (collection/store/breeding/contests)

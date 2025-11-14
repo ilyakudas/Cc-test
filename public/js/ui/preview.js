@@ -3,8 +3,8 @@
  * Preview panel with selected parrot details and action buttons
  */
 
-import * as GameState from '../gameState.js';
-import { generateParrotSVG } from '../svg.js';
+import * as GameState from '../core/gameState.js';
+import { generateParrotSVG } from '../lib/svg.js';
 
 /**
  * Rarity configuration for display

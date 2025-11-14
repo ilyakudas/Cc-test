@@ -3,7 +3,7 @@
  * Stats display functionality
  */
 
-import * as GameState from '../gameState.js';
+import * as GameState from '../core/gameState.js';
 
 /**
  * Update stats display (coins, parrot count, generation)

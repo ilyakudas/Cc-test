@@ -3,7 +3,7 @@
  * Mutation display functionality
  */
 
-import * as GameState from '../gameState.js';
+import * as GameState from '../core/gameState.js';
 
 /**
  * Update mutation display in stats bar

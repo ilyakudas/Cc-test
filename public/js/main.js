@@ -365,7 +365,12 @@ window.toggleAutoExamineHandler = () => Actions.toggleAutoExamine(saveGame);
 // ===== ALPINE.JS COMPONENTS =====
 
 // Register Alpine.js component for breeding slots (reactive UI)
-window.breedingSlots = createBreedingSlotsComponent();
+// Wait for Alpine to be available, then register component
+document.addEventListener('alpine:init', () => {
+    if (window.Alpine) {
+        window.Alpine.data('breedingSlots', createBreedingSlotsComponent);
+    }
+});
 
 // ===== INITIALIZATION =====
 
