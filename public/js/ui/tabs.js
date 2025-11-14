@@ -8,8 +8,6 @@ import { updateUI } from './core.js';
 import { renderBreedingSlots, updateBreedButton } from './breedingSlots.js';
 import { createParrotCard } from './parrotCard.js';
 import { generateParrotSVG } from '../lib/svg.js';
-import { breedParrotGenes } from '../core/genetics.js';
-import { Parrot } from '../core/parrot.js';
 
 /**
  * Switch between tabs (collection/store/breeding/contests)
@@ -75,18 +73,18 @@ export async function updateBreedingLab() {
     const breedingPair = GameState.getBreedingPair();
     const parrots = GameState.getParrots();
 
-    // Show/hide compatibility and predictions sections
+    // Show/hide compatibility section
     if (breedingPair.left !== null && breedingPair.right !== null) {
         const leftParrot = parrots.find(p => p.id === breedingPair.left);
         const rightParrot = parrots.find(p => p.id === breedingPair.right);
 
         if (leftParrot && rightParrot) {
             renderCompatibility(leftParrot, rightParrot);
-            renderPredictions(leftParrot, rightParrot);
+            // Predictions are now handled by Alpine.js component
         }
     } else {
         document.getElementById('compatibilitySection').style.display = 'none';
-        document.getElementById('predictionsSection').style.display = 'none';
+        // Predictions visibility handled by Alpine.js x-show
     }
 
     // Render recent offspring
@@ -172,94 +170,3 @@ function renderCompatibility(leftParrot, rightParrot) {
     `;
 }
 
-/**
- * Calculate genetic diversity between two parrots
- */
-function calculateGeneticDiversity(parrot1, parrot2) {
-    let differences = 0;
-    let total = 0;
-
-    const bodyParts = ['wings', 'special_wing', 'body', 'head', 'tail', 'accents'];
-    const colors = ['red', 'green', 'blue'];
-
-    bodyParts.forEach(part => {
-        colors.forEach(color => {
-            for (let i = 0; i < 4; i++) {
-                if (parrot1.genes[part][color][i] !== parrot2.genes[part][color][i]) {
-                    differences++;
-                }
-                total++;
-            }
-        });
-        if (parrot1.genes[part].gradient !== parrot2.genes[part].gradient) {
-            differences++;
-        }
-        total++;
-    });
-
-    return Math.round((differences / total) * 100);
-}
-
-/**
- * Render offspring predictions
- */
-async function renderPredictions(leftParrot, rightParrot) {
-    const section = document.getElementById('predictionsSection');
-    const info = document.getElementById('predictionsInfo');
-
-    section.style.display = 'block';
-
-    // Generate 10 predicted offspring
-    const predictions = [];
-    for (let i = 0; i < 10; i++) {
-        const childGenes = breedParrotGenes(leftParrot.genes, rightParrot.genes);
-        const childGen = Math.max(leftParrot.generation, rightParrot.generation) + 1;
-        const predictedParrot = new Parrot(`Prediction ${i + 1}`, childGenes, childGen, -1);
-        predictions.push(predictedParrot);
-    }
-
-    // Calculate beauty statistics from predicted offspring
-    const beautyScores = predictions.map(p => p.calculateBeauty().score);
-    const maxBeauty = Math.round(Math.max(...beautyScores));
-    const minBeauty = Math.round(Math.min(...beautyScores));
-    const avgBeauty = Math.round(beautyScores.reduce((a, b) => a + b, 0) / beautyScores.length);
-
-    const diversityScore = calculateGeneticDiversity(leftParrot, rightParrot);
-    const mutationChance = GameState.getMutationsEnabled() ? 15 : 0;
-
-    // Generate SVG for each prediction
-    const svgPromises = predictions.map(parrot => generateParrotSVG(parrot));
-    const svgs = await Promise.all(svgPromises);
-
-    // Display predictions with stats and images
-    info.innerHTML = `
-        <div class="predictions-grid">
-            <div class="prediction-card">
-                <div class="prediction-label">Beauty Range</div>
-                <div class="prediction-value">${minBeauty}-${maxBeauty}</div>
-            </div>
-            <div class="prediction-card">
-                <div class="prediction-label">Average Beauty</div>
-                <div class="prediction-value">${avgBeauty}/100</div>
-            </div>
-            <div class="prediction-card">
-                <div class="prediction-label">Diversity</div>
-                <div class="prediction-value">${diversityScore > 50 ? 'High' : diversityScore > 25 ? 'Medium' : 'Low'}</div>
-            </div>
-        </div>
-        <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; padding: 10px 0; margin-top: 15px;">
-            ${svgs.map(svg => `
-                <div style="width: 100%; padding-bottom: 100%; position: relative; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: white;">
-                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
-                        <div style="max-width: 90%; max-height: 90%; display: flex; align-items: center; justify-content: center;">
-                            ${svg}
-                        </div>
-                    </div>
-                </div>
-            `).join('')}
-        </div>
-        <p style="margin-top: 15px; color: #666; font-size: 0.9em; text-align: center;">
-            💡 Higher genetic diversity increases chances of unique offspring traits
-        </p>
-    `;
-}
