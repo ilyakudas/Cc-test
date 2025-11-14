@@ -193,7 +193,7 @@
                             </div>
 
                             <div x-show="!isLoading && predictions.length > 0">
-                                <div style="display: flex; flex-direction: row; flex-wrap: nowrap; gap: 10px; padding: 10px 0; overflow-x: auto; overflow-y: hidden; width: 100%;">
+                                <div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: 10px; padding: 10px 0;">
                                     <template x-for="(pred, index) in predictions" :key="index">
                                     <div
                                         style="width: 120px; height: 120px; position: relative; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: white; cursor: pointer; flex-shrink: 0;"
