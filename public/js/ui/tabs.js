@@ -8,6 +8,8 @@ import { updateUI } from './core.js';
 import { renderBreedingSlots, updateBreedButton } from './breedingSlots.js';
 import { createParrotCard } from './parrotCard.js';
 import { generateParrotSVG } from '../lib/svg.js';
+import { breedParrotGenes } from '../core/genetics.js';
+import { Parrot } from '../core/parrot.js';
 
 /**
  * Switch between tabs (collection/store/breeding/contests)
@@ -201,7 +203,7 @@ function calculateGeneticDiversity(parrot1, parrot2) {
 /**
  * Render offspring predictions
  */
-function renderPredictions(leftParrot, rightParrot) {
+async function renderPredictions(leftParrot, rightParrot) {
     const section = document.getElementById('predictionsSection');
     const info = document.getElementById('predictionsInfo');
 
@@ -212,6 +214,20 @@ function renderPredictions(leftParrot, rightParrot) {
     const diversityScore = calculateGeneticDiversity(leftParrot, rightParrot);
     const mutationChance = GameState.getMutationsEnabled() ? 15 : 0;
 
+    // Generate 10 predicted offspring
+    const predictions = [];
+    for (let i = 0; i < 10; i++) {
+        const childGenes = breedParrotGenes(leftParrot.genes, rightParrot.genes);
+        const childGen = Math.max(leftParrot.generation, rightParrot.generation) + 1;
+        const predictedParrot = new Parrot(`Prediction ${i + 1}`, childGenes, childGen, -1);
+        predictions.push(predictedParrot);
+    }
+
+    // Generate SVG for each prediction
+    const svgPromises = predictions.map(parrot => generateParrotSVG(parrot));
+    const svgs = await Promise.all(svgPromises);
+
+    // Display predictions with stats and images
     info.innerHTML = `
         <div class="predictions-grid">
             <div class="prediction-card">
@@ -226,6 +242,15 @@ function renderPredictions(leftParrot, rightParrot) {
                 <div class="prediction-label">Mutation Chance</div>
                 <div class="prediction-value">${mutationChance}%</div>
             </div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; padding: 10px 0; margin-top: 15px;">
+            ${svgs.map(svg => `
+                <div style="width: 100%; height: 100px; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center;">
+                    <div style="max-width: 90%; max-height: 90%;">
+                        ${svg}
+                    </div>
+                </div>
+            `).join('')}
         </div>
         <p style="margin-top: 15px; color: #666; font-size: 0.9em; text-align: center;">
             💡 Higher genetic diversity increases chances of unique offspring traits
