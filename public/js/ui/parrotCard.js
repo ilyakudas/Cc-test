@@ -87,10 +87,9 @@ export async function createParrotCard(parrot, isStore) {
         const label = partLabels[partName];
 
         if (colorData.isGradient) {
-            // For gradients, create animated gradient square
-            const isSameColor = colorData.startColor === colorData.endColor;
+            // For gradients, create animated gradient square with border
             colorPalette += `
-                <div class="color-square gradient-square${isSameColor ? ' same-color' : ''}"
+                <div class="color-square gradient-square"
                      title="${label}: Gradient"
                      style="--start-color: ${colorData.startColor}; --end-color: ${colorData.endColor};">
                 </div>
@@ -107,19 +106,31 @@ export async function createParrotCard(parrot, isStore) {
     });
     colorPalette += '</div>';
 
-    // Trophy/contest indicators
+    // Trophy/contest indicators and gradient symbol
     let trophyIndicator = '';
     if (!isStore) {
         const trophies = GameState.getParrotTrophies(parrot.id);
-        if (trophies && trophies.length > 0) {
+        const hasGradients = parrot.hasAnyGradients();
+
+        if (trophies && trophies.length > 0 || hasGradients) {
             const tierIcons = ['🎨', '🌈', '✨', '🎭', '👑'];
 
             trophyIndicator = '<div class="trophy-indicator">';
-            trophies.forEach(trophy => {
-                const tierIcon = tierIcons[trophy.tier] || '🏆';
-                const suffix = trophy.placement === 1 ? 'st' : trophy.placement === 2 ? 'nd' : 'rd';
-                trophyIndicator += `<span title="Tier ${trophy.tier + 1} - ${trophy.placement}${suffix}">${tierIcon}${trophy.badge}</span>`;
-            });
+
+            // Add gradient symbol first if parrot has gradients
+            if (hasGradients) {
+                trophyIndicator += `<span title="Has gradient colors" class="gradient-symbol">✨</span>`;
+            }
+
+            // Add trophies
+            if (trophies && trophies.length > 0) {
+                trophies.forEach(trophy => {
+                    const tierIcon = tierIcons[trophy.tier] || '🏆';
+                    const suffix = trophy.placement === 1 ? 'st' : trophy.placement === 2 ? 'nd' : 'rd';
+                    trophyIndicator += `<span title="Tier ${trophy.tier + 1} - ${trophy.placement}${suffix}">${tierIcon}${trophy.badge}</span>`;
+                });
+            }
+
             trophyIndicator += '</div>';
         }
     }
@@ -135,7 +146,6 @@ export async function createParrotCard(parrot, isStore) {
         <div class="parrot-gen">Gen ${parrot.generation}</div>
         <div class="rarity-badge" style="background: ${rarityInfo.color};">${rarityInfo.label}</div>
         <div class="beauty-badge" style="background: ${beautyColor}; color: white; font-size: 0.8em; padding: 2px 6px; border-radius: 4px; margin-top: 4px;">Beauty: ${beautyScore}</div>
-        ${parrot.hasAnyGradients() ? '<div class="gradient-indicator">✨ Gradient</div>' : ''}
         ${trophyIndicator}
     `;
 
