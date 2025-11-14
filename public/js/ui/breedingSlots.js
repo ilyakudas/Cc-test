@@ -135,6 +135,10 @@ export function createBreedingSlotsComponent() {
             const pair = GameState.getBreedingPair();
             pair[slot] = null;
             GameState.setBreedingPair(pair);
+
+            // Dispatch event for other components (like predictions)
+            document.dispatchEvent(new CustomEvent('breeding-pair-changed'));
+
             // UI updates automatically via Alpine reactivity
         },
 

@@ -128,8 +128,15 @@ export function createPredictionsComponent() {
 
         // Initialize when parents change
         init() {
+            console.log('Predictions component initialized', {
+                hasBothParents: this.hasBothParents,
+                leftParrot: !!this.leftParrot,
+                rightParrot: !!this.rightParrot
+            });
+
             // Watch for parent changes
             this.$watch('hasBothParents', (value) => {
+                console.log('hasBothParents changed:', value);
                 if (value && !this.hasGenerated) {
                     this.generatePredictions();
                 }
@@ -137,8 +144,20 @@ export function createPredictionsComponent() {
 
             // Generate immediately if both parents are selected
             if (this.hasBothParents) {
+                console.log('Generating initial predictions...');
                 this.generatePredictions();
             }
+
+            // Listen for breeding pair changes from outside Alpine
+            document.addEventListener('breeding-pair-changed', () => {
+                console.log('breeding-pair-changed event received');
+                // Force re-evaluation of computed properties
+                this.$nextTick(() => {
+                    if (this.hasBothParents && !this.hasGenerated) {
+                        this.generatePredictions();
+                    }
+                });
+            });
         }
     };
 }
