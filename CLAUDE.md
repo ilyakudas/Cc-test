@@ -1,203 +1,270 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/claude-code) when working with code in this repository.
 
 ## Project Overview
 
-**ChromaWing** - A genetics-based parrot breeding simulation game. Players breed parrots with RGB color genetics, compete in beauty contests, and explore Mendelian inheritance through gameplay. The project includes interactive SVG parrots with individually controllable feathers and a full breeding game implementation.
+**ChromaWing** - A genetics-based parrot breeding simulation game built with vanilla JavaScript, Alpine.js, and SVG rendering. Players breed parrots with RGB color genetics, compete in beauty contests, and explore Mendelian inheritance through gameplay.
 
-Live site: https://cc-test-e3ccf.web.app
+**Live Site**: https://cc-test-e3ccf.web.app
 
-## Development Commands
+## Quick Start
 
-### Local Development
+### Running Locally
 ```bash
-# Serve locally using Firebase CLI
+# Using Firebase CLI
 firebase serve
 
-# Alternative: Use any static file server
+# Using Python
 python -m http.server 8000
-# or
+
+# Using Node
 npx serve public
 ```
 
-### Deployment
-```bash
-# Deploy to Firebase Hosting
-firebase deploy
+Access: `http://localhost:XXXX/public/breeding-game-modular.html`
 
-# Test deployment (emulator)
-firebase emulators:start --only hosting
+### Deploying
+```bash
+firebase deploy
+```
+Auto-deploys on push to `main` branch via GitHub Actions.
+
+## Documentation Structure
+
+**Read [parrot-genetics-game/docs/INDEX.md](parrot-genetics-game/docs/INDEX.md) first** - it provides a complete navigation guide.
+
+### Quick Navigation
+
+**Understanding the System**:
+- Architecture: `parrot-genetics-game/docs/architecture/OVERVIEW.md`
+- Modules: `parrot-genetics-game/docs/MODULE_STRUCTURE.md`
+- Genetics: `parrot-genetics-game/docs/systems/GENETICS.md`
+
+**Working with Features**:
+- Adding features: `parrot-genetics-game/docs/guides/ADDING_FEATURES.md`
+- Debugging: `parrot-genetics-game/docs/guides/DEBUGGING.md`
+- Testing: `parrot-genetics-game/docs/guides/TESTING.md`
+
+**Feature Documentation**: `parrot-genetics-game/docs/features/`
+- BREEDING_LAB.md - Dedicated breeding interface
+- LOCK_SYSTEM.md - Parrot protection
+- AUTO_EXAMINE.md - Automatic gene examination
+- OFFSPRING.md - Managing bred parrots
+- VISUAL_INDICATORS.md - Badges and animations
+- SPLASH_SCREEN.md - Welcome experience
+
+**System Documentation**: `parrot-genetics-game/docs/systems/`
+- GENETICS.md - Breeding mechanics
+- STORAGE.md - Save/load system
+- UI_RENDERING.md - SVG and card rendering
+- BEAUTY_SYSTEM.md - Beauty calculation
+- CONTESTS_SYSTEM.md - Contest mechanics
+
+## Architecture
+
+### Module Organization
+
+```
+public/js/
+├── main.js                # Entry point, initialization, window handlers
+├── core/                  # Core systems
+│   ├── gameState.js      # Centralized state (ALWAYS use getters/setters)
+│   ├── parrot.js         # Parrot class
+│   ├── genetics.js       # Breeding algorithms
+│   └── storage.js        # localStorage save/load
+├── actions/               # User actions (breeding, buying, selling, etc.)
+├── ui/                    # UI rendering (cards, grids, stats, tabs, etc.)
+└── lib/                   # Utilities (notifications, SVG, constants, etc.)
 ```
 
-Note: Pushing to `main` branch automatically deploys via GitHub Actions (see `.github/workflows/`).
+### Key Patterns
 
-## Project Structure
+**State Management**:
+```javascript
+// ✅ CORRECT: Use gameState functions
+import * as GameState from './core/gameState.js';
+GameState.addCoins(100);
+const parrots = GameState.getParrots();
 
-### Entry Points
-- `index.html` - Root landing page with project gallery
-- `public/index.html` - Public-facing game homepage
-- `public/breeding-game-modular.html` - Main game (modular ES6)
-- `public/breeding-game.html` - Main game (monolithic version)
-- `public/genetics-explorer.html` - Genetics visualization tool
-- `public/parrot-interactive.html` - Interactive SVG demo
+// ❌ WRONG: Never access state directly
+coins += 100;  // Don't do this!
+```
 
-### Code Organization (Modular Version)
+**Standard Action Pattern**:
+```javascript
+export async function someAction(saveGameFn) {
+  // 1. Validate
+  if (!isValid) {
+    showToast('Error message', 'Details', 'error');
+    return;
+  }
 
-The modular version (`public/js/`) uses ES6 modules with clear separation of concerns:
+  // 2. Update state
+  GameState.modifyState();
 
-**Core Systems** (`public/js/core/`)
-- `gameState.js` - Centralized state management (parrots, coins, breeding pairs, etc.)
-- `genetics.js` - Mendelian breeding logic (RGB color inheritance, mutations)
-- `parrot.js` - Parrot class definition and phenotype calculation
-- `storage.js` - Cookie-based save/load system
+  // 3. Update UI
+  await UI.updateUI();
 
-**Game Logic** (`public/js/actions/`)
-- `breeding.js` - Breeding slot management and offspring generation
-- `collection.js` - Parrot selection and collection management
-- `laboratory.js` - Gene examination system
-- `offspring.js` - Offspring handling (move to collection, sell, dismiss)
-- `selection.js` - Parrot selection state
-- `settings.js` - Game settings (mutations, auto-examine)
-- `trading.js` - Buy/sell mechanics
+  // 4. Save
+  if (saveGameFn) saveGameFn();
 
-**UI Components** (`public/js/ui/`)
-- `core.js` - Main UI update orchestration
-- `parrotCard.js` - Parrot card rendering with SVG generation
-- `parrotGrid.js` - Grid layout for parrot collections
-- `breedingSlots.js` - Alpine.js component for breeding interface
-- `preview.js` - Selected parrot preview panel
-- `stats.js` - Coins and game statistics display
-- `tabs.js` - Tab switching logic
-- `mutations.js` - Mutation toggle UI
+  // 5. Feedback
+  showToast('Success!', 'Details', 'success');
+}
+```
 
-**Libraries** (`public/js/lib/`)
-- `constants.js` - Contest tiers, achievement definitions, parrot names
-- `svg.js` - SVG generation and parrot rendering
-- `achievements.js` - Achievement tracking and unlocking
-- `contests.js` - Beauty contest system
-- `notifications.js` - Toast notification system
-- `utils.js` - Helper functions (random name generation, genetics utilities)
+**Window Handler Pattern** (in main.js):
+```javascript
+window.actionHandler = (args) => Actions.someAction(args, saveGame);
+```
 
-**Main Module**
-- `public/js/main.js` - Application initialization, window event handlers, new game setup
-
-### Legacy Files
-- `public/breeding-game.js` - Monolithic version of the entire game (137KB)
-- Use this for reference but prefer modular version for new development
-
-### Design Documentation
-- `parrot-genetics-game/docs/` - Game design documents
-- `parrot-genetics-game/design/` - System specifications
-
-## Architecture Principles
-
-### State Management
-All game state lives in `gameState.js`. Other modules import state getters/setters:
-- Use `getParrots()`, `addParrot()`, `removeParrot()` instead of direct state access
-- Breeding pair stored separately from selected parrot for clear UX
-- Recent offspring tracked separately before moving to collection
+## Critical Systems
 
 ### Genetics System
-RGB genetics with 4 alleles per color channel (red, green, blue) per body part:
+
+**RGB Color Genetics**:
 - 6 body parts: wings, special_wing, body, head, tail, accents
-- Each part has 4 boolean alleles for R, G, B (12 bits total)
-- Gradient flag per body part (boolean)
-- Breeding uses Mendelian inheritance: random selection from each parent
-- Mutations can flip individual alleles based on `mutationRate` (default 5%)
+- Each part: 4 alleles × 3 colors (R/G/B) + gradient flag
+- Color calculation: `count_true(alleles) * 64` → 0-255
+- Breeding: Random allele selection from each parent
+- Mutations: 5% chance per allele to flip (if enabled)
+
+**See**: `parrot-genetics-game/docs/systems/GENETICS.md`
+
+### State Management
+
+All state lives in `core/gameState.js`:
+- Parrots (collection, store, recent offspring)
+- Resources (coins, counters)
+- Settings (mutations, auto-examine)
+- Status (examined parrots, locked parrots)
+
+**Always**:
+- Import and use gameState functions
+- Never modify state variables directly
+- Call save after meaningful changes
 
 ### SVG Rendering
-Parrot SVG is cached in `gameState.svgCache` and cloned for performance:
-- Individual feather groups can be recolored based on genes
-- Gradients generated dynamically with unique IDs
-- Color calculation: RGB alleles determine color presence (0-255 per channel)
-- Rarity based on gene purity and gradient count
 
-### Event Handling
-Window-level handlers in `main.js` bridge HTML onclick attributes to action modules:
-- Example: `window.breedParrotsHandler = () => Actions.breedParrots(saveGame, checkAchievements)`
-- Allows HTML templates to call game logic without globals
-- Alpine.js components for reactive UI (breeding slots)
+- Template: `public/Parrot-1-recolored.svg` (cached)
+- 119 feather groups recolored per parrot
+- Gradients generated dynamically
+- Cards rendered in responsive grid
 
 ### Save System
-Cookie-based persistence (no backend):
-- Saves on every significant action (breed, buy, sell)
-- Serializes entire game state including Sets and complex objects
-- Auto-loads on page load if save cookie exists
 
-## Common Workflows
+- Storage: localStorage (5-10MB capacity)
+- Key: `chromawing_save`
+- Saves: After every significant action
+- Migration: Automatic from legacy cookie saves
 
-### Adding a New Body Part
-1. Update `Parrot` class constructor in `parrot.js` to include new part genes
-2. Add breeding logic in `genetics.js` `breedParrotGenes()`
-3. Update SVG generation in `svg.js` to render new part
-4. Add to rarity calculation in `parrot.js` `calculateRarity()`
+## Common Tasks
 
-### Adding a New Contest Tier
-1. Add tier definition to `CONTEST_TIERS` in `constants.js`
-2. Define unlock condition (e.g., player level, achievement)
-3. Add special validation rules if needed
-4. Update rewards structure
+### Adding a New Feature
 
-### Adding a New Achievement
-1. Define achievement in `ACHIEVEMENT_DEFINITIONS` in `constants.js`
-2. Add checking logic in `achievements.js` `checkAchievements()`
-3. Update UI notification in `notifications.js`
+1. Read relevant feature/system docs
+2. Determine affected modules
+3. Follow standard patterns (state → UI → save)
+4. Test thoroughly (see testing guide)
+5. Document if substantial
 
-### Modifying Genetics Algorithm
-- Core logic in `genetics.js` `breedBodyPart()`
-- Mutation rate controlled by `gameState.mutationRate`
-- Toggle mutations via `gameState.mutationsEnabled`
+**See**: `parrot-genetics-game/docs/guides/ADDING_FEATURES.md`
 
-## SVG Asset Details
+### Debugging an Issue
 
-Main parrot SVG: `public/Parrot-1-recolored.svg` (59KB)
-- 119 individually controllable feather groups
-- Each feather has an ID like `detail-gray-1`, `detail-gray-2`, etc.
-- Recoloring uses JavaScript to set fill/stroke attributes
-- Gradient support via inline `<linearGradient>` elements
+1. Check browser console for errors
+2. Inspect state with DevTools
+3. Review debugging guide for common patterns
+4. Add logging to track execution
+5. Test fix thoroughly
 
-## Firebase Configuration
+**See**: `parrot-genetics-game/docs/guides/DEBUGGING.md`
 
-- Public directory: `public/`
-- SPA routing: All paths rewrite to `/index.html`
-- Caching: Images (2h), HTML/CSS/JS (1h)
-- Auto-deploy on merge to main branch via GitHub Actions
-- Service account secret: `FIREBASE_SERVICE_ACCOUNT` (GitHub secret)
+### Understanding a Feature
 
-## Testing & Debugging
+**Look up feature documentation**:
+- INDEX.md → Find relevant feature doc
+- Read 200-400 lines vs 1,744 lines of mixed content
+- Get requirements, rationale, edge cases
 
-No formal test suite. Debug features:
-- Store includes test parrots: `[TEST-MAX-RARITY]`, `[TEST-MAX-BEAUTY]`, `[TEST-MAX-GRADIENT]`
-- Console logging in `main.js` for save/load operations
-- Browser devtools for state inspection via `window` handlers
+## Development Workflow
 
-## Known Patterns
+### Standard Flow
 
-### Module Import Style
-```javascript
-import * as GameState from './core/gameState.js';
-import { Parrot } from './core/parrot.js';
-```
-- Use named imports for specific functions
-- Use namespace imports (`* as`) for state modules
+1. Start local server
+2. Make changes
+3. Refresh browser (no build step)
+4. Test functionality
+5. Commit changes
 
-### Parrot Creation
-```javascript
-const parrot = new Parrot(name, genes, generation, id);
-GameState.addParrot(parrot);
-GameState.incrementParrotIdCounter();
-```
+### Testing Checklist
 
-### Save After State Change
-```javascript
-import { saveGame } from './core/storage.js';
-// ... modify state ...
-saveGame();
-```
+**Core loop**:
+- Buy parrot → works
+- Breed parrots → offspring appear
+- Examine parrot → shows genes
+- Lock parrot → protected from selling
+- Save/reload → state persists
 
-## File Naming Conventions
-- `kebab-case.html` for HTML files
-- `camelCase.js` for JavaScript files
-- Component files named after their primary export
-- UI components in `ui/`, business logic in `actions/` or `lib/`
+**See**: `parrot-genetics-game/docs/guides/TESTING.md`
+
+## Important Notes
+
+### What to Avoid
+
+- ❌ Modifying state directly (use gameState functions)
+- ❌ Forgetting to save after state changes
+- ❌ Not updating UI after state changes
+- ❌ Copying code snippets without understanding patterns
+- ❌ Assuming variables are non-null
+
+### What to Do
+
+- ✅ Read relevant documentation first
+- ✅ Follow established patterns
+- ✅ Validate input and check for null
+- ✅ Test edge cases
+- ✅ Use browser DevTools
+- ✅ Update documentation for substantial changes
+
+## File Naming & Conventions
+
+- HTML files: `kebab-case.html`
+- JavaScript files: `camelCase.js`
+- Module imports: Always include `.js` extension
+- Functions: camelCase
+- Constants: SCREAMING_SNAKE_CASE
+
+## Key Technologies
+
+- **Language**: Vanilla JavaScript (ES6 modules)
+- **Reactive UI**: Alpine.js v3.13.3 (lightweight, 15KB)
+- **Graphics**: SVG manipulation
+- **Storage**: localStorage
+- **Hosting**: Firebase Hosting (static)
+- **Deployment**: GitHub Actions (auto on main push)
+
+## Resources
+
+**Primary Documentation**:
+- Start here: `parrot-genetics-game/docs/INDEX.md`
+- Architecture: `parrot-genetics-game/docs/architecture/OVERVIEW.md`
+- All features: `parrot-genetics-game/docs/features/`
+- All systems: `parrot-genetics-game/docs/systems/`
+- All guides: `parrot-genetics-game/docs/guides/`
+
+**Firebase**:
+- Configuration: `firebase.json`, `.firebaserc`
+- Setup guide: `FIREBASE_SETUP.md`
+
+**Design Documentation**:
+- Game design: `parrot-genetics-game/docs/GAME_DESIGN.md`
+- Technical spec: `parrot-genetics-game/docs/TECHNICAL_SPEC.md`
+- Gameplay mechanics: `parrot-genetics-game/design/GAMEPLAY_MECHANICS.md`
+
+## Version
+
+**Current**: v1.1.1
+
+**See**: `parrot-genetics-game/docs/changelog/CHANGELOG.md`
