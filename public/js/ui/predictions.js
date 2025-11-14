@@ -142,8 +142,3 @@ export function createPredictionsComponent() {
         }
     };
 }
-
-// Export for global access
-if (typeof window !== 'undefined') {
-    window.predictionsComponent = createPredictionsComponent();
-}

@@ -142,6 +142,38 @@ async function renderRecentOffspring() {
 }
 
 /**
+ * Calculate genetic diversity between two parrots
+ */
+function calculateGeneticDiversity(parrot1, parrot2) {
+    const bodyParts = ['wings', 'special_wing', 'body', 'head', 'tail', 'accents'];
+    let differences = 0;
+    let total = 0;
+
+    for (const bodyPart of bodyParts) {
+        const part1 = parrot1.genes[bodyPart];
+        const part2 = parrot2.genes[bodyPart];
+
+        // Compare RGB alleles
+        for (const channel of ['red', 'green', 'blue']) {
+            for (let i = 0; i < 4; i++) {
+                total++;
+                if (part1[channel][i] !== part2[channel][i]) {
+                    differences++;
+                }
+            }
+        }
+
+        // Compare gradient
+        total++;
+        if (part1.gradient !== part2.gradient) {
+            differences++;
+        }
+    }
+
+    return Math.round((differences / total) * 100);
+}
+
+/**
  * Render genetic compatibility information
  */
 function renderCompatibility(leftParrot, rightParrot) {
