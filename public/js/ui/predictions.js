@@ -55,15 +55,29 @@ export function createPredictionsComponent() {
 
         // Computed properties
         get leftParrot() {
-            if (!this.leftParentId) return null;
+            if (this.leftParentId === null) return null;
             const parrots = GameState.getParrots();
-            return parrots.find(p => p.id === this.leftParentId);
+            const found = parrots.find(p => p.id === this.leftParentId);
+            if (!found) {
+                console.log('leftParrot not found:', {
+                    leftParentId: this.leftParentId,
+                    availableIds: parrots.slice(0, 5).map(p => p.id)
+                });
+            }
+            return found;
         },
 
         get rightParrot() {
-            if (!this.rightParentId) return null;
+            if (this.rightParentId === null) return null;
             const parrots = GameState.getParrots();
-            return parrots.find(p => p.id === this.rightParentId);
+            const found = parrots.find(p => p.id === this.rightParentId);
+            if (!found) {
+                console.log('rightParrot not found:', {
+                    rightParentId: this.rightParentId,
+                    availableIds: parrots.slice(0, 5).map(p => p.id)
+                });
+            }
+            return found;
         },
 
         get hasBothParents() {
