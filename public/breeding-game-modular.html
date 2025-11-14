@@ -192,10 +192,10 @@
                                 <div>Generating predictions...</div>
                             </div>
 
-                            <div x-show="!isLoading && predictions.length > 0" style="display: flex; flex-wrap: wrap; gap: 10px; padding: 10px 0; justify-content: center;">
+                            <div x-show="!isLoading && predictions.length > 0" style="display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 0; justify-content: center;">
                                 <template x-for="(pred, index) in predictions" :key="index">
                                     <div
-                                        style="width: 120px; height: 120px; position: relative; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: white; cursor: pointer;"
+                                        style="width: 80px; height: 80px; position: relative; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: white; cursor: pointer; flex-shrink: 0;"
                                         x-bind:title="`Beauty: ${pred.beauty}`"
                                     >
                                         <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 8px;">
