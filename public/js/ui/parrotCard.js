@@ -87,10 +87,9 @@ export async function createParrotCard(parrot, isStore) {
         const label = partLabels[partName];
 
         if (colorData.isGradient) {
-            // For gradients, create animated gradient square
-            const isSameColor = colorData.startColor === colorData.endColor;
+            // For gradients, create animated gradient square with border
             colorPalette += `
-                <div class="color-square gradient-square${isSameColor ? ' same-color' : ''}"
+                <div class="color-square gradient-square"
                      title="${label}: Gradient"
                      style="--start-color: ${colorData.startColor}; --end-color: ${colorData.endColor};">
                 </div>
