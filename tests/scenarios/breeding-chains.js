@@ -78,6 +78,7 @@ export async function run(simulator, options = {}) {
 
             if (offspring.length > 0) {
                 currentGeneration = offspring[0].generation;
+                maxGenReached = Math.max(maxGenReached, currentGeneration);
                 generationSizes[currentGeneration] = offspring.length;
 
                 // Track genetic diversity (number of unique color patterns)
