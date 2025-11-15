@@ -366,7 +366,7 @@ window.toggleAutoExamineHandler = () => Actions.toggleAutoExamine(saveGame);
 
 // Alpine component registration is handled in breeding-game-modular.html
 // Component is exported from ui/breedingSlots.js and registered via alpine:init event
-console.log('v1.1.1 - main.js loaded');
+console.log('v1.3.0 - main.js loaded');
 
 // ===== INITIALIZATION =====
 

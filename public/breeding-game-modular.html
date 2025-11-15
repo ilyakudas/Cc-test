@@ -13,6 +13,7 @@
             <div class="splash-logo">🦜</div>
             <h1 class="splash-title">ChromaWing</h1>
             <p class="splash-subtitle">A Genetics Breeding Game</p>
+            <p class="splash-version" id="splashVersion"></p>
             <div class="splash-description">
                 <p>Breed beautiful parrots and explore the fascinating world of genetics.</p>
                 <p>Create unique color combinations, compete in contests, and discover rare mutations!</p>
@@ -70,13 +71,6 @@
                 <div>
                     <div style="font-size: 0.75em; color: #666;">Auto-Exam</div>
                     <div class="value" id="autoExamineStatus">OFF</div>
-                </div>
-            </div>
-            <div class="stat-badge" style="cursor: default;">
-                <span>ℹ️</span>
-                <div>
-                    <div style="font-size: 0.75em; color: #666;">Version</div>
-                    <div class="value" style="font-size: 0.8em;">v1.2.0</div>
                 </div>
             </div>
         </div>
@@ -467,6 +461,13 @@
 
     <!-- Main application module loads first -->
     <script type="module">
+        // Version constant - single source of truth
+        const VERSION = 'v1.3.0';
+        window.CHROMAWING_VERSION = VERSION;
+
+        // Update splash screen version
+        document.getElementById('splashVersion').textContent = VERSION;
+
         import { createBreedingSlotsComponent } from './js/ui/breedingSlots.js';
         import { createGalleryComponent } from './js/ui/galleryParrots.js';
         import { createColorLabComponent } from './js/ui/colorLab.js';
@@ -475,38 +476,39 @@
         window.breedingSlotsComponent = createBreedingSlotsComponent();
         window.galleryComponent = createGalleryComponent();
         window.colorLabComponent = createColorLabComponent();
-        console.log('v1.2.1 - breedingSlotsComponent available:', !!window.breedingSlotsComponent);
-        console.log('v1.2.1 - galleryComponent available:', !!window.galleryComponent);
-        console.log('v1.2.1 - colorLabComponent available:', !!window.colorLabComponent);
+        console.log(`${VERSION} - breedingSlotsComponent available:`, !!window.breedingSlotsComponent);
+        console.log(`${VERSION} - galleryComponent available:`, !!window.galleryComponent);
+        console.log(`${VERSION} - colorLabComponent available:`, !!window.colorLabComponent);
     </script>
 
     <!-- Register Alpine components using the factories -->
     <script>
         document.addEventListener('alpine:init', () => {
-            console.log('v1.2.1 - alpine:init fired');
+            const VERSION = window.CHROMAWING_VERSION || 'unknown';
+            console.log(`${VERSION} - alpine:init fired`);
 
             // Register breeding slots component
             if (window.breedingSlotsComponent) {
                 Alpine.data('breedingSlots', () => window.breedingSlotsComponent);
-                console.log('v1.2.1 - breedingSlots component registered');
+                console.log(`${VERSION} - breedingSlots component registered`);
             } else {
-                console.error('v1.2.1 - breedingSlotsComponent not found!');
+                console.error(`${VERSION} - breedingSlotsComponent not found!`);
             }
 
             // Register gallery component
             if (window.galleryComponent) {
                 Alpine.data('galleryParrots', () => window.galleryComponent);
-                console.log('v1.2.1 - galleryParrots component registered');
+                console.log(`${VERSION} - galleryParrots component registered`);
             } else {
-                console.error('v1.2.1 - galleryComponent not found!');
+                console.error(`${VERSION} - galleryComponent not found!`);
             }
 
             // Register color lab component
             if (window.colorLabComponent) {
                 Alpine.data('colorLab', () => window.colorLabComponent);
-                console.log('v1.2.1 - colorLab component registered');
+                console.log(`${VERSION} - colorLab component registered`);
             } else {
-                console.error('v1.2.1 - colorLabComponent not found!');
+                console.error(`${VERSION} - colorLabComponent not found!`);
             }
         });
     </script>

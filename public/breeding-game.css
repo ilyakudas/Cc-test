@@ -1366,8 +1366,16 @@ header h1 {
 
 .splash-subtitle {
     font-size: 1.5em;
-    margin-bottom: 30px;
+    margin-bottom: 10px;
     opacity: 0.9;
+}
+
+.splash-version {
+    font-size: 0.9em;
+    margin-bottom: 30px;
+    opacity: 0.7;
+    font-family: monospace;
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .splash-description {
