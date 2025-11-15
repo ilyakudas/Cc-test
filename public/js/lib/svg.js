@@ -117,10 +117,10 @@ export async function generateParrotSVG(parrot) {
         'body-yellow-4': EYE_BLACK,
         'accent-white-4': EYE_WHITE,
 
-        // Beak (detail-gray 1, 2, 3)
+        // Beak (detail-gray 1, 3, 10)
         'detail-gray-1': BEAK_COLOR,
-        'detail-gray-2': BEAK_COLOR,
         'detail-gray-3': BEAK_COLOR,
+        'detail-gray-10': BEAK_COLOR,
 
         // Claws (other 2-4)
         'other-2': CLAW_COLOR,
@@ -154,6 +154,13 @@ export async function generateParrotSVG(parrot) {
     const tailTipRegex = new RegExp(`id="other-1"[^>]*fill="[^"]*"`, 'g');
     svg = svg.replace(tailTipRegex, match => {
         return match.replace(/fill="[^"]*"/, `fill="${tailTipFillValue}"`);
+    });
+
+    // Apply accent color to detail-gray-9
+    const accentFillValue = accentColor.isGradient ? `url(#${gradientMap['accents']})` : accentColor.color;
+    const detailGray9Regex = new RegExp(`id="detail-gray-9"[^>]*fill="[^"]*"`, 'g');
+    svg = svg.replace(detailGray9Regex, match => {
+        return match.replace(/fill="[^"]*"/, `fill="${accentFillValue}"`);
     });
 
     // Apply body part colors to feather groups
