@@ -13,6 +13,7 @@
             <div class="splash-logo">🦜</div>
             <h1 class="splash-title">ChromaWing</h1>
             <p class="splash-subtitle">A Genetics Breeding Game</p>
+            <p class="splash-version">v1.3.0</p>
             <div class="splash-description">
                 <p>Breed beautiful parrots and explore the fascinating world of genetics.</p>
                 <p>Create unique color combinations, compete in contests, and discover rare mutations!</p>
@@ -70,13 +71,6 @@
                 <div>
                     <div style="font-size: 0.75em; color: #666;">Auto-Exam</div>
                     <div class="value" id="autoExamineStatus">OFF</div>
-                </div>
-            </div>
-            <div class="stat-badge" style="cursor: default;">
-                <span>ℹ️</span>
-                <div>
-                    <div style="font-size: 0.75em; color: #666;">Version</div>
-                    <div class="value" style="font-size: 0.8em;">v1.2.0</div>
                 </div>
             </div>
         </div>
@@ -475,38 +469,38 @@
         window.breedingSlotsComponent = createBreedingSlotsComponent();
         window.galleryComponent = createGalleryComponent();
         window.colorLabComponent = createColorLabComponent();
-        console.log('v1.2.1 - breedingSlotsComponent available:', !!window.breedingSlotsComponent);
-        console.log('v1.2.1 - galleryComponent available:', !!window.galleryComponent);
-        console.log('v1.2.1 - colorLabComponent available:', !!window.colorLabComponent);
+        console.log('v1.3.0 - breedingSlotsComponent available:', !!window.breedingSlotsComponent);
+        console.log('v1.3.0 - galleryComponent available:', !!window.galleryComponent);
+        console.log('v1.3.0 - colorLabComponent available:', !!window.colorLabComponent);
     </script>
 
     <!-- Register Alpine components using the factories -->
     <script>
         document.addEventListener('alpine:init', () => {
-            console.log('v1.2.1 - alpine:init fired');
+            console.log('v1.3.0 - alpine:init fired');
 
             // Register breeding slots component
             if (window.breedingSlotsComponent) {
                 Alpine.data('breedingSlots', () => window.breedingSlotsComponent);
-                console.log('v1.2.1 - breedingSlots component registered');
+                console.log('v1.3.0 - breedingSlots component registered');
             } else {
-                console.error('v1.2.1 - breedingSlotsComponent not found!');
+                console.error('v1.3.0 - breedingSlotsComponent not found!');
             }
 
             // Register gallery component
             if (window.galleryComponent) {
                 Alpine.data('galleryParrots', () => window.galleryComponent);
-                console.log('v1.2.1 - galleryParrots component registered');
+                console.log('v1.3.0 - galleryParrots component registered');
             } else {
-                console.error('v1.2.1 - galleryComponent not found!');
+                console.error('v1.3.0 - galleryComponent not found!');
             }
 
             // Register color lab component
             if (window.colorLabComponent) {
                 Alpine.data('colorLab', () => window.colorLabComponent);
-                console.log('v1.2.1 - colorLab component registered');
+                console.log('v1.3.0 - colorLab component registered');
             } else {
-                console.error('v1.2.1 - colorLabComponent not found!');
+                console.error('v1.3.0 - colorLabComponent not found!');
             }
         });
     </script>
