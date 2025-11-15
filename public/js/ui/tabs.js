@@ -28,6 +28,7 @@ export function switchTab(tab, event, renderContestsFn) {
     document.getElementById('storeTab').style.display = 'none';
     document.getElementById('breedingTab').style.display = 'none';
     document.getElementById('contestsTab').style.display = 'none';
+    document.getElementById('galleryTab').style.display = 'none';
 
     if (tab === 'collection') {
         document.getElementById('collectionTab').style.display = 'grid';
@@ -47,6 +48,10 @@ export function switchTab(tab, event, renderContestsFn) {
             renderContestsFn();
         }
         return; // Don't call updateUI for contests tab
+    } else if (tab === 'gallery') {
+        document.getElementById('galleryTab').style.display = 'block';
+        document.getElementById('panelTitle').textContent = 'Parrot Gallery';
+        return; // Don't call updateUI for gallery tab (handled by Alpine.js)
     }
 
     GameState.setSelectedParrotId(null);
