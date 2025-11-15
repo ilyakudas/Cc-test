@@ -10,6 +10,7 @@ import * as basicGameplay from './scenarios/basic-gameplay.js';
 import * as economyStress from './scenarios/economy-stress.js';
 import * as breedingChains from './scenarios/breeding-chains.js';
 import * as rarityDistribution from './scenarios/rarity-distribution.js';
+import * as starterValidation from './scenarios/starter-parrots-validation.js';
 
 // ANSI color codes for terminal output
 const colors = {
@@ -48,7 +49,8 @@ const configs = {
             { scenario: basicGameplay, options: { cycles: 20, verbose } },
             { scenario: economyStress, options: { cycles: 50, verbose } },
             { scenario: breedingChains, options: { targetGeneration: 5, verbose } },
-            { scenario: rarityDistribution, options: { sampleSize: 100, verbose } }
+            { scenario: rarityDistribution, options: { sampleSize: 100, verbose } },
+            { scenario: starterValidation, options: { seed: 12345, verbose }, simOptions: { useStarters: true, seed: 12345 } }
         ]
     },
     '--stress': {
@@ -57,14 +59,15 @@ const configs = {
             { scenario: basicGameplay, options: { cycles: 100, verbose } },
             { scenario: economyStress, options: { cycles: 500, verbose } },
             { scenario: breedingChains, options: { targetGeneration: 20, verbose } },
-            { scenario: rarityDistribution, options: { sampleSize: 500, verbose } }
+            { scenario: rarityDistribution, options: { sampleSize: 500, verbose } },
+            { scenario: starterValidation, options: { seed: 12345, verbose }, simOptions: { useStarters: true, seed: 12345 } }
         ]
     }
 };
 
 async function runTests() {
     const config = configs[mode] || configs['--normal'];
-    const simulator = new HeadlessGameSimulator();
+    const defaultSimulator = new HeadlessGameSimulator();
 
     console.log(colorize('\n╔═══════════════════════════════════════════════════════════╗', 'cyan'));
     console.log(colorize('║    ChromaWing Game Simulation Test Suite                 ║', 'cyan'));
@@ -78,7 +81,12 @@ async function runTests() {
     const startTime = Date.now();
 
     for (let i = 0; i < config.scenarios.length; i++) {
-        const { scenario, options } = config.scenarios[i];
+        const { scenario, options, simOptions } = config.scenarios[i];
+
+        // Use scenario-specific simulator if options provided, otherwise use default
+        const simulator = simOptions
+            ? new HeadlessGameSimulator(simOptions)
+            : defaultSimulator;
 
         console.log(colorize(`\n[${ i + 1}/${config.scenarios.length}] ${scenario.name}`, 'blue'));
         console.log(colorize(`    ${scenario.description}`, 'gray'));

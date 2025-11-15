@@ -8,12 +8,14 @@ import * as GameState from '../public/js/core/gameState.js';
 import { Parrot } from '../public/js/core/parrot.js';
 import { breedParrotGenes } from '../public/js/core/genetics.js';
 import { getRandomName, randomBodyPartGenes } from '../public/js/lib/utils.js';
+import { SeededRandom } from './seeded-random.js';
+import { TWILIGHT_GENES, PRISM_GENES } from './starter-parrots.js';
 
 // Setup mocks before loading game modules
 setupMockGlobals();
 
 export class HeadlessGameSimulator {
-    constructor() {
+    constructor(options = {}) {
         this.stats = {
             totalBreedings: 0,
             totalParrotsBorn: 0,
@@ -33,6 +35,14 @@ export class HeadlessGameSimulator {
             errors: []
         };
         this.verbose = false;
+
+        // Random number generator (seeded or unseeded)
+        this.random = options.seed !== undefined
+            ? new SeededRandom(options.seed)
+            : null;
+
+        // Whether to use starter parrots (default: false for backwards compatibility)
+        this.useStarters = options.useStarters || false;
     }
 
     /**
@@ -76,10 +86,57 @@ export class HeadlessGameSimulator {
         };
 
         this.log('Game state reset');
+
+        // Add starter parrots if enabled
+        if (this.useStarters) {
+            this.addStarterParrots();
+        }
+
+        // Reset seeded random if using one
+        if (this.random) {
+            this.random.reset();
+        }
+    }
+
+    /**
+     * Add starter parrots (Twilight in collection, Prism ready to buy)
+     */
+    addStarterParrots() {
+        // Add Twilight to collection
+        const twilight = new Parrot(
+            'Twilight',
+            TWILIGHT_GENES,
+            1,
+            GameState.getAndIncrementParrotIdCounter()
+        );
+        GameState.addParrot(twilight);
+        this.updateRarityStats(twilight);
+
+        this.log('Added starter parrot: Twilight to collection');
+    }
+
+    /**
+     * Get random boolean (using seeded random if available)
+     */
+    _randomBoolean() {
+        return this.random ? this.random.boolean() : Math.random() < 0.5;
+    }
+
+    /**
+     * Generate random body part genes (using seeded random if available)
+     */
+    _randomBodyPartGenes() {
+        return {
+            red: [this._randomBoolean(), this._randomBoolean(), this._randomBoolean(), this._randomBoolean()],
+            green: [this._randomBoolean(), this._randomBoolean(), this._randomBoolean(), this._randomBoolean()],
+            blue: [this._randomBoolean(), this._randomBoolean(), this._randomBoolean(), this._randomBoolean()],
+            gradient: false
+        };
     }
 
     /**
      * Buy a random parrot (simplified store logic)
+     * Returns Prism if using starters and it's the first purchase, otherwise random
      */
     buyParrot() {
         const price = 50; // Standard parrot price
@@ -90,18 +147,28 @@ export class HeadlessGameSimulator {
             return null;
         }
 
-        // Generate random parrot
-        const genes = {
-            wings: randomBodyPartGenes(),
-            special_wing: randomBodyPartGenes(),
-            body: randomBodyPartGenes(),
-            head: randomBodyPartGenes(),
-            tail: randomBodyPartGenes(),
-            accents: randomBodyPartGenes()
-        };
+        let genes;
+        let name;
+
+        // If using starters and this is the first purchase, give Prism
+        if (this.useStarters && this.stats.totalParrotsBought === 0) {
+            genes = PRISM_GENES;
+            name = 'Prism';
+        } else {
+            // Generate random parrot
+            genes = {
+                wings: this._randomBodyPartGenes(),
+                special_wing: this._randomBodyPartGenes(),
+                body: this._randomBodyPartGenes(),
+                head: this._randomBodyPartGenes(),
+                tail: this._randomBodyPartGenes(),
+                accents: this._randomBodyPartGenes()
+            };
+            name = getRandomName();
+        }
 
         const parrot = new Parrot(
-            getRandomName(),
+            name,
             genes,
             1,
             GameState.getAndIncrementParrotIdCounter()
