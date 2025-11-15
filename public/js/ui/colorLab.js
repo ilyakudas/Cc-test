@@ -228,10 +228,30 @@ export function createColorLabComponent() {
         // Get computed RGB color for a body part
         getComputedColor(bodyPart) {
             const genes = this.currentGenes[bodyPart];
-            const r = this.countActiveGenes(bodyPart, 'red') * 64;
-            const g = this.countActiveGenes(bodyPart, 'green') * 64;
-            const b = this.countActiveGenes(bodyPart, 'blue') * 64;
-            return `rgb(${r}, ${g}, ${b})`;
+
+            // If gradient is disabled, all 4 genes contribute to one solid color
+            if (!genes.gradient) {
+                const r = this.countActiveGenes(bodyPart, 'red') * 64;
+                const g = this.countActiveGenes(bodyPart, 'green') * 64;
+                const b = this.countActiveGenes(bodyPart, 'blue') * 64;
+                return `rgb(${r}, ${g}, ${b})`;
+            }
+
+            // If gradient is enabled, split genes into two groups:
+            // Genes 0-1: START color (each gene adds 128 to RGB)
+            // Genes 2-3: END color (each gene adds 128 to RGB)
+            const startR = (genes.red[0] ? 128 : 0) + (genes.red[1] ? 128 : 0);
+            const startG = (genes.green[0] ? 128 : 0) + (genes.green[1] ? 128 : 0);
+            const startB = (genes.blue[0] ? 128 : 0) + (genes.blue[1] ? 128 : 0);
+
+            const endR = (genes.red[2] ? 128 : 0) + (genes.red[3] ? 128 : 0);
+            const endG = (genes.green[2] ? 128 : 0) + (genes.green[3] ? 128 : 0);
+            const endB = (genes.blue[2] ? 128 : 0) + (genes.blue[3] ? 128 : 0);
+
+            const startColor = `rgb(${startR}, ${startG}, ${startB})`;
+            const endColor = `rgb(${endR}, ${endG}, ${endB})`;
+
+            return `linear-gradient(90deg, ${startColor}, ${endColor})`;
         },
 
     };
