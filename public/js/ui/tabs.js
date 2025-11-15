@@ -29,6 +29,7 @@ export function switchTab(tab, event, renderContestsFn) {
     document.getElementById('breedingTab').style.display = 'none';
     document.getElementById('contestsTab').style.display = 'none';
     document.getElementById('galleryTab').style.display = 'none';
+    document.getElementById('colorLabTab').style.display = 'none';
 
     if (tab === 'collection') {
         document.getElementById('collectionTab').style.display = 'grid';
@@ -52,6 +53,10 @@ export function switchTab(tab, event, renderContestsFn) {
         document.getElementById('galleryTab').style.display = 'block';
         document.getElementById('panelTitle').textContent = 'Parrot Gallery';
         return; // Don't call updateUI for gallery tab (handled by Alpine.js)
+    } else if (tab === 'colorlab') {
+        document.getElementById('colorLabTab').style.display = 'block';
+        document.getElementById('panelTitle').textContent = 'Color Lab - Gene Editor';
+        return; // Don't call updateUI for color lab tab (handled by Alpine.js)
     }
 
     GameState.setSelectedParrotId(null);

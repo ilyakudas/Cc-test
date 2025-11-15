@@ -285,7 +285,8 @@ export function getGalleryParrots() {
  */
 export function createGalleryComponent() {
     return {
-        parrots: [],
+        curatedParrots: [],
+        customParrots: [],
         loading: true,
         selectedGalleryParrot: null,
 
@@ -295,16 +296,92 @@ export function createGalleryComponent() {
             await this.loadGalleryParrots();
         },
 
-        // Load gallery parrots
+        // Load gallery parrots (both curated and custom)
         async loadGalleryParrots() {
             this.loading = true;
             try {
-                this.parrots = getGalleryParrots();
-                console.log(`Loaded ${this.parrots.length} gallery parrots`);
+                // Load curated RYB parrots
+                this.curatedParrots = getGalleryParrots();
+                console.log(`Loaded ${this.curatedParrots.length} curated parrots`);
+
+                // Load custom parrots from localStorage
+                this.loadCustomParrots();
             } catch (error) {
                 console.error('Error loading gallery parrots:', error);
             } finally {
                 this.loading = false;
+            }
+        },
+
+        // Load custom parrots from localStorage
+        loadCustomParrots() {
+            try {
+                const saved = localStorage.getItem('chromawing_custom_gallery');
+                if (saved) {
+                    const customData = JSON.parse(saved);
+                    // Convert custom data to Parrot objects
+                    this.customParrots = customData.map(data => {
+                        const parrot = new Parrot(data.name, data.genes, 1, data.id);
+                        parrot.isCustom = true;
+                        parrot.created = data.created;
+                        return parrot;
+                    });
+                    console.log(`Loaded ${this.customParrots.length} custom parrots`);
+                } else {
+                    this.customParrots = [];
+                }
+            } catch (error) {
+                console.error('Error loading custom parrots:', error);
+                this.customParrots = [];
+            }
+        },
+
+        // Delete a custom parrot
+        deleteCustomParrot(parrot) {
+            if (!parrot.isCustom) {
+                alert('Cannot delete curated parrots!');
+                return;
+            }
+
+            if (!confirm(`Delete "${parrot.name}"?`)) {
+                return;
+            }
+
+            try {
+                // Remove from array
+                const index = this.customParrots.findIndex(p => p.id === parrot.id);
+                if (index !== -1) {
+                    this.customParrots.splice(index, 1);
+                }
+
+                // Update localStorage
+                const customData = this.customParrots.map(p => ({
+                    id: p.id,
+                    name: p.name,
+                    genes: p.genes,
+                    created: p.created
+                }));
+                localStorage.setItem('chromawing_custom_gallery', JSON.stringify(customData));
+
+                console.log('Deleted custom parrot:', parrot.name);
+            } catch (error) {
+                console.error('Error deleting custom parrot:', error);
+                alert('Failed to delete parrot!');
+            }
+        },
+
+        // Clone a parrot to Color Lab
+        cloneToColorLab(parrot) {
+            if (window.colorLabComponent && window.colorLabComponent.loadParrot) {
+                window.colorLabComponent.loadParrot(parrot);
+                console.log('Cloned parrot to Color Lab:', parrot.name);
+
+                // Switch to Color Lab tab
+                if (window.switchTabHandler) {
+                    window.switchTabHandler('colorlab');
+                }
+            } else {
+                console.error('Color Lab component not available');
             }
         },
 

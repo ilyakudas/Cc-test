@@ -1,12 +1,23 @@
 # Gallery Feature
 
-**Purpose**: Showcase beautiful parrots designed with RYB color wheel harmony, providing inspiration and demonstrating the game's color genetics system.
+**Purpose**: Showcase beautiful parrots designed with RYB color wheel harmony, providing inspiration and demonstrating the game's color genetics system. Displays both curated RYB parrots and user-created custom parrots from Color Lab.
 
-**Related docs**: [Visual Indicators](VISUAL_INDICATORS.md), [UI Rendering](../systems/UI_RENDERING.md)
+**Related docs**: [Color Lab](COLOR_LAB.md), [Visual Indicators](VISUAL_INDICATORS.md), [UI Rendering](../systems/UI_RENDERING.md), [Storage System](../systems/STORAGE.md)
 
 ## Overview
 
-The Gallery is a curated collection of 12 stunning parrots, each designed using the RYB (Red-Yellow-Blue) color wheel model. Each parrot represents a unique color theme with creative names that reflect natural phenomena, precious gems, and artistic concepts. The gallery serves as both inspiration for breeding and a demonstration of the game's genetic color system capabilities.
+The Gallery has two sections:
+
+**1. Curated Collection** - 12 predefined parrots designed using the RYB (Red-Yellow-Blue) color wheel model. Each represents a unique color theme with creative names reflecting natural phenomena, precious gems, and artistic concepts.
+
+**2. My Creations** - User-designed parrots created in Color Lab. Players can save custom genetic designs to this section, creating a personal showcase of their favorite color combinations.
+
+The gallery serves multiple purposes:
+- **Inspiration** for breeding strategies
+- **Education** demonstrating color genetics
+- **Reference** for harmonious color schemes
+- **Creative showcase** for player designs
+- **Learning tool** via clone-and-modify workflow
 
 ## User Requirements
 
@@ -424,6 +435,291 @@ Alpine.data('galleryParrots', () => window.galleryComponent);
 - `.gallery-parrot-name` - Parrot name styling
 - `.gallery-parrot-theme` - Theme description styling
 - `.gallery-parrot-beauty` - Beauty score badge
+
+## Gallery Sections
+
+### Curated Collection
+
+**Display**:
+- Section header: "Curated Collection" or "RYB Color Wheel Gallery"
+- Subtitle: "12 beautiful parrots demonstrating color wheel harmony"
+- Always visible (hardcoded, never empty)
+- 12 predefined parrots in grid
+
+**Parrot Sources**:
+- Defined in `RYB_COLOR_WHEEL` constant
+- Generated from color definitions
+- Never stored in localStorage
+- Always available across all sessions
+
+**Card Actions**:
+- "Clone to Color Lab" button on each card
+- No delete button (predefined parrots can't be removed)
+- Click card for preview (future)
+
+**Characteristics**:
+- Theme names (e.g., "🌅 Sunset Serenade")
+- Theme descriptions (e.g., "Warm sunset gradient")
+- High beauty scores (typically 150-200)
+- Carefully designed color harmonies
+
+### My Creations
+
+**Display**:
+- Section header: "My Creations" or "Custom Gallery"
+- Subtitle: "Your custom designs from Color Lab"
+- Shows empty state if no custom parrots
+- Grid of user-created parrots
+
+**Empty State**:
+```
+╔══════════════════════════════════════╗
+║  🎨 No custom parrots yet            ║
+║                                      ║
+║  Create beautiful parrots in         ║
+║  Color Lab and save them here!       ║
+║                                      ║
+║  [Go to Color Lab →]                 ║
+╚══════════════════════════════════════╝
+```
+
+**Parrot Sources**:
+- Created in Color Lab
+- Saved to localStorage (`customGalleryParrots`)
+- Persists across sessions
+- Player-specific (not shared)
+
+**Card Actions**:
+- "Clone to Color Lab" button
+- "Delete" button (⚠️ with confirmation)
+- Custom badge or icon to distinguish from predefined
+
+**Characteristics**:
+- User-chosen names
+- Variable beauty scores
+- Any color combinations
+- Reflects player creativity
+
+**Storage Limit** (Optional):
+- Maximum 50 custom parrots
+- Show warning at 45
+- Suggest deleting old ones at limit
+
+### Section Ordering
+
+**Recommended Order**:
+1. My Creations (top) - Player's work showcased first
+2. Curated Collection (below) - Inspiration and reference
+
+**Alternative Order**:
+1. Curated Collection (top) - Learn from examples first
+2. My Creations (below) - Then create your own
+
+**Current Implementation**: Curated first (showing examples)
+
+## Card Actions
+
+### Clone to Color Lab Button
+
+**Visual Design**:
+- Button text: "🧬 Clone to Lab" or "✏️ Edit Copy"
+- Style: Secondary button (blue/purple)
+- Position: Below beauty badge
+- Width: Full card width or centered
+
+**Behavior**:
+1. User clicks "Clone to Lab" button
+2. Switch to Color Lab tab
+3. Load parrot genes into gene editor
+4. Set name to "{original name} (Copy)"
+5. Show toast: "Loaded '{name}' for editing"
+6. User can now modify and save as new custom parrot
+
+**Use Cases**:
+- Learn from curated designs
+- Tweak existing designs
+- Create variations
+- Understand gene combinations
+
+**Technical**:
+- Triggers `window.cloneToColorLabHandler(parrotId)`
+- Passes parrot genes to Color Lab component
+- See [Color Lab](COLOR_LAB.md) for implementation
+
+### Delete Button (Custom Parrots Only)
+
+**Visual Design**:
+- Button text: "🗑️ Delete" or "✖️ Remove"
+- Style: Danger button (red)
+- Position: Next to Clone button or separate row
+- Width: Half card width or full width
+
+**Behavior**:
+1. User clicks "Delete" button
+2. Show confirmation dialog:
+   ```
+   Delete "Parrot Name"?
+
+   This custom parrot will be permanently removed
+   from your gallery. This action cannot be undone.
+
+   [Cancel]  [Delete]
+   ```
+3. If confirmed:
+   - Remove from customGalleryParrots array
+   - Save to localStorage
+   - Update gallery display
+   - Show toast: "Deleted '{name}'"
+4. If cancelled:
+   - No action
+   - Close dialog
+
+**Safety**:
+- Confirmation required (prevent accidents)
+- Clear warning about permanence
+- Toast feedback on deletion
+- Undo not available (keep it simple)
+
+**Technical**:
+- Triggers `window.deleteCustomParrotHandler(parrotId)`
+- Filters array, saves to localStorage
+- Refreshes gallery component
+
+**Not Available For**:
+- Predefined parrots (button hidden/disabled)
+- Empty custom gallery (no parrots to delete)
+
+## Color Lab Integration
+
+### Saving to Gallery
+
+**Entry Point**: Color Lab "Save to Gallery" button
+
+**Flow**:
+```
+Color Lab → Enter Name → Click Save
+    ↓
+Validate Name
+    ↓
+Create Parrot from Genes
+    ↓
+Add to customGalleryParrots Array
+    ↓
+Save to localStorage
+    ↓
+Show Success Toast
+    ↓
+(Optional) Switch to Gallery Tab
+```
+
+**Storage**:
+- Key: `customGalleryParrots`
+- Type: Array of parrot objects
+- Each object contains: id, name, genes, createdAt, isCustom flag
+
+**Display**:
+- Immediately appears in "My Creations" section
+- Sorted by createdAt (newest first) or alphabetically
+- Shows with Clone + Delete buttons
+
+**See**: [Color Lab](COLOR_LAB.md) for detailed save process
+
+### Cloning to Color Lab
+
+**Entry Point**: Gallery card "Clone to Lab" button
+
+**Flow**:
+```
+Gallery Card → Click "Clone to Lab"
+    ↓
+Switch to Color Lab Tab
+    ↓
+Load Parrot Genes
+    ↓
+Populate All 78 Alleles
+    ↓
+Set Gradient Flags
+    ↓
+Set Name (with " (Copy)" suffix)
+    ↓
+Show Toast
+    ↓
+User Modifies & Saves as New
+```
+
+**Benefits**:
+- Start with known good design
+- Learn by modification
+- Create design families (variations on theme)
+- Understand curated designs
+
+**See**: [Color Lab](COLOR_LAB.md) for detailed clone process
+
+### Data Flow Diagram
+
+```
+┌─────────────┐
+│  Color Lab  │
+│             │
+│  [Save] ────┼────→ localStorage.customGalleryParrots
+│             │              ↓
+│  [Clone] ←──┼──────────────┘
+└─────────────┘              ↓
+                      ┌──────────────┐
+                      │   Gallery    │
+                      │              │
+                      │  Curated     │← RYB_COLOR_WHEEL (hardcoded)
+                      │  My Creations│← localStorage
+                      │              │
+                      │  [Clone] ────┼─→ Color Lab
+                      │  [Delete] ───┼─→ localStorage (remove)
+                      └──────────────┘
+```
+
+## Storage Architecture
+
+### Predefined Parrots
+
+**Location**: `public/js/ui/galleryParrots.js`
+
+**Format**: JavaScript constant
+```javascript
+const RYB_COLOR_WHEEL = { /* 12 color definitions */ };
+const GALLERY_PARROTS = [ /* 12 parrot definitions */ ];
+```
+
+**Characteristics**:
+- Hardcoded in source code
+- Never in localStorage
+- Identical for all players
+- Can only be updated via code deployment
+
+### Custom Parrots
+
+**Location**: `localStorage.customGalleryParrots`
+
+**Format**: JSON array
+```javascript
+[
+  {
+    id: "custom-1699123456789",
+    name: "Midnight Blue",
+    genes: { /* 6 body parts × 13 genes */ },
+    createdAt: 1699123456789,
+    isCustom: true
+  },
+  // ... more custom parrots
+]
+```
+
+**Characteristics**:
+- Stored per-browser
+- Player-specific
+- Survives page reloads
+- Can be deleted by user
+- Subject to localStorage limits (5-10MB typically)
+
+**See**: [Storage System](../systems/STORAGE.md) for persistence details
 
 ## User Interactions
 
