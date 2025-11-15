@@ -12,6 +12,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Cleanup old Firebase Hosting preview channels
+        continue-on-error: true
+        run: |
+          # List all channels and delete expired ones (older than 7 days)
+          npx firebase-tools hosting:channel:list --project cc-test-e3ccf --json > channels.json || true
+
+          # Delete channels that have expired (expirationTime in the past)
+          # This helps stay under Firebase's channel quota limits
+          node -e "
+            const channels = require('./channels.json');
+            const now = Date.now();
+            if (channels.result) {
+              channels.result
+                .filter(ch => ch.expireTime && new Date(ch.expireTime).getTime() < now)
+                .forEach(ch => {
+                  console.log('Deleting expired channel:', ch.name);
+                  require('child_process').execSync(
+                    \`npx firebase-tools hosting:channel:delete \${ch.name} --project cc-test-e3ccf --force\`,
+                    { stdio: 'inherit' }
+                  );
+                });
+            }
+          " || echo "Cleanup completed or skipped"
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
       - name: Deploy to Firebase Hosting Preview Channel
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
