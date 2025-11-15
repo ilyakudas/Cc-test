@@ -55,6 +55,12 @@ export function createColorLabComponent() {
         async init() {
             console.log('Color Lab component initializing...');
             this.resetToDefault();
+
+            // Listen for load-parrot events from Gallery
+            window.addEventListener('load-parrot', (event) => {
+                console.log('[COLORLAB] Received load-parrot event');
+                this.handleLoadParrot(event.detail);
+            });
         },
 
         // Reset to default (all genes off)
@@ -155,13 +161,42 @@ export function createColorLabComponent() {
             }
         },
 
-        // Load a parrot for editing (clone from gallery)
-        loadParrot(parrot) {
-            // Deep copy the genes
-            this.currentGenes = JSON.parse(JSON.stringify(parrot.genes));
-            this.parrotName = parrot.name + ' (Copy)';
+        // Handle load-parrot event (called from event listener)
+        handleLoadParrot(parrotData) {
+            console.log('[COLORLAB] handleLoadParrot called for:', parrotData.name);
+
+            // Update parrot name
+            this.parrotName = parrotData.name + ' (Copy)';
+
+            // Create a completely new genes object
+            const genes = {};
+            BODY_PARTS.forEach(part => {
+                const sourceGenes = parrotData.genes[part.key];
+                if (sourceGenes) {
+                    genes[part.key] = {
+                        red: [...sourceGenes.red],
+                        green: [...sourceGenes.green],
+                        blue: [...sourceGenes.blue],
+                        gradient: sourceGenes.gradient
+                    };
+                } else {
+                    // Fallback to default if body part doesn't exist
+                    genes[part.key] = {
+                        red: [false, false, false, false],
+                        green: [false, false, false, false],
+                        blue: [false, false, false, false],
+                        gradient: false
+                    };
+                }
+            });
+
+            // Replace the entire currentGenes object
+            this.currentGenes = genes;
+            console.log('[COLORLAB] Loaded genes:', genes.wings.red);
+
+            // Update preview
             this.updatePreview();
-            console.log('Loaded parrot for editing:', parrot.name);
+            console.log('[COLORLAB] Parrot loaded successfully');
         },
 
         // Get custom parrots from localStorage
@@ -197,7 +232,8 @@ export function createColorLabComponent() {
             const g = this.countActiveGenes(bodyPart, 'green') * 64;
             const b = this.countActiveGenes(bodyPart, 'blue') * 64;
             return `rgb(${r}, ${g}, ${b})`;
-        }
+        },
+
     };
 }
 

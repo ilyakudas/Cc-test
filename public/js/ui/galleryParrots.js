@@ -372,17 +372,26 @@ export function createGalleryComponent() {
 
         // Clone a parrot to Color Lab
         cloneToColorLab(parrot) {
-            if (window.colorLabComponent && window.colorLabComponent.loadParrot) {
-                window.colorLabComponent.loadParrot(parrot);
-                console.log('Cloned parrot to Color Lab:', parrot.name);
+            console.log('[GALLERY] Clone button clicked for:', parrot.name);
 
-                // Switch to Color Lab tab
-                if (window.switchTabHandler) {
-                    window.switchTabHandler('colorlab');
-                }
-            } else {
-                console.error('Color Lab component not available');
+            // Switch to Color Lab tab FIRST so the elements are visible
+            if (window.switchTabHandler) {
+                console.log('[GALLERY] Switching to Color Lab tab...');
+                window.switchTabHandler('colorlab');
             }
+
+            // Dispatch custom event with parrot data
+            // This allows Alpine to handle it in its reactive context
+            setTimeout(() => {
+                console.log('[GALLERY] Dispatching load-parrot event');
+                const event = new CustomEvent('load-parrot', {
+                    detail: {
+                        name: parrot.name,
+                        genes: parrot.genes
+                    }
+                });
+                window.dispatchEvent(event);
+            }, 100);  // Small delay to ensure tab switch completes
         },
 
         // Get SVG for a parrot
