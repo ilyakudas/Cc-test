@@ -196,6 +196,90 @@ const unlockedOffspring = offspring.filter(p => !GameState.isParrotLocked(p.id))
 // Operate only on unlockedOffspring
 ```
 
+### Alpine.js UI Not Updating After Programmatic Data Changes
+
+**Symptoms**:
+- Data is correct (verified in console)
+- Manual interactions work (clicking buttons, toggles)
+- Programmatic updates don't reflect in UI
+- Manual refresh or switching views makes it update
+- Tab switching triggers correct display
+
+**Root Cause**: Breaking Alpine's reactivity system by:
+1. **Reusing component instances** instead of creating new ones
+2. **Direct method calls** on shared component instances
+3. **Updating data when component is hidden** (tab not active)
+
+**Example of the Problem**:
+```javascript
+// WRONG: Reusing same instance breaks Alpine reactivity
+window.myComponent = createMyComponent();
+Alpine.data('myComponent', () => window.myComponent);
+
+// Gallery calls directly
+window.myComponent.loadData(data);  // Alpine may not detect this!
+```
+
+**Why This Breaks**:
+- `Alpine.data()` expects a **factory function** that returns a NEW object each time
+- Returning the same instance breaks Alpine's proxy-based reactivity
+- Direct method calls from outside don't run in Alpine's reactive context
+- Updates while tab is hidden compound the issue
+
+**Solutions**:
+
+**Option 1: Use Custom Events (Recommended)**
+```javascript
+// Component A: Dispatch event
+const event = new CustomEvent('load-data', {
+  detail: { myData: data }
+});
+window.dispatchEvent(event);
+
+// Component B: Listen in Alpine context
+init() {
+  window.addEventListener('load-data', (event) => {
+    this.handleLoadData(event.detail);  // Runs in Alpine context!
+  });
+}
+```
+
+**Option 2: Use Alpine.store() for Shared State**
+```javascript
+// Create store instead of component instance
+Alpine.store('myData', {
+  items: [],
+  loadItems(newItems) {
+    this.items = newItems;  // Reactive!
+  }
+});
+
+// Access from any component
+x-text="$store.myData.items.length"
+```
+
+**Option 3: Proper Component Registration**
+```javascript
+// WRONG
+const instance = createComponent();
+Alpine.data('myComponent', () => instance);
+
+// RIGHT - Create NEW instance each time
+Alpine.data('myComponent', () => createComponent());
+```
+
+**Prevention**:
+- Use custom events for cross-component communication
+- Use Alpine.store() for shared state
+- Never reuse component instances
+- Keep Alpine.data() as factory functions
+- Test programmatic updates, not just manual interactions
+
+**Resources**:
+- [Alpine.js Reactivity](https://alpinejs.dev/advanced/reactivity)
+- [Alpine.js Store](https://alpinejs.dev/globals/alpine-store)
+- [CustomEvent API](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent)
+
 ## Debugging Techniques
 
 ### Browser DevTools Console
@@ -429,6 +513,8 @@ Before committing changes:
 - Setting arrays instead of appending
 - Applying CSS to wrong element
 - Using stale variable values
+- **Reusing Alpine.js component instances** (breaks reactivity)
+- **Direct method calls between Alpine components** (use events instead)
 
 **Always**:
 - Validate input
@@ -436,3 +522,5 @@ Before committing changes:
 - Update state → update UI → save
 - Test in multiple browsers
 - Use console.log liberally during development
+- **Use Alpine.data() as factory functions** (return NEW instances)
+- **Use custom events or Alpine.store() for cross-component communication**
