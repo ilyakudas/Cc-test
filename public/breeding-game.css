@@ -1543,6 +1543,86 @@ header h1 {
     font-size: 1.2em;
 }
 
+/* Gallery sections */
+.gallery-section {
+    margin-bottom: 20px;
+}
+
+.gallery-section-header {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.gallery-section-header h4 {
+    color: #667eea;
+    font-size: 1.3em;
+    margin-bottom: 5px;
+}
+
+.gallery-section-header p {
+    color: #999;
+    font-size: 0.9em;
+}
+
+/* Gallery card actions */
+.gallery-card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.btn-gallery-clone,
+.btn-gallery-delete {
+    flex: 1;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.85em;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-gallery-clone {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+.btn-gallery-clone:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+.btn-gallery-delete {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-gallery-delete:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+/* Gallery empty state */
+.gallery-empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border: 2px dashed #ddd;
+}
+
+.gallery-empty-state p:first-child {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #667eea;
+}
+
 /* Gallery tab specific layout */
 #galleryTab {
     flex: 1;
@@ -1550,4 +1630,346 @@ header h1 {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+}
+
+/* ===== Color Lab Styles ===== */
+
+.colorlab-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    height: 100%;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.colorlab-header {
+    text-align: center;
+}
+
+.colorlab-header h3 {
+    color: #667eea;
+    font-size: 1.5em;
+    margin-bottom: 5px;
+}
+
+.colorlab-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.colorlab-name-input {
+    padding: 10px 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    transition: border-color 0.3s;
+}
+
+.colorlab-name-input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.colorlab-action-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-colorlab {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+    transition: all 0.3s;
+    flex: 1;
+    min-width: 140px;
+}
+
+.btn-colorlab:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-colorlab-secondary {
+    background: white;
+    color: #667eea;
+    border: 2px solid #667eea;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: all 0.3s;
+    flex: 1;
+    min-width: 100px;
+}
+
+.btn-colorlab-secondary:hover {
+    background: #f0f2ff;
+    transform: translateY(-2px);
+}
+
+/* Two-panel layout */
+.colorlab-panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    flex: 1;
+    min-height: 0;
+}
+
+.colorlab-editor-panel,
+.colorlab-preview-panel {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 15px;
+    overflow-y: auto;
+}
+
+.colorlab-editor-panel h4,
+.colorlab-preview-panel h4 {
+    color: #667eea;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    text-align: center;
+}
+
+/* Body part selector */
+.body-part-selector {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.body-part-button {
+    background: white;
+    border: 2px solid #ddd;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.85em;
+}
+
+.body-part-button:hover {
+    border-color: #667eea;
+    background: #f0f2ff;
+}
+
+.body-part-button.active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border-color: #667eea;
+}
+
+.body-part-button span:first-child {
+    font-size: 1.5em;
+}
+
+/* Gene controls */
+.gene-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.gene-section {
+    background: white;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.gene-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #333;
+}
+
+.gene-count {
+    font-size: 0.9em;
+    color: #667eea;
+    background: #f0f2ff;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.gene-quick-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-gene-quick {
+    background: #f0f2ff;
+    color: #667eea;
+    border: 1px solid #667eea;
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.75em;
+    transition: all 0.2s;
+}
+
+.btn-gene-quick:hover {
+    background: #667eea;
+    color: white;
+}
+
+/* Gene toggles */
+.gene-toggles {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.gene-toggle {
+    background: #f8f9fa;
+    border: 2px solid #ddd;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 600;
+    font-size: 0.9em;
+}
+
+.gene-toggle:hover {
+    border-color: #667eea;
+    background: #f0f2ff;
+}
+
+.gene-toggle.active {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* Gradient toggle */
+.gradient-toggle-container {
+    display: flex;
+    justify-content: center;
+}
+
+.gradient-toggle {
+    background: #f8f9fa;
+    border: 2px solid #ddd;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 600;
+    min-width: 150px;
+}
+
+.gradient-toggle:hover {
+    border-color: #667eea;
+    background: #f0f2ff;
+}
+
+.gradient-toggle.active {
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    color: #333;
+    border-color: #ffd700;
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+}
+
+/* Color preview swatch */
+.color-preview-swatch {
+    width: 100%;
+    height: 60px;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Preview panel */
+.colorlab-preview-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.colorlab-preview-display {
+    width: 100%;
+    max-width: 300px;
+    height: 300px;
+    background: white;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    border: 2px solid #e0e0e0;
+}
+
+.colorlab-preview-display svg {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.colorlab-preview-stats {
+    width: 100%;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.preview-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+.preview-stat span:first-child {
+    color: #666;
+}
+
+.preview-stat span:last-child {
+    color: #667eea;
+    font-size: 1.1em;
+}
+
+/* Color Lab tab specific layout */
+#colorLabTab {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Responsive adjustments for Color Lab */
+@media (max-width: 1200px) {
+    .colorlab-panels {
+        grid-template-columns: 1fr;
+    }
+
+    .body-part-selector {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }

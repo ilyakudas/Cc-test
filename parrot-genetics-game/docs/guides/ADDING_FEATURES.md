@@ -425,6 +425,65 @@ export function buyParrot(parrotId, saveGameFn) {
 }
 ```
 
+### Alpine.js Components
+
+**Always**:
+- Use `Alpine.data()` as factory functions (return NEW instances)
+- Use custom events for cross-component communication
+- Use `Alpine.store()` for shared state
+- Never reuse component instances
+
+**Component Registration**:
+```javascript
+// WRONG - Reusing same instance breaks reactivity
+window.myComponent = createMyComponent();
+Alpine.data('myComponent', () => window.myComponent);
+
+// RIGHT - Create new instance each time
+Alpine.data('myComponent', () => createMyComponent());
+```
+
+**Cross-Component Communication**:
+```javascript
+// WRONG - Direct method calls break reactivity
+window.componentA.loadData(data);
+
+// RIGHT - Use custom events
+const event = new CustomEvent('load-data', {
+  detail: { myData: data }
+});
+window.dispatchEvent(event);
+
+// In receiving component's init()
+window.addEventListener('load-data', (event) => {
+  this.handleLoadData(event.detail);  // Runs in Alpine context
+});
+```
+
+**Shared State**:
+```javascript
+// Use Alpine.store() for state shared across components
+Alpine.store('gameData', {
+  items: [],
+  selectedItem: null,
+  selectItem(item) {
+    this.selectedItem = item;
+  }
+});
+
+// Access in any component
+x-text="$store.gameData.items.length"
+@click="$store.gameData.selectItem(item)"
+```
+
+**Why This Matters**:
+- Alpine.js uses Proxies for reactivity
+- Reusing instances prevents proper proxy setup
+- Direct method calls run outside Alpine's reactive context
+- Updates while components are hidden (tab switching) compound issues
+
+**See Also**: [Debugging Guide - Alpine.js Reactivity Issues](DEBUGGING.md#alpinejs-ui-not-updating-after-programmatic-data-changes)
+
 ### Testing
 
 **Always test**:

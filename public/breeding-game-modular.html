@@ -95,6 +95,7 @@
                     <button class="tab" onclick="switchTabHandler('breeding')">💕 Breeding</button>
                     <button class="tab" onclick="switchTabHandler('contests')">🏆 Contests</button>
                     <button class="tab" onclick="switchTabHandler('gallery')">🎨 Gallery</button>
+                    <button class="tab" onclick="switchTabHandler('colorlab')">🧬 Color Lab</button>
                 </div>
 
                 <!-- Actions Section -->
@@ -168,9 +169,9 @@
                 <div id="galleryTab" style="display: none;" x-data="galleryParrots">
                     <div class="gallery-container">
                         <div class="gallery-header">
-                            <h3>🎨 Beautiful Parrot Gallery</h3>
+                            <h3>🎨 Parrot Gallery</h3>
                             <p style="color: #666; font-size: 0.9em; margin-top: 8px;">
-                                Explore stunning parrots designed with RYB color wheel harmony
+                                Explore curated parrots and your custom creations
                             </p>
                         </div>
 
@@ -181,22 +182,235 @@
                         </template>
 
                         <template x-if="!loading">
-                            <div class="gallery-grid">
-                                <template x-for="parrot in parrots" :key="parrot.id">
-                                    <div class="gallery-card" @click="selectParrot(parrot)">
-                                        <div class="gallery-parrot-display" x-html="await getParrotSVG(parrot)"></div>
-                                        <div class="gallery-card-info">
-                                            <div class="gallery-parrot-name" x-text="parrot.name"></div>
-                                            <div class="gallery-parrot-theme" x-text="parrot.galleryTheme"></div>
-                                            <div class="gallery-parrot-beauty">
-                                                <span>✨</span>
-                                                <span x-text="'Beauty: ' + parrot.calculateBeauty().score"></span>
+                            <div>
+                                <!-- Curated Collection Section -->
+                                <div class="gallery-section">
+                                    <div class="gallery-section-header">
+                                        <h4>🌈 Curated Collection</h4>
+                                        <p>Beautiful parrots designed with RYB color wheel harmony</p>
+                                    </div>
+                                    <div class="gallery-grid">
+                                        <template x-for="parrot in curatedParrots" :key="parrot.id">
+                                            <div class="gallery-card">
+                                                <div class="gallery-parrot-display" x-html="await getParrotSVG(parrot)"></div>
+                                                <div class="gallery-card-info">
+                                                    <div class="gallery-parrot-name" x-text="parrot.name"></div>
+                                                    <div class="gallery-parrot-theme" x-text="parrot.galleryTheme"></div>
+                                                    <div class="gallery-parrot-beauty">
+                                                        <span>✨</span>
+                                                        <span x-text="'Beauty: ' + parrot.calculateBeauty().score"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="gallery-card-actions">
+                                                    <button class="btn-gallery-clone" @click="cloneToColorLab(parrot)" title="Clone to Color Lab">
+                                                        🧬 Clone
+                                                    </button>
+                                                </div>
                                             </div>
+                                        </template>
+                                    </div>
+                                </div>
+
+                                <!-- My Creations Section -->
+                                <div class="gallery-section" style="margin-top: 30px;">
+                                    <div class="gallery-section-header">
+                                        <h4>✨ My Creations</h4>
+                                        <p>Custom parrots you've designed in the Color Lab</p>
+                                    </div>
+                                    <template x-if="customParrots.length === 0">
+                                        <div class="gallery-empty-state">
+                                            <p>No custom parrots yet!</p>
+                                            <p style="font-size: 0.9em; color: #999; margin-top: 8px;">
+                                                Visit the Color Lab to create your first custom parrot
+                                            </p>
+                                        </div>
+                                    </template>
+                                    <template x-if="customParrots.length > 0">
+                                        <div class="gallery-grid">
+                                            <template x-for="parrot in customParrots" :key="parrot.id">
+                                                <div class="gallery-card">
+                                                    <div class="gallery-parrot-display" x-html="await getParrotSVG(parrot)"></div>
+                                                    <div class="gallery-card-info">
+                                                        <div class="gallery-parrot-name" x-text="parrot.name"></div>
+                                                        <div class="gallery-parrot-beauty">
+                                                            <span>✨</span>
+                                                            <span x-text="'Beauty: ' + parrot.calculateBeauty().score"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="gallery-card-actions">
+                                                        <button class="btn-gallery-clone" @click="cloneToColorLab(parrot)" title="Clone to Color Lab">
+                                                            🧬 Clone
+                                                        </button>
+                                                        <button class="btn-gallery-delete" @click="deleteCustomParrot(parrot)" title="Delete">
+                                                            🗑️ Delete
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <div id="colorLabTab" style="display: none;" x-data="colorLab">
+                    <div class="colorlab-container">
+                        <div class="colorlab-header">
+                            <h3>🧬 Color Lab - Gene Editor</h3>
+                            <p style="color: #666; font-size: 0.9em; margin-top: 8px;">
+                                Create custom parrots by controlling individual genes
+                            </p>
+                        </div>
+
+                        <!-- Name input and actions -->
+                        <div class="colorlab-actions">
+                            <input type="text"
+                                   x-model="parrotName"
+                                   placeholder="Parrot name..."
+                                   class="colorlab-name-input"
+                                   maxlength="30">
+                            <div class="colorlab-action-buttons">
+                                <button class="btn btn-colorlab" @click="saveToGallery()">💾 Save to Gallery</button>
+                                <button class="btn btn-colorlab-secondary" @click="randomize()">🎲 Randomize</button>
+                                <button class="btn btn-colorlab-secondary" @click="resetToDefault()">🔄 Reset</button>
+                            </div>
+                        </div>
+
+                        <!-- Two-panel layout: Editor + Preview -->
+                        <div class="colorlab-panels">
+                            <!-- Gene Editor Panel -->
+                            <div class="colorlab-editor-panel">
+                                <h4>Gene Editor</h4>
+
+                                <!-- Body part selector -->
+                                <div class="body-part-selector">
+                                    <template x-for="part in [
+                                        { key: 'wings', label: 'Wings', icon: '🪽' },
+                                        { key: 'special_wing', label: 'Special Wing', icon: '✨' },
+                                        { key: 'body', label: 'Body', icon: '🦜' },
+                                        { key: 'head', label: 'Head', icon: '👁️' },
+                                        { key: 'tail', label: 'Tail', icon: '🎨' },
+                                        { key: 'accents', label: 'Accents', icon: '💫' }
+                                    ]" :key="part.key">
+                                        <button class="body-part-button"
+                                                :class="{ 'active': selectedBodyPart === part.key }"
+                                                @click="selectBodyPart(part.key)">
+                                            <span x-text="part.icon"></span>
+                                            <span x-text="part.label"></span>
+                                        </button>
+                                    </template>
+                                </div>
+
+                                <!-- Gene controls for selected body part -->
+                                <div class="gene-controls" x-show="selectedBodyPart">
+                                    <div class="gene-section">
+                                        <div class="gene-header">
+                                            <span>🔴 Red Channel</span>
+                                            <span class="gene-count" x-text="countActiveGenes(selectedBodyPart, 'red') + '/4'"></span>
+                                            <div class="gene-quick-actions">
+                                                <button class="btn-gene-quick" @click="setAllGenesOfColor(selectedBodyPart, 'red', true)">All</button>
+                                                <button class="btn-gene-quick" @click="setAllGenesOfColor(selectedBodyPart, 'red', false)">None</button>
+                                            </div>
+                                        </div>
+                                        <div class="gene-toggles">
+                                            <template x-for="i in [0, 1, 2, 3]" :key="'red-' + i">
+                                                <button class="gene-toggle"
+                                                        :class="{ 'active': currentGenes[selectedBodyPart].red[i] }"
+                                                        @click="toggleGene(selectedBodyPart, 'red', i)">
+                                                    <span x-text="'R' + (i + 1)"></span>
+                                                </button>
+                                            </template>
+                                        </div>
+                                    </div>
+
+                                    <div class="gene-section">
+                                        <div class="gene-header">
+                                            <span>🟢 Green Channel</span>
+                                            <span class="gene-count" x-text="countActiveGenes(selectedBodyPart, 'green') + '/4'"></span>
+                                            <div class="gene-quick-actions">
+                                                <button class="btn-gene-quick" @click="setAllGenesOfColor(selectedBodyPart, 'green', true)">All</button>
+                                                <button class="btn-gene-quick" @click="setAllGenesOfColor(selectedBodyPart, 'green', false)">None</button>
+                                            </div>
+                                        </div>
+                                        <div class="gene-toggles">
+                                            <template x-for="i in [0, 1, 2, 3]" :key="'green-' + i">
+                                                <button class="gene-toggle"
+                                                        :class="{ 'active': currentGenes[selectedBodyPart].green[i] }"
+                                                        @click="toggleGene(selectedBodyPart, 'green', i)">
+                                                    <span x-text="'G' + (i + 1)"></span>
+                                                </button>
+                                            </template>
+                                        </div>
+                                    </div>
+
+                                    <div class="gene-section">
+                                        <div class="gene-header">
+                                            <span>🔵 Blue Channel</span>
+                                            <span class="gene-count" x-text="countActiveGenes(selectedBodyPart, 'blue') + '/4'"></span>
+                                            <div class="gene-quick-actions">
+                                                <button class="btn-gene-quick" @click="setAllGenesOfColor(selectedBodyPart, 'blue', true)">All</button>
+                                                <button class="btn-gene-quick" @click="setAllGenesOfColor(selectedBodyPart, 'blue', false)">None</button>
+                                            </div>
+                                        </div>
+                                        <div class="gene-toggles">
+                                            <template x-for="i in [0, 1, 2, 3]" :key="'blue-' + i">
+                                                <button class="gene-toggle"
+                                                        :class="{ 'active': currentGenes[selectedBodyPart].blue[i] }"
+                                                        @click="toggleGene(selectedBodyPart, 'blue', i)">
+                                                    <span x-text="'B' + (i + 1)"></span>
+                                                </button>
+                                            </template>
+                                        </div>
+                                    </div>
+
+                                    <div class="gene-section">
+                                        <div class="gene-header">
+                                            <span>✨ Gradient</span>
+                                        </div>
+                                        <div class="gradient-toggle-container">
+                                            <button class="gradient-toggle"
+                                                    :class="{ 'active': currentGenes[selectedBodyPart].gradient }"
+                                                    @click="toggleGradient(selectedBodyPart)">
+                                                <span x-text="currentGenes[selectedBodyPart].gradient ? '✓ Enabled' : '○ Disabled'"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Color preview swatch -->
+                                    <div class="gene-section">
+                                        <div class="gene-header">
+                                            <span>🎨 Resulting Color</span>
+                                        </div>
+                                        <div class="color-preview-swatch"
+                                             :style="`background-color: ${getComputedColor(selectedBodyPart)}`">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Live Preview Panel -->
+                            <div class="colorlab-preview-panel">
+                                <h4>Live Preview</h4>
+                                <div class="colorlab-preview-display" x-html="previewSVG"></div>
+                                <template x-if="previewParrot">
+                                    <div class="colorlab-preview-stats">
+                                        <div class="preview-stat">
+                                            <span>✨ Beauty:</span>
+                                            <span x-text="previewParrot.calculateBeauty().score"></span>
+                                        </div>
+                                        <div class="preview-stat">
+                                            <span>🧬 Active Genes:</span>
+                                            <span x-text="Object.keys(currentGenes).reduce((total, part) =>
+                                                total + countActiveGenes(part, 'red') +
+                                                countActiveGenes(part, 'green') +
+                                                countActiveGenes(part, 'blue'), 0) + '/72'"></span>
                                         </div>
                                     </div>
                                 </template>
                             </div>
-                        </template>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -255,12 +469,15 @@
     <script type="module">
         import { createBreedingSlotsComponent } from './js/ui/breedingSlots.js';
         import { createGalleryComponent } from './js/ui/galleryParrots.js';
+        import { createColorLabComponent } from './js/ui/colorLab.js';
 
         // Make component factories globally available
         window.breedingSlotsComponent = createBreedingSlotsComponent();
         window.galleryComponent = createGalleryComponent();
+        window.colorLabComponent = createColorLabComponent();
         console.log('v1.2.1 - breedingSlotsComponent available:', !!window.breedingSlotsComponent);
         console.log('v1.2.1 - galleryComponent available:', !!window.galleryComponent);
+        console.log('v1.2.1 - colorLabComponent available:', !!window.colorLabComponent);
     </script>
 
     <!-- Register Alpine components using the factories -->
@@ -282,6 +499,14 @@
                 console.log('v1.2.1 - galleryParrots component registered');
             } else {
                 console.error('v1.2.1 - galleryComponent not found!');
+            }
+
+            // Register color lab component
+            if (window.colorLabComponent) {
+                Alpine.data('colorLab', () => window.colorLabComponent);
+                console.log('v1.2.1 - colorLab component registered');
+            } else {
+                console.error('v1.2.1 - colorLabComponent not found!');
             }
         });
     </script>
