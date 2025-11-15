@@ -94,6 +94,7 @@
                     <button class="tab" onclick="switchTabHandler('store')">🏪 Store</button>
                     <button class="tab" onclick="switchTabHandler('breeding')">💕 Breeding</button>
                     <button class="tab" onclick="switchTabHandler('contests')">🏆 Contests</button>
+                    <button class="tab" onclick="switchTabHandler('gallery')">🎨 Gallery</button>
                 </div>
 
                 <!-- Actions Section -->
@@ -163,6 +164,41 @@
                 <div id="contestsTab" style="display: none;">
                     <!-- Contests content will be inserted here -->
                 </div>
+
+                <div id="galleryTab" style="display: none;" x-data="galleryParrots">
+                    <div class="gallery-container">
+                        <div class="gallery-header">
+                            <h3>🎨 Beautiful Parrot Gallery</h3>
+                            <p style="color: #666; font-size: 0.9em; margin-top: 8px;">
+                                Explore stunning parrots designed with RYB color wheel harmony
+                            </p>
+                        </div>
+
+                        <template x-if="loading">
+                            <div class="gallery-loading">
+                                <div>Loading gallery...</div>
+                            </div>
+                        </template>
+
+                        <template x-if="!loading">
+                            <div class="gallery-grid">
+                                <template x-for="parrot in parrots" :key="parrot.id">
+                                    <div class="gallery-card" @click="selectParrot(parrot)">
+                                        <div class="gallery-parrot-display" x-html="await getParrotSVG(parrot)"></div>
+                                        <div class="gallery-card-info">
+                                            <div class="gallery-parrot-name" x-text="parrot.name"></div>
+                                            <div class="gallery-parrot-theme" x-text="parrot.galleryTheme"></div>
+                                            <div class="gallery-parrot-beauty">
+                                                <span>✨</span>
+                                                <span x-text="'Beauty: ' + parrot.calculateBeauty().score"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+                </div>
             </div>
 
             <!-- Right Panel - Preview -->
@@ -218,21 +254,34 @@
     <!-- Main application module loads first -->
     <script type="module">
         import { createBreedingSlotsComponent } from './js/ui/breedingSlots.js';
+        import { createGalleryComponent } from './js/ui/galleryParrots.js';
 
-        // Make component factory globally available
+        // Make component factories globally available
         window.breedingSlotsComponent = createBreedingSlotsComponent();
-        console.log('v1.1.1 - breedingSlotsComponent available:', !!window.breedingSlotsComponent);
+        window.galleryComponent = createGalleryComponent();
+        console.log('v1.2.1 - breedingSlotsComponent available:', !!window.breedingSlotsComponent);
+        console.log('v1.2.1 - galleryComponent available:', !!window.galleryComponent);
     </script>
 
-    <!-- Register Alpine component using the factory -->
+    <!-- Register Alpine components using the factories -->
     <script>
         document.addEventListener('alpine:init', () => {
-            console.log('v1.1.1 - alpine:init fired, breedingSlotsComponent:', !!window.breedingSlotsComponent);
+            console.log('v1.2.1 - alpine:init fired');
+
+            // Register breeding slots component
             if (window.breedingSlotsComponent) {
                 Alpine.data('breedingSlots', () => window.breedingSlotsComponent);
-                console.log('v1.1.1 - breedingSlots component registered');
+                console.log('v1.2.1 - breedingSlots component registered');
             } else {
-                console.error('v1.1.1 - breedingSlotsComponent not found!');
+                console.error('v1.2.1 - breedingSlotsComponent not found!');
+            }
+
+            // Register gallery component
+            if (window.galleryComponent) {
+                Alpine.data('galleryParrots', () => window.galleryComponent);
+                console.log('v1.2.1 - galleryParrots component registered');
+            } else {
+                console.error('v1.2.1 - galleryComponent not found!');
             }
         });
     </script>
