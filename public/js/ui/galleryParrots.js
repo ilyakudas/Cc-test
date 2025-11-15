@@ -3,7 +3,7 @@
  * Beautiful showcase parrots based on RYB color wheel
  */
 
-import Parrot from '../core/parrot.js';
+import { Parrot } from '../core/parrot.js';
 import { generateParrotSVG } from '../lib/svg.js';
 
 /**
@@ -223,9 +223,10 @@ function hexToRgb(hex) {
  */
 function createGenesFromRgb(rgb) {
     const genes = {
-        r: [false, false, false, false],
-        g: [false, false, false, false],
-        b: [false, false, false, false]
+        red: [false, false, false, false],
+        green: [false, false, false, false],
+        blue: [false, false, false, false],
+        gradient: false
     };
 
     // Convert 0-255 to number of true alleles (0-4)
@@ -234,9 +235,9 @@ function createGenesFromRgb(rgb) {
     const bCount = Math.round((rgb.b / 255) * 4);
 
     // Set alleles to true based on count
-    for (let i = 0; i < rCount; i++) genes.r[i] = true;
-    for (let i = 0; i < gCount; i++) genes.g[i] = true;
-    for (let i = 0; i < bCount; i++) genes.b[i] = true;
+    for (let i = 0; i < rCount; i++) genes.red[i] = true;
+    for (let i = 0; i < gCount; i++) genes.green[i] = true;
+    for (let i = 0; i < bCount; i++) genes.blue[i] = true;
 
     return genes;
 }
@@ -264,7 +265,8 @@ function createGalleryParrot(definition) {
     });
 
     // Create parrot with these genes
-    const parrot = new Parrot(definition.id, definition.name, genes, 1, 'gallery');
+    // Constructor signature: (name, genes, generation = 1, id = null)
+    const parrot = new Parrot(definition.name, genes, 1, definition.id);
     parrot.galleryTheme = definition.theme;
 
     return parrot;
