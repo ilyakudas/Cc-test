@@ -1,3 +1,20 @@
+/* Version badge */
+.splash-screen::after {
+    content: "v1.3.3";
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.9);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 600;
+    font-family: monospace;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
