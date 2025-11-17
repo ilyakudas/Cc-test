@@ -8,6 +8,7 @@ import { Parrot } from '../core/parrot.js';
 import { showToast } from '../lib/notifications.js';
 import { getRandomName, createParrotWithPurity } from '../lib/utils.js';
 import * as UI from '../ui.js';
+import { t } from '../lib/i18n.js';
 
 // Sell hold timer tracking
 let sellHoldTimer = null;
@@ -88,8 +89,8 @@ export function buyParrot(parrotId, saveGameFn, checkAchievementsFn) {
     // Show success toast
     const rarity = parrot.calculateRarity();
     showToast(
-        `${parrot.name} joined your collection!`,
-        `${rarity.charAt(0).toUpperCase() + rarity.slice(1)} • Gen ${parrot.generation} • -${price} coins`,
+        t('toasts.parrotJoined.title', { name: parrot.name }),
+        t('toasts.parrotJoined.message', { rarity: t(`rarity.${rarity}`), generation: parrot.generation, price }),
         'success'
     );
 }
@@ -108,8 +109,8 @@ export function startSellHold(parrotId, event, saveGameFn) {
     // Check if parrot is locked
     if (GameState.isParrotLocked(parrotId)) {
         showToast(
-            `${parrot.name} is locked`,
-            `Unlock the parrot first to sell it`,
+            t('toasts.parrotLocked.title', { name: parrot.name }),
+            t('toasts.parrotLocked.message'),
             'error',
             3000
         );
@@ -158,8 +159,8 @@ export function startSellHold(parrotId, event, saveGameFn) {
 
             // Show info toast
             showToast(
-                `${parrot.name} sold`,
-                `+${sellValue} coins`,
+                t('toasts.parrotSold.title', { name: parrot.name }),
+                t('toasts.parrotSold.message', { value: sellValue }),
                 'success'
             );
         }
