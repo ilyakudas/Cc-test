@@ -24,7 +24,7 @@ export async function renderBreedingSlots() {
                 const svg = await generateParrotSVG(parrot);
                 leftSlotLarge.className = 'breeding-slot-large filled';
                 leftSlotLarge.innerHTML = `
-                    <div class="slot-label">Left Parent</div>
+                    <div class="slot-label">👈 Left Parent</div>
                     <div class="parrot-display-large">${svg}</div>
                     <div class="parrot-name-large">${parrot.name}</div>
                     <div class="parrot-info-large">Gen ${parrot.generation} • ${parrot.calculateRarity()}</div>
@@ -33,7 +33,7 @@ export async function renderBreedingSlots() {
         } else {
             leftSlotLarge.className = 'breeding-slot-large';
             leftSlotLarge.innerHTML = `
-                <div class="slot-label">Left Parent</div>
+                <div class="slot-label">👈 Left Parent</div>
                 <div style="color: #ccc; font-size: 0.9em;">Select from Collection</div>
             `;
         }
@@ -47,7 +47,7 @@ export async function renderBreedingSlots() {
                 const svg = await generateParrotSVG(parrot);
                 rightSlotLarge.className = 'breeding-slot-large filled';
                 rightSlotLarge.innerHTML = `
-                    <div class="slot-label">Right Parent</div>
+                    <div class="slot-label">Right Parent 👉</div>
                     <div class="parrot-display-large">${svg}</div>
                     <div class="parrot-name-large">${parrot.name}</div>
                     <div class="parrot-info-large">Gen ${parrot.generation} • ${parrot.calculateRarity()}</div>
@@ -56,7 +56,7 @@ export async function renderBreedingSlots() {
         } else {
             rightSlotLarge.className = 'breeding-slot-large';
             rightSlotLarge.innerHTML = `
-                <div class="slot-label">Right Parent</div>
+                <div class="slot-label">Right Parent 👉</div>
                 <div style="color: #ccc; font-size: 0.9em;">Select from Collection</div>
             `;
         }

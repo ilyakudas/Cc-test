@@ -19,9 +19,14 @@
                 <p>Breed beautiful parrots and explore the fascinating world of genetics.</p>
                 <p>Create unique color combinations, compete in contests, and discover rare mutations!</p>
             </div>
-            <button class="btn-start" onclick="closeSplashScreen()">
-                🎮 Start Playing
-            </button>
+            <div class="splash-buttons">
+                <button class="btn-start" onclick="closeSplashScreen()">
+                    🎮 Start Playing
+                </button>
+                <button class="btn-new-game-splash" onclick="newGameHandler()">
+                    🔄 New Game
+                </button>
+            </div>
             <div class="splash-features">
                 <div class="splash-feature">🧬 78 Genes Per Parrot</div>
                 <div class="splash-feature">🎨 Vibrant Color Genetics</div>
@@ -31,13 +36,6 @@
     </div>
 
     <div class="container">
-        <header>
-            <div class="header-content">
-                <h1>🦜 ChromaWing</h1>
-                <button class="btn-new-game" onclick="newGameHandler()">🔄 New Game</button>
-            </div>
-        </header>
-
         <div class="stats-bar">
             <div class="stat-badge">
                 <span>💰</span>
@@ -85,12 +83,30 @@
                 </h2>
 
                 <div class="tabs">
-                    <button class="tab active" onclick="switchTabHandler('collection')">📦 Collection</button>
-                    <button class="tab" onclick="switchTabHandler('store')">🏪 Store</button>
-                    <button class="tab" onclick="switchTabHandler('breeding')">💕 Breeding</button>
-                    <button class="tab" onclick="switchTabHandler('contests')">🏆 Contests</button>
-                    <button class="tab" onclick="switchTabHandler('gallery')">🎨 Gallery</button>
-                    <button class="tab" onclick="switchTabHandler('colorlab')">🧬 Color Lab</button>
+                    <button class="tab active" onclick="switchTabHandler('collection')">
+                        <span class="tab-icon">📦</span>
+                        <span class="tab-label">Collection</span>
+                    </button>
+                    <button class="tab" onclick="switchTabHandler('store')">
+                        <span class="tab-icon">🏪</span>
+                        <span class="tab-label">Store</span>
+                    </button>
+                    <button class="tab" onclick="switchTabHandler('breeding')">
+                        <span class="tab-icon">💕</span>
+                        <span class="tab-label">Breeding</span>
+                    </button>
+                    <button class="tab" onclick="switchTabHandler('contests')">
+                        <span class="tab-icon">🏆</span>
+                        <span class="tab-label">Contests</span>
+                    </button>
+                    <button class="tab" onclick="switchTabHandler('gallery')">
+                        <span class="tab-icon">🎨</span>
+                        <span class="tab-label">Gallery</span>
+                    </button>
+                    <button class="tab" onclick="switchTabHandler('colorlab')">
+                        <span class="tab-icon">🧬</span>
+                        <span class="tab-label">Color Lab</span>
+                    </button>
                 </div>
 
                 <!-- Actions Section -->
@@ -114,12 +130,12 @@
                             <h3>👨‍👩‍👧 Select Parents</h3>
                             <div class="breeding-slots-large">
                                 <div class="breeding-slot-large" id="breedSlotLeftLarge">
-                                    <div class="slot-label">Left Parent</div>
+                                    <div class="slot-label">👈 Left Parent</div>
                                     <div style="color: #ccc; font-size: 0.9em;">Empty</div>
                                 </div>
                                 <div class="breeding-icon-large">💕</div>
                                 <div class="breeding-slot-large" id="breedSlotRightLarge">
-                                    <div class="slot-label">Right Parent</div>
+                                    <div class="slot-label">Right Parent 👉</div>
                                     <div style="color: #ccc; font-size: 0.9em;">Empty</div>
                                 </div>
                             </div>
