@@ -26,6 +26,10 @@ export async function breedOnLeft(parrotId) {
     }
 
     GameState.setBreedingPair({ ...breedingPair, left: parrotId });
+
+    // Dispatch event for Alpine.js reactivity
+    document.dispatchEvent(new CustomEvent('breeding-pair-changed'));
+
     await UI.renderBreedingSlots();
     await UI.renderParrotGrid(); // Refresh cards to show L/R badges immediately
     UI.updateBreedButton();
@@ -50,6 +54,10 @@ export async function breedOnRight(parrotId) {
     }
 
     GameState.setBreedingPair({ ...breedingPair, right: parrotId });
+
+    // Dispatch event for Alpine.js reactivity
+    document.dispatchEvent(new CustomEvent('breeding-pair-changed'));
+
     await UI.renderBreedingSlots();
     await UI.renderParrotGrid(); // Refresh cards to show L/R badges immediately
     UI.updateBreedButton();
@@ -66,6 +74,10 @@ export async function removeFromSlot(slot) {
     const breedingPair = GameState.getBreedingPair();
     breedingPair[slot] = null;
     GameState.setBreedingPair(breedingPair);
+
+    // Dispatch event for Alpine.js reactivity
+    document.dispatchEvent(new CustomEvent('breeding-pair-changed'));
+
     await UI.renderBreedingSlots();
     UI.updateBreedButton();
 
