@@ -608,7 +608,12 @@ header h1 {
     /* Remove min-width restrictions for compact icon-only buttons */
     .action-buttons-horizontal .btn {
         flex: 0 0 auto;
-        min-width: auto;        
+        min-width: auto;
+    }
+
+    /* Hide breeding heart icon on portrait */
+    .breeding-icon-large {
+        display: none;
     }
 }
 
