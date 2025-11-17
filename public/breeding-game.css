@@ -222,6 +222,8 @@ header h1 {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     cursor: help;
     transition: transform 0.2s ease;
+    max-width: 14px;
+    max-height: 14px;    
 }
 
 .color-square:hover {
@@ -2041,13 +2043,13 @@ header h1 {
     }
 
     /* Parrot Cards: Single column on mobile */
-    .parrot-grid {
-        grid-template-columns: 1fr;
+     .parrot-grid {
         gap: 10px;
-    }
+    } 
 
     .parrot-card {
-        max-width: 100%;
+        max-width: 140px;
+        margin: 0 auto;
     }
 
     /* Color palette: Ensure all 6 squares fit in card width */
@@ -2109,11 +2111,6 @@ header h1 {
         min-height: 44px;
     }
 
-    /* Gallery Cards: Single column */
-    .gallery-grid {
-        grid-template-columns: 1fr;
-    }
-
     /* Header: Smaller on mobile */
     header h1 {
         font-size: 1.5em;
@@ -2128,14 +2125,6 @@ header h1 {
 
 /* Tablet Portrait (768px - 1024px) */
 @media (min-width: 768px) and (max-width: 1024px) {
-    /* Parrot Cards: 2 columns */
-    .parrot-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .gallery-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
 
     /* Color palette: Tighter spacing for 2-column layout */
     .color-palette {
@@ -2176,12 +2165,7 @@ header h1 {
     .colorlab-panels {
         grid-template-columns: 55% 45%;
     }
-
-    /* 2 columns for cards */
-    .parrot-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
+} 
 
 /* Mobile Landscape (smaller devices in landscape) */
 @media (max-width: 767px) and (orientation: landscape) {
