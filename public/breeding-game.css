@@ -2046,6 +2046,25 @@ header h1 {
         gap: 10px;
     }
 
+    .parrot-card {
+        max-width: 100%;
+    }
+
+    /* Color palette: Ensure all 6 squares fit in card width */
+    .color-palette {
+        gap: 2px;
+        padding: 0 2px;
+        margin: 4px 0;
+    }
+
+    .color-square {
+        border-width: 0.5px;
+    }
+
+    .color-square:hover {
+        transform: scale(1.1); /* Less aggressive scale on mobile */
+    }
+
     /* Color Lab: Stack panels vertically */
     .colorlab-panels {
         grid-template-columns: 1fr;
@@ -2115,6 +2134,12 @@ header h1 {
 
     .gallery-grid {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Color palette: Tighter spacing for 2-column layout */
+    .color-palette {
+        gap: 2px;
+        padding: 0 3px;
     }
 
     /* Stats bar: Allow some overflow with scroll */
