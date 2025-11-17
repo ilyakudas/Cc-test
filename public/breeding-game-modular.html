@@ -22,6 +22,9 @@
             <button class="btn-start" onclick="closeSplashScreen()">
                 🎮 Start Playing
             </button>
+            <button class="btn-new-game-splash" onclick="newGameHandler()">
+                🔄 New Game
+            </button>
             <div class="splash-features">
                 <div class="splash-feature">🧬 78 Genes Per Parrot</div>
                 <div class="splash-feature">🎨 Vibrant Color Genetics</div>
@@ -34,7 +37,6 @@
         <header>
             <div class="header-content">
                 <h1>🦜 ChromaWing</h1>
-                <button class="btn-new-game" onclick="newGameHandler()">🔄 New Game</button>
             </div>
         </header>
 
@@ -463,7 +465,7 @@
     <!-- Main application module loads first -->
     <script type="module">
         // Version constant - single source of truth
-        const VERSION = 'v1.3.3';
+        const VERSION = 'v1.3.4';
         window.CHROMAWING_VERSION = VERSION;
 
         // Update splash screen version
