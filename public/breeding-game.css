@@ -580,6 +580,17 @@ header h1 {
     .tab-icon {
         font-size: 2em;
     }
+
+    /* Breed buttons: Show only icons on portrait */
+    .btn-breed-left .btn-text,
+    .btn-breed-right .btn-text {
+        display: none;
+    }
+
+    .btn-breed-left .btn-icon,
+    .btn-breed-right .btn-icon {
+        font-size: 1.5em;
+    }
 }
 
 .selection-indicator {
