@@ -149,6 +149,18 @@ header h1 {
     color: #666;
     border-bottom: 3px solid transparent;
     transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tab-icon {
+    font-size: 1em;
+    line-height: 1;
+}
+
+.tab-label {
+    line-height: 1;
 }
 
 .tab.active {
@@ -549,6 +561,20 @@ header h1 {
 
     .main-layout {
         grid-template-columns: 1fr;
+    }
+
+    /* Tabs: Show only icons, larger size */
+    .tab {
+        padding: 10px 12px;
+        justify-content: center;
+    }
+
+    .tab-label {
+        display: none;
+    }
+
+    .tab-icon {
+        font-size: 1.5em;
     }
 }
 
