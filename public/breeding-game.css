@@ -222,6 +222,8 @@ header h1 {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     cursor: help;
     transition: transform 0.2s ease;
+    max-width: 14px;
+    max-height: 14px;    
 }
 
 .color-square:hover {
@@ -1979,5 +1981,206 @@ header h1 {
 
     .body-part-selector {
         grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ===== MOBILE RESPONSIVE STYLES ===== */
+
+/* Mobile Portrait & Small Screens (320px - 767px) */
+@media (max-width: 767px) {
+    /* Stats Bar: Horizontal scroll on overflow */
+    .stats-bar {
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding: 0 10px;
+        gap: 10px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; /* Firefox */
+    }
+
+    .stats-bar::-webkit-scrollbar {
+        display: none; /* Chrome, Safari */
+    }
+
+    .stat-badge {
+        flex-shrink: 0;
+        font-size: 0.85em;
+        padding: 6px 12px;
+    }
+
+    /* Tabs: Horizontal scroll with touch-friendly spacing */
+    .tabs {
+        overflow-x: auto;
+        gap: 8px;
+        padding-bottom: 5px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .tab {
+        flex-shrink: 0;
+        padding: 10px 16px;
+        font-size: 0.85em;
+        min-height: 44px; /* Touch target */
+        display: flex;
+        align-items: center;
+    }
+
+    /* Touch Targets: Minimum 44px */
+    .btn, button {
+        min-height: 44px;
+        padding: 10px 20px;
+    }
+
+    .btn-new-game {
+        font-size: 0.85em;
+        padding: 8px 16px;
+        min-height: 44px;
+    }
+
+    /* Parrot Cards: Single column on mobile */
+     .parrot-grid {
+        gap: 10px;
+    } 
+
+    .parrot-card {
+        max-width: 140px;
+        margin: 0 auto;
+    }
+
+    /* Color palette: Ensure all 6 squares fit in card width */
+    .color-palette {
+        gap: 1px;
+        padding: 0;
+        margin: 2px 0;
+    }
+
+    .color-square {
+        border-width: 0.5px;
+        border-radius: 2px;
+    }
+
+    .color-square:hover {
+        transform: scale(1.05); /* Very subtle on mobile */
+    }
+
+    /* Color Lab: Stack panels vertically */
+    .colorlab-panels {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    /* Gene Toggles: Larger for touch */
+    .gene-toggle {
+        min-width: 44px;
+        min-height: 44px;
+        font-size: 0.9em;
+    }
+
+    .btn-gene-quick {
+        min-height: 40px;
+        min-width: 60px;
+        font-size: 0.85em;
+    }
+
+    /* Body part selector: 2 columns on mobile */
+    .body-part-selector {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .body-part-button {
+        min-height: 44px;
+        font-size: 0.85em;
+        padding: 8px;
+    }
+
+    /* Color Lab Actions */
+    .colorlab-action-buttons {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .btn-colorlab,
+    .btn-colorlab-secondary {
+        width: 100%;
+        min-height: 44px;
+    }
+
+    /* Header: Smaller on mobile */
+    header h1 {
+        font-size: 1.5em;
+    }
+
+    /* Preview panel: Reduce parrot size on mobile */
+    .colorlab-preview-display {
+        height: 200px;
+        max-width: 200px;
+    }
+}
+
+/* Tablet Portrait (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+
+    /* Color palette: Tighter spacing for 2-column layout */
+    .color-palette {
+        gap: 1px;
+        padding: 0 1px;
+    }
+
+    .color-square {
+        border-radius: 2px;
+    }
+
+    /* Stats bar: Allow some overflow with scroll */
+    .stats-bar {
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding: 0 10px;
+    }
+
+    /* Tabs: Scrollable if needed */
+    .tabs {
+        overflow-x: auto;
+    }
+
+    /* Touch targets */
+    .btn, button {
+        min-height: 44px;
+    }
+
+    .gene-toggle {
+        min-width: 44px;
+        min-height: 44px;
+    }
+}
+
+/* Tablet Landscape (768px - 1024px landscape) */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+    /* Keep Color Lab side-by-side in landscape */
+    .colorlab-panels {
+        grid-template-columns: 55% 45%;
+    }
+} 
+
+/* Mobile Landscape (smaller devices in landscape) */
+@media (max-width: 767px) and (orientation: landscape) {
+    /* Optimize for landscape editing */
+    .colorlab-panels {
+        grid-template-columns: 60% 40%;
+    }
+
+    /* Reduce vertical spacing */
+    .gene-section {
+        margin-bottom: 8px;
+    }
+
+    .colorlab-preview-display {
+        height: 180px;
+        max-width: 180px;
     }
 }
