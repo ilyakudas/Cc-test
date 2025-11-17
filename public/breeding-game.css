@@ -2052,17 +2052,18 @@ header h1 {
 
     /* Color palette: Ensure all 6 squares fit in card width */
     .color-palette {
-        gap: 2px;
-        padding: 0 2px;
-        margin: 4px 0;
+        gap: 1px;
+        padding: 0;
+        margin: 2px 0;
     }
 
     .color-square {
         border-width: 0.5px;
+        border-radius: 2px;
     }
 
     .color-square:hover {
-        transform: scale(1.1); /* Less aggressive scale on mobile */
+        transform: scale(1.05); /* Very subtle on mobile */
     }
 
     /* Color Lab: Stack panels vertically */
@@ -2138,8 +2139,12 @@ header h1 {
 
     /* Color palette: Tighter spacing for 2-column layout */
     .color-palette {
-        gap: 2px;
-        padding: 0 3px;
+        gap: 1px;
+        padding: 0 1px;
+    }
+
+    .color-square {
+        border-radius: 2px;
     }
 
     /* Stats bar: Allow some overflow with scroll */
