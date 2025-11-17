@@ -535,6 +535,21 @@ header h1 {
     .main-layout {
         grid-template-columns: 1fr;
     }
+
+    .preview-panel {
+        display: none;
+    }
+}
+
+/* Hide preview panel on portrait orientation for better space usage */
+@media (orientation: portrait) {
+    .preview-panel {
+        display: none;
+    }
+
+    .main-layout {
+        grid-template-columns: 1fr;
+    }
 }
 
 .selection-indicator {
