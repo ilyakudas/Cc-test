@@ -100,7 +100,7 @@ export async function updatePreview() {
 
             actionButtons.innerHTML = `
                 <button class="btn btn-breed-left" onclick="window.breedOnLeftHandler(${parrot.id})">
-                    💕 Breed on Left
+                    👈 Breed on Left
                 </button>
                 <button class="btn btn-breed ${canBreed ? 'active' : ''}"
                         onclick="window.switchTabHandler('breeding')"
@@ -110,7 +110,7 @@ export async function updatePreview() {
                     💕
                 </button>
                 <button class="btn btn-breed-right" onclick="window.breedOnRightHandler(${parrot.id})">
-                    💕 Breed on Right
+                    Breed on Right 👉
                 </button>
                 <button class="btn btn-lab" onclick="window.openLaboratoryHandler(${parrot.id})">
                     🔬 Examine in Laboratory
