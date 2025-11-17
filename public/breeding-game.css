@@ -606,13 +606,8 @@ header h1 {
     }
 
     /* Remove min-width restrictions for compact icon-only buttons */
-    .btn,
-    .btn-breed-left,
-    .btn-breed-right,
-    .btn-lab,
-    .btn-contest,
-    .btn-sell,
-    .btn-free {
+    .action-buttons-horizontal .btn {
+        flex: 0 0 auto;
         min-width: auto;
     }
 }
