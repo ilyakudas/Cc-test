@@ -50,7 +50,8 @@ export function saveGame() {
         achievements: GameState.getAchievements(),
         mutationsEnabled: GameState.getMutationsEnabled(),
         mutationRate: GameState.getMutationRate(),
-        autoExamineEnabled: GameState.getAutoExamineEnabled()
+        autoExamineEnabled: GameState.getAutoExamineEnabled(),
+        language: GameState.getLanguage()
     };
 
     try {
@@ -181,6 +182,7 @@ export function loadGame() {
         GameState.setMutationsEnabled(gameStateData.mutationsEnabled !== undefined ? gameStateData.mutationsEnabled : true);
         GameState.setMutationRate(gameStateData.mutationRate || 0.05);
         GameState.setAutoExamineEnabled(gameStateData.autoExamineEnabled !== undefined ? gameStateData.autoExamineEnabled : false);
+        GameState.setLanguage(gameStateData.language || 'en');
 
         // Update auto-examine UI
         const autoExamineStatusEl = document.getElementById('autoExamineStatus');

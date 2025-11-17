@@ -1,0 +1,222 @@
+{
+  "_meta": {
+    "language": "Español",
+    "code": "es",
+    "version": "1.0.0",
+    "translator_notes": "Traducción para ChromaWing, un juego de cría genética de loros"
+  },
+
+  "common": {
+    "coins": {
+      "value": "Monedas",
+      "_context": "Game currency. Displayed in header stats. Max length: 15 chars."
+    },
+    "parrots": {
+      "value": "Loros",
+      "_context": "Number of parrots owned. Displayed in header stats. Max length: 15 chars."
+    },
+    "generation": {
+      "value": "Generación",
+      "_context": "Breeding generation number. Displayed in header stats. Max length: 15 chars."
+    },
+    "mutations": {
+      "value": "Mutaciones",
+      "_context": "Genetic mutations toggle. Displayed in header stats. Max length: 15 chars."
+    },
+    "autoExam": {
+      "value": "Auto-Exam",
+      "_context": "Auto-examination feature toggle. Displayed in header stats. Max length: 15 chars."
+    },
+    "on": {
+      "value": "SÍ",
+      "_context": "Toggle status: enabled. Max length: 5 chars."
+    },
+    "off": {
+      "value": "NO",
+      "_context": "Toggle status: disabled. Max length: 5 chars."
+    },
+    "buy": {
+      "value": "Comprar",
+      "_context": "Button text to purchase a parrot in the shop. Synonym: purchase. Max length: 10 chars."
+    },
+    "sell": {
+      "value": "Vender",
+      "_context": "Button text to sell a parrot. Hold-to-sell action. Max length: 10 chars."
+    },
+    "locked": {
+      "value": "Bloqueado",
+      "_context": "Status indicator that parrot is protected from selling. Max length: 15 chars."
+    },
+    "delete": {
+      "value": "Eliminar",
+      "_context": "Button text to delete item. Max length: 10 chars."
+    },
+    "clone": {
+      "value": "Clonar",
+      "_context": "Button text to clone a parrot to color lab. Max length: 10 chars."
+    },
+    "close": {
+      "value": "Cerrar",
+      "_context": "Button text to close modal or panel. Max length: 10 chars."
+    },
+    "clearAll": {
+      "value": "Borrar Todo",
+      "_context": "Button text to clear all notifications. Max length: 15 chars."
+    },
+    "notifications": {
+      "value": "Notificaciones",
+      "_context": "Notification history panel header. Max length: 25 chars."
+    }
+  },
+
+  "splash": {
+    "title": {
+      "value": "ChromaWing",
+      "_context": "Game title on splash screen. Should NOT be translated - it's a brand name."
+    },
+    "subtitle": {
+      "value": "Un Juego de Genética",
+      "_context": "Game subtitle on splash screen. Max length: 40 chars."
+    },
+    "description1": {
+      "value": "Cría loros hermosos y explora el fascinante mundo de la genética.",
+      "_context": "First description line on splash screen. Max length: 80 chars."
+    },
+    "description2": {
+      "value": "¡Crea combinaciones únicas, compite en concursos y descubre mutaciones raras!",
+      "_context": "Second description line on splash screen. Max length: 90 chars."
+    },
+    "startPlaying": {
+      "value": "Comenzar a Jugar",
+      "_context": "Primary button on splash screen to begin game. Max length: 20 chars."
+    },
+    "newGame": {
+      "value": "Juego Nuevo",
+      "_context": "Button to start a fresh game (erases progress). Max length: 15 chars."
+    },
+    "feature1": {
+      "value": "78 Genes por Loro",
+      "_context": "Feature highlight on splash screen. Max length: 30 chars."
+    },
+    "feature2": {
+      "value": "Genética de Colores",
+      "_context": "Feature highlight on splash screen. Max length: 30 chars."
+    },
+    "feature3": {
+      "value": "Múltiples Concursos",
+      "_context": "Feature highlight on splash screen. Max length: 30 chars."
+    }
+  },
+
+  "tabs": {
+    "collection": {
+      "value": "Colección",
+      "_context": "Tab name for viewing owned parrots. Max length: 15 chars."
+    },
+    "store": {
+      "value": "Tienda",
+      "_context": "Tab name for shop/purchasing parrots. Synonym: shop. Max length: 15 chars."
+    },
+    "breeding": {
+      "value": "Cría",
+      "_context": "Tab name for breeding lab. Max length: 15 chars."
+    },
+    "contests": {
+      "value": "Concursos",
+      "_context": "Tab name for beauty contests. Max length: 15 chars."
+    },
+    "gallery": {
+      "value": "Galería",
+      "_context": "Tab name for parrot gallery. Max length: 15 chars."
+    },
+    "colorLab": {
+      "value": "Lab de Color",
+      "_context": "Tab name for gene editor. Max length: 15 chars."
+    }
+  },
+
+  "bodyParts": {
+    "wings": {
+      "value": "Alas",
+      "_context": "Body part name: wings of a bird. Displayed in genetics panel. Max length: 20 chars."
+    },
+    "specialWing": {
+      "value": "Ala Especial",
+      "_context": "Body part name: special decorative wing feathers. Max length: 20 chars."
+    },
+    "body": {
+      "value": "Cuerpo",
+      "_context": "Body part name: main body/torso of bird. Max length: 20 chars."
+    },
+    "head": {
+      "value": "Cabeza",
+      "_context": "Body part name: head of bird. Max length: 20 chars."
+    },
+    "tail": {
+      "value": "Cola",
+      "_context": "Body part name: tail feathers. Max length: 20 chars."
+    },
+    "accents": {
+      "value": "Acentos",
+      "_context": "Body part name: decorative accent feathers. Max length: 20 chars."
+    }
+  },
+
+  "rarity": {
+    "common": {
+      "value": "Común",
+      "_context": "Rarity level: lowest tier. Max length: 15 chars."
+    },
+    "uncommon": {
+      "value": "Poco Común",
+      "_context": "Rarity level: second tier. Max length: 15 chars."
+    },
+    "rare": {
+      "value": "Raro",
+      "_context": "Rarity level: third tier. Max length: 15 chars."
+    },
+    "epic": {
+      "value": "Épico",
+      "_context": "Rarity level: fourth tier. Max length: 15 chars."
+    },
+    "legendary": {
+      "value": "Legendario",
+      "_context": "Rarity level: highest tier. Max length: 15 chars."
+    }
+  },
+
+  "toasts": {
+    "breedSuccess": {
+      "title": "¡Cría exitosa!",
+      "message": "¡4 polluelos nacidos!{examInfo} {total} esperando en el Lab de Cría.",
+      "_context": "Success notification after breeding. {examInfo} and {total} are replaced with values."
+    },
+    "breedNotEnoughCoins": {
+      "title": "¡No hay suficientes monedas!",
+      "message": "La cría cuesta {cost} monedas. Tienes {current}.",
+      "_context": "Error when insufficient coins for breeding. {cost} and {current} are numbers."
+    },
+    "parrotJoined": {
+      "title": "¡{name} se unió a tu colección!",
+      "message": "{rarity} • Gen {generation} • -{price} monedas",
+      "_context": "Success when buying parrot. {name}, {rarity}, {generation}, {price} are replaced."
+    },
+    "mutationsEnabled": {
+      "title": "Mutaciones Activadas",
+      "message": "La cría puede introducir nuevos genes",
+      "_context": "Info when mutations toggled on."
+    },
+    "mutationsDisabled": {
+      "title": "Mutaciones Desactivadas",
+      "message": "La cría preservará genes puros",
+      "_context": "Info when mutations toggled off."
+    }
+  },
+
+  "messages": {
+    "newGameConfirm": {
+      "value": "¿Comenzar un juego nuevo? ¡Esto borrará tu progreso actual!",
+      "_context": "Confirmation prompt for new game. Max length: 80 chars."
+    }
+  }
+}

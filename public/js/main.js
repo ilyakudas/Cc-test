@@ -13,6 +13,7 @@ import { saveGame, loadGame } from './core/storage.js';
 import { checkAchievements } from './lib/achievements.js';
 import { CONTEST_TIERS } from './lib/constants.js';
 import { createBreedingSlotsComponent } from './ui/breedingSlots.js';
+import * as I18n from './lib/i18n.js';
 
 /**
  * Initialize a new game with starter parrots
@@ -371,8 +372,26 @@ console.log('v1.3.1 - main.js loaded');
 // ===== INITIALIZATION =====
 
 window.addEventListener('load', async () => {
-    // Try to load saved game
+    // Initialize i18n system first
+    let savedLang = null;
+
+    // Try to load saved game to get language preference
     const loaded = loadGame();
+
+    if (loaded) {
+        savedLang = GameState.getLanguage();
+    }
+
+    // Load translations (use saved language or auto-detect)
+    const langToLoad = savedLang || I18n.detectLanguage();
+    await I18n.loadTranslations(langToLoad);
+
+    // Store the detected/loaded language
+    if (!savedLang) {
+        GameState.setLanguage(langToLoad);
+    }
+
+    console.log(`i18n: Game language set to '${GameState.getLanguage()}'`);
 
     if (loaded) {
         // Game loaded from save
@@ -389,4 +408,7 @@ window.addEventListener('load', async () => {
         // New game
         await initGame();
     }
+
+    // Make i18n available globally for use in HTML onclick handlers
+    window.i18n = I18n;
 });

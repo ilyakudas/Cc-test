@@ -35,6 +35,9 @@ export let mutationRate = 0.05;
 // Auto-examine system state
 export let autoExamineEnabled = false;
 
+// Language preference
+export let language = 'en'; // Default to English
+
 // Parrot names tracking
 export let usedNames = new Set();
 
@@ -349,6 +352,14 @@ export function toggleAutoExamineEnabled() {
     return autoExamineEnabled;
 }
 
+export function getLanguage() {
+    return language;
+}
+
+export function setLanguage(lang) {
+    language = lang;
+}
+
 export function getUsedNames() {
     return usedNames;
 }
@@ -396,6 +407,7 @@ export function resetGameState() {
     };
     mutationsEnabled = true;
     mutationRate = 0.05;
+    language = 'en'; // Reset to English
     usedNames = new Set();
     notificationHistory = [];
     toastIdCounter = 0;

@@ -592,6 +592,20 @@
             } else {
                 console.error(`${VERSION} - colorLabComponent not found!`);
             }
+
+            // Register $t magic helper for translations
+            Alpine.magic('t', () => {
+                return (key, params = {}) => {
+                    // Access the i18n module from window (set in main.js)
+                    if (window.i18n && window.i18n.t) {
+                        return window.i18n.t(key, params);
+                    }
+                    // Fallback if i18n not loaded yet
+                    console.warn('i18n not loaded, returning key:', key);
+                    return key;
+                };
+            });
+            console.log(`${VERSION} - $t magic helper registered`);
         });
     </script>
 
