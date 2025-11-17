@@ -604,6 +604,17 @@ header h1 {
     .btn .btn-icon {
         font-size: 1.3em;
     }
+
+    /* Remove min-width restrictions for compact icon-only buttons */
+    .btn,
+    .btn-breed-left,
+    .btn-breed-right,
+    .btn-lab,
+    .btn-contest,
+    .btn-sell,
+    .btn-free {
+        min-width: auto;
+    }
 }
 
 .selection-indicator {
