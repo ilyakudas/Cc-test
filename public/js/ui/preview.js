@@ -83,10 +83,12 @@ export async function updatePreview() {
             // Limited actions for offspring (not yet in collection)
             actionButtons.innerHTML = `
                 <button class="btn btn-lab" onclick="window.openLaboratoryHandler(${parrot.id})">
-                    🔬 Examine in Laboratory
+                    <span class="btn-icon">🔬</span>
+                    <span class="btn-text">Examine in Laboratory</span>
                 </button>
                 <button class="btn ${GameState.isParrotLocked(parrot.id) ? 'btn-free' : 'btn-lab'}" onclick="window.toggleLockParrotHandler(${parrot.id})">
-                    ${GameState.isParrotLocked(parrot.id) ? '🔓 Unlock Parrot' : '🔒 Lock Parrot'}
+                    <span class="btn-icon">${GameState.isParrotLocked(parrot.id) ? '🔓' : '🔒'}</span>
+                    <span class="btn-text">${GameState.isParrotLocked(parrot.id) ? 'Unlock Parrot' : 'Lock Parrot'}</span>
                 </button>
                 <p style="color: #666; margin-top: 10px; font-size: 0.9em;">
                     💡 Use "Move All to Collection" to enable breeding and contests
@@ -100,7 +102,7 @@ export async function updatePreview() {
 
             actionButtons.innerHTML = `
                 <button class="btn btn-breed-left" onclick="window.breedOnLeftHandler(${parrot.id})">
-                    <span class="btn-icon">👈</span>
+                    <span class="btn-icon">💕👈</span>
                     <span class="btn-text">Breed on Left</span>
                 </button>
                 <button class="btn btn-breed ${canBreed ? 'active' : ''}"
@@ -112,16 +114,19 @@ export async function updatePreview() {
                 </button>
                 <button class="btn btn-breed-right" onclick="window.breedOnRightHandler(${parrot.id})">
                     <span class="btn-text">Breed on Right</span>
-                    <span class="btn-icon">👉</span>
+                    <span class="btn-icon">👉💕</span>
                 </button>
                 <button class="btn btn-lab" onclick="window.openLaboratoryHandler(${parrot.id})">
-                    🔬 Examine in Laboratory
+                    <span class="btn-icon">🔬</span>
+                    <span class="btn-text">Examine in Laboratory</span>
                 </button>
                 <button class="btn btn-contest" onclick="window.switchTabHandler('contests')">
-                    🏆 Enter Beauty Contest
+                    <span class="btn-icon">🏆</span>
+                    <span class="btn-text">Enter Beauty Contest</span>
                 </button>
                 <button class="btn ${GameState.isParrotLocked(parrot.id) ? 'btn-free' : 'btn-lab'}" onclick="window.toggleLockParrotHandler(${parrot.id})">
-                    ${GameState.isParrotLocked(parrot.id) ? '🔓 Unlock Parrot' : '🔒 Lock Parrot'}
+                    <span class="btn-icon">${GameState.isParrotLocked(parrot.id) ? '🔓' : '🔒'}</span>
+                    <span class="btn-text">${GameState.isParrotLocked(parrot.id) ? 'Unlock Parrot' : 'Lock Parrot'}</span>
                 </button>
                 <button class="btn btn-sell"
                         onmousedown="window.startSellHoldHandler(${parrot.id})"
@@ -130,10 +135,12 @@ export async function updatePreview() {
                         ontouchstart="window.startSellHoldHandler(${parrot.id})"
                         ontouchend="window.cancelSellHoldHandler()"
                         ontouchcancel="window.cancelSellHoldHandler()">
-                    💰 Hold to Sell (${sellValue} coins)
+                    <span class="btn-icon">💰</span>
+                    <span class="btn-text">Hold to Sell (${sellValue} coins)</span>
                 </button>
                 <button class="btn btn-free" onclick="window.freeParrotHandler(${parrot.id})">
-                    🕊️ Release to Wild
+                    <span class="btn-icon">🕊️</span>
+                    <span class="btn-text">Release to Wild</span>
                 </button>
             `;
         }

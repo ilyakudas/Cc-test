@@ -581,15 +581,28 @@ header h1 {
         font-size: 2em;
     }
 
-    /* Breed buttons: Show only icons on portrait */
+    /* Action buttons: Show only icons on portrait */
     .btn-breed-left .btn-text,
-    .btn-breed-right .btn-text {
+    .btn-breed-right .btn-text,
+    .btn-lab .btn-text,
+    .btn-contest .btn-text,
+    .btn-sell .btn-text,
+    .btn-free .btn-text,
+    .btn .btn-text {
         display: none;
     }
 
     .btn-breed-left .btn-icon,
     .btn-breed-right .btn-icon {
         font-size: 1.5em;
+    }
+
+    .btn-lab .btn-icon,
+    .btn-contest .btn-icon,
+    .btn-sell .btn-icon,
+    .btn-free .btn-icon,
+    .btn .btn-icon {
+        font-size: 1.3em;
     }
 }
 
