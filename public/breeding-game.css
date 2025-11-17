@@ -608,7 +608,7 @@ header h1 {
     /* Remove min-width restrictions for compact icon-only buttons */
     .action-buttons-horizontal .btn {
         flex: 0 0 auto;
-        min-width: auto;
+        min-width: auto;        
     }
 }
 
@@ -1097,7 +1097,7 @@ header h1 {
 
 .action-buttons-horizontal .btn {
     flex: 1;
-    min-width: 120px;
+    min-width: 20px;
     padding: 10px 8px;
     font-size: 0.85em;
 }
@@ -2146,7 +2146,7 @@ header h1 {
     /* Tabs: Horizontal scroll with touch-friendly spacing */
     .tabs {
         overflow-x: auto;
-        gap: 8px;
+        gap: 0px;
         padding-bottom: 5px;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
@@ -2158,7 +2158,7 @@ header h1 {
 
     .tab {
         flex-shrink: 0;
-        padding: 10px 16px;
+        padding: 7px 7px;
         font-size: 0.85em;
         min-height: 44px; /* Touch target */
         display: flex;
