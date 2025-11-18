@@ -173,6 +173,30 @@
     "clickToView": {
       "value": "Кликни на попугая для подробностей",
       "_context": "Empty state message in preview panel. Max length: 50 chars."
+    },
+    "storeBuyParrots": {
+      "value": "Магазин - Покупай Попугаев",
+      "_context": "Panel title for store tab. Max length: 30 chars."
+    },
+    "breedingLaboratory": {
+      "value": "Лаборатория Разведения",
+      "_context": "Panel title for breeding tab. Max length: 30 chars."
+    },
+    "beautyContests": {
+      "value": "Конкурсы Красоты",
+      "_context": "Panel title for contests tab. Max length: 30 chars."
+    },
+    "geneticDiversity": {
+      "value": "Генетическое Разнообразие",
+      "_context": "Label for genetic diversity compatibility metric. Max length: 30 chars."
+    },
+    "generationDifference": {
+      "value": "Различие Поколений",
+      "_context": "Label for generation difference compatibility metric. Max length: 30 chars."
+    },
+    "offspringGeneration": {
+      "value": "Поколение Потомства",
+      "_context": "Label for predicted offspring generation. Max length: 30 chars."
     }
   },
   "breeding": {
@@ -243,6 +267,30 @@
     "breedToSeeOffspring": {
       "value": "Скрести попугаев, чтобы увидеть потомство!",
       "_context": "Empty state message for offspring section. Max length: 60 chars."
+    },
+    "offspringWaiting": {
+      "value": "{count} {plural} ждут",
+      "_context": "Offspring count header. {count} is number, {plural} is 'chick' or 'chicks'. Max length: 30 chars."
+    },
+    "moveAllToCollection": {
+      "value": "Переместить все ({count}) в коллекцию",
+      "_context": "Button to move all offspring to collection. {count} is number. Max length: 40 chars."
+    },
+    "sellAllCount": {
+      "value": "Продать все ({count})",
+      "_context": "Button to sell all offspring. {count} is number. Max length: 30 chars."
+    },
+    "dismissAllCount": {
+      "value": "Отклонить все ({count})",
+      "_context": "Button to dismiss all offspring. {count} is number. Max length: 30 chars."
+    },
+    "chick": {
+      "value": "птенец",
+      "_context": "Singular form of baby parrot. Max length: 10 chars."
+    },
+    "chicks": {
+      "value": "птенцов",
+      "_context": "Plural form of baby parrot. Max length: 10 chars."
     }
   },
   "bodyParts": {

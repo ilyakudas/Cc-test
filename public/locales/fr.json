@@ -173,6 +173,30 @@
     "clickToView": {
       "value": "Clique sur un perroquet pour voir",
       "_context": "Empty state message in preview panel. Max length: 50 chars."
+    },
+    "storeBuyParrots": {
+      "value": "Magasin - Achète Perroquets",
+      "_context": "Panel title for store tab. Max length: 30 chars."
+    },
+    "breedingLaboratory": {
+      "value": "Laboratoire d'Élevage",
+      "_context": "Panel title for breeding tab. Max length: 30 chars."
+    },
+    "beautyContests": {
+      "value": "Concours de Beauté",
+      "_context": "Panel title for contests tab. Max length: 30 chars."
+    },
+    "geneticDiversity": {
+      "value": "Diversité Génétique",
+      "_context": "Label for genetic diversity compatibility metric. Max length: 30 chars."
+    },
+    "generationDifference": {
+      "value": "Différence de Génération",
+      "_context": "Label for generation difference compatibility metric. Max length: 30 chars."
+    },
+    "offspringGeneration": {
+      "value": "Génération de Descendants",
+      "_context": "Label for predicted offspring generation. Max length: 30 chars."
     }
   },
   "breeding": {
@@ -243,6 +267,30 @@
     "breedToSeeOffspring": {
       "value": "Élève des perroquets pour voir tes petits ici !",
       "_context": "Empty state message for offspring section. Max length: 60 chars."
+    },
+    "offspringWaiting": {
+      "value": "{count} {plural} en attente",
+      "_context": "Offspring count header. {count} is number, {plural} is 'chick' or 'chicks'. Max length: 30 chars."
+    },
+    "moveAllToCollection": {
+      "value": "Déplacer tous ({count}) vers la collection",
+      "_context": "Button to move all offspring to collection. {count} is number. Max length: 40 chars."
+    },
+    "sellAllCount": {
+      "value": "Vendre tous ({count})",
+      "_context": "Button to sell all offspring. {count} is number. Max length: 30 chars."
+    },
+    "dismissAllCount": {
+      "value": "Rejeter tous ({count})",
+      "_context": "Button to dismiss all offspring. {count} is number. Max length: 30 chars."
+    },
+    "chick": {
+      "value": "oisillon",
+      "_context": "Singular form of baby parrot. Max length: 10 chars."
+    },
+    "chicks": {
+      "value": "oisillons",
+      "_context": "Plural form of baby parrot. Max length: 10 chars."
     }
   },
   "bodyParts": {
