@@ -4,6 +4,12 @@
  */
 
 import { incrementParrotIdCounter } from './gameState.js';
+import {
+    PARROT_BASE_VALUE,
+    PARROT_BEAUTY_MULTIPLIER,
+    PARROT_GENERATION_VALUE,
+    RARITY_VALUE_MULTIPLIERS
+} from '../lib/economy.js';
 
 /**
  * Parrot class with RGB Genetics v2.1
@@ -111,17 +117,10 @@ export class Parrot {
         }
 
         // Factor in rarity for pricing
-        const baseValue = 50 + Math.floor(score * 2) + (this.generation * 10);
+        const baseValue = PARROT_BASE_VALUE + Math.floor(score * PARROT_BEAUTY_MULTIPLIER) + (this.generation * PARROT_GENERATION_VALUE);
         const rarity = this.calculateRarity();
-        const rarityMultipliers = {
-            'common': 1.0,
-            'uncommon': 1.3,
-            'rare': 1.6,
-            'epic': 2.0,
-            'legendary': 2.5
-        };
 
-        return Math.floor(baseValue * rarityMultipliers[rarity]);
+        return Math.floor(baseValue * RARITY_VALUE_MULTIPLIERS[rarity]);
     }
 
     // Classify color based on RGB values

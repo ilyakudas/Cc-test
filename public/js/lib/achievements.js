@@ -5,6 +5,7 @@
 
 import * as GameState from '../core/gameState.js';
 import { showToast } from './notifications.js';
+import { ACHIEVEMENT_COIN_THRESHOLDS } from './economy.js';
 
 /**
  * Achievement definitions
@@ -173,16 +174,16 @@ export const ACHIEVEMENTS = {
     'wealthy_1000': {
         id: 'wealthy_1000',
         name: '💰 Entrepreneur',
-        description: 'Accumulate 1000 coins',
+        description: `Accumulate ${ACHIEVEMENT_COIN_THRESHOLDS.WEALTHY} coins`,
         category: 'economic',
-        check: () => GameState.getCoins() >= 1000
+        check: () => GameState.getCoins() >= ACHIEVEMENT_COIN_THRESHOLDS.WEALTHY
     },
     'wealthy_5000': {
         id: 'wealthy_5000',
         name: '💎 Business Mogul',
-        description: 'Accumulate 5000 coins',
+        description: `Accumulate ${ACHIEVEMENT_COIN_THRESHOLDS.VERY_WEALTHY} coins`,
         category: 'economic',
-        check: () => GameState.getCoins() >= 5000
+        check: () => GameState.getCoins() >= ACHIEVEMENT_COIN_THRESHOLDS.VERY_WEALTHY
     },
 
     // Special Achievements
