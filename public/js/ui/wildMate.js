@@ -24,6 +24,9 @@ export async function renderWildMateTab() {
     const parrots = GameState.getParrots();
     const credits = GameState.getConservationCredits();
 
+    // Render parrots section asynchronously
+    const parrotsHtml = await renderParrotActions(parrots, stats.exists);
+
     let html = `
         <div class="wild-mate-container">
             <div class="wild-mate-header">
@@ -42,7 +45,7 @@ export async function renderWildMateTab() {
             <!-- Your Parrots Section -->
             <div class="wild-mate-parrots">
                 <h4>🦜 Your Parrots</h4>
-                ${renderParrotActions(parrots, stats.exists)}
+                ${parrotsHtml}
             </div>
         </div>
     `;
@@ -125,7 +128,7 @@ function renderGenePoolDashboard(stats) {
 /**
  * Render parrot action cards
  */
-function renderParrotActions(parrots, poolExists) {
+async function renderParrotActions(parrots, poolExists) {
     if (parrots.length === 0) {
         return `
             <div class="empty-state">
@@ -146,10 +149,13 @@ function renderParrotActions(parrots, poolExists) {
 
         const searchCost = calculateSearchCost(parrot);
 
+        // Generate SVG asynchronously
+        const svgMarkup = await generateParrotSVG(parrot, 100, 100);
+
         html += `
             <div class="wild-mate-parrot-card">
                 <div class="parrot-mini-preview">
-                    <div class="parrot-svg-mini">${generateParrotSVG(parrot, 100, 100)}</div>
+                    <div class="parrot-svg-mini">${svgMarkup}</div>
                 </div>
                 <div class="parrot-info">
                     <h4>${parrot.name}</h4>
@@ -246,16 +252,20 @@ export async function showMateSelectionModal(searchingParrot, mates, searchCost)
                 <div class="mate-options-grid">
     `;
 
+    // Generate SVGs asynchronously for all mates
     for (let i = 0; i < mates.length; i++) {
         const mate = mates[i];
         const beauty = mate.calculateBeauty();
         const beautyStars = Math.floor((beauty.score / beauty.maxScore) * 5);
         const rarity = mate.calculateRarity();
 
+        // Await SVG generation
+        const svgMarkup = await generateParrotSVG(mate, 150, 150);
+
         html += `
             <div class="mate-option-card">
                 <div class="mate-preview">
-                    ${generateParrotSVG(mate, 150, 150)}
+                    ${svgMarkup}
                 </div>
                 <div class="mate-info">
                     <h3>${mate.name}</h3>
