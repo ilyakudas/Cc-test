@@ -19,7 +19,9 @@ export function saveGame() {
             generation: p.generation,
             isRare: p.isRare,
             rareSource: p.rareSource,
-            description: p.description
+            description: p.description,
+            hasFoundWildMate: p.hasFoundWildMate,
+            wildMateAttempts: p.wildMateAttempts
         })),
         storeParrots: GameState.getStoreParrots().map(p => ({
             id: p.id,
@@ -28,7 +30,9 @@ export function saveGame() {
             generation: p.generation,
             isRare: p.isRare,
             rareSource: p.rareSource,
-            description: p.description
+            description: p.description,
+            hasFoundWildMate: p.hasFoundWildMate,
+            wildMateAttempts: p.wildMateAttempts
         })),
         recentOffspring: GameState.getRecentOffspring().map(p => ({
             id: p.id,
@@ -37,7 +41,9 @@ export function saveGame() {
             generation: p.generation,
             isRare: p.isRare,
             rareSource: p.rareSource,
-            description: p.description
+            description: p.description,
+            hasFoundWildMate: p.hasFoundWildMate,
+            wildMateAttempts: p.wildMateAttempts
         })),
         coins: GameState.getCoins(),
         parrotIdCounter: GameState.getParrotIdCounter(),
@@ -51,7 +57,10 @@ export function saveGame() {
         mutationsEnabled: GameState.getMutationsEnabled(),
         mutationRate: GameState.getMutationRate(),
         autoExamineEnabled: GameState.getAutoExamineEnabled(),
-        language: GameState.getLanguage()
+        language: GameState.getLanguage(),
+        conservationCredits: GameState.getConservationCredits(),
+        wildGenePool: GameState.getWildGenePool(),
+        releaseHistory: GameState.getReleaseHistory()
     };
 
     try {
@@ -131,6 +140,9 @@ export function loadGame() {
                 parrot.rareSource = p.rareSource;
                 parrot.description = p.description;
             }
+            // Restore wild mate tracking
+            parrot.hasFoundWildMate = p.hasFoundWildMate || false;
+            parrot.wildMateAttempts = p.wildMateAttempts || 0;
             return parrot;
         });
         GameState.setParrots(restoredParrots);
@@ -143,6 +155,9 @@ export function loadGame() {
                 parrot.rareSource = p.rareSource;
                 parrot.description = p.description;
             }
+            // Restore wild mate tracking
+            parrot.hasFoundWildMate = p.hasFoundWildMate || false;
+            parrot.wildMateAttempts = p.wildMateAttempts || 0;
             return parrot;
         });
         GameState.setStoreParrots(restoredStoreParrots);
@@ -155,6 +170,9 @@ export function loadGame() {
                 parrot.rareSource = p.rareSource;
                 parrot.description = p.description;
             }
+            // Restore wild mate tracking
+            parrot.hasFoundWildMate = p.hasFoundWildMate || false;
+            parrot.wildMateAttempts = p.wildMateAttempts || 0;
             return parrot;
         });
         GameState.setRecentOffspring(restoredOffspring);
@@ -183,6 +201,11 @@ export function loadGame() {
         GameState.setMutationRate(gameStateData.mutationRate || 0.05);
         GameState.setAutoExamineEnabled(gameStateData.autoExamineEnabled !== undefined ? gameStateData.autoExamineEnabled : false);
         GameState.setLanguage(gameStateData.language || 'en');
+
+        // Restore wild mate system
+        GameState.setConservationCredits(gameStateData.conservationCredits || 0);
+        GameState.setWildGenePool(gameStateData.wildGenePool || null);
+        GameState.setReleaseHistory(gameStateData.releaseHistory || []);
 
         // Note: Auto-examine and mutation UI will be updated by main.js after translations load
 

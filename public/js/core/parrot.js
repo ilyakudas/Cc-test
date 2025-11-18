@@ -12,8 +12,10 @@ import {
 } from '../lib/economy.js';
 
 /**
- * Parrot class with RGB Genetics v2.1
- * 78 genes: 6 body parts × 13 genes each
+ * Parrot class with RGB Genetics v2.2 + Performance Genes
+ * Color genes: 6 body parts × 13 genes each = 78 genes
+ * Performance genes: 5 traits × 4 alleles each = 20 genes
+ * Total: 98 genes
  */
 export class Parrot {
     constructor(name, genes, generation = 1, id = null) {
@@ -23,6 +25,10 @@ export class Parrot {
         // Each has: 4 red, 4 green, 4 blue, 1 gradient = 13 genes per part
         this.genes = genes;
         this.generation = generation;
+
+        // Wild mate system tracking
+        this.hasFoundWildMate = false;
+        this.wildMateAttempts = 0;
     }
 
     countDominant(alleles) {
@@ -458,6 +464,79 @@ export class Parrot {
             traits: beautyTraits,
             bodyPartColors,
             partContributions
+        };
+    }
+
+    // === PERFORMANCE GENE ACCESSORS ===
+
+    /**
+     * Get agility level (0-4 dominant alleles)
+     * @returns {number} 0-4
+     */
+    getAgilityLevel() {
+        return this.genes.agility ? this.countDominant(this.genes.agility) : 2; // Default to medium
+    }
+
+    /**
+     * Get intelligence level (0-4 dominant alleles)
+     * @returns {number} 0-4
+     */
+    getIntelligenceLevel() {
+        return this.genes.intelligence ? this.countDominant(this.genes.intelligence) : 2; // Default to medium
+    }
+
+    /**
+     * Get stamina level (0-4 dominant alleles)
+     * @returns {number} 0-4
+     */
+    getStaminaLevel() {
+        return this.genes.stamina ? this.countDominant(this.genes.stamina) : 2; // Default to medium
+    }
+
+    /**
+     * Get speed level (0-4 dominant alleles)
+     * @returns {number} 0-4
+     */
+    getSpeedLevel() {
+        return this.genes.speed ? this.countDominant(this.genes.speed) : 2; // Default to medium
+    }
+
+    /**
+     * Get fertility level (0-4 dominant alleles)
+     * @returns {number} 0-4
+     */
+    getFertilityLevel() {
+        return this.genes.fertility ? this.countDominant(this.genes.fertility) : 2; // Default to medium
+    }
+
+    /**
+     * Get performance gene category (low/medium/high)
+     * @param {number} level - Dominant allele count (0-4)
+     * @returns {string} 'low', 'medium', or 'high'
+     */
+    getPerformanceCategory(level) {
+        if (level <= 1) return 'low';
+        if (level >= 3) return 'high';
+        return 'medium';
+    }
+
+    /**
+     * Get all performance stats as an object
+     * @returns {Object} Performance stats with levels and categories
+     */
+    getPerformanceStats() {
+        const agility = this.getAgilityLevel();
+        const intelligence = this.getIntelligenceLevel();
+        const stamina = this.getStaminaLevel();
+        const speed = this.getSpeedLevel();
+        const fertility = this.getFertilityLevel();
+
+        return {
+            agility: { level: agility, category: this.getPerformanceCategory(agility) },
+            intelligence: { level: intelligence, category: this.getPerformanceCategory(intelligence) },
+            stamina: { level: stamina, category: this.getPerformanceCategory(stamina) },
+            speed: { level: speed, category: this.getPerformanceCategory(speed) },
+            fertility: { level: fertility, category: this.getPerformanceCategory(fertility) }
         };
     }
 }
