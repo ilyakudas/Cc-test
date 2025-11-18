@@ -652,13 +652,16 @@
 
   "actions": {
     "examine": {
-      "value": "Examine"
+      "value": "Examine in Laboratory"
     },
     "free": {
-      "value": "Free"
+      "value": "Release to Wild"
     },
     "lock": {
-      "value": "Lock"
+      "value": "Lock Parrot"
+    },
+    "unlock": {
+      "value": "Unlock Parrot"
     },
     "breedLeft": {
       "value": "Breed on Left"
@@ -666,8 +669,14 @@
     "breedRight": {
       "value": "Breed on Right"
     },
+    "enterContest": {
+      "value": "Enter Beauty Contest"
+    },
     "moveToCollection": {
       "value": "Use \"Move All to Collection\" to enable breeding and contests"
+    },
+    "moveOffspring": {
+      "value": "Move to Collection"
     },
     "sellAllOffspring": {
       "value": "Sell All Offspring"
