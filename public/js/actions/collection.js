@@ -8,49 +8,14 @@ import { showToast } from '../lib/notifications.js';
 import * as UI from '../ui.js';
 
 /**
- * Free parrot (release to wild, no coins)
+ * Free parrot (now redirects to Wild Mate release system)
  * @param {number} parrotId - Parrot ID
  * @param {Function} saveGameFn - Save game function
  */
-export function freeParrot(parrotId, saveGameFn) {
-    const parrots = GameState.getParrots();
-    const parrot = parrots.find(p => p.id === parrotId);
-    if (!parrot) return;
-
-    // Check if parrot is locked
-    if (GameState.isParrotLocked(parrotId)) {
-        showToast(
-            `${parrot.name} is locked`,
-            `Unlock the parrot first to release it`,
-            'error',
-            3000
-        );
-        return;
-    }
-
-    if (!confirm(`Release ${parrot.name} to the wild? You won't get any coins.`)) return;
-
-    GameState.removeParrot(parrotId);
-
-    // Clear from breeding pair if present
-    const breedingPair = GameState.getBreedingPair();
-    if (breedingPair.left === parrotId) {
-        GameState.setBreedingPair({ ...breedingPair, left: null });
-    }
-    if (breedingPair.right === parrotId) {
-        GameState.setBreedingPair({ ...breedingPair, right: null });
-    }
-    GameState.setSelectedParrotId(null);
-
-    UI.updateUI();
-    if (saveGameFn) saveGameFn();
-
-    // Show info toast
-    showToast(
-        `${parrot.name} released`,
-        `Set free to the wild`,
-        'info'
-    );
+export async function freeParrot(parrotId, saveGameFn) {
+    // Import and use the new Wild Mate release system
+    const { releaseParrot } = await import('./wildMate.js');
+    releaseParrot(parrotId, saveGameFn);
 }
 
 /**
