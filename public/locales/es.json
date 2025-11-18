@@ -1038,5 +1038,227 @@
       "value": "¿Comenzar un juego nuevo? ¡Esto borrará tu progreso actual!",
       "_context": "Confirmation prompt for new game. Max length: 80 chars."
     }
+  },
+
+  "galleryParrots": {
+    "sunsetSerenade": {
+      "value": "Serenata del Atardecer",
+      "_context": "Gallery parrot name - warm sunset gradient colors (orange, vermilion, amber, yellow). Max length: 30 chars."
+    },
+    "sunsetSerenadeTheme": {
+      "value": "Gradiente cálido del atardecer",
+      "_context": "Theme description for Sunset Serenade. Max length: 40 chars."
+    },
+    "oceanDepths": {
+      "value": "Profundidades Oceánicas",
+      "_context": "Gallery parrot name - cool ocean blues (teal, blue, indigo). Max length: 30 chars."
+    },
+    "oceanDepthsTheme": {
+      "value": "Azules frescos del océano",
+      "_context": "Theme description for Ocean Depths. Max length: 40 chars."
+    },
+    "forestCanopy": {
+      "value": "Dosel del Bosque",
+      "_context": "Gallery parrot name - lush forest greens (chartreuse, green, teal). Max length: 30 chars."
+    },
+    "forestCanopyTheme": {
+      "value": "Verdes exuberantes del bosque",
+      "_context": "Theme description for Forest Canopy. Max length: 40 chars."
+    },
+    "royalMajesty": {
+      "value": "Majestad Real",
+      "_context": "Gallery parrot name - regal purples and violets. Max length: 30 chars."
+    },
+    "royalMajestyTheme": {
+      "value": "Púrpuras y violetas regios",
+      "_context": "Theme description for Royal Majesty. Max length: 40 chars."
+    },
+    "phoenixFlame": {
+      "value": "Llama del Fénix",
+      "_context": "Gallery parrot name - fiery reds and oranges. Max length: 30 chars."
+    },
+    "phoenixFlameTheme": {
+      "value": "Rojos y naranjas ardientes",
+      "_context": "Theme description for Phoenix Flame. Max length: 40 chars."
+    },
+    "goldenSunshine": {
+      "value": "Sol Dorado",
+      "_context": "Gallery parrot name - bright yellows and golds (yellow, amber). Max length: 30 chars."
+    },
+    "goldenSunshineTheme": {
+      "value": "Amarillos y dorados brillantes",
+      "_context": "Theme description for Golden Sunshine. Max length: 40 chars."
+    },
+    "twilightDreams": {
+      "value": "Sueños del Crepúsculo",
+      "_context": "Gallery parrot name - magical purple-orange contrast. Max length: 30 chars."
+    },
+    "twilightDreamsTheme": {
+      "value": "Contraste mágico púrpura-naranja",
+      "_context": "Theme description for Twilight Dreams. Max length: 40 chars."
+    },
+    "springBlossom": {
+      "value": "Flor de Primavera",
+      "_context": "Gallery parrot name - soft magenta and chartreuse. Max length: 30 chars."
+    },
+    "springBlossomTheme": {
+      "value": "Magenta y chartreuse suaves",
+      "_context": "Theme description for Spring Blossom. Max length: 40 chars."
+    },
+    "auroraBorealis": {
+      "value": "Aurora Boreal",
+      "_context": "Gallery parrot name - northern lights spectrum (teal, green, violet, indigo, magenta, blue). Max length: 30 chars."
+    },
+    "auroraBorealisTheme": {
+      "value": "Espectro de auroras boreales",
+      "_context": "Theme description for Aurora Borealis. Max length: 40 chars."
+    },
+    "rubyRadiance": {
+      "value": "Resplandor Rubí",
+      "_context": "Gallery parrot name - deep crimson reds (red, vermilion, magenta). Max length: 30 chars."
+    },
+    "rubyRadianceTheme": {
+      "value": "Rojos carmesí profundos",
+      "_context": "Theme description for Ruby Radiance. Max length: 40 chars."
+    },
+    "emeraldGarden": {
+      "value": "Jardín de Esmeraldas",
+      "_context": "Gallery parrot name - rich emerald greens (green, teal, chartreuse). Max length: 30 chars."
+    },
+    "emeraldGardenTheme": {
+      "value": "Verdes esmeralda intensos",
+      "_context": "Theme description for Emerald Garden. Max length: 40 chars."
+    },
+    "sapphireSky": {
+      "value": "Cielo de Zafiro",
+      "_context": "Gallery parrot name - deep sapphire blues (blue, indigo, teal). Max length: 30 chars."
+    },
+    "sapphireSkyTheme": {
+      "value": "Azules zafiro profundos",
+      "_context": "Theme description for Sapphire Sky. Max length: 40 chars."
+    }
+  },
+
+  "contestParrots": {
+    "goldenDawn": {
+      "value": "Amanecer Dorado",
+      "_context": "Contest reward parrot (Tier 0, 1st place) - warm golden tones. Max length: 30 chars."
+    },
+    "goldenDawnDesc": {
+      "value": "Tonos dorados cálidos perfectos para exhibiciones",
+      "_context": "Description for Golden Dawn. Max length: 60 chars."
+    },
+    "silverMist": {
+      "value": "Neblina Plateada",
+      "_context": "Contest reward parrot (Tier 0, 2nd place) - cool silvery blues. Max length: 30 chars."
+    },
+    "silverMistDesc": {
+      "value": "Azules plateados frescos",
+      "_context": "Description for Silver Mist. Max length: 60 chars."
+    },
+    "bronzeGleam": {
+      "value": "Destello Bronce",
+      "_context": "Contest reward parrot (Tier 0, 3rd place) - earthy bronze tones. Max length: 30 chars."
+    },
+    "bronzeGleamDesc": {
+      "value": "Tonos bronce terrosos con brillo metálico",
+      "_context": "Description for Bronze Gleam. Max length: 60 chars."
+    },
+    "prismaticPride": {
+      "value": "Orgullo Prismático",
+      "_context": "Contest reward parrot (Tier 1, 1st place) - full color spectrum. Max length: 30 chars."
+    },
+    "prismaticPrideDesc": {
+      "value": "Deslumbrante espectro completo de colores",
+      "_context": "Description for Prismatic Pride. Max length: 60 chars."
+    },
+    "chromaticDream": {
+      "value": "Sueño Cromático",
+      "_context": "Contest reward parrot (Tier 1, 2nd place) - harmonious vivid hues. Max length: 30 chars."
+    },
+    "chromaticDreamDesc": {
+      "value": "Mezcla armoniosa de tonos vívidos",
+      "_context": "Description for Chromatic Dream. Max length: 60 chars."
+    },
+    "spectrumWing": {
+      "value": "Ala del Espectro",
+      "_context": "Contest reward parrot (Tier 1, 3rd place) - rainbow colors. Max length: 30 chars."
+    },
+    "spectrumWingDesc": {
+      "value": "Todos los colores del arcoíris en armonía",
+      "_context": "Description for Spectrum Wing. Max length: 60 chars."
+    },
+    "auroraCascade": {
+      "value": "Cascada Aurora",
+      "_context": "Contest reward parrot (Tier 2, 1st place) - northern lights flow. Max length: 30 chars."
+    },
+    "auroraCascadeDesc": {
+      "value": "Colores fluidos como las auroras boreales",
+      "_context": "Description for Aurora Cascade. Max length: 60 chars."
+    },
+    "twilightFlow": {
+      "value": "Flujo Crepuscular",
+      "_context": "Contest reward parrot (Tier 2, 2nd place) - sunset color transitions. Max length: 30 chars."
+    },
+    "twilightFlowDesc": {
+      "value": "Colores del atardecer en transiciones gráciles",
+      "_context": "Description for Twilight Flow. Max length: 60 chars."
+    },
+    "oceanDrift": {
+      "value": "Deriva Oceánica",
+      "_context": "Contest reward parrot (Tier 2, 3rd place) - sea blues with sunset hints. Max length: 30 chars."
+    },
+    "oceanDriftDesc": {
+      "value": "Azules marinos encuentran tonos cálidos",
+      "_context": "Description for Ocean Drift. Max length: 60 chars."
+    },
+    "emberAndIce": {
+      "value": "Brasa y Hielo",
+      "_context": "Contest reward parrot (Tier 3, 1st place) - fire and frost contrast. Max length: 30 chars."
+    },
+    "emberAndIceDesc": {
+      "value": "Fuego y hielo en perfecta oposición",
+      "_context": "Description for Ember & Ice. Max length: 60 chars."
+    },
+    "sunsetContrast": {
+      "value": "Contraste del Ocaso",
+      "_context": "Contest reward parrot (Tier 3, 2nd place) - orange sky meets ocean blue. Max length: 30 chars."
+    },
+    "sunsetContrastDesc": {
+      "value": "Cielos naranjas encuentran azules oceánicos",
+      "_context": "Description for Sunset Contrast. Max length: 60 chars."
+    },
+    "forestFire": {
+      "value": "Incendio Forestal",
+      "_context": "Contest reward parrot (Tier 3, 3rd place) - green and red clash. Max length: 30 chars."
+    },
+    "forestFireDesc": {
+      "value": "Verdes vibrantes chocan con rojos ardientes",
+      "_context": "Description for Forest Fire. Max length: 60 chars."
+    },
+    "celestialPerfection": {
+      "value": "Perfección Celestial",
+      "_context": "Contest reward parrot (Tier 4, 1st place) - ultimate chromatic beauty. Max length: 30 chars."
+    },
+    "celestialPerfectionDesc": {
+      "value": "La cumbre de la belleza cromática",
+      "_context": "Description for Celestial Perfection. Max length: 70 chars."
+    },
+    "royalSpectrum": {
+      "value": "Espectro Real",
+      "_context": "Contest reward parrot (Tier 4, 2nd place) - majestic beauty. Max length: 30 chars."
+    },
+    "royalSpectrumDesc": {
+      "value": "Belleza majestuosa digna de la realeza",
+      "_context": "Description for Royal Spectrum. Max length: 60 chars."
+    },
+    "nobleRadiance": {
+      "value": "Resplandor Noble",
+      "_context": "Contest reward parrot (Tier 4, 3rd place) - dignified elegance. Max length: 30 chars."
+    },
+    "nobleRadianceDesc": {
+      "value": "Elegancia digna con juego de colores asombroso",
+      "_context": "Description for Noble Radiance. Max length: 60 chars."
+    }
   }
 }
