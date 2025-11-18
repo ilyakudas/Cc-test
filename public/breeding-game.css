@@ -1555,6 +1555,68 @@ header h1 {
     margin-bottom: 10px;
 }
 
+/* Language Selector */
+.language-selector {
+    margin: 30px 0 20px;
+}
+
+.language-selector-label {
+    font-size: 1em;
+    margin-bottom: 15px;
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+.language-flags {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.language-flag {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 10px 16px;
+    border-radius: 25px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.language-flag:hover {
+    background: rgba(255, 255, 255, 0.35);
+    border-color: rgba(255, 255, 255, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+}
+
+.language-flag:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+}
+
+.language-name {
+    font-weight: 500;
+}
+
+/* Responsive - hide language names on small screens, show only flags */
+@media (max-width: 600px) {
+    .language-name {
+        display: none;
+    }
+
+    .language-flag {
+        padding: 10px 12px;
+        font-size: 1.2em;
+    }
+}
+
 .splash-buttons {
     display: flex;
     gap: 15px;

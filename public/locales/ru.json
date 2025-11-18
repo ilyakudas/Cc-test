@@ -108,6 +108,33 @@
     }
   },
 
+  "languageSelector": {
+    "label": {
+      "value": "Выбрать язык",
+      "_context": "Header text for language selector on splash screen. Max length: 25 chars."
+    },
+    "english": {
+      "value": "English",
+      "_context": "Language name in its native form. Max length: 20 chars."
+    },
+    "spanish": {
+      "value": "Español",
+      "_context": "Language name in its native form. Max length: 20 chars."
+    },
+    "french": {
+      "value": "Français",
+      "_context": "Language name in its native form. Max length: 20 chars."
+    },
+    "russian": {
+      "value": "Русский",
+      "_context": "Language name in its native form. Max length: 20 chars."
+    },
+    "ukrainian": {
+      "value": "Українська",
+      "_context": "Language name in its native form. Max length: 20 chars."
+    }
+  },
+
   "tabs": {
     "collection": {
       "value": "Коллекция",

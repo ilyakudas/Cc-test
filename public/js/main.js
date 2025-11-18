@@ -363,6 +363,23 @@ window.sellAllOffspringHandler = () => Actions.sellAllOffspring(saveGame);
 window.dismissOffspringHandler = () => Actions.dismissOffspring(saveGame);
 window.toggleAutoExamineHandler = () => Actions.toggleAutoExamine(saveGame);
 
+/**
+ * Change game language and reload
+ * @param {string} langCode - Language code (en, es, fr, ru, uk)
+ */
+window.changeLanguageHandler = async (langCode) => {
+    console.log(`Changing language to: ${langCode}`);
+
+    // Update language in game state
+    GameState.setLanguage(langCode);
+
+    // Save game with new language
+    saveGame();
+
+    // Reload page to apply new language
+    window.location.reload();
+};
+
 // ===== ALPINE.JS COMPONENTS =====
 
 // Alpine component registration is handled in breeding-game-modular.html
@@ -392,6 +409,28 @@ window.addEventListener('load', async () => {
     }
 
     console.log(`i18n: Game language set to '${GameState.getLanguage()}'`);
+
+    // Initialize language selector on splash screen with translations
+    const languageSelectorLabel = document.getElementById('languageSelectorLabel');
+    if (languageSelectorLabel) {
+        languageSelectorLabel.textContent = I18n.t('languageSelector.label');
+    }
+
+    // Update language names in selector
+    const languageFlags = document.querySelectorAll('.language-flag');
+    languageFlags.forEach(btn => {
+        const lang = btn.getAttribute('data-lang');
+        const nameSpan = btn.querySelector('.language-name');
+        if (nameSpan && lang) {
+            nameSpan.textContent = I18n.t(`languageSelector.${lang === 'en' ? 'english' : lang === 'es' ? 'spanish' : lang === 'fr' ? 'french' : lang === 'ru' ? 'russian' : 'ukrainian'}`);
+        }
+
+        // Highlight the current language
+        if (lang === GameState.getLanguage()) {
+            btn.style.background = 'rgba(255, 255, 255, 0.4)';
+            btn.style.borderColor = 'rgba(255, 255, 255, 0.8)';
+        }
+    });
 
     if (loaded) {
         // Game loaded from save

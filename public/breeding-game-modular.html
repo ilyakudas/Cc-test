@@ -19,6 +19,29 @@
                 <p>Breed beautiful parrots and explore the fascinating world of genetics.</p>
                 <p>Create unique color combinations, compete in contests, and discover rare mutations!</p>
             </div>
+
+            <!-- Language Selector -->
+            <div class="language-selector">
+                <div class="language-selector-label" id="languageSelectorLabel">Select Language</div>
+                <div class="language-flags">
+                    <button class="language-flag" onclick="changeLanguageHandler('en')" title="English" data-lang="en">
+                        🇬🇧 <span class="language-name">English</span>
+                    </button>
+                    <button class="language-flag" onclick="changeLanguageHandler('es')" title="Español" data-lang="es">
+                        🇪🇸 <span class="language-name">Español</span>
+                    </button>
+                    <button class="language-flag" onclick="changeLanguageHandler('fr')" title="Français" data-lang="fr">
+                        🇫🇷 <span class="language-name">Français</span>
+                    </button>
+                    <button class="language-flag" onclick="changeLanguageHandler('ru')" title="Русский" data-lang="ru">
+                        🇷🇺 <span class="language-name">Русский</span>
+                    </button>
+                    <button class="language-flag" onclick="changeLanguageHandler('uk')" title="Українська" data-lang="uk">
+                        🇺🇦 <span class="language-name">Українська</span>
+                    </button>
+                </div>
+            </div>
+
             <div class="splash-buttons">
                 <button class="btn-start" onclick="closeSplashScreen()">
                     🎮 Start Playing
