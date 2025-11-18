@@ -5,16 +5,17 @@
 
 import * as GameState from '../core/gameState.js';
 import { generateParrotSVG } from '../lib/svg.js';
+import { t } from '../lib/i18n.js';
 
 /**
  * Rarity configuration for display
  */
 const RARITY_CONFIG = {
-    'common': { color: '#9e9e9e', label: 'Common' },
-    'uncommon': { color: '#4caf50', label: 'Uncommon' },
-    'rare': { color: '#2196f3', label: 'Rare' },
-    'epic': { color: '#9c27b0', label: 'Epic' },
-    'legendary': { color: '#ff9800', label: 'Legendary' }
+    'common': { color: '#9e9e9e', labelKey: 'rarity.common' },
+    'uncommon': { color: '#4caf50', labelKey: 'rarity.uncommon' },
+    'rare': { color: '#2196f3', labelKey: 'rarity.rare' },
+    'epic': { color: '#9c27b0', labelKey: 'rarity.epic' },
+    'legendary': { color: '#ff9800', labelKey: 'rarity.legendary' }
 };
 
 /**
@@ -27,7 +28,7 @@ export async function updatePreview() {
     const currentTab = GameState.getCurrentTab();
 
     if (selectedParrotId === null) {
-        previewDiv.innerHTML = '<div class="empty-preview">Click a parrot to view details</div>';
+        previewDiv.innerHTML = `<div class="empty-preview">${t('panel.clickToView')}</div>`;
         actionSection.style.display = 'none';
         return;
     }
@@ -57,9 +58,9 @@ export async function updatePreview() {
         <div class="large-parrot-display">${svg}</div>
         <div style="text-align: center; margin-bottom: 10px;">
             <strong style="font-size: 1.3em;">${parrot.name}</strong><br>
-            <span style="color: #666;">Generation ${parrot.generation}</span><br>
-            <span class="rarity-badge" style="background: ${rarityInfo.color}; display: inline-block; margin-top: 5px;">${rarityInfo.label}</span>
-            ${parrot.hasAnyGradients() ? '<br><span style="color: #9c27b0; font-weight: bold;">✨ Has Gradients</span>' : ''}
+            <span style="color: #666;">${t('common.generation')} ${parrot.generation}</span><br>
+            <span class="rarity-badge" style="background: ${rarityInfo.color}; display: inline-block; margin-top: 5px;">${t(rarityInfo.labelKey)}</span>
+            ${parrot.hasAnyGradients() ? `<br><span style="color: #9c27b0; font-weight: bold;">✨ ${t('beauty.traits')}</span>` : ''}
         </div>
     `;
 
@@ -72,7 +73,7 @@ export async function updatePreview() {
         const price = parrot.getValue();
         actionButtons.innerHTML = `
             <button class="btn btn-buy" onclick="window.buyParrotHandler(${parrot.id})" ${coins < price ? 'disabled' : ''}>
-                💰 Buy for ${price} coins
+                💰 ${t('common.buy')} (${price} ${t('common.coins').toLowerCase()})
             </button>
         `;
     } else {
@@ -81,17 +82,18 @@ export async function updatePreview() {
 
         if (isOffspring) {
             // Limited actions for offspring (not yet in collection)
+            const isLocked = GameState.isParrotLocked(parrot.id);
             actionButtons.innerHTML = `
                 <button class="btn btn-lab" onclick="window.openLaboratoryHandler(${parrot.id})">
                     <span class="btn-icon">🔬</span>
-                    <span class="btn-text">Examine in Laboratory</span>
+                    <span class="btn-text">${t('actions.examine')}</span>
                 </button>
-                <button class="btn ${GameState.isParrotLocked(parrot.id) ? 'btn-free' : 'btn-lab'}" onclick="window.toggleLockParrotHandler(${parrot.id})">
-                    <span class="btn-icon">${GameState.isParrotLocked(parrot.id) ? '🔓' : '🔒'}</span>
-                    <span class="btn-text">${GameState.isParrotLocked(parrot.id) ? 'Unlock Parrot' : 'Lock Parrot'}</span>
+                <button class="btn ${isLocked ? 'btn-free' : 'btn-lab'}" onclick="window.toggleLockParrotHandler(${parrot.id})">
+                    <span class="btn-icon">${isLocked ? '🔓' : '🔒'}</span>
+                    <span class="btn-text">${isLocked ? t('common.locked') : t('actions.lock')}</span>
                 </button>
                 <p style="color: #666; margin-top: 10px; font-size: 0.9em;">
-                    💡 Use "Move All to Collection" to enable breeding and contests
+                    💡 ${t('actions.moveToCollection')}
                 </p>
             `;
         } else {
@@ -99,34 +101,35 @@ export async function updatePreview() {
             const sellValue = Math.floor(parrot.getValue() * 0.7);
             const breedingPair = GameState.getBreedingPair();
             const canBreed = breedingPair.left !== null && breedingPair.right !== null;
+            const isLocked = GameState.isParrotLocked(parrot.id);
 
             actionButtons.innerHTML = `
                 <button class="btn btn-breed-left" onclick="window.breedOnLeftHandler(${parrot.id})">
                     <span class="btn-icon">💕👈</span>
-                    <span class="btn-text">Breed on Left</span>
+                    <span class="btn-text">${t('actions.breedLeft')}</span>
                 </button>
                 <button class="btn btn-breed ${canBreed ? 'active' : ''}"
                         onclick="window.switchTabHandler('breeding')"
                         ${!canBreed ? 'disabled' : ''}
-                        title="${canBreed ? 'Go to Breeding Lab' : 'Select both parents first'}"
+                        title="${canBreed ? t('tabs.breeding') : t('panel.selectTwoToBreed')}"
                         style="font-size: 1.6em; padding: 8px; min-width: auto; width: 50px;">
                     💕
                 </button>
                 <button class="btn btn-breed-right" onclick="window.breedOnRightHandler(${parrot.id})">
-                    <span class="btn-text">Breed on Right</span>
+                    <span class="btn-text">${t('actions.breedRight')}</span>
                     <span class="btn-icon">👉💕</span>
                 </button>
                 <button class="btn btn-lab" onclick="window.openLaboratoryHandler(${parrot.id})">
                     <span class="btn-icon">🔬</span>
-                    <span class="btn-text">Examine in Laboratory</span>
+                    <span class="btn-text">${t('actions.examine')}</span>
                 </button>
                 <button class="btn btn-contest" onclick="window.switchTabHandler('contests')">
                     <span class="btn-icon">🏆</span>
-                    <span class="btn-text">Enter Beauty Contest</span>
+                    <span class="btn-text">${t('tabs.contests')}</span>
                 </button>
-                <button class="btn ${GameState.isParrotLocked(parrot.id) ? 'btn-free' : 'btn-lab'}" onclick="window.toggleLockParrotHandler(${parrot.id})">
-                    <span class="btn-icon">${GameState.isParrotLocked(parrot.id) ? '🔓' : '🔒'}</span>
-                    <span class="btn-text">${GameState.isParrotLocked(parrot.id) ? 'Unlock Parrot' : 'Lock Parrot'}</span>
+                <button class="btn ${isLocked ? 'btn-free' : 'btn-lab'}" onclick="window.toggleLockParrotHandler(${parrot.id})">
+                    <span class="btn-icon">${isLocked ? '🔓' : '🔒'}</span>
+                    <span class="btn-text">${isLocked ? t('common.locked') : t('actions.lock')}</span>
                 </button>
                 <button class="btn btn-sell"
                         onmousedown="window.startSellHoldHandler(${parrot.id})"
@@ -136,11 +139,11 @@ export async function updatePreview() {
                         ontouchend="window.cancelSellHoldHandler()"
                         ontouchcancel="window.cancelSellHoldHandler()">
                     <span class="btn-icon">💰</span>
-                    <span class="btn-text">Hold to Sell (${sellValue} coins)</span>
+                    <span class="btn-text">${t('common.sell')} (${sellValue} ${t('common.coins').toLowerCase()})</span>
                 </button>
                 <button class="btn btn-free" onclick="window.freeParrotHandler(${parrot.id})">
                     <span class="btn-icon">🕊️</span>
-                    <span class="btn-text">Release to Wild</span>
+                    <span class="btn-text">${t('actions.free')}</span>
                 </button>
             `;
         }

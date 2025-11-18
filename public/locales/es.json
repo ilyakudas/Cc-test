@@ -445,6 +445,54 @@
     "rule": {
       "value": "Regla",
       "_context": "Label for special contest rules. Max length: 10 chars."
+    },
+    "placed": {
+      "value": "¡{name} quedó en {placement}!",
+      "_context": "Result message showing parrot placement. {name} is parrot name, {placement} is '1st place', '2nd place', etc. Max length: 60 chars."
+    },
+    "chooseReward": {
+      "value": "Elige tu Recompensa",
+      "_context": "Header for reward selection screen. Max length: 30 chars."
+    },
+    "takeCoinsBtn": {
+      "value": "Tomar Monedas",
+      "_context": "Button to take coins reward. Max length: 15 chars."
+    },
+    "safeChoice": {
+      "value": "Opción segura - valor inmediato",
+      "_context": "Description for coins reward. Max length: 50 chars."
+    },
+    "takeParrotName": {
+      "value": "Tomar a {name}",
+      "_context": "Header for parrot reward option. {name} is parrot name. Max length: 40 chars."
+    },
+    "sellValue": {
+      "value": "Valor de venta: ~{value} monedas",
+      "_context": "Shows parrot sell value. {value} is number. Max length: 40 chars."
+    },
+    "uniqueParrot": {
+      "value": "¡Loro único con genes especiales!",
+      "_context": "Description for rare parrot reward. Max length: 50 chars."
+    },
+    "takeParrotBtn": {
+      "value": "Tomar Loro",
+      "_context": "Button to take parrot reward. Max length: 15 chars."
+    },
+    "wonCoins": {
+      "value": "¡Ganaste {coins} monedas!",
+      "_context": "Message for non-reward tiers. {coins} is amount. Max length: 30 chars."
+    },
+    "betterLuck": {
+      "value": "¡Mejor suerte la próxima vez!",
+      "_context": "Message when player doesn't place top 3. Max length: 40 chars."
+    },
+    "finalRankings": {
+      "value": "Clasificación Final",
+      "_context": "Header for results table. Max length: 25 chars."
+    },
+    "playerYou": {
+      "value": " (Tú)",
+      "_context": "Suffix to show player's entry. Max length: 10 chars."
     }
   },
 

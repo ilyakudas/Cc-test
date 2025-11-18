@@ -298,7 +298,7 @@ async function generateStore(prismParrot = null) {
  * Start a new game
  */
 async function newGame() {
-    if (!confirm('Start a new game? This will erase your current progress!')) {
+    if (!confirm(I18n.t('messages.newGameConfirm'))) {
         return;
     }
 
@@ -519,6 +519,46 @@ window.addEventListener('load', async () => {
 
         const tab5Labels = tabs[5].querySelectorAll('.tab-label');
         if (tab5Labels[0]) tab5Labels[0].textContent = I18n.t('tabs.colorLab');
+    }
+
+    // Translate panel titles and hints
+    const panelTitle = document.getElementById('panelTitle');
+    if (panelTitle) {
+        panelTitle.textContent = I18n.t('panel.yourParrots');
+    }
+
+    const panelHint = document.querySelector('.panel h2 span[style*="color: #999"]');
+    if (panelHint) {
+        panelHint.textContent = I18n.t('panel.selectTwoToBreed');
+    }
+
+    // Translate preview panel
+    const previewTitle = document.querySelector('.preview-section h3');
+    if (previewTitle) {
+        previewTitle.textContent = I18n.t('panel.selectedParrot');
+    }
+
+    const emptyPreview = document.querySelector('.empty-preview');
+    if (emptyPreview) {
+        emptyPreview.textContent = I18n.t('panel.clickToView');
+    }
+
+    // Translate breeding button
+    const breedButton = document.getElementById('breedButtonLarge');
+    if (breedButton) {
+        const BREEDING_COST = 50; // Match constant from constants.js
+        breedButton.innerHTML = `💕 ${I18n.t('breeding.breedButton')} (${I18n.t('breeding.breedCost', { cost: BREEDING_COST })})`;
+    }
+
+    // Translate notification panel
+    const notificationHeader = document.querySelector('.notification-history-header h3');
+    if (notificationHeader) {
+        notificationHeader.textContent = I18n.t('common.notifications');
+    }
+
+    const clearAllBtn = document.querySelector('.notification-history-header button');
+    if (clearAllBtn) {
+        clearAllBtn.textContent = I18n.t('common.clearAll');
     }
 
     if (loaded) {

@@ -5,6 +5,7 @@
 
 import * as GameState from '../core/gameState.js';
 import { generateParrotSVG } from '../lib/svg.js';
+import { t } from '../lib/i18n.js';
 
 /**
  * Render breeding slots (left and right parents)
@@ -22,19 +23,20 @@ export async function renderBreedingSlots() {
             const parrot = parrots.find(p => p.id === breedingPair.left);
             if (parrot) {
                 const svg = await generateParrotSVG(parrot);
+                const rarityTranslated = t(`rarity.${parrot.calculateRarity()}`);
                 leftSlotLarge.className = 'breeding-slot-large filled';
                 leftSlotLarge.innerHTML = `
-                    <div class="slot-label">👈 Left Parent</div>
+                    <div class="slot-label">👈 ${t('breeding.leftParent')}</div>
                     <div class="parrot-display-large">${svg}</div>
                     <div class="parrot-name-large">${parrot.name}</div>
-                    <div class="parrot-info-large">Gen ${parrot.generation} • ${parrot.calculateRarity()}</div>
+                    <div class="parrot-info-large">${t('common.generation')} ${parrot.generation} • ${rarityTranslated}</div>
                 `;
             }
         } else {
             leftSlotLarge.className = 'breeding-slot-large';
             leftSlotLarge.innerHTML = `
-                <div class="slot-label">👈 Left Parent</div>
-                <div style="color: #ccc; font-size: 0.9em;">Select from Collection</div>
+                <div class="slot-label">👈 ${t('breeding.leftParent')}</div>
+                <div style="color: #ccc; font-size: 0.9em;">${t('breeding.empty')}</div>
             `;
         }
     }
@@ -45,19 +47,20 @@ export async function renderBreedingSlots() {
             const parrot = parrots.find(p => p.id === breedingPair.right);
             if (parrot) {
                 const svg = await generateParrotSVG(parrot);
+                const rarityTranslated = t(`rarity.${parrot.calculateRarity()}`);
                 rightSlotLarge.className = 'breeding-slot-large filled';
                 rightSlotLarge.innerHTML = `
-                    <div class="slot-label">Right Parent 👉</div>
+                    <div class="slot-label">${t('breeding.rightParent')} 👉</div>
                     <div class="parrot-display-large">${svg}</div>
                     <div class="parrot-name-large">${parrot.name}</div>
-                    <div class="parrot-info-large">Gen ${parrot.generation} • ${parrot.calculateRarity()}</div>
+                    <div class="parrot-info-large">${t('common.generation')} ${parrot.generation} • ${rarityTranslated}</div>
                 `;
             }
         } else {
             rightSlotLarge.className = 'breeding-slot-large';
             rightSlotLarge.innerHTML = `
-                <div class="slot-label">Right Parent 👉</div>
-                <div style="color: #ccc; font-size: 0.9em;">Select from Collection</div>
+                <div class="slot-label">${t('breeding.rightParent')} 👉</div>
+                <div style="color: #ccc; font-size: 0.9em;">${t('breeding.empty')}</div>
             `;
         }
     }
