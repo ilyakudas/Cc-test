@@ -132,7 +132,7 @@ export function updateWildMateActions() {
 
     let html = `
         <div class="action-buttons-horizontal">
-            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <div style="align-items: center; gap: 12px; flex-wrap: wrap;">
     `;
 
     // Release button
