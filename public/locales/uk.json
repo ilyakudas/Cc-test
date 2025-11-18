@@ -887,7 +887,7 @@
       "_context": "Button to release parrot. Max length: 10 chars."
     },
     "lock": {
-      "value": "Замок",
+      "value": "Замкнути",
       "_context": "Button to lock/unlock parrot. Max length: 10 chars."
     },
     "breedLeft": {
@@ -911,15 +911,15 @@
       "_context": "Button to dismiss all offspring. Max length: 20 chars."
     },
     "unlock": {
-      "value": "Unlock Parrot",
+      "value": "Розблокувати",
       "_context": "Button to unlock a locked parrot. Max length: 20 chars."
     },
     "enterContest": {
-      "value": "Enter Beauty Contest",
+      "value": "Конкурс краси",
       "_context": "Button to enter a beauty contest with selected parrot. Max length: 30 chars."
     },
     "moveOffspring": {
-      "value": "Move to Collection",
+      "value": "До колекції",
       "_context": "Alternative action button to move offspring. Max length: 30 chars."
     }
   },
