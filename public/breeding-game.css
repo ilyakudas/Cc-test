@@ -2518,10 +2518,27 @@ header h1 {
 /* ===== WILD MATE SYSTEM STYLES ===== */
 
 /* Wild Mate Container */
+#wildMateTab {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
 .wild-mate-container {
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 12px;
+    overflow: hidden;
+}
+
+#wildMateParrotGrid {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 5px;
 }
 
 .wild-mate-header {
