@@ -19,7 +19,9 @@ export function saveGame() {
             generation: p.generation,
             isRare: p.isRare,
             rareSource: p.rareSource,
-            description: p.description
+            description: p.description,
+            hasFoundWildMate: p.hasFoundWildMate,
+            wildMateAttempts: p.wildMateAttempts
         })),
         storeParrots: GameState.getStoreParrots().map(p => ({
             id: p.id,
@@ -28,7 +30,9 @@ export function saveGame() {
             generation: p.generation,
             isRare: p.isRare,
             rareSource: p.rareSource,
-            description: p.description
+            description: p.description,
+            hasFoundWildMate: p.hasFoundWildMate,
+            wildMateAttempts: p.wildMateAttempts
         })),
         recentOffspring: GameState.getRecentOffspring().map(p => ({
             id: p.id,
@@ -37,7 +41,9 @@ export function saveGame() {
             generation: p.generation,
             isRare: p.isRare,
             rareSource: p.rareSource,
-            description: p.description
+            description: p.description,
+            hasFoundWildMate: p.hasFoundWildMate,
+            wildMateAttempts: p.wildMateAttempts
         })),
         coins: GameState.getCoins(),
         parrotIdCounter: GameState.getParrotIdCounter(),
@@ -51,7 +57,10 @@ export function saveGame() {
         mutationsEnabled: GameState.getMutationsEnabled(),
         mutationRate: GameState.getMutationRate(),
         autoExamineEnabled: GameState.getAutoExamineEnabled(),
-        language: GameState.getLanguage()
+        language: GameState.getLanguage(),
+        conservationCredits: GameState.getConservationCredits(),
+        wildGenePool: GameState.getWildGenePool(),
+        releaseHistory: GameState.getReleaseHistory()
     };
 
     try {
@@ -125,36 +134,69 @@ export function loadGame() {
 
         // Restore parrots
         const restoredParrots = gameStateData.parrots.map(p => {
+            // Migration: Add performance genes to old parrots if missing
+            if (!p.genes.agility) {
+                p.genes.agility = [true, true, false, false];       // Default: medium (2/4)
+                p.genes.intelligence = [true, true, false, false];  // Default: medium (2/4)
+                p.genes.stamina = [true, true, false, false];       // Default: medium (2/4)
+                p.genes.speed = [true, true, false, false];         // Default: medium (2/4)
+                p.genes.fertility = [true, true, false, false];     // Default: medium (2/4)
+            }
             const parrot = new Parrot(p.name, p.genes, p.generation, p.id);
             if (p.isRare) {
                 parrot.isRare = p.isRare;
                 parrot.rareSource = p.rareSource;
                 parrot.description = p.description;
             }
+            // Restore wild mate tracking
+            parrot.hasFoundWildMate = p.hasFoundWildMate || false;
+            parrot.wildMateAttempts = p.wildMateAttempts || 0;
             return parrot;
         });
         GameState.setParrots(restoredParrots);
 
         // Restore store parrots
         const restoredStoreParrots = (gameStateData.storeParrots || []).map(p => {
+            // Migration: Add performance genes to old parrots if missing
+            if (!p.genes.agility) {
+                p.genes.agility = [true, true, false, false];       // Default: medium (2/4)
+                p.genes.intelligence = [true, true, false, false];  // Default: medium (2/4)
+                p.genes.stamina = [true, true, false, false];       // Default: medium (2/4)
+                p.genes.speed = [true, true, false, false];         // Default: medium (2/4)
+                p.genes.fertility = [true, true, false, false];     // Default: medium (2/4)
+            }
             const parrot = new Parrot(p.name, p.genes, p.generation, p.id);
             if (p.isRare) {
                 parrot.isRare = p.isRare;
                 parrot.rareSource = p.rareSource;
                 parrot.description = p.description;
             }
+            // Restore wild mate tracking
+            parrot.hasFoundWildMate = p.hasFoundWildMate || false;
+            parrot.wildMateAttempts = p.wildMateAttempts || 0;
             return parrot;
         });
         GameState.setStoreParrots(restoredStoreParrots);
 
         // Restore recent offspring
         const restoredOffspring = (gameStateData.recentOffspring || []).map(p => {
+            // Migration: Add performance genes to old parrots if missing
+            if (!p.genes.agility) {
+                p.genes.agility = [true, true, false, false];       // Default: medium (2/4)
+                p.genes.intelligence = [true, true, false, false];  // Default: medium (2/4)
+                p.genes.stamina = [true, true, false, false];       // Default: medium (2/4)
+                p.genes.speed = [true, true, false, false];         // Default: medium (2/4)
+                p.genes.fertility = [true, true, false, false];     // Default: medium (2/4)
+            }
             const parrot = new Parrot(p.name, p.genes, p.generation, p.id);
             if (p.isRare) {
                 parrot.isRare = p.isRare;
                 parrot.rareSource = p.rareSource;
                 parrot.description = p.description;
             }
+            // Restore wild mate tracking
+            parrot.hasFoundWildMate = p.hasFoundWildMate || false;
+            parrot.wildMateAttempts = p.wildMateAttempts || 0;
             return parrot;
         });
         GameState.setRecentOffspring(restoredOffspring);
@@ -184,20 +226,12 @@ export function loadGame() {
         GameState.setAutoExamineEnabled(gameStateData.autoExamineEnabled !== undefined ? gameStateData.autoExamineEnabled : false);
         GameState.setLanguage(gameStateData.language || 'en');
 
-        // Update auto-examine UI
-        const autoExamineStatusEl = document.getElementById('autoExamineStatus');
-        const autoExamineIconEl = document.getElementById('autoExamineIcon');
-        if (autoExamineStatusEl && autoExamineIconEl) {
-            if (GameState.getAutoExamineEnabled()) {
-                autoExamineStatusEl.textContent = 'ON';
-                autoExamineStatusEl.style.color = '#4caf50';
-                autoExamineIconEl.textContent = '🔬';
-            } else {
-                autoExamineStatusEl.textContent = 'OFF';
-                autoExamineStatusEl.style.color = '#dc3545';
-                autoExamineIconEl.textContent = '🔒';
-            }
-        }
+        // Restore wild mate system
+        GameState.setConservationCredits(gameStateData.conservationCredits || 0);
+        GameState.setWildGenePool(gameStateData.wildGenePool || null);
+        GameState.setReleaseHistory(gameStateData.releaseHistory || []);
+
+        // Note: Auto-examine and mutation UI will be updated by main.js after translations load
 
         // Restore contest tier unlock status
         if (gameStateData.contestProgress) {

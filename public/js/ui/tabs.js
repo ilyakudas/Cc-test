@@ -8,6 +8,7 @@ import { updateUI } from './core.js';
 import { renderBreedingSlots, updateBreedButton } from './breedingSlots.js';
 import { createParrotCard } from './parrotCard.js';
 import { generateParrotSVG } from '../lib/svg.js';
+import { t } from '../lib/i18n.js';
 
 /**
  * Switch between tabs (collection/store/breeding/contests)
@@ -30,33 +31,42 @@ export function switchTab(tab, event, renderContestsFn) {
     document.getElementById('contestsTab').style.display = 'none';
     document.getElementById('galleryTab').style.display = 'none';
     document.getElementById('colorLabTab').style.display = 'none';
+    document.getElementById('wildMateTab').style.display = 'none';
 
     if (tab === 'collection') {
         document.getElementById('collectionTab').style.display = 'grid';
-        document.getElementById('panelTitle').textContent = 'Your Parrots';
+        document.getElementById('panelTitle').textContent = t('panel.yourParrots');
     } else if (tab === 'store') {
         document.getElementById('storeTab').style.display = 'grid';
-        document.getElementById('panelTitle').textContent = 'Store - Buy Parrots';
+        document.getElementById('panelTitle').textContent = t('panel.storeBuyParrots');
     } else if (tab === 'breeding') {
         document.getElementById('breedingTab').style.display = 'block';
-        document.getElementById('panelTitle').textContent = 'Breeding Laboratory';
+        document.getElementById('panelTitle').textContent = t('panel.breedingLaboratory');
         updateBreedingLab();
         return; // Don't call updateUI for breeding tab
     } else if (tab === 'contests') {
         document.getElementById('contestsTab').style.display = 'block';
-        document.getElementById('panelTitle').textContent = 'Beauty Contests';
+        document.getElementById('panelTitle').textContent = t('panel.beautyContests');
         if (renderContestsFn) {
             renderContestsFn();
         }
         return; // Don't call updateUI for contests tab
     } else if (tab === 'gallery') {
         document.getElementById('galleryTab').style.display = 'block';
-        document.getElementById('panelTitle').textContent = 'Parrot Gallery';
+        document.getElementById('panelTitle').textContent = t('gallery.title');
         return; // Don't call updateUI for gallery tab (handled by Alpine.js)
     } else if (tab === 'colorlab') {
         document.getElementById('colorLabTab').style.display = 'block';
-        document.getElementById('panelTitle').textContent = 'Color Lab - Gene Editor';
+        document.getElementById('panelTitle').textContent = t('colorLab.title');
         return; // Don't call updateUI for color lab tab (handled by Alpine.js)
+    } else if (tab === 'wildmate') {
+        document.getElementById('wildMateTab').style.display = 'block';
+        document.getElementById('panelTitle').textContent = '🌿 Wild Mate Finding';
+        // Import and render wild mate tab
+        import('./wildMate.js').then(module => {
+            module.renderWildMateTab();
+        });
+        return; // Don't call updateUI for wild mate tab
     }
 
     GameState.setSelectedParrotId(null);
@@ -101,7 +111,7 @@ async function renderRecentOffspring() {
     console.log('Rendering recent offspring:', offspring.length);
 
     if (offspring.length === 0) {
-        grid.innerHTML = '<div class="empty-state">Breed parrots to see your offspring here!</div>';
+        grid.innerHTML = `<div class="empty-state">${t('breeding.breedToSeeOffspring')}</div>`;
         return;
     }
 
@@ -110,7 +120,8 @@ async function renderRecentOffspring() {
     // Add header with count
     const headerDiv = document.createElement('div');
     headerDiv.style.cssText = 'margin-bottom: 10px; font-weight: 600; color: #667eea;';
-    headerDiv.textContent = `${offspring.length} chick${offspring.length !== 1 ? 's' : ''} waiting`;
+    const pluralForm = offspring.length !== 1 ? t('breeding.chicks') : t('breeding.chick');
+    headerDiv.textContent = t('breeding.offspringWaiting', { count: offspring.length, plural: pluralForm });
     grid.appendChild(headerDiv);
 
     // Add button to move all to collection
@@ -118,13 +129,13 @@ async function renderRecentOffspring() {
     actionBar.style.cssText = 'margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap;';
     actionBar.innerHTML = `
         <button class="btn btn-breed" style="flex: 1; min-width: 140px; font-size: 0.9em;" onclick="window.moveOffspringToCollectionHandler()">
-            📦 Move All (${offspring.length}) to Collection
+            📦 ${t('breeding.moveAllToCollection', { count: offspring.length })}
         </button>
         <button class="btn btn-sell" style="flex: 1; min-width: 140px; font-size: 0.9em;" onclick="window.sellAllOffspringHandler()">
-            💰 Sell All (${offspring.length})
+            💰 ${t('breeding.sellAllCount', { count: offspring.length })}
         </button>
         <button class="btn btn-free" style="flex: 1; min-width: 140px; font-size: 0.9em;" onclick="window.dismissOffspringHandler()">
-            ✖️ Dismiss All (${offspring.length})
+            ✖️ ${t('breeding.dismissAllCount', { count: offspring.length })}
         </button>
     `;
     grid.appendChild(actionBar);
@@ -188,16 +199,16 @@ function renderCompatibility(leftParrot, rightParrot) {
 
     info.innerHTML = `
         <div class="compatibility-stat">
-            <span class="compatibility-label">🧬 Genetic Diversity</span>
+            <span class="compatibility-label">🧬 ${t('panel.geneticDiversity')}</span>
             <span class="compatibility-value">${diversityScore}%</span>
         </div>
         <div class="compatibility-stat">
-            <span class="compatibility-label">🔄 Generation Difference</span>
+            <span class="compatibility-label">🔄 ${t('panel.generationDifference')}</span>
             <span class="compatibility-value">${generationDiff}</span>
         </div>
         <div class="compatibility-stat">
-            <span class="compatibility-label">👶 Offspring Generation</span>
-            <span class="compatibility-value">Gen ${Math.max(leftParrot.generation, rightParrot.generation) + 1}</span>
+            <span class="compatibility-label">👶 ${t('panel.offspringGeneration')}</span>
+            <span class="compatibility-value">${t('common.generation')} ${Math.max(leftParrot.generation, rightParrot.generation) + 1}</span>
         </div>
     `;
 }

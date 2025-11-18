@@ -104,5 +104,12 @@ export function createParrotWithPurity(targetPurity) {
         genes[part] = partGenes;
     }
 
+    // Add performance genes (random distribution, 50% chance for each allele to be dominant)
+    genes.agility = [randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean()];
+    genes.intelligence = [randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean()];
+    genes.stamina = [randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean()];
+    genes.speed = [randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean()];
+    genes.fertility = [randomBoolean(), randomBoolean(), randomBoolean(), randomBoolean()];
+
     return genes;
 }

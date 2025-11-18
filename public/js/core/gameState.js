@@ -3,6 +3,8 @@
  * Centralizes all global game state
  */
 
+import { INITIAL_COINS } from '../lib/economy.js';
+
 // Core game state
 export let parrots = [];
 export let storeParrots = [];
@@ -10,7 +12,7 @@ export let recentOffspring = []; // Parrots from last breeding, shown in Breedin
 export let selectedParrotId = null;
 export let breedingPair = { left: null, right: null };
 export let currentTab = 'collection';
-export let coins = 500;
+export let coins = INITIAL_COINS;
 export let parrotIdCounter = 0;
 export let generation = 1;
 export let svgCache = null;
@@ -44,6 +46,11 @@ export let usedNames = new Set();
 // Notification state
 export let notificationHistory = [];
 export let toastIdCounter = 0;
+
+// Wild Mate System state
+export let conservationCredits = 0;
+export let wildGenePool = null; // Will be initialized on first use
+export let releaseHistory = []; // Track released parrots for analytics
 
 // Setters for state updates
 export function setParrots(newParrots) {
@@ -385,6 +392,43 @@ export function getNotificationHistory() {
     return notificationHistory;
 }
 
+// Wild Mate System getters/setters
+export function getConservationCredits() {
+    return conservationCredits;
+}
+
+export function setConservationCredits(amount) {
+    conservationCredits = amount;
+}
+
+export function addConservationCredits(amount) {
+    conservationCredits += amount;
+}
+
+export function subtractConservationCredits(amount) {
+    conservationCredits -= amount;
+}
+
+export function getWildGenePool() {
+    return wildGenePool;
+}
+
+export function setWildGenePool(pool) {
+    wildGenePool = pool;
+}
+
+export function getReleaseHistory() {
+    return releaseHistory;
+}
+
+export function setReleaseHistory(history) {
+    releaseHistory = history;
+}
+
+export function addReleaseRecord(record) {
+    releaseHistory.push(record);
+}
+
 // Reset entire game state
 export function resetGameState() {
     parrots = [];
@@ -392,7 +436,7 @@ export function resetGameState() {
     selectedParrotId = null;
     breedingPair = { left: null, right: null };
     currentTab = 'collection';
-    coins = 500;
+    coins = INITIAL_COINS;
     parrotIdCounter = 0;
     generation = 1;
     svgCache = null;
@@ -411,4 +455,7 @@ export function resetGameState() {
     usedNames = new Set();
     notificationHistory = [];
     toastIdCounter = 0;
+    conservationCredits = 0;
+    wildGenePool = null;
+    releaseHistory = [];
 }

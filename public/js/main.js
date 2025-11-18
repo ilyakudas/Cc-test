@@ -14,6 +14,7 @@ import { checkAchievements } from './lib/achievements.js';
 import { CONTEST_TIERS } from './lib/constants.js';
 import { createBreedingSlotsComponent } from './ui/breedingSlots.js';
 import * as I18n from './lib/i18n.js';
+import { BREEDING_COST } from './lib/economy.js';
 
 /**
  * Initialize a new game with starter parrots
@@ -56,7 +57,13 @@ async function initGame() {
             green: [false, false, true, true],
             blue: [true, true, false, false],
             gradient: false
-        }
+        },
+        // Performance genes
+        agility: [true, true, false, true],       // 3/4 = high
+        intelligence: [true, false, true, false],  // 2/4 = medium
+        stamina: [true, true, true, false],        // 3/4 = high
+        speed: [false, true, false, true],         // 2/4 = medium
+        fertility: [true, true, false, false]      // 2/4 = medium
     }, 1, 0);
 
     GameState.addParrot(twilight);
@@ -99,7 +106,13 @@ async function initGame() {
             green: [false, false, false, false],
             blue: [true, true, true, true],
             gradient: false
-        }
+        },
+        // Performance genes
+        agility: [true, true, true, false],        // 3/4 = high
+        intelligence: [true, true, true, true],    // 4/4 = high
+        stamina: [false, true, false, true],       // 2/4 = medium
+        speed: [true, true, true, false],          // 3/4 = high
+        fertility: [true, false, true, true]       // 3/4 = high
     }, 1, 1);
 
     GameState.incrementParrotIdCounter();
@@ -308,8 +321,9 @@ async function newGame() {
     // Reset all game state
     GameState.resetGameState();
 
-    // Update mutation display
+    // Update mutation and auto-exam displays
     UI.updateMutationDisplay();
+    UI.updateAutoExamDisplay();
 
     // Reset contest tiers
     CONTEST_TIERS.forEach((tier, index) => {
@@ -363,6 +377,68 @@ window.sellAllOffspringHandler = () => Actions.sellAllOffspring(saveGame);
 window.dismissOffspringHandler = () => Actions.dismissOffspring(saveGame);
 window.toggleAutoExamineHandler = () => Actions.toggleAutoExamine(saveGame);
 
+// Wild Mate System Handlers
+window.releaseParrotHandler = async (parrotId) => {
+    const { releaseParrot } = await import('./actions/wildMate.js');
+    releaseParrot(parrotId, saveGame);
+    // Refresh wild mate tab if currently viewing it
+    if (GameState.getCurrentTab() === 'wildmate') {
+        const { renderWildMateTab } = await import('./ui/wildMate.js');
+        renderWildMateTab();
+    }
+};
+
+window.findWildMateHandler = async (parrotId) => {
+    const { startWildMateSearch } = await import('./actions/wildMate.js');
+    const result = startWildMateSearch(parrotId, saveGame);
+    if (result) {
+        const { showMateSelectionModal } = await import('./ui/wildMate.js');
+        showMateSelectionModal(result.searchingParrot, result.mates, result.cost);
+    }
+    // Refresh wild mate tab
+    if (GameState.getCurrentTab() === 'wildmate') {
+        const { renderWildMateTab } = await import('./ui/wildMate.js');
+        renderWildMateTab();
+    }
+};
+
+window.selectMateHandler = async (searchingParrotId, mateIndex) => {
+    const { selectWildMate } = await import('./actions/wildMate.js');
+    const selectedMate = window.currentMateOptions[mateIndex];
+    selectWildMate(searchingParrotId, selectedMate, saveGame);
+    // Close modal
+    const { closeMateSelectionModal } = await import('./ui/wildMate.js');
+    closeMateSelectionModal();
+    // Refresh wild mate tab
+    if (GameState.getCurrentTab() === 'wildmate') {
+        const { renderWildMateTab } = await import('./ui/wildMate.js');
+        renderWildMateTab();
+    }
+};
+
+window.cancelMateSearchHandler = async (cost) => {
+    const { cancelWildMateSearch } = await import('./actions/wildMate.js');
+    cancelWildMateSearch(cost, saveGame);
+    // Close modal
+    const { closeMateSelectionModal } = await import('./ui/wildMate.js');
+    closeMateSelectionModal();
+    // Refresh wild mate tab
+    if (GameState.getCurrentTab() === 'wildmate') {
+        const { renderWildMateTab } = await import('./ui/wildMate.js');
+        renderWildMateTab();
+    }
+};
+
+window.closeMateModalHandler = async () => {
+    const { closeMateSelectionModal } = await import('./ui/wildMate.js');
+    closeMateSelectionModal();
+};
+
+window.viewMateDetailsHandler = async (mateIndex) => {
+    // TODO: Implement detailed mate view (future enhancement)
+    console.log('View details for mate', mateIndex);
+};
+
 /**
  * Change game language and reload
  * @param {string} langCode - Language code (en, es, fr, ru, uk)
@@ -400,19 +476,33 @@ console.log('v1.3.1 - main.js loaded');
 // ===== INITIALIZATION =====
 
 window.addEventListener('load', async () => {
-    // Initialize i18n system first
-    let savedLang = null;
+    // STEP 1: Load English translations first (needed for loadGame to work)
+    console.log('i18n: Loading default English translations...');
+    await I18n.loadTranslations('en');
 
-    // Try to load saved game to get language preference
+    // Make i18n available globally immediately (needed for Alpine.js)
+    window.i18n = I18n;
+
+    // Start Alpine.js now that i18n is ready
+    if (window.startAlpine) {
+        console.log('i18n: Starting Alpine.js with translations ready');
+        window.startAlpine();
+    }
+
+    // STEP 2: Try to load saved game to get language preference
+    let savedLang = null;
     const loaded = loadGame();
 
     if (loaded) {
         savedLang = GameState.getLanguage();
     }
 
-    // Load translations (use saved language or auto-detect)
+    // STEP 3: Load translations for user's preferred language (if different from English)
     const langToLoad = savedLang || I18n.detectLanguage();
-    await I18n.loadTranslations(langToLoad);
+    if (langToLoad !== 'en') {
+        console.log(`i18n: Loading ${langToLoad} translations...`);
+        await I18n.loadTranslations(langToLoad);
+    }
 
     // Store the detected/loaded language
     if (!savedLang) {
@@ -420,6 +510,11 @@ window.addEventListener('load', async () => {
     }
 
     console.log(`i18n: Game language set to '${GameState.getLanguage()}'`);
+
+    // Mark i18n as ready for Alpine reactive updates
+    if (window.Alpine && window.Alpine.store) {
+        window.Alpine.store('i18n').markReady();
+    }
 
     // Initialize language selector on splash screen with translations
     const languageSelectorLabel = document.getElementById('languageSelectorLabel');
@@ -546,7 +641,6 @@ window.addEventListener('load', async () => {
     // Translate breeding button
     const breedButton = document.getElementById('breedButtonLarge');
     if (breedButton) {
-        const BREEDING_COST = 50; // Match constant from constants.js
         breedButton.innerHTML = `💕 ${I18n.t('breeding.breedButton')} (${I18n.t('breeding.breedCost', { cost: BREEDING_COST })})`;
     }
 
@@ -565,6 +659,10 @@ window.addEventListener('load', async () => {
         // Game loaded from save
         console.log('Game loaded - Store has', GameState.getStoreParrots().length, 'parrots');
 
+        // Update mutation and auto-exam displays with correct translations
+        UI.updateMutationDisplay();
+        UI.updateAutoExamDisplay();
+
         // Only generate store if it's empty (for old saves without store data)
         if (GameState.getStoreParrots().length === 0) {
             console.log('Store is empty, generating new store parrots');
@@ -576,7 +674,4 @@ window.addEventListener('load', async () => {
         // New game
         await initGame();
     }
-
-    // Make i18n available globally for use in HTML onclick handlers
-    window.i18n = I18n;
 });

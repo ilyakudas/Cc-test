@@ -138,6 +138,24 @@
     },
     "clickToView": {
       "value": "Click a parrot to view details"
+    },
+    "storeBuyParrots": {
+      "value": "Store - Buy Parrots"
+    },
+    "breedingLaboratory": {
+      "value": "Breeding Laboratory"
+    },
+    "beautyContests": {
+      "value": "Beauty Contests"
+    },
+    "geneticDiversity": {
+      "value": "Genetic Diversity"
+    },
+    "generationDifference": {
+      "value": "Generation Difference"
+    },
+    "offspringGeneration": {
+      "value": "Offspring Generation"
     }
   },
 
@@ -192,6 +210,24 @@
     },
     "breedToSeeOffspring": {
       "value": "Breed parrots to see your offspring here!"
+    },
+    "offspringWaiting": {
+      "value": "{count} chick(s) waiting"
+    },
+    "moveAllToCollection": {
+      "value": "Move All ({count}) to Collection"
+    },
+    "sellAllCount": {
+      "value": "Sell All ({count})"
+    },
+    "dismissAllCount": {
+      "value": "Dismiss All ({count})"
+    },
+    "chick": {
+      "value": "chick"
+    },
+    "chicks": {
+      "value": "chicks"
     }
   },
 
