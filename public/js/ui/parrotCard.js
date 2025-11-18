@@ -107,6 +107,21 @@ export async function createParrotCard(parrot, isStore) {
     });
     colorPalette += '</div>';
 
+    // Performance genes display
+    let performanceGenes = '';
+    if (!isStore) {
+        const perfStats = parrot.getPerformanceStats();
+        performanceGenes = `
+            <div class="performance-genes">
+                <span title="Agility: ${perfStats.agility.category}" class="perf-gene perf-${perfStats.agility.category}">⚡${perfStats.agility.level}</span>
+                <span title="Intelligence: ${perfStats.intelligence.category}" class="perf-gene perf-${perfStats.intelligence.category}">🧠${perfStats.intelligence.level}</span>
+                <span title="Stamina: ${perfStats.stamina.category}" class="perf-gene perf-${perfStats.stamina.category}">💪${perfStats.stamina.level}</span>
+                <span title="Speed: ${perfStats.speed.category}" class="perf-gene perf-${perfStats.speed.category}">🏃${perfStats.speed.level}</span>
+                <span title="Fertility: ${perfStats.fertility.category}" class="perf-gene perf-${perfStats.fertility.category}">🥚${perfStats.fertility.level}</span>
+            </div>
+        `;
+    }
+
     // Trophy/contest indicators and gradient symbol
     let trophyIndicator = '';
     if (!isStore) {
@@ -143,6 +158,7 @@ export async function createParrotCard(parrot, isStore) {
         ${lockIndicator}
         <div class="parrot-mini">${svg}</div>
         ${colorPalette}
+        ${performanceGenes}
         <div class="parrot-name">${parrot.name}</div>
         <div class="parrot-gen">${t('common.generation')} ${parrot.generation}</div>
         <div class="rarity-badge" style="background: ${rarityInfo.color};">${t(rarityInfo.labelKey)}</div>

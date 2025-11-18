@@ -34,3 +34,6 @@ export { updatePreview } from './ui/preview.js';
 
 // Mutation and settings display
 export { updateMutationDisplay, updateAutoExamDisplay } from './ui/mutations.js';
+
+// Wild mate system
+export { renderWildMateTab, showMateSelectionModal, closeMateSelectionModal, updateWildMateActions } from './ui/wildMate.js';

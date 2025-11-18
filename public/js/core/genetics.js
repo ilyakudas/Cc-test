@@ -48,13 +48,37 @@ export function breedBodyPart(part1, part2) {
 }
 
 /**
+ * Breed a performance gene (simple 4-allele trait)
+ * @param {Array} parent1Alleles - First parent's alleles (4 booleans)
+ * @param {Array} parent2Alleles - Second parent's alleles (4 booleans)
+ * @returns {Array} Child alleles (4 booleans)
+ */
+export function breedPerformanceGene(parent1Alleles, parent2Alleles) {
+    const childAlleles = [];
+
+    for (let i = 0; i < 4; i++) {
+        // Randomly inherit from either parent
+        let allele = Math.random() < 0.5 ? parent1Alleles[i] : parent2Alleles[i];
+
+        // Apply mutations if enabled
+        if (getMutationsEnabled() && Math.random() < getMutationRate()) {
+            allele = !allele;
+        }
+
+        childAlleles.push(allele);
+    }
+
+    return childAlleles;
+}
+
+/**
  * Breed two parrots to create offspring genes
  * @param {Object} parent1Genes - First parent's genes
  * @param {Object} parent2Genes - Second parent's genes
- * @returns {Object} Child genes with all body parts
+ * @returns {Object} Child genes with all body parts and performance genes
  */
 export function breedParrotGenes(parent1Genes, parent2Genes) {
-    return {
+    const childGenes = {
         wings: breedBodyPart(parent1Genes.wings, parent2Genes.wings),
         special_wing: breedBodyPart(parent1Genes.special_wing, parent2Genes.special_wing),
         body: breedBodyPart(parent1Genes.body, parent2Genes.body),
@@ -62,4 +86,28 @@ export function breedParrotGenes(parent1Genes, parent2Genes) {
         tail: breedBodyPart(parent1Genes.tail, parent2Genes.tail),
         accents: breedBodyPart(parent1Genes.accents, parent2Genes.accents)
     };
+
+    // Breed performance genes (with fallback for backward compatibility)
+    childGenes.agility = breedPerformanceGene(
+        parent1Genes.agility || [true, true, false, false],
+        parent2Genes.agility || [true, true, false, false]
+    );
+    childGenes.intelligence = breedPerformanceGene(
+        parent1Genes.intelligence || [true, true, false, false],
+        parent2Genes.intelligence || [true, true, false, false]
+    );
+    childGenes.stamina = breedPerformanceGene(
+        parent1Genes.stamina || [true, true, false, false],
+        parent2Genes.stamina || [true, true, false, false]
+    );
+    childGenes.speed = breedPerformanceGene(
+        parent1Genes.speed || [true, true, false, false],
+        parent2Genes.speed || [true, true, false, false]
+    );
+    childGenes.fertility = breedPerformanceGene(
+        parent1Genes.fertility || [true, true, false, false],
+        parent2Genes.fertility || [true, true, false, false]
+    );
+
+    return childGenes;
 }
