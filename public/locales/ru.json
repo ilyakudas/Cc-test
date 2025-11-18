@@ -5,7 +5,6 @@
     "version": "1.0.0",
     "translator_notes": "This is the Russian translation file for ChromaWing, a parrot breeding genetics game. Players breed parrots with RGB color genetics and compete in beauty contests."
   },
-
   "common": {
     "coins": {
       "value": "Монеты",
@@ -68,7 +67,6 @@
       "_context": "Notification history panel header. Max length: 25 chars."
     }
   },
-
   "splash": {
     "title": {
       "value": "ChromaWing",
@@ -107,7 +105,6 @@
       "_context": "Feature highlight on splash screen. Max length: 30 chars."
     }
   },
-
   "languageSelector": {
     "label": {
       "value": "Выбрать язык",
@@ -134,7 +131,6 @@
       "_context": "Language name in its native form. Max length: 20 chars."
     }
   },
-
   "tabs": {
     "collection": {
       "value": "Коллекция",
@@ -161,7 +157,6 @@
       "_context": "Tab name for gene editor. Max length: 15 chars."
     }
   },
-
   "panel": {
     "yourParrots": {
       "value": "Твои попугаи",
@@ -180,7 +175,6 @@
       "_context": "Empty state message in preview panel. Max length: 50 chars."
     }
   },
-
   "breeding": {
     "selectParents": {
       "value": "Выбери родителей",
@@ -251,7 +245,6 @@
       "_context": "Empty state message for offspring section. Max length: 60 chars."
     }
   },
-
   "bodyParts": {
     "wings": {
       "value": "Крылья",
@@ -278,7 +271,6 @@
       "_context": "Body part name: decorative accent feathers. Max length: 20 chars."
     }
   },
-
   "rarity": {
     "common": {
       "value": "Обычный",
@@ -301,7 +293,6 @@
       "_context": "Rarity level: highest tier. Max length: 15 chars."
     }
   },
-
   "beauty": {
     "plain": {
       "value": "Простой",
@@ -332,7 +323,6 @@
       "_context": "Label shown when parrot has gradient traits. Max length: 15 chars."
     }
   },
-
   "contests": {
     "header": {
       "value": "Конкурсы красоты для {name}",
@@ -499,7 +489,6 @@
       "_context": "Suffix to show player's entry. Max length: 10 chars."
     }
   },
-
   "laboratory": {
     "title": {
       "value": "Лабораторный анализ",
@@ -662,7 +651,6 @@
       "_context": "Blue color channel. Max length: 10 chars."
     }
   },
-
   "gallery": {
     "title": {
       "value": "Галерея попугаев",
@@ -701,7 +689,6 @@
       "_context": "Prompt to create custom parrot. Max length: 70 chars."
     }
   },
-
   "colorLab": {
     "title": {
       "value": "Цветолаб - Редактор генов",
@@ -772,7 +759,6 @@
       "_context": "Stat label for active gene count. Max length: 20 chars."
     }
   },
-
   "toasts": {
     "breedSuccess": {
       "title": "Скрещивание успешно!",
@@ -891,7 +877,6 @@
       "_context": "Confirmation prompt for clearing notifications. Max length: 40 chars."
     }
   },
-
   "actions": {
     "examine": {
       "value": "Осмотреть",
@@ -924,9 +909,20 @@
     "dismissOffspring": {
       "value": "Отпустить всех",
       "_context": "Button to dismiss all offspring. Max length: 20 chars."
+    },
+    "unlock": {
+      "value": "Unlock Parrot",
+      "_context": "Button to unlock a locked parrot. Max length: 20 chars."
+    },
+    "enterContest": {
+      "value": "Enter Beauty Contest",
+      "_context": "Button to enter a beauty contest with selected parrot. Max length: 30 chars."
+    },
+    "moveOffspring": {
+      "value": "Move to Collection",
+      "_context": "Alternative action button to move offspring. Max length: 30 chars."
     }
   },
-
   "time": {
     "justNow": {
       "value": "Только что",
@@ -945,7 +941,6 @@
       "_context": "Relative time: days ago. {n} is number. Max length: 15 chars."
     }
   },
-
   "messages": {
     "newGameConfirm": {
       "value": "Начать новую игру? Это сотрёт твой текущий прогресс!",

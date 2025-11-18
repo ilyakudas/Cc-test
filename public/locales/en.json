@@ -905,6 +905,10 @@
       "value": "Lock",
       "_context": "Button to lock/unlock parrot. Max length: 10 chars."
     },
+    "unlock": {
+      "value": "Unlock Parrot",
+      "_context": "Button to unlock a locked parrot. Max length: 20 chars."
+    },
     "breedLeft": {
       "value": "Breed (L)",
       "_context": "Button to add to left breeding slot. Max length: 15 chars."
@@ -913,9 +917,17 @@
       "value": "Breed (R)",
       "_context": "Button to add to right breeding slot. Max length: 15 chars."
     },
+    "enterContest": {
+      "value": "Enter Beauty Contest",
+      "_context": "Button to enter a beauty contest with selected parrot. Max length: 30 chars."
+    },
     "moveToCollection": {
       "value": "Move to Collection",
       "_context": "Button to move offspring to main collection. Max length: 30 chars."
+    },
+    "moveOffspring": {
+      "value": "Move to Collection",
+      "_context": "Alternative action button to move offspring. Max length: 30 chars."
     },
     "sellAllOffspring": {
       "value": "Sell All Offspring",
