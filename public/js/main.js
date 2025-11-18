@@ -409,6 +409,12 @@ window.addEventListener('load', async () => {
     // Make i18n available globally immediately (needed for Alpine.js)
     window.i18n = I18n;
 
+    // Start Alpine.js now that i18n is ready
+    if (window.startAlpine) {
+        console.log('i18n: Starting Alpine.js with translations ready');
+        window.startAlpine();
+    }
+
     // STEP 2: Try to load saved game to get language preference
     let savedLang = null;
     const loaded = loadGame();

@@ -634,7 +634,15 @@
         });
     </script>
 
-    <!-- Alpine.js -->
+    <!-- Prevent Alpine from auto-starting until i18n is ready -->
+    <script>
+        // Defer Alpine initialization
+        window.deferLoadingAlpine = callback => {
+            window.startAlpine = callback;
+        };
+    </script>
+
+    <!-- Alpine.js (will wait for manual start) -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
 
     <!-- Main application module -->
