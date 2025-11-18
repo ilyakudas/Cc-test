@@ -443,6 +443,84 @@ window.addEventListener('load', async () => {
         }
     });
 
+    // Translate splash screen elements
+    const splashSubtitle = document.querySelector('.splash-subtitle');
+    if (splashSubtitle) {
+        splashSubtitle.textContent = I18n.t('splash.subtitle');
+    }
+
+    // Translate splash description paragraphs
+    const splashDescriptions = document.querySelectorAll('.splash-description p');
+    if (splashDescriptions.length >= 2) {
+        splashDescriptions[0].textContent = I18n.t('splash.description1');
+        splashDescriptions[1].textContent = I18n.t('splash.description2');
+    }
+
+    // Translate splash buttons
+    const btnStart = document.querySelector('.btn-start');
+    if (btnStart) {
+        btnStart.innerHTML = '🎮 ' + I18n.t('splash.startPlaying');
+    }
+
+    const btnNewGame = document.querySelector('.btn-new-game-splash');
+    if (btnNewGame) {
+        btnNewGame.innerHTML = '🔄 ' + I18n.t('splash.newGame');
+    }
+
+    // Translate splash features
+    const splashFeatures = document.querySelectorAll('.splash-feature');
+    if (splashFeatures.length >= 3) {
+        splashFeatures[0].innerHTML = '🧬 ' + I18n.t('splash.feature1');
+        splashFeatures[1].innerHTML = '🎨 ' + I18n.t('splash.feature2');
+        splashFeatures[2].innerHTML = '🏆 ' + I18n.t('splash.feature3');
+    }
+
+    // Translate main game UI elements
+    const statBadges = document.querySelectorAll('.stat-badge');
+    if (statBadges.length >= 5) {
+        // Coins
+        const coinsLabel = statBadges[0].querySelector('div > div:first-child');
+        if (coinsLabel) coinsLabel.textContent = I18n.t('common.coins');
+
+        // Parrots
+        const parrotsLabel = statBadges[1].querySelector('div > div:first-child');
+        if (parrotsLabel) parrotsLabel.textContent = I18n.t('common.parrots');
+
+        // Generation
+        const generationLabel = statBadges[2].querySelector('div > div:first-child');
+        if (generationLabel) generationLabel.textContent = I18n.t('common.generation');
+
+        // Mutations
+        const mutationsLabel = statBadges[3].querySelector('div > div:first-child');
+        if (mutationsLabel) mutationsLabel.textContent = I18n.t('common.mutations');
+
+        // Auto-Exam
+        const autoExamLabel = statBadges[4].querySelector('div > div:first-child');
+        if (autoExamLabel) autoExamLabel.textContent = I18n.t('common.autoExam');
+    }
+
+    // Translate tab labels
+    const tabs = document.querySelectorAll('.tab');
+    if (tabs.length >= 6) {
+        const tabLabels = tabs[0].querySelectorAll('.tab-label');
+        if (tabLabels[0]) tabLabels[0].textContent = I18n.t('tabs.collection');
+
+        const tab1Labels = tabs[1].querySelectorAll('.tab-label');
+        if (tab1Labels[0]) tab1Labels[0].textContent = I18n.t('tabs.store');
+
+        const tab2Labels = tabs[2].querySelectorAll('.tab-label');
+        if (tab2Labels[0]) tab2Labels[0].textContent = I18n.t('tabs.breeding');
+
+        const tab3Labels = tabs[3].querySelectorAll('.tab-label');
+        if (tab3Labels[0]) tab3Labels[0].textContent = I18n.t('tabs.contests');
+
+        const tab4Labels = tabs[4].querySelectorAll('.tab-label');
+        if (tab4Labels[0]) tab4Labels[0].textContent = I18n.t('tabs.gallery');
+
+        const tab5Labels = tabs[5].querySelectorAll('.tab-label');
+        if (tab5Labels[0]) tab5Labels[0].textContent = I18n.t('tabs.colorLab');
+    }
+
     if (loaded) {
         // Game loaded from save
         console.log('Game loaded - Store has', GameState.getStoreParrots().length, 'parrots');
