@@ -6,6 +6,7 @@
 import { Parrot } from './parrot.js';
 import { CONTEST_TIERS } from '../lib/constants.js';
 import * as GameState from './gameState.js';
+import { t } from '../lib/i18n.js';
 
 /**
  * Save current game state to localStorage (migrated from cookies due to size limits)
@@ -189,11 +190,11 @@ export function loadGame() {
         const autoExamineIconEl = document.getElementById('autoExamineIcon');
         if (autoExamineStatusEl && autoExamineIconEl) {
             if (GameState.getAutoExamineEnabled()) {
-                autoExamineStatusEl.textContent = 'ON';
+                autoExamineStatusEl.textContent = t('common.on');
                 autoExamineStatusEl.style.color = '#4caf50';
                 autoExamineIconEl.textContent = '🔬';
             } else {
-                autoExamineStatusEl.textContent = 'OFF';
+                autoExamineStatusEl.textContent = t('common.off');
                 autoExamineStatusEl.style.color = '#dc3545';
                 autoExamineIconEl.textContent = '🔒';
             }

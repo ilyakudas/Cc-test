@@ -4,6 +4,7 @@
  */
 
 import * as GameState from '../core/gameState.js';
+import { t } from '../lib/i18n.js';
 
 /**
  * Update mutation display in stats bar
@@ -14,11 +15,11 @@ export function updateMutationDisplay() {
     const mutationsEnabled = GameState.getMutationsEnabled();
 
     if (mutationsEnabled) {
-        statusEl.textContent = 'ON';
+        statusEl.textContent = t('common.on');
         statusEl.style.color = '#4caf50';
         iconEl.textContent = '🧪';
     } else {
-        statusEl.textContent = 'OFF';
+        statusEl.textContent = t('common.off');
         statusEl.style.color = '#dc3545';
         iconEl.textContent = '🔒';
     }
