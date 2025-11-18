@@ -16,8 +16,9 @@ export async function selectParrot(parrotId) {
     // Ensure action buttons reflect current breeding state
     await UI.updatePreview();
 
-    // Update wild mate actions if on wild mate tab
+    // Update wild mate tab if active
     if (GameState.getCurrentTab() === 'wildmate') {
-        UI.updateWildMateActions();
+        // Re-render the entire wild mate tab to update card selection styling
+        await UI.renderWildMateTab();
     }
 }
