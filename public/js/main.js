@@ -367,17 +367,28 @@ window.toggleAutoExamineHandler = () => Actions.toggleAutoExamine(saveGame);
  * Change game language and reload
  * @param {string} langCode - Language code (en, es, fr, ru, uk)
  */
-window.changeLanguageHandler = async (langCode) => {
-    console.log(`Changing language to: ${langCode}`);
+window.changeLanguageHandler = (langCode) => {
+    console.log(`[Language] Changing language to: ${langCode}`);
 
-    // Update language in game state
-    GameState.setLanguage(langCode);
+    try {
+        // Update language in game state
+        GameState.setLanguage(langCode);
+        console.log(`[Language] Language set in GameState: ${GameState.getLanguage()}`);
 
-    // Save game with new language
-    saveGame();
+        // Save game with new language
+        const saved = saveGame();
+        console.log(`[Language] Game saved:`, saved);
 
-    // Reload page to apply new language
-    window.location.reload();
+        // Store language in localStorage as backup
+        localStorage.setItem('chromawing_language', langCode);
+        console.log(`[Language] Language stored in localStorage`);
+
+        // Reload page to apply new language
+        console.log(`[Language] Reloading page...`);
+        window.location.reload();
+    } catch (error) {
+        console.error(`[Language] Error changing language:`, error);
+    }
 };
 
 // ===== ALPINE.JS COMPONENTS =====
