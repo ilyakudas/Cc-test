@@ -437,6 +437,11 @@ window.addEventListener('load', async () => {
 
     console.log(`i18n: Game language set to '${GameState.getLanguage()}'`);
 
+    // Mark i18n as ready for Alpine reactive updates
+    if (window.Alpine && window.Alpine.store) {
+        window.Alpine.store('i18n').markReady();
+    }
+
     // Initialize language selector on splash screen with translations
     const languageSelectorLabel = document.getElementById('languageSelectorLabel');
     if (languageSelectorLabel) {
