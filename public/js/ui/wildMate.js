@@ -230,67 +230,56 @@ export function updateWildMateActions() {
  * Show mate selection modal
  */
 export async function showMateSelectionModal(searchingParrot, mates, searchCost) {
+    const { createParrotCard } = await import('./parrotCard.js');
+
     const modal = document.createElement('div');
     modal.className = 'modal active';
     modal.id = 'wildMateModal';
 
-    let html = `
-        <div class="modal-content wild-mate-modal-content">
-            <span class="modal-close" onclick="closeMateModalHandler()">&times;</span>
-            <div class="mate-selection-container">
-                <h2>🔍 Wild Mates Found!</h2>
-                <p>Found ${mates.length} potential mates for <strong>${searchingParrot.name}</strong></p>
+    const modalContent = document.createElement('div');
+    modalContent.className = 'modal-content wild-mate-modal-content';
 
-                <div class="mate-options-grid">
-    `;
-
-    // Generate SVGs asynchronously for all mates
-    for (let i = 0; i < mates.length; i++) {
-        const mate = mates[i];
-        const beauty = mate.calculateBeauty();
-        const beautyStars = Math.floor((beauty.score / beauty.maxScore) * 5);
-        const rarity = mate.calculateRarity();
-
-        // Await SVG generation
-        const svgMarkup = await generateParrotSVG(mate, 150, 150);
-
-        html += `
-            <div class="mate-option-card">
-                <div class="mate-preview">
-                    ${svgMarkup}
-                </div>
-                <div class="mate-info">
-                    <h3>${mate.name}</h3>
-                    <div class="mate-stats">
-                        <div>Beauty: ${'⭐'.repeat(beautyStars)}</div>
-                        <div>Rarity: ${rarity}</div>
-                        <div>Generation: ${mate.generation}</div>
-                    </div>
-                    <button class="btn btn-primary" onclick="selectMateHandler(${searchingParrot.id}, ${i})">
-                        ✓ Select This Mate
-                    </button>
-                    <button class="btn btn-secondary" onclick="viewMateDetailsHandler(${i})">
-                        👁️ View Details
-                    </button>
-                </div>
-            </div>
-        `;
-    }
-
-    html += `
-                </div>
-
-                <div class="mate-modal-actions">
-                    <button class="btn btn-cancel" onclick="cancelMateSearchHandler(${searchCost})">
-                        ✖ Cancel (Refund 50%)
-                    </button>
-                </div>
+    modalContent.innerHTML = `
+        <span class="modal-close" onclick="closeMateModalHandler()">&times;</span>
+        <div class="mate-selection-container">
+            <h2>🔍 Wild Mates Found!</h2>
+            <p>Found ${mates.length} potential mates for <strong>${searchingParrot.name}</strong></p>
+            <div class="mate-options-grid parrot-grid"></div>
+            <div class="mate-modal-actions">
+                <button class="btn btn-cancel" onclick="cancelMateSearchHandler(${searchCost})">
+                    ✖ Cancel (Refund 50%)
+                </button>
             </div>
         </div>
     `;
 
-    modal.innerHTML = html;
+    modal.appendChild(modalContent);
     document.body.appendChild(modal);
+
+    // Populate grid with standard parrot cards
+    const grid = modalContent.querySelector('.mate-options-grid');
+    for (let i = 0; i < mates.length; i++) {
+        const mate = mates[i];
+        const card = await createParrotCard(mate, false);
+
+        // Replace the default click handler with mate selection
+        card.onclick = null;
+
+        // Add select button below the card
+        const selectButton = document.createElement('button');
+        selectButton.className = 'btn btn-primary';
+        selectButton.style.width = '100%';
+        selectButton.style.marginTop = '8px';
+        selectButton.textContent = '✓ Select This Mate';
+        selectButton.onclick = () => window.selectMateHandler(searchingParrot.id, i);
+
+        const cardWrapper = document.createElement('div');
+        cardWrapper.className = 'mate-card-wrapper';
+        cardWrapper.appendChild(card);
+        cardWrapper.appendChild(selectButton);
+
+        grid.appendChild(cardWrapper);
+    }
 
     // Store mates in window for access
     window.currentMateOptions = mates;
