@@ -45,7 +45,7 @@
     },
     "locked": {
       "value": "Locked",
-      "_context": "Status indicator that parrot is protected from selling. Max length: 15 chars."
+      "_context": "Status indicator that parrot is protected from selling. Adjective modifies 'parrot' (feminine in many languages). Max length: 15 chars."
     },
     "delete": {
       "value": "Delete",
@@ -282,46 +282,46 @@
   "rarity": {
     "common": {
       "value": "Common",
-      "_context": "Rarity level: lowest tier. Max length: 15 chars."
+      "_context": "Rarity level: lowest tier. Adjective modifies 'parrot' (feminine in many languages). Max length: 15 chars."
     },
     "uncommon": {
       "value": "Uncommon",
-      "_context": "Rarity level: second tier. Max length: 15 chars."
+      "_context": "Rarity level: second tier. Adjective modifies 'parrot' (feminine in many languages). Max length: 15 chars."
     },
     "rare": {
       "value": "Rare",
-      "_context": "Rarity level: third tier. Max length: 15 chars."
+      "_context": "Rarity level: third tier. Adjective modifies 'parrot' (feminine in many languages). Max length: 15 chars."
     },
     "epic": {
       "value": "Epic",
-      "_context": "Rarity level: fourth tier. Max length: 15 chars."
+      "_context": "Rarity level: fourth tier. Adjective modifies 'parrot' (feminine in many languages). Max length: 15 chars."
     },
     "legendary": {
       "value": "Legendary",
-      "_context": "Rarity level: highest tier. Max length: 15 chars."
+      "_context": "Rarity level: highest tier. Adjective modifies 'parrot' (feminine in many languages). Max length: 15 chars."
     }
   },
 
   "beauty": {
     "plain": {
       "value": "Plain",
-      "_context": "Beauty level: lowest. Max length: 15 chars."
+      "_context": "Beauty level: lowest. Adjective modifies 'parrot' (feminine in many languages). Max length: 15 chars."
     },
     "decent": {
       "value": "Decent",
-      "_context": "Beauty level: low tier. Max length: 15 chars."
+      "_context": "Beauty level: low tier. Adjective modifies 'parrot' (feminine in many languages). Max length: 15 chars."
     },
     "pretty": {
       "value": "Pretty",
-      "_context": "Beauty level: mid-low tier. Max length: 15 chars."
+      "_context": "Beauty level: mid-low tier. Adjective modifies 'parrot' (feminine in many languages). Max length: 15 chars."
     },
     "beautiful": {
       "value": "Beautiful",
-      "_context": "Beauty level: mid-high tier. Max length: 15 chars."
+      "_context": "Beauty level: mid-high tier. Adjective modifies 'parrot' (feminine in many languages). Max length: 15 chars."
     },
     "stunning": {
       "value": "Stunning",
-      "_context": "Beauty level: highest tier. Max length: 15 chars."
+      "_context": "Beauty level: highest tier. Adjective modifies 'parrot' (feminine in many languages). Max length: 15 chars."
     },
     "score": {
       "value": "Beauty",
@@ -895,19 +895,19 @@
   "actions": {
     "examine": {
       "value": "Examine",
-      "_context": "Button to examine parrot genes. Max length: 15 chars."
+      "_context": "Button to examine parrot genes. Imperative verb. Max length: 15 chars."
     },
     "free": {
       "value": "Free",
-      "_context": "Button to release parrot. Max length: 10 chars."
+      "_context": "Button to release parrot. Imperative verb. Max length: 10 chars."
     },
     "lock": {
       "value": "Lock",
-      "_context": "Button to lock/unlock parrot. Max length: 10 chars."
+      "_context": "Button to lock parrot (prevent selling). Imperative verb. Max length: 10 chars."
     },
     "unlock": {
       "value": "Unlock Parrot",
-      "_context": "Button to unlock a locked parrot. Max length: 20 chars."
+      "_context": "Button to unlock a locked parrot. Imperative verb. Max length: 20 chars."
     },
     "breedLeft": {
       "value": "Breed (L)",
@@ -946,15 +946,15 @@
     },
     "minutesAgo": {
       "value": "{n}m ago",
-      "_context": "Relative time: minutes ago. {n} is number. Max length: 15 chars."
+      "_context": "Relative time: minutes ago. {n} is number. Abbreviated form - use appropriate abbreviation for your language. Max length: 15 chars."
     },
     "hoursAgo": {
       "value": "{n}h ago",
-      "_context": "Relative time: hours ago. {n} is number. Max length: 15 chars."
+      "_context": "Relative time: hours ago. {n} is number. Abbreviated form - use appropriate abbreviation for your language. Max length: 15 chars."
     },
     "daysAgo": {
       "value": "{n}d ago",
-      "_context": "Relative time: days ago. {n} is number. Max length: 15 chars."
+      "_context": "Relative time: days ago. {n} is number. Abbreviated form - use appropriate abbreviation for your language. Max length: 15 chars."
     }
   },
 
