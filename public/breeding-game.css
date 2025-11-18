@@ -2912,3 +2912,56 @@ header h1 {
         padding: 16px;
     }
 }
+
+/* ===== PERFORMANCE GENES DISPLAY ===== */
+
+.performance-genes {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    margin: 6px 0;
+    flex-wrap: wrap;
+}
+
+.perf-gene {
+    display: inline-block;
+    padding: 2px 6px;
+    background: #f0f0f0;
+    border-radius: 4px;
+    font-size: 0.75em;
+    cursor: help;
+    transition: all 0.2s;
+}
+
+.perf-gene:hover {
+    transform: scale(1.1);
+}
+
+.perf-gene.perf-low {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.perf-gene.perf-medium {
+    background: #fff3e0;
+    color: #ef6c00;
+}
+
+.perf-gene.perf-high {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+/* Wild Mate Actions Top Bar */
+.wild-mate-actions-top {
+    background: #f7fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 20px;
+    min-height: 50px;
+}
+
+.wild-mate-actions-top .action-buttons-horizontal {
+    margin: 0;
+}

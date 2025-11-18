@@ -36,4 +36,4 @@ export { updatePreview } from './ui/preview.js';
 export { updateMutationDisplay, updateAutoExamDisplay } from './ui/mutations.js';
 
 // Wild mate system
-export { renderWildMateTab, showMateSelectionModal, closeMateSelectionModal } from './ui/wildMate.js';
+export { renderWildMateTab, showMateSelectionModal, closeMateSelectionModal, updateWildMateActions } from './ui/wildMate.js';

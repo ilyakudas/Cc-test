@@ -21,36 +21,30 @@ export async function renderWildMateTab() {
     if (!tab) return;
 
     const stats = getGenePoolStats();
-    const parrots = GameState.getParrots();
-    const credits = GameState.getConservationCredits();
-
-    // Render parrots section asynchronously
-    const parrotsHtml = await renderParrotActions(parrots, stats.exists);
 
     let html = `
         <div class="wild-mate-container">
-            <div class="wild-mate-header">
-                <h3>🌿 Wild Mate Finding System</h3>
-                <p style="color: #666; font-size: 0.9em; margin-top: 8px;">
-                    Release parrots to build the wild gene pool, then find mates for your collection
-                </p>
-            </div>
-
             <!-- Gene Pool Dashboard -->
             <div class="gene-pool-dashboard">
-                <h4>📊 Gene Pool Status</h4>
+                <h4>📊 Wild Gene Pool Status</h4>
                 ${renderGenePoolDashboard(stats)}
             </div>
 
-            <!-- Your Parrots Section -->
-            <div class="wild-mate-parrots">
-                <h4>🦜 Your Parrots</h4>
-                ${parrotsHtml}
-            </div>
+            <!-- Action Menu (populated when parrot is selected) -->
+            <div id="wildMateActions" class="wild-mate-actions-top"></div>
+
+            <!-- Parrot Grid (uses standard parrot cards) -->
+            <div id="wildMateParrotGrid" class="parrot-grid"></div>
         </div>
     `;
 
     tab.innerHTML = html;
+
+    // Render parrot grid using standard cards
+    await renderWildMateParrotGrid();
+
+    // Update action buttons for selected parrot
+    updateWildMateActions();
 }
 
 /**
@@ -126,79 +120,74 @@ function renderGenePoolDashboard(stats) {
 }
 
 /**
- * Render parrot action cards
+ * Render parrot grid using standard parrot cards
  */
-async function renderParrotActions(parrots, poolExists) {
+async function renderWildMateParrotGrid() {
+    const grid = document.getElementById('wildMateParrotGrid');
+    if (!grid) return;
+
+    const parrots = GameState.getParrots();
+
     if (parrots.length === 0) {
-        return `
-            <div class="empty-state">
-                <p>No parrots in your collection</p>
-            </div>
-        `;
+        grid.innerHTML = '<div class="empty-state"><p>No parrots in your collection</p></div>';
+        return;
     }
 
-    let html = '<div class="wild-mate-parrot-grid">';
+    // Clear grid
+    grid.innerHTML = '';
 
+    // Import and use standard parrot card
+    const { createParrotCard } = await import('./parrotCard.js');
+
+    // Render each parrot using standard card
     for (const parrot of parrots) {
-        const perfStats = parrot.getPerformanceStats();
-        const beauty = parrot.calculateBeauty();
-        const beautyPercent = Math.floor((beauty.score / beauty.maxScore) * 100);
-        const beautyStars = Math.floor((beauty.score / beauty.maxScore) * 5);
-        const isLocked = GameState.isParrotLocked(parrot.id);
-        const hasFoundMate = parrot.hasFoundWildMate;
-
-        const searchCost = calculateSearchCost(parrot);
-
-        // Generate SVG asynchronously
-        const svgMarkup = await generateParrotSVG(parrot, 100, 100);
-
-        html += `
-            <div class="wild-mate-parrot-card">
-                <div class="parrot-mini-preview">
-                    <div class="parrot-svg-mini">${svgMarkup}</div>
-                </div>
-                <div class="parrot-info">
-                    <h4>${parrot.name}</h4>
-                    <div class="parrot-stats-mini">
-                        <div>Beauty: ${'⭐'.repeat(beautyStars)} (${beautyPercent}%)</div>
-                        <div>Rarity: ${parrot.calculateRarity()}</div>
-                        <div>Gen: ${parrot.generation}</div>
-                    </div>
-                    <div class="performance-stats-mini">
-                        <span title="Agility: ${perfStats.agility.category}">⚡${perfStats.agility.level}</span>
-                        <span title="Intelligence: ${perfStats.intelligence.category}">🧠${perfStats.intelligence.level}</span>
-                        <span title="Stamina: ${perfStats.stamina.category}">💪${perfStats.stamina.level}</span>
-                        <span title="Speed: ${perfStats.speed.category}">🏃${perfStats.speed.level}</span>
-                        <span title="Fertility: ${perfStats.fertility.category}">🥚${perfStats.fertility.level}</span>
-                    </div>
-                </div>
-                <div class="parrot-actions">
-                    ${renderParrotActionButtons(parrot, isLocked, hasFoundMate, poolExists, searchCost)}
-                </div>
-            </div>
-        `;
+        const card = await createParrotCard(parrot, false);
+        grid.appendChild(card);
     }
-
-    html += '</div>';
-    return html;
 }
 
 /**
- * Render action buttons for a parrot
+ * Update action buttons for selected parrot
  */
-function renderParrotActionButtons(parrot, isLocked, hasFoundMate, poolExists, searchCost) {
-    let html = '';
+export function updateWildMateActions() {
+    const actionsDiv = document.getElementById('wildMateActions');
+    if (!actionsDiv) return;
+
+    const selectedParrotId = GameState.getSelectedParrotId();
+    if (!selectedParrotId) {
+        actionsDiv.innerHTML = '<p style="color: #666; text-align: center; padding: 12px;">Select a parrot to see available actions</p>';
+        return;
+    }
+
+    const parrots = GameState.getParrots();
+    const parrot = parrots.find(p => p.id === selectedParrotId);
+    if (!parrot) {
+        actionsDiv.innerHTML = '';
+        return;
+    }
+
+    const stats = getGenePoolStats();
+    const isLocked = GameState.isParrotLocked(parrot.id);
+    const hasFoundMate = parrot.hasFoundWildMate;
+    const searchCost = calculateSearchCost(parrot);
+    const credits = GameState.getConservationCredits();
+
+    let html = `
+        <div class="action-buttons-horizontal">
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <strong>${parrot.name}</strong>
+    `;
 
     // Release button
     if (isLocked) {
         html += `
-            <button class="btn-wild-action" disabled title="Unlock parrot to release">
-                🔒 Locked
+            <button class="btn" disabled title="Unlock parrot to release">
+                🔒 Locked - Cannot Release
             </button>
         `;
     } else {
         html += `
-            <button class="btn-wild-action btn-release" onclick="releaseParrotHandler(${parrot.id})">
+            <button class="btn btn-free" onclick="releaseParrotHandler(${parrot.id})">
                 🌿 Release to Wild
             </button>
         `;
@@ -207,31 +196,34 @@ function renderParrotActionButtons(parrot, isLocked, hasFoundMate, poolExists, s
     // Find mate button
     if (hasFoundMate) {
         html += `
-            <button class="btn-wild-action" disabled title="This parrot has already found a wild mate">
-                ✓ Mate Found
+            <button class="btn" disabled title="This parrot has already found a wild mate">
+                ✓ Wild Mate Already Found
             </button>
         `;
-    } else if (!poolExists) {
+    } else if (!stats.exists) {
         html += `
-            <button class="btn-wild-action" disabled title="Release parrots first to build gene pool">
-                🔍 Find Mate (Pool Empty)
+            <button class="btn" disabled title="Release parrots first to build gene pool">
+                🔍 Find Wild Mate (Pool Empty)
             </button>
         `;
     } else {
-        const credits = GameState.getConservationCredits();
         const canAfford = credits >= searchCost;
-
         html += `
-            <button class="btn-wild-action btn-find-mate"
+            <button class="btn btn-breed"
                     onclick="findWildMateHandler(${parrot.id})"
                     ${canAfford ? '' : 'disabled'}
                     title="${canAfford ? `Search for wild mate (${searchCost} 🌿)` : `Need ${searchCost} 🌿 credits`}">
-                🔍 Find Mate (${searchCost} 🌿)
+                🔍 Find Wild Mate (${searchCost} 🌿)
             </button>
         `;
     }
 
-    return html;
+    html += `
+            </div>
+        </div>
+    `;
+
+    actionsDiv.innerHTML = html;
 }
 
 /**
