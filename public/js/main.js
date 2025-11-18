@@ -365,6 +365,68 @@ window.sellAllOffspringHandler = () => Actions.sellAllOffspring(saveGame);
 window.dismissOffspringHandler = () => Actions.dismissOffspring(saveGame);
 window.toggleAutoExamineHandler = () => Actions.toggleAutoExamine(saveGame);
 
+// Wild Mate System Handlers
+window.releaseParrotHandler = async (parrotId) => {
+    const { releaseParrot } = await import('./actions/wildMate.js');
+    releaseParrot(parrotId, saveGame);
+    // Refresh wild mate tab if currently viewing it
+    if (GameState.getCurrentTab() === 'wildmate') {
+        const { renderWildMateTab } = await import('./ui/wildMate.js');
+        renderWildMateTab();
+    }
+};
+
+window.findWildMateHandler = async (parrotId) => {
+    const { startWildMateSearch } = await import('./actions/wildMate.js');
+    const result = startWildMateSearch(parrotId, saveGame);
+    if (result) {
+        const { showMateSelectionModal } = await import('./ui/wildMate.js');
+        showMateSelectionModal(result.searchingParrot, result.mates, result.cost);
+    }
+    // Refresh wild mate tab
+    if (GameState.getCurrentTab() === 'wildmate') {
+        const { renderWildMateTab } = await import('./ui/wildMate.js');
+        renderWildMateTab();
+    }
+};
+
+window.selectMateHandler = async (searchingParrotId, mateIndex) => {
+    const { selectWildMate } = await import('./actions/wildMate.js');
+    const selectedMate = window.currentMateOptions[mateIndex];
+    selectWildMate(searchingParrotId, selectedMate, saveGame);
+    // Close modal
+    const { closeMateSelectionModal } = await import('./ui/wildMate.js');
+    closeMateSelectionModal();
+    // Refresh wild mate tab
+    if (GameState.getCurrentTab() === 'wildmate') {
+        const { renderWildMateTab } = await import('./ui/wildMate.js');
+        renderWildMateTab();
+    }
+};
+
+window.cancelMateSearchHandler = async (cost) => {
+    const { cancelWildMateSearch } = await import('./actions/wildMate.js');
+    cancelWildMateSearch(cost, saveGame);
+    // Close modal
+    const { closeMateSelectionModal } = await import('./ui/wildMate.js');
+    closeMateSelectionModal();
+    // Refresh wild mate tab
+    if (GameState.getCurrentTab() === 'wildmate') {
+        const { renderWildMateTab } = await import('./ui/wildMate.js');
+        renderWildMateTab();
+    }
+};
+
+window.closeMateModalHandler = async () => {
+    const { closeMateSelectionModal } = await import('./ui/wildMate.js');
+    closeMateSelectionModal();
+};
+
+window.viewMateDetailsHandler = async (mateIndex) => {
+    // TODO: Implement detailed mate view (future enhancement)
+    console.log('View details for mate', mateIndex);
+};
+
 /**
  * Change game language and reload
  * @param {string} langCode - Language code (en, es, fr, ru, uk)

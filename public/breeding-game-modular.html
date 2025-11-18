@@ -100,6 +100,13 @@
                     <div class="value" id="autoExamineStatus">OFF</div>
                 </div>
             </div>
+            <div class="stat-badge" title="Conservation Credits - earned by releasing parrots">
+                <span>🌿</span>
+                <div>
+                    <div style="font-size: 0.75em; color: #666;" id="creditsLabel">Credits</div>
+                    <div class="value" id="conservationCredits">0</div>
+                </div>
+            </div>
         </div>
 
         <div class="main-layout">
@@ -134,6 +141,10 @@
                     <button class="tab" onclick="switchTabHandler('colorlab')">
                         <span class="tab-icon">🧬</span>
                         <span class="tab-label">Color Lab</span>
+                    </button>
+                    <button class="tab" onclick="switchTabHandler('wildmate')">
+                        <span class="tab-icon">🌿</span>
+                        <span class="tab-label">Wild Mates</span>
                     </button>
                 </div>
 
@@ -500,6 +511,10 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div id="wildMateTab" style="display: none;">
+                    <!-- Wild Mate System Tab Content (populated by wildMate.js UI module) -->
                 </div>
             </div>
 
