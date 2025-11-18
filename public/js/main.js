@@ -298,7 +298,7 @@ async function generateStore(prismParrot = null) {
  * Start a new game
  */
 async function newGame() {
-    if (!confirm('Start a new game? This will erase your current progress!')) {
+    if (!confirm(I18n.t('messages.newGameConfirm'))) {
         return;
     }
 
