@@ -326,6 +326,10 @@
     "score": {
       "value": "Beauté",
       "_context": "Label for beauty score. Max length: 15 chars."
+    },
+    "traits": {
+      "value": "Dégradé",
+      "_context": "Label shown when parrot has gradient traits. Max length: 15 chars."
     }
   },
 
