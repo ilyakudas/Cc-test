@@ -316,10 +316,14 @@ export function createRareParrot(tierIndex, placement) {
         return null;
     }
 
-    const parrot = new Parrot(rareTemplate.name, rareTemplate.genes, 1);
+    // Translate name and description using i18n
+    const translatedName = t(rareTemplate.nameKey);
+    const translatedDescription = t(rareTemplate.descKey);
+
+    const parrot = new Parrot(translatedName, rareTemplate.genes, 1);
     parrot.isRare = true;
     parrot.rareSource = { tier: tierIndex, placement };
-    parrot.description = rareTemplate.description;
+    parrot.description = translatedDescription;
 
     return parrot;
 }

@@ -104,12 +104,13 @@ export const CONTEST_TIERS = [
 ];
 
 // Rare contest parrot templates
+// Names and descriptions use i18n translation keys
 export const RARE_CONTEST_PARROTS = {
     // Tier 0: Beginner Beauty Show
     0: {
         1: {
-            name: 'Golden Dawn',
-            description: 'Warm golden tones perfect for rainbow showcases',
+            nameKey: 'contestParrots.goldenDawn',
+            descKey: 'contestParrots.goldenDawnDesc',
             genes: {
                 wings: { red: [true, true, true, false], green: [true, true, false, false], blue: [false, false, false, false], gradient: false },
                 special_wing: { red: [true, true, true, true], green: [true, true, true, false], blue: [false, false, false, false], gradient: false },
@@ -120,8 +121,8 @@ export const RARE_CONTEST_PARROTS = {
             }
         },
         2: {
-            name: 'Silver Mist',
-            description: 'Cool silvery blues perfect for rainbow showcases',
+            nameKey: 'contestParrots.silverMist',
+            descKey: 'contestParrots.silverMistDesc',
             genes: {
                 wings: { red: [false, false, false, false], green: [true, true, true, false], blue: [true, true, true, true], gradient: false },
                 special_wing: { red: [true, true, true, false], green: [true, true, true, true], blue: [true, true, true, true], gradient: false },
@@ -132,8 +133,8 @@ export const RARE_CONTEST_PARROTS = {
             }
         },
         3: {
-            name: 'Bronze Gleam',
-            description: 'Earthy bronze tones with a metallic sheen',
+            nameKey: 'contestParrots.bronzeGleam',
+            descKey: 'contestParrots.bronzeGleamDesc',
             genes: {
                 wings: { red: [true, true, false, false], green: [true, false, false, false], blue: [false, false, false, false], gradient: false },
                 special_wing: { red: [true, true, true, false], green: [true, true, false, false], blue: [false, false, false, false], gradient: false },
@@ -148,8 +149,8 @@ export const RARE_CONTEST_PARROTS = {
     // Tier 1: Rainbow Showcase (rewards have gradients)
     1: {
         1: {
-            name: 'Prismatic Pride',
-            description: 'A dazzling display of the full color spectrum',
+            nameKey: 'contestParrots.prismaticPride',
+            descKey: 'contestParrots.prismaticPrideDesc',
             genes: {
                 wings: { red: [true, true, false, false], green: [true, true, true, true], blue: [true, true, true, false], gradient: true },
                 special_wing: { red: [false, false, true, true], green: [false, false, true, true], blue: [true, true, true, true], gradient: true },
@@ -160,8 +161,8 @@ export const RARE_CONTEST_PARROTS = {
             }
         },
         2: {
-            name: 'Chromatic Dream',
-            description: 'A harmonious blend of vivid hues',
+            nameKey: 'contestParrots.chromaticDream',
+            descKey: 'contestParrots.chromaticDreamDesc',
             genes: {
                 wings: { red: [false, false, false, false], green: [true, true, true, true], blue: [false, false, true, true], gradient: true },
                 special_wing: { red: [true, true, true, true], green: [false, false, false, false], blue: [false, false, false, false], gradient: false },
@@ -172,8 +173,8 @@ export const RARE_CONTEST_PARROTS = {
             }
         },
         3: {
-            name: 'Spectrum Wing',
-            description: 'Every color of the rainbow in perfect harmony',
+            nameKey: 'contestParrots.spectrumWing',
+            descKey: 'contestParrots.spectrumWingDesc',
             genes: {
                 wings: { red: [true, true, true, true], green: [false, false, false, false], blue: [false, false, false, false], gradient: false },
                 special_wing: { red: [true, true, true, true], green: [true, true, false, false], blue: [false, false, false, false], gradient: false },
@@ -188,8 +189,8 @@ export const RARE_CONTEST_PARROTS = {
     // Tier 2: Gradient Masters (rewards have complementary colors)
     2: {
         1: {
-            name: 'Aurora Cascade',
-            description: 'Flowing colors like the northern lights',
+            nameKey: 'contestParrots.auroraCascade',
+            descKey: 'contestParrots.auroraCascadeDesc',
             genes: {
                 wings: { red: [false, false, true, true], green: [true, true, true, true], blue: [true, true, false, false], gradient: true },
                 special_wing: { red: [true, true, true, true], green: [false, false, true, true], blue: [true, true, true, true], gradient: true },
@@ -200,8 +201,8 @@ export const RARE_CONTEST_PARROTS = {
             }
         },
         2: {
-            name: 'Twilight Flow',
-            description: 'Sunset colors in graceful transitions',
+            nameKey: 'contestParrots.twilightFlow',
+            descKey: 'contestParrots.twilightFlowDesc',
             genes: {
                 wings: { red: [true, true, true, true], green: [false, false, true, true], blue: [true, true, true, true], gradient: true },
                 special_wing: { red: [true, true, false, false], green: [false, false, true, true], blue: [true, true, false, false], gradient: true },
@@ -212,8 +213,8 @@ export const RARE_CONTEST_PARROTS = {
             }
         },
         3: {
-            name: 'Ocean Drift',
-            description: 'Sea blues meet warm sunset hints',
+            nameKey: 'contestParrots.oceanDrift',
+            descKey: 'contestParrots.oceanDriftDesc',
             genes: {
                 wings: { red: [false, false, false, false], green: [false, false, true, true], blue: [true, true, true, true], gradient: true },
                 special_wing: { red: [false, false, false, false], green: [true, true, true, true], blue: [true, true, false, false], gradient: true },
@@ -228,8 +229,8 @@ export const RARE_CONTEST_PARROTS = {
     // Tier 3: Contrast Championship (rewards have gradients + complementary)
     3: {
         1: {
-            name: 'Ember & Ice',
-            description: 'Fire and frost in perfect opposition',
+            nameKey: 'contestParrots.emberAndIce',
+            descKey: 'contestParrots.emberAndIceDesc',
             genes: {
                 wings: { red: [true, true, false, false], green: [false, false, false, false], blue: [false, false, true, true], gradient: true },
                 special_wing: { red: [true, true, true, true], green: [false, false, true, true], blue: [false, false, true, true], gradient: true },
@@ -240,8 +241,8 @@ export const RARE_CONTEST_PARROTS = {
             }
         },
         2: {
-            name: 'Sunset Contrast',
-            description: 'Bold orange skies meet deep ocean blues',
+            nameKey: 'contestParrots.sunsetContrast',
+            descKey: 'contestParrots.sunsetContrastDesc',
             genes: {
                 wings: { red: [true, true, true, true], green: [true, true, false, false], blue: [false, false, true, true], gradient: true },
                 special_wing: { red: [true, true, true, true], green: [true, true, true, true], blue: [false, false, false, false], gradient: true },
@@ -252,8 +253,8 @@ export const RARE_CONTEST_PARROTS = {
             }
         },
         3: {
-            name: 'Forest Fire',
-            description: 'Vibrant greens clash with burning reds',
+            nameKey: 'contestParrots.forestFire',
+            descKey: 'contestParrots.forestFireDesc',
             genes: {
                 wings: { red: [true, true, true, true], green: [false, false, true, true], blue: [false, false, false, false], gradient: true },
                 special_wing: { red: [false, false, false, false], green: [true, true, true, true], blue: [false, false, false, false], gradient: false },
@@ -268,8 +269,8 @@ export const RARE_CONTEST_PARROTS = {
     // Tier 4: Elite Grand Prix (ultimate parrots with perfect genes)
     4: {
         1: {
-            name: 'Celestial Perfection',
-            description: 'The pinnacle of chromatic beauty - required for endgame',
+            nameKey: 'contestParrots.celestialPerfection',
+            descKey: 'contestParrots.celestialPerfectionDesc',
             genes: {
                 wings: { red: [true, true, false, false], green: [false, false, true, true], blue: [true, true, true, true], gradient: true },
                 special_wing: { red: [true, true, true, true], green: [true, true, false, false], blue: [false, false, true, true], gradient: true },
@@ -280,8 +281,8 @@ export const RARE_CONTEST_PARROTS = {
             }
         },
         2: {
-            name: 'Royal Spectrum',
-            description: 'Majestic beauty fit for royalty',
+            nameKey: 'contestParrots.royalSpectrum',
+            descKey: 'contestParrots.royalSpectrumDesc',
             genes: {
                 wings: { red: [true, true, true, true], green: [false, false, true, true], blue: [true, true, true, true], gradient: true },
                 special_wing: { red: [true, true, false, false], green: [true, true, true, true], blue: [false, false, true, true], gradient: true },
@@ -292,8 +293,8 @@ export const RARE_CONTEST_PARROTS = {
             }
         },
         3: {
-            name: 'Noble Radiance',
-            description: 'Dignified elegance with stunning color play',
+            nameKey: 'contestParrots.nobleRadiance',
+            descKey: 'contestParrots.nobleRadianceDesc',
             genes: {
                 wings: { red: [true, true, true, true], green: [true, true, false, false], blue: [false, false, true, true], gradient: true },
                 special_wing: { red: [false, false, true, true], green: [true, true, true, true], blue: [true, true, false, false], gradient: true },
