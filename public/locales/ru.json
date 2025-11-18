@@ -649,6 +649,50 @@
     "blue": {
       "value": "Синий",
       "_context": "Blue color channel. Max length: 10 chars."
+    },
+    "generationTotal": {
+      "value": "Поколение {generation} • Всего: 78 генов (6 частей × 13 генов каждая)",
+      "_context": "Subtitle in laboratory showing generation and gene count. {generation} is number. Max length: 90 chars."
+    },
+    "formatExplanation": {
+      "value": "[Часть]:[R][G][B][Градиент]",
+      "_context": "DNA format pattern explanation. Max length: 40 chars."
+    },
+    "formatPart": {
+      "value": "Часть: W=Крылья, S=Особые, B=Тело, H=Голова, T=Хвост, A=Акценты",
+      "_context": "Part abbreviations explanation. Max length: 80 chars."
+    },
+    "formatRGB": {
+      "value": "RGB: 0-4 доминантных аллеля на цвет",
+      "_context": "RGB values explanation. Max length: 50 chars."
+    },
+    "formatGradient": {
+      "value": "Градиент: * если есть",
+      "_context": "Gradient marker explanation. Max length: 40 chars."
+    },
+    "formatRaw": {
+      "value": "Формат raw: RGBG-RGBG-... (G=0/1 для градиента)",
+      "_context": "Raw DNA format explanation. Max length: 60 chars."
+    },
+    "redChannel": {
+      "value": "Красный (4)",
+      "_context": "Red channel with allele count. Max length: 15 chars."
+    },
+    "greenChannel": {
+      "value": "Зелёный (4)",
+      "_context": "Green channel with allele count. Max length: 15 chars."
+    },
+    "blueChannel": {
+      "value": "Синий (4)",
+      "_context": "Blue channel with allele count. Max length: 15 chars."
+    },
+    "gradientGene": {
+      "value": "Градиент (1)",
+      "_context": "Gradient gene with allele count. Max length: 20 chars."
+    },
+    "raw": {
+      "value": "Raw",
+      "_context": "Label for raw DNA string. Max length: 10 chars."
     }
   },
   "gallery": {

@@ -649,6 +649,50 @@
     "blue": {
       "value": "Bleu",
       "_context": "Blue color channel. Max length: 10 chars."
+    },
+    "generationTotal": {
+      "value": "Génération {generation} • Total : 78 Gènes (6 parties × 13 gènes chacune)",
+      "_context": "Subtitle in laboratory showing generation and gene count. {generation} is number. Max length: 90 chars."
+    },
+    "formatExplanation": {
+      "value": "[Partie]:[R][G][B][Dégradé]",
+      "_context": "DNA format pattern explanation. Max length: 40 chars."
+    },
+    "formatPart": {
+      "value": "Partie : W=Ailes, S=Spécial, B=Corps, H=Tête, T=Queue, A=Accents",
+      "_context": "Part abbreviations explanation. Max length: 80 chars."
+    },
+    "formatRGB": {
+      "value": "RGB : 0-4 allèles dominants par couleur",
+      "_context": "RGB values explanation. Max length: 50 chars."
+    },
+    "formatGradient": {
+      "value": "Dégradé : * si présent",
+      "_context": "Gradient marker explanation. Max length: 40 chars."
+    },
+    "formatRaw": {
+      "value": "Format brut : RGBG-RGBG-... (G=0/1 pour dégradé)",
+      "_context": "Raw DNA format explanation. Max length: 60 chars."
+    },
+    "redChannel": {
+      "value": "Rouge (4)",
+      "_context": "Red channel with allele count. Max length: 15 chars."
+    },
+    "greenChannel": {
+      "value": "Vert (4)",
+      "_context": "Green channel with allele count. Max length: 15 chars."
+    },
+    "blueChannel": {
+      "value": "Bleu (4)",
+      "_context": "Blue channel with allele count. Max length: 15 chars."
+    },
+    "gradientGene": {
+      "value": "Dégradé (1)",
+      "_context": "Gradient gene with allele count. Max length: 20 chars."
+    },
+    "raw": {
+      "value": "Brut",
+      "_context": "Label for raw DNA string. Max length: 10 chars."
     }
   },
   "gallery": {
