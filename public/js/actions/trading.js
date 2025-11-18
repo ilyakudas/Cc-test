@@ -9,6 +9,7 @@ import { showToast } from '../lib/notifications.js';
 import { getRandomName, createParrotWithPurity } from '../lib/utils.js';
 import * as UI from '../ui.js';
 import { t } from '../lib/i18n.js';
+import { SELL_VALUE_MULTIPLIER, SELL_HOLD_DURATION } from '../lib/economy.js';
 
 // Sell hold timer tracking
 let sellHoldTimer = null;
@@ -118,8 +119,8 @@ export function startSellHold(parrotId, event, saveGameFn) {
     }
 
     const button = event.target;
-    const sellValue = Math.floor(parrot.getValue() * 0.7);
-    const holdDuration = 1000; // 1 second
+    const sellValue = Math.floor(parrot.getValue() * SELL_VALUE_MULTIPLIER);
+    const holdDuration = SELL_HOLD_DURATION;
     const startTime = Date.now();
 
     // Create progress overlay

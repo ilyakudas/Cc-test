@@ -3,6 +3,8 @@
  * Centralizes all global game state
  */
 
+import { INITIAL_COINS } from '../lib/economy.js';
+
 // Core game state
 export let parrots = [];
 export let storeParrots = [];
@@ -10,7 +12,7 @@ export let recentOffspring = []; // Parrots from last breeding, shown in Breedin
 export let selectedParrotId = null;
 export let breedingPair = { left: null, right: null };
 export let currentTab = 'collection';
-export let coins = 500;
+export let coins = INITIAL_COINS;
 export let parrotIdCounter = 0;
 export let generation = 1;
 export let svgCache = null;
@@ -392,7 +394,7 @@ export function resetGameState() {
     selectedParrotId = null;
     breedingPair = { left: null, right: null };
     currentTab = 'collection';
-    coins = 500;
+    coins = INITIAL_COINS;
     parrotIdCounter = 0;
     generation = 1;
     svgCache = null;

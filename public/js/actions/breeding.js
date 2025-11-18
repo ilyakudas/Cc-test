@@ -10,6 +10,7 @@ import { showToast } from '../lib/notifications.js';
 import { getRandomName } from '../lib/utils.js';
 import * as UI from '../ui.js';
 import { t } from '../lib/i18n.js';
+import { BREEDING_COST, EXAMINATION_COST } from '../lib/economy.js';
 
 /**
  * Add parrot to left breeding slot
@@ -101,8 +102,7 @@ export async function breedParrots(saveGameFn, checkAchievementsFn) {
 
     if (!parent1 || !parent2) return;
 
-    // Check if player has enough coins (breeding costs 50 coins)
-    const BREEDING_COST = 50;
+    // Check if player has enough coins
     let coins = GameState.getCoins();
     if (coins < BREEDING_COST) {
         showToast(
@@ -147,23 +147,22 @@ export async function breedParrots(saveGameFn, checkAchievementsFn) {
 
     // Auto-examine offspring if enabled
     const autoExamineEnabled = GameState.getAutoExamineEnabled();
-    const EXAM_COST = 100;
     let examineCount = 0;
     let examineMessage = '';
 
     if (autoExamineEnabled && offspring.length > 0) {
-        const maxExaminations = Math.min(offspring.length, Math.floor(coins / EXAM_COST));
+        const maxExaminations = Math.min(offspring.length, Math.floor(coins / EXAMINATION_COST));
 
         for (let i = 0; i < maxExaminations; i++) {
-            GameState.addCoins(-EXAM_COST);
+            GameState.addCoins(-EXAMINATION_COST);
             GameState.addExaminedParrot(offspring[i].id);
             examineCount++;
         }
 
         if (examineCount > 0) {
-            examineMessage = ' ' + t('toasts.examAutoInfo.value', { count: examineCount, totalCost: examineCount * EXAM_COST });
+            examineMessage = ' ' + t('toasts.examAutoInfo.value', { count: examineCount, totalCost: examineCount * EXAMINATION_COST });
         } else {
-            examineMessage = ' ' + t('toasts.examAutoNeedCoins.value', { cost: EXAM_COST });
+            examineMessage = ' ' + t('toasts.examAutoNeedCoins.value', { cost: EXAMINATION_COST });
         }
     }
 

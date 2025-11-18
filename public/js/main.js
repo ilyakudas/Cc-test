@@ -14,6 +14,7 @@ import { checkAchievements } from './lib/achievements.js';
 import { CONTEST_TIERS } from './lib/constants.js';
 import { createBreedingSlotsComponent } from './ui/breedingSlots.js';
 import * as I18n from './lib/i18n.js';
+import { BREEDING_COST } from './lib/economy.js';
 
 /**
  * Initialize a new game with starter parrots
@@ -555,7 +556,6 @@ window.addEventListener('load', async () => {
     // Translate breeding button
     const breedButton = document.getElementById('breedButtonLarge');
     if (breedButton) {
-        const BREEDING_COST = 50; // Match constant from constants.js
         breedButton.innerHTML = `💕 ${I18n.t('breeding.breedButton')} (${I18n.t('breeding.breedCost', { cost: BREEDING_COST })})`;
     }
 
