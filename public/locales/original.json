@@ -345,6 +345,42 @@
     },
     "rule": {
       "value": "Rule"
+    },
+    "placed": {
+      "value": "{name} placed {placement}!"
+    },
+    "chooseReward": {
+      "value": "Choose Your Reward"
+    },
+    "takeCoinsBtn": {
+      "value": "Take Coins"
+    },
+    "safeChoice": {
+      "value": "Safe choice - immediate value"
+    },
+    "takeParrotName": {
+      "value": "Take {name}"
+    },
+    "sellValue": {
+      "value": "Sell value: ~{value} coins"
+    },
+    "uniqueParrot": {
+      "value": "Unique parrot with special genes!"
+    },
+    "takeParrotBtn": {
+      "value": "Take Parrot"
+    },
+    "wonCoins": {
+      "value": "Won {coins} coins!"
+    },
+    "betterLuck": {
+      "value": "Better luck next time!"
+    },
+    "finalRankings": {
+      "value": "Final Rankings"
+    },
+    "playerYou": {
+      "value": " (You)"
     }
   },
 
