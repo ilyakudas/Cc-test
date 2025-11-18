@@ -9,6 +9,7 @@ import { breedParrotGenes } from '../core/genetics.js';
 import { showToast } from '../lib/notifications.js';
 import { getRandomName } from '../lib/utils.js';
 import * as UI from '../ui.js';
+import { t } from '../lib/i18n.js';
 
 /**
  * Add parrot to left breeding slot
@@ -105,8 +106,8 @@ export async function breedParrots(saveGameFn, checkAchievementsFn) {
     let coins = GameState.getCoins();
     if (coins < BREEDING_COST) {
         showToast(
-            `Not enough coins!`,
-            `Breeding costs ${BREEDING_COST} coins. You have ${coins}.`,
+            t('toasts.breedNotEnoughCoins.title'),
+            t('toasts.breedNotEnoughCoins.message', { cost: BREEDING_COST, current: coins }),
             'error',
             3000
         );
@@ -160,9 +161,9 @@ export async function breedParrots(saveGameFn, checkAchievementsFn) {
         }
 
         if (examineCount > 0) {
-            examineMessage = ` ${examineCount} examined (-${examineCount * EXAM_COST} coins).`;
+            examineMessage = ' ' + t('toasts.examAutoInfo.value', { count: examineCount, totalCost: examineCount * EXAM_COST });
         } else {
-            examineMessage = ` Auto-exam: Need ${EXAM_COST} coins per chick.`;
+            examineMessage = ' ' + t('toasts.examAutoNeedCoins.value', { cost: EXAM_COST });
         }
     }
 
@@ -191,8 +192,8 @@ export async function breedParrots(saveGameFn, checkAchievementsFn) {
     // Show success toast with total offspring count
     const totalOffspring = GameState.getRecentOffspring().length;
     showToast(
-        `Breeding successful!`,
-        `4 new chicks born!${examineMessage} ${totalOffspring} total waiting in Breeding Lab.`,
+        t('toasts.breedSuccess.title'),
+        t('toasts.breedSuccess.message', { examInfo: examineMessage, total: totalOffspring }),
         'success',
         6000
     );

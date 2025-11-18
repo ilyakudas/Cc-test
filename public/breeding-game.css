@@ -1555,6 +1555,132 @@ header h1 {
     margin-bottom: 10px;
 }
 
+/* Language Selector */
+.language-selector {
+    margin: 30px 0 20px;
+}
+
+.language-selector-label {
+    font-size: 1em;
+    margin-bottom: 15px;
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+.language-flags {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.language-flag {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 10px 16px;
+    border-radius: 25px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.language-flag:hover {
+    background: rgba(255, 255, 255, 0.35);
+    border-color: rgba(255, 255, 255, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+}
+
+.language-flag:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+}
+
+.language-name {
+    font-weight: 500;
+}
+
+/* Flag Icons */
+.flag-icon {
+    display: inline-block;
+    width: 24px;
+    height: 18px;
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+/* United Kingdom (Union Jack approximation) */
+.flag-gb {
+    background: linear-gradient(to bottom,
+        #012169 0%, #012169 33%,
+        white 33%, white 40%,
+        #C8102E 40%, #C8102E 60%,
+        white 60%, white 67%,
+        #012169 67%, #012169 100%);
+}
+
+.flag-gb::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        linear-gradient(45deg, transparent 45%, #C8102E 45%, #C8102E 55%, transparent 55%),
+        linear-gradient(-45deg, transparent 45%, #C8102E 45%, #C8102E 55%, transparent 55%);
+}
+
+/* Spain */
+.flag-es {
+    background: linear-gradient(to bottom,
+        #AA151B 0%, #AA151B 25%,
+        #F1BF00 25%, #F1BF00 75%,
+        #AA151B 75%, #AA151B 100%);
+}
+
+/* France */
+.flag-fr {
+    background: linear-gradient(to right,
+        #002395 0%, #002395 33%,
+        white 33%, white 66%,
+        #ED2939 66%, #ED2939 100%);
+}
+
+/* Russia */
+.flag-ru {
+    background: linear-gradient(to bottom,
+        white 0%, white 33%,
+        #0039A6 33%, #0039A6 66%,
+        #D52B1E 66%, #D52B1E 100%);
+}
+
+/* Ukraine */
+.flag-ua {
+    background: linear-gradient(to bottom,
+        #005BBB 0%, #005BBB 50%,
+        #FFD500 50%, #FFD500 100%);
+}
+
+/* Responsive - hide language names on small screens, show only flags */
+@media (max-width: 600px) {
+    .language-name {
+        display: none;
+    }
+
+    .language-flag {
+        padding: 10px 12px;
+        font-size: 1.2em;
+    }
+}
+
 .splash-buttons {
     display: flex;
     gap: 15px;

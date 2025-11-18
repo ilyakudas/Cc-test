@@ -1,0 +1,19 @@
+{
+  "_meta": {
+    "language": "[LANGUAGE NAME]",
+    "code": "[LANGUAGE CODE]",
+    "version": "1.0.0",
+    "translator_notes": "Translation for ChromaWing parrot breeding genetics game"
+  },
+
+  "common": {
+    "coins": {
+      "value": "[TRANSLATE]",
+      "_context": "Game currency. Displayed in header stats. Max length: 15 chars."
+    },
+    "parrots": {
+      "value": "[TRANSLATE]",
+      "_context": "Number of parrots owned. Displayed in header stats. Max length: 15 chars."
+    }
+  }
+}

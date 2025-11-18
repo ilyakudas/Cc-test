@@ -7,6 +7,7 @@ import * as GameState from '../core/gameState.js';
 import { generateParrotSVG } from '../lib/svg.js';
 import { showToast } from '../lib/notifications.js';
 import * as UI from '../ui.js';
+import { t } from '../lib/i18n.js';
 
 /**
  * Open laboratory modal for parrot examination
@@ -371,8 +372,8 @@ export async function performExamination(parrotId, saveGameFn) {
     const coins = GameState.getCoins();
     if (coins < EXAM_COST) {
         showToast(
-            'Not enough coins!',
-            `Laboratory examination costs ${EXAM_COST} coins. You have ${coins}.`,
+            t('toasts.examNotEnoughCoins.title'),
+            t('toasts.examNotEnoughCoins.message', { cost: EXAM_COST, current: coins }),
             'error',
             3000
         );
@@ -387,8 +388,8 @@ export async function performExamination(parrotId, saveGameFn) {
 
     // Show info toast
     showToast(
-        `Laboratory analysis complete`,
-        `${parrot.name} examined • -${EXAM_COST} coins`,
+        t('toasts.examComplete.title'),
+        t('toasts.examComplete.message', { name: parrot.name, cost: EXAM_COST }),
         'info'
     );
 

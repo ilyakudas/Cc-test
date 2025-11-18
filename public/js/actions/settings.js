@@ -5,6 +5,7 @@
 
 import * as GameState from '../core/gameState.js';
 import { showToast } from '../lib/notifications.js';
+import { t } from '../lib/i18n.js';
 
 /**
  * Toggle mutations on/off
@@ -19,15 +20,25 @@ export function toggleMutations(saveGameFn) {
     const iconEl = document.getElementById('mutationIcon');
 
     if (newState) {
-        statusEl.textContent = 'ON';
+        statusEl.textContent = t('common.on');
         statusEl.style.color = '#4caf50';
         iconEl.textContent = '🧪';
-        showToast('Mutations Enabled', 'Breeding can introduce new genes', 'success', 3000);
+        showToast(
+            t('toasts.mutationsEnabled.title'),
+            t('toasts.mutationsEnabled.message'),
+            'success',
+            3000
+        );
     } else {
-        statusEl.textContent = 'OFF';
+        statusEl.textContent = t('common.off');
         statusEl.style.color = '#dc3545';
         iconEl.textContent = '🔒';
-        showToast('Mutations Disabled', 'Breeding will preserve pure genes', 'info', 3000);
+        showToast(
+            t('toasts.mutationsDisabled.title'),
+            t('toasts.mutationsDisabled.message'),
+            'info',
+            3000
+        );
     }
 
     if (saveGameFn) saveGameFn();
@@ -45,15 +56,25 @@ export function toggleAutoExamine(saveGameFn) {
     const iconEl = document.getElementById('autoExamineIcon');
 
     if (enabled) {
-        statusEl.textContent = 'ON';
+        statusEl.textContent = t('common.on');
         statusEl.style.color = '#4caf50';
         iconEl.textContent = '🔬';
-        showToast('Auto-Examine Enabled', 'New offspring will be automatically examined if you have enough coins', 'success', 3000);
+        showToast(
+            t('toasts.autoExamEnabled.title'),
+            t('toasts.autoExamEnabled.message'),
+            'success',
+            3000
+        );
     } else {
-        statusEl.textContent = 'OFF';
+        statusEl.textContent = t('common.off');
         statusEl.style.color = '#dc3545';
         iconEl.textContent = '🔒';
-        showToast('Auto-Examine Disabled', 'You must manually examine offspring', 'info', 3000);
+        showToast(
+            t('toasts.autoExamDisabled.title'),
+            t('toasts.autoExamDisabled.message'),
+            'info',
+            3000
+        );
     }
 
     if (saveGameFn) saveGameFn();

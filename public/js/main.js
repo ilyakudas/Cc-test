@@ -13,6 +13,7 @@ import { saveGame, loadGame } from './core/storage.js';
 import { checkAchievements } from './lib/achievements.js';
 import { CONTEST_TIERS } from './lib/constants.js';
 import { createBreedingSlotsComponent } from './ui/breedingSlots.js';
+import * as I18n from './lib/i18n.js';
 
 /**
  * Initialize a new game with starter parrots
@@ -362,6 +363,34 @@ window.sellAllOffspringHandler = () => Actions.sellAllOffspring(saveGame);
 window.dismissOffspringHandler = () => Actions.dismissOffspring(saveGame);
 window.toggleAutoExamineHandler = () => Actions.toggleAutoExamine(saveGame);
 
+/**
+ * Change game language and reload
+ * @param {string} langCode - Language code (en, es, fr, ru, uk)
+ */
+window.changeLanguageHandler = (langCode) => {
+    console.log(`[Language] Changing language to: ${langCode}`);
+
+    try {
+        // Update language in game state
+        GameState.setLanguage(langCode);
+        console.log(`[Language] Language set in GameState: ${GameState.getLanguage()}`);
+
+        // Save game with new language
+        const saved = saveGame();
+        console.log(`[Language] Game saved:`, saved);
+
+        // Store language in localStorage as backup
+        localStorage.setItem('chromawing_language', langCode);
+        console.log(`[Language] Language stored in localStorage`);
+
+        // Reload page to apply new language
+        console.log(`[Language] Reloading page...`);
+        window.location.reload();
+    } catch (error) {
+        console.error(`[Language] Error changing language:`, error);
+    }
+};
+
 // ===== ALPINE.JS COMPONENTS =====
 
 // Alpine component registration is handled in breeding-game-modular.html
@@ -371,8 +400,126 @@ console.log('v1.3.1 - main.js loaded');
 // ===== INITIALIZATION =====
 
 window.addEventListener('load', async () => {
-    // Try to load saved game
+    // Initialize i18n system first
+    let savedLang = null;
+
+    // Try to load saved game to get language preference
     const loaded = loadGame();
+
+    if (loaded) {
+        savedLang = GameState.getLanguage();
+    }
+
+    // Load translations (use saved language or auto-detect)
+    const langToLoad = savedLang || I18n.detectLanguage();
+    await I18n.loadTranslations(langToLoad);
+
+    // Store the detected/loaded language
+    if (!savedLang) {
+        GameState.setLanguage(langToLoad);
+    }
+
+    console.log(`i18n: Game language set to '${GameState.getLanguage()}'`);
+
+    // Initialize language selector on splash screen with translations
+    const languageSelectorLabel = document.getElementById('languageSelectorLabel');
+    if (languageSelectorLabel) {
+        languageSelectorLabel.textContent = I18n.t('languageSelector.label');
+    }
+
+    // Update language names in selector
+    const languageFlags = document.querySelectorAll('.language-flag');
+    languageFlags.forEach(btn => {
+        const lang = btn.getAttribute('data-lang');
+        const nameSpan = btn.querySelector('.language-name');
+        if (nameSpan && lang) {
+            nameSpan.textContent = I18n.t(`languageSelector.${lang === 'en' ? 'english' : lang === 'es' ? 'spanish' : lang === 'fr' ? 'french' : lang === 'ru' ? 'russian' : 'ukrainian'}`);
+        }
+
+        // Highlight the current language
+        if (lang === GameState.getLanguage()) {
+            btn.style.background = 'rgba(255, 255, 255, 0.4)';
+            btn.style.borderColor = 'rgba(255, 255, 255, 0.8)';
+        }
+    });
+
+    // Translate splash screen elements
+    const splashSubtitle = document.querySelector('.splash-subtitle');
+    if (splashSubtitle) {
+        splashSubtitle.textContent = I18n.t('splash.subtitle');
+    }
+
+    // Translate splash description paragraphs
+    const splashDescriptions = document.querySelectorAll('.splash-description p');
+    if (splashDescriptions.length >= 2) {
+        splashDescriptions[0].textContent = I18n.t('splash.description1');
+        splashDescriptions[1].textContent = I18n.t('splash.description2');
+    }
+
+    // Translate splash buttons
+    const btnStart = document.querySelector('.btn-start');
+    if (btnStart) {
+        btnStart.innerHTML = '🎮 ' + I18n.t('splash.startPlaying');
+    }
+
+    const btnNewGame = document.querySelector('.btn-new-game-splash');
+    if (btnNewGame) {
+        btnNewGame.innerHTML = '🔄 ' + I18n.t('splash.newGame');
+    }
+
+    // Translate splash features
+    const splashFeatures = document.querySelectorAll('.splash-feature');
+    if (splashFeatures.length >= 3) {
+        splashFeatures[0].innerHTML = '🧬 ' + I18n.t('splash.feature1');
+        splashFeatures[1].innerHTML = '🎨 ' + I18n.t('splash.feature2');
+        splashFeatures[2].innerHTML = '🏆 ' + I18n.t('splash.feature3');
+    }
+
+    // Translate main game UI elements
+    const statBadges = document.querySelectorAll('.stat-badge');
+    if (statBadges.length >= 5) {
+        // Coins
+        const coinsLabel = statBadges[0].querySelector('div > div:first-child');
+        if (coinsLabel) coinsLabel.textContent = I18n.t('common.coins');
+
+        // Parrots
+        const parrotsLabel = statBadges[1].querySelector('div > div:first-child');
+        if (parrotsLabel) parrotsLabel.textContent = I18n.t('common.parrots');
+
+        // Generation
+        const generationLabel = statBadges[2].querySelector('div > div:first-child');
+        if (generationLabel) generationLabel.textContent = I18n.t('common.generation');
+
+        // Mutations
+        const mutationsLabel = statBadges[3].querySelector('div > div:first-child');
+        if (mutationsLabel) mutationsLabel.textContent = I18n.t('common.mutations');
+
+        // Auto-Exam
+        const autoExamLabel = statBadges[4].querySelector('div > div:first-child');
+        if (autoExamLabel) autoExamLabel.textContent = I18n.t('common.autoExam');
+    }
+
+    // Translate tab labels
+    const tabs = document.querySelectorAll('.tab');
+    if (tabs.length >= 6) {
+        const tabLabels = tabs[0].querySelectorAll('.tab-label');
+        if (tabLabels[0]) tabLabels[0].textContent = I18n.t('tabs.collection');
+
+        const tab1Labels = tabs[1].querySelectorAll('.tab-label');
+        if (tab1Labels[0]) tab1Labels[0].textContent = I18n.t('tabs.store');
+
+        const tab2Labels = tabs[2].querySelectorAll('.tab-label');
+        if (tab2Labels[0]) tab2Labels[0].textContent = I18n.t('tabs.breeding');
+
+        const tab3Labels = tabs[3].querySelectorAll('.tab-label');
+        if (tab3Labels[0]) tab3Labels[0].textContent = I18n.t('tabs.contests');
+
+        const tab4Labels = tabs[4].querySelectorAll('.tab-label');
+        if (tab4Labels[0]) tab4Labels[0].textContent = I18n.t('tabs.gallery');
+
+        const tab5Labels = tabs[5].querySelectorAll('.tab-label');
+        if (tab5Labels[0]) tab5Labels[0].textContent = I18n.t('tabs.colorLab');
+    }
 
     if (loaded) {
         // Game loaded from save
@@ -389,4 +536,7 @@ window.addEventListener('load', async () => {
         // New game
         await initGame();
     }
+
+    // Make i18n available globally for use in HTML onclick handlers
+    window.i18n = I18n;
 });

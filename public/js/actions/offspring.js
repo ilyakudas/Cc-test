@@ -6,6 +6,7 @@
 import * as GameState from '../core/gameState.js';
 import { showToast } from '../lib/notifications.js';
 import * as UI from '../ui.js';
+import { t } from '../lib/i18n.js';
 
 /**
  * Move all recent offspring to collection
@@ -14,6 +15,10 @@ export async function moveOffspringToCollection(saveGameFn) {
     const offspring = GameState.getRecentOffspring();
     if (offspring.length === 0) return;
 
+    // Count how many are already examined
+    const examinedParrots = GameState.getExaminedParrots();
+    const examCount = offspring.filter(p => examinedParrots.has(p.id)).length;
+
     GameState.moveRecentOffspringToCollection();
     await UI.updateUI();
     await UI.updateBreedingLab();
@@ -21,8 +26,8 @@ export async function moveOffspringToCollection(saveGameFn) {
     if (saveGameFn) saveGameFn();
 
     showToast(
-        `Moved to collection!`,
-        `${offspring.length} parrots added to your collection`,
+        t('toasts.offspringMoved.title'),
+        t('toasts.offspringMoved.message', { count: offspring.length, examCount }),
         'success',
         3000
     );
@@ -68,13 +73,9 @@ export async function sellAllOffspring(saveGameFn) {
 
     if (saveGameFn) saveGameFn();
 
-    const message = lockedCount > 0
-        ? `${unlockedOffspring.length} sold for ${totalValue} coins. ${lockedCount} locked offspring kept.`
-        : `${unlockedOffspring.length} parrot${unlockedOffspring.length !== 1 ? 's' : ''} sold for ${totalValue} coins`;
-
     showToast(
-        `Offspring sold!`,
-        message,
+        t('toasts.offspringSold.title'),
+        t('toasts.offspringSold.message', { count: unlockedOffspring.length, coins: totalValue }),
         'success',
         4000
     );
@@ -110,13 +111,9 @@ export async function dismissOffspring(saveGameFn) {
 
     if (saveGameFn) saveGameFn();
 
-    const message = lockedCount > 0
-        ? `${unlockedOffspring.length} dismissed. ${lockedCount} locked offspring kept.`
-        : `${unlockedOffspring.length} parrot${unlockedOffspring.length !== 1 ? 's' : ''} released into the wild`;
-
     showToast(
-        `Offspring dismissed`,
-        message,
+        t('toasts.offspringDismissed.title'),
+        t('toasts.offspringDismissed.message', { count: unlockedOffspring.length }),
         'info',
         3000
     );

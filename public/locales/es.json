@@ -1,0 +1,903 @@
+{
+  "_meta": {
+    "language": "Español",
+    "code": "es",
+    "version": "1.0.0",
+    "translator_notes": "Traducción para ChromaWing, un juego de cría genética de loros"
+  },
+
+  "common": {
+    "coins": {
+      "value": "Monedas",
+      "_context": "Game currency. Displayed in header stats. Max length: 15 chars."
+    },
+    "parrots": {
+      "value": "Loros",
+      "_context": "Number of parrots owned. Displayed in header stats. Max length: 15 chars."
+    },
+    "generation": {
+      "value": "Generación",
+      "_context": "Breeding generation number. Displayed in header stats. Max length: 15 chars."
+    },
+    "mutations": {
+      "value": "Mutaciones",
+      "_context": "Genetic mutations toggle. Displayed in header stats. Max length: 15 chars."
+    },
+    "autoExam": {
+      "value": "Auto-Exam",
+      "_context": "Auto-examination feature toggle. Displayed in header stats. Max length: 15 chars."
+    },
+    "on": {
+      "value": "SÍ",
+      "_context": "Toggle status: enabled. Max length: 5 chars."
+    },
+    "off": {
+      "value": "NO",
+      "_context": "Toggle status: disabled. Max length: 5 chars."
+    },
+    "buy": {
+      "value": "Comprar",
+      "_context": "Button text to purchase a parrot in the shop. Synonym: purchase. Max length: 10 chars."
+    },
+    "sell": {
+      "value": "Vender",
+      "_context": "Button text to sell a parrot. Hold-to-sell action. Max length: 10 chars."
+    },
+    "locked": {
+      "value": "Bloqueado",
+      "_context": "Status indicator that parrot is protected from selling. Max length: 15 chars."
+    },
+    "delete": {
+      "value": "Eliminar",
+      "_context": "Button text to delete item. Max length: 10 chars."
+    },
+    "clone": {
+      "value": "Clonar",
+      "_context": "Button text to clone a parrot to color lab. Max length: 10 chars."
+    },
+    "close": {
+      "value": "Cerrar",
+      "_context": "Button text to close modal or panel. Max length: 10 chars."
+    },
+    "clearAll": {
+      "value": "Borrar Todo",
+      "_context": "Button text to clear all notifications. Max length: 15 chars."
+    },
+    "notifications": {
+      "value": "Notificaciones",
+      "_context": "Notification history panel header. Max length: 25 chars."
+    }
+  },
+
+  "splash": {
+    "title": {
+      "value": "ChromaWing",
+      "_context": "Game title on splash screen. Should NOT be translated - it's a brand name."
+    },
+    "subtitle": {
+      "value": "Un Juego de Genética",
+      "_context": "Game subtitle on splash screen. Max length: 40 chars."
+    },
+    "description1": {
+      "value": "Cría loros hermosos y explora el fascinante mundo de la genética.",
+      "_context": "First description line on splash screen. Max length: 80 chars."
+    },
+    "description2": {
+      "value": "¡Crea combinaciones únicas, compite en concursos y descubre mutaciones raras!",
+      "_context": "Second description line on splash screen. Max length: 90 chars."
+    },
+    "startPlaying": {
+      "value": "Comenzar a Jugar",
+      "_context": "Primary button on splash screen to begin game. Max length: 20 chars."
+    },
+    "newGame": {
+      "value": "Juego Nuevo",
+      "_context": "Button to start a fresh game (erases progress). Max length: 15 chars."
+    },
+    "feature1": {
+      "value": "78 Genes por Loro",
+      "_context": "Feature highlight on splash screen. Max length: 30 chars."
+    },
+    "feature2": {
+      "value": "Genética de Colores",
+      "_context": "Feature highlight on splash screen. Max length: 30 chars."
+    },
+    "feature3": {
+      "value": "Múltiples Concursos",
+      "_context": "Feature highlight on splash screen. Max length: 30 chars."
+    }
+  },
+
+  "languageSelector": {
+    "label": {
+      "value": "Seleccionar Idioma",
+      "_context": "Header text for language selector on splash screen. Max length: 25 chars."
+    },
+    "english": {
+      "value": "English",
+      "_context": "Language name in its native form. Max length: 20 chars."
+    },
+    "spanish": {
+      "value": "Español",
+      "_context": "Language name in its native form. Max length: 20 chars."
+    },
+    "french": {
+      "value": "Français",
+      "_context": "Language name in its native form. Max length: 20 chars."
+    },
+    "russian": {
+      "value": "Русский",
+      "_context": "Language name in its native form. Max length: 20 chars."
+    },
+    "ukrainian": {
+      "value": "Українська",
+      "_context": "Language name in its native form. Max length: 20 chars."
+    }
+  },
+
+  "tabs": {
+    "collection": {
+      "value": "Colección",
+      "_context": "Tab name for viewing owned parrots. Max length: 15 chars."
+    },
+    "store": {
+      "value": "Tienda",
+      "_context": "Tab name for shop/purchasing parrots. Synonym: shop. Max length: 15 chars."
+    },
+    "breeding": {
+      "value": "Cría",
+      "_context": "Tab name for breeding lab. Max length: 15 chars."
+    },
+    "contests": {
+      "value": "Concursos",
+      "_context": "Tab name for beauty contests. Max length: 15 chars."
+    },
+    "gallery": {
+      "value": "Galería",
+      "_context": "Tab name for parrot gallery. Max length: 15 chars."
+    },
+    "colorLab": {
+      "value": "Lab de Color",
+      "_context": "Tab name for gene editor. Max length: 15 chars."
+    }
+  },
+
+  "panel": {
+    "yourParrots": {
+      "value": "Tus Loros",
+      "_context": "Panel title showing owned parrots. Max length: 25 chars."
+    },
+    "selectTwoToBreed": {
+      "value": "Selecciona 2 para criar",
+      "_context": "Subtitle hint to select breeding pair. Max length: 30 chars."
+    },
+    "selectedParrot": {
+      "value": "Loro Seleccionado",
+      "_context": "Preview panel title. Max length: 25 chars."
+    },
+    "clickToView": {
+      "value": "Haz clic en un loro para ver detalles",
+      "_context": "Empty state message in preview panel. Max length: 50 chars."
+    }
+  },
+
+  "breeding": {
+    "selectParents": {
+      "value": "Seleccionar Padres",
+      "_context": "Header for breeding pair selection. Max length: 25 chars."
+    },
+    "leftParent": {
+      "value": "Padre Izquierdo",
+      "_context": "Label for left breeding slot. Max length: 20 chars."
+    },
+    "rightParent": {
+      "value": "Padre Derecho",
+      "_context": "Label for right breeding slot. Max length: 20 chars."
+    },
+    "empty": {
+      "value": "Vacío",
+      "_context": "Empty breeding slot indicator. Max length: 15 chars."
+    },
+    "breedButton": {
+      "value": "Criar Loros",
+      "_context": "Button text to breed selected parrots. Max length: 20 chars."
+    },
+    "breedCost": {
+      "value": "Costo: {cost} monedas",
+      "_context": "Cost display for breeding. {cost} is a number (e.g., 50). Max length: 25 chars."
+    },
+    "compatibility": {
+      "value": "Compatibilidad Genética",
+      "_context": "Header for compatibility analysis. Max length: 30 chars."
+    },
+    "predictions": {
+      "value": "Predicciones de Crías",
+      "_context": "Header for breeding predictions. Max length: 30 chars."
+    },
+    "beautyRange": {
+      "value": "Rango de Belleza",
+      "_context": "Stat label for predicted beauty range. Max length: 20 chars."
+    },
+    "averageBeauty": {
+      "value": "Belleza Promedio",
+      "_context": "Stat label for predicted average beauty. Max length: 20 chars."
+    },
+    "diversity": {
+      "value": "Diversidad",
+      "_context": "Stat label for genetic diversity. Max length: 15 chars."
+    },
+    "regeneratePredictions": {
+      "value": "Regenerar Predicciones",
+      "_context": "Button to generate new predictions. Max length: 30 chars."
+    },
+    "generating": {
+      "value": "Generando...",
+      "_context": "Loading state while generating predictions. Max length: 20 chars."
+    },
+    "generatingPredictions": {
+      "value": "Generando predicciones...",
+      "_context": "Loading message for predictions. Max length: 40 chars."
+    },
+    "predictionHint": {
+      "value": "Pasa el cursor sobre las predicciones para ver puntuación. Haz clic para regenerar.",
+      "_context": "Helpful hint about predictions. Max length: 100 chars."
+    },
+    "recentOffspring": {
+      "value": "Crías Recientes",
+      "_context": "Header for recently bred parrots. Max length: 25 chars."
+    },
+    "breedToSeeOffspring": {
+      "value": "¡Cría loros para ver tus crías aquí!",
+      "_context": "Empty state message for offspring section. Max length: 60 chars."
+    }
+  },
+
+  "bodyParts": {
+    "wings": {
+      "value": "Alas",
+      "_context": "Body part name: wings of a bird. Displayed in genetics panel. Max length: 20 chars."
+    },
+    "specialWing": {
+      "value": "Ala Especial",
+      "_context": "Body part name: special decorative wing feathers. Max length: 20 chars."
+    },
+    "body": {
+      "value": "Cuerpo",
+      "_context": "Body part name: main body/torso of bird. Max length: 20 chars."
+    },
+    "head": {
+      "value": "Cabeza",
+      "_context": "Body part name: head of bird. Max length: 20 chars."
+    },
+    "tail": {
+      "value": "Cola",
+      "_context": "Body part name: tail feathers. Max length: 20 chars."
+    },
+    "accents": {
+      "value": "Acentos",
+      "_context": "Body part name: decorative accent feathers. Max length: 20 chars."
+    }
+  },
+
+  "rarity": {
+    "common": {
+      "value": "Común",
+      "_context": "Rarity level: lowest tier. Max length: 15 chars."
+    },
+    "uncommon": {
+      "value": "Poco Común",
+      "_context": "Rarity level: second tier. Max length: 15 chars."
+    },
+    "rare": {
+      "value": "Raro",
+      "_context": "Rarity level: third tier. Max length: 15 chars."
+    },
+    "epic": {
+      "value": "Épico",
+      "_context": "Rarity level: fourth tier. Max length: 15 chars."
+    },
+    "legendary": {
+      "value": "Legendario",
+      "_context": "Rarity level: highest tier. Max length: 15 chars."
+    }
+  },
+
+  "beauty": {
+    "plain": {
+      "value": "Simple",
+      "_context": "Beauty level: lowest. Max length: 15 chars."
+    },
+    "decent": {
+      "value": "Decente",
+      "_context": "Beauty level: low tier. Max length: 15 chars."
+    },
+    "pretty": {
+      "value": "Bonito",
+      "_context": "Beauty level: mid-low tier. Max length: 15 chars."
+    },
+    "beautiful": {
+      "value": "Hermoso",
+      "_context": "Beauty level: mid-high tier. Max length: 15 chars."
+    },
+    "stunning": {
+      "value": "Impresionante",
+      "_context": "Beauty level: highest tier. Max length: 15 chars."
+    },
+    "score": {
+      "value": "Belleza",
+      "_context": "Label for beauty score. Max length: 15 chars."
+    }
+  },
+
+  "contests": {
+    "header": {
+      "value": "Concursos de Belleza para {name}",
+      "_context": "Contests header. {name} is parrot name. Max length: 50 chars."
+    },
+    "description": {
+      "value": "Compite para ganar monedas e insignias. ¡Supera cada nivel para desbloquear el siguiente!",
+      "_context": "Contests tab description. Max length: 80 chars."
+    },
+    "selectParrotPrompt": {
+      "value": "¡Selecciona un loro de tu colección para entrar en concursos!",
+      "_context": "Empty state prompt when no parrot selected. Max length: 70 chars."
+    },
+    "goToCollection": {
+      "value": "Ir a Colección",
+      "_context": "Button to navigate to collection tab. Max length: 25 chars."
+    },
+    "entry": {
+      "value": "Entrada",
+      "_context": "Label for entry cost. Max length: 15 chars."
+    },
+    "completed": {
+      "value": "Completado",
+      "_context": "Status for completed contest. Max length: 15 chars."
+    },
+    "complete": {
+      "value": "Completo",
+      "_context": "Button label for already completed. Max length: 15 chars."
+    },
+    "locked": {
+      "value": "Bloqueado",
+      "_context": "Status for locked contest tier. Max length: 15 chars."
+    },
+    "enter": {
+      "value": "Entrar",
+      "_context": "Button to enter contest. Max length: 10 chars."
+    },
+    "needCoins": {
+      "value": "Necesitas {cost}",
+      "_context": "Message when insufficient coins. {cost} is amount. Max length: 20 chars."
+    },
+    "place1st": {
+      "value": "1er lugar",
+      "_context": "First place ranking. Max length: 15 chars."
+    },
+    "place2nd": {
+      "value": "2do lugar",
+      "_context": "Second place ranking. Max length: 15 chars."
+    },
+    "place3rd": {
+      "value": "3er lugar",
+      "_context": "Third place ranking. Max length: 15 chars."
+    },
+    "placeTh": {
+      "value": "{n}º lugar",
+      "_context": "Fourth or lower place. {n} is number. Max length: 15 chars."
+    },
+    "tier1Name": {
+      "value": "Concurso de Principiantes",
+      "_context": "Contest tier 1 name. Max length: 35 chars."
+    },
+    "tier1Desc": {
+      "value": "Una competencia local amistosa para bellezas novatas",
+      "_context": "Contest tier 1 description. Max length: 70 chars."
+    },
+    "tier2Name": {
+      "value": "Exhibición Arcoíris",
+      "_context": "Contest tier 2 name. Max length: 35 chars."
+    },
+    "tier2Desc": {
+      "value": "Celebra la diversidad con plumaje colorido",
+      "_context": "Contest tier 2 description. Max length: 70 chars."
+    },
+    "tier2Rule": {
+      "value": "Debe tener al menos 3 colores hermosos diferentes",
+      "_context": "Contest tier 2 special rule. Max length: 70 chars."
+    },
+    "tier3Name": {
+      "value": "Maestros del Degradado",
+      "_context": "Contest tier 3 name. Max length: 35 chars."
+    },
+    "tier3Desc": {
+      "value": "Donde las transiciones suaves roban el show",
+      "_context": "Contest tier 3 description. Max length: 70 chars."
+    },
+    "tier3Rule": {
+      "value": "Debe tener al menos 2 degradados hermosos",
+      "_context": "Contest tier 3 special rule. Max length: 70 chars."
+    },
+    "tier4Name": {
+      "value": "Campeonato de Contraste",
+      "_context": "Contest tier 4 name. Max length: 35 chars."
+    },
+    "tier4Desc": {
+      "value": "Opuestos audaces crean declaraciones impresionantes",
+      "_context": "Contest tier 4 description. Max length: 70 chars."
+    },
+    "tier4Rule": {
+      "value": "Debe tener al menos un par de colores complementarios",
+      "_context": "Contest tier 4 special rule. Max length: 70 chars."
+    },
+    "tier5Name": {
+      "value": "Gran Premio de Élite",
+      "_context": "Contest tier 5 name. Max length: 35 chars."
+    },
+    "tier5Desc": {
+      "value": "La prueba definitiva de perfección cromática",
+      "_context": "Contest tier 5 description. Max length: 70 chars."
+    },
+    "tier5Rule": {
+      "value": "Debe tener degradados Y colores complementarios",
+      "_context": "Contest tier 5 special rule. Max length: 70 chars."
+    },
+    "rule": {
+      "value": "Regla",
+      "_context": "Label for special contest rules. Max length: 10 chars."
+    }
+  },
+
+  "laboratory": {
+    "title": {
+      "value": "Análisis de Laboratorio",
+      "_context": "Laboratory modal title. Max length: 35 chars."
+    },
+    "payAndExamine": {
+      "value": "Pagar {cost} Monedas y Examinar",
+      "_context": "Button to pay for examination. {cost} is number. Max length: 40 chars."
+    },
+    "notEnoughCoins": {
+      "value": "No Hay Suficientes Monedas",
+      "_context": "Message when insufficient coins for exam. Max length: 30 chars."
+    },
+    "needMoreCoins": {
+      "value": "Necesitas {amount} monedas más",
+      "_context": "Detailed insufficient coins message. {amount} is number. Max length: 40 chars."
+    },
+    "analysisIncludes": {
+      "value": "El Análisis Incluye:",
+      "_context": "Header for analysis features list. Max length: 30 chars."
+    },
+    "geneBreakdown": {
+      "value": "78 Genes Detallados (6 partes × 13 genes)",
+      "_context": "Analysis feature description. Max length: 60 chars."
+    },
+    "rarityAnalysis": {
+      "value": "Análisis de Rareza con puntuación detallada",
+      "_context": "Analysis feature description. Max length: 60 chars."
+    },
+    "beautyAssessment": {
+      "value": "Evaluación de Belleza con armonía de colores",
+      "_context": "Analysis feature description. Max length: 60 chars."
+    },
+    "rgbValues": {
+      "value": "Valores RGB para cada parte del cuerpo",
+      "_context": "Analysis feature description. Max length: 60 chars."
+    },
+    "oneTimeCost": {
+      "value": "Costo único: {cost} monedas por loro",
+      "_context": "Cost explanation. {cost} is number. Max length: 50 chars."
+    },
+    "rarityAnalysisTitle": {
+      "value": "Análisis de Rareza",
+      "_context": "Section header in lab results. Max length: 30 chars."
+    },
+    "rarityScore": {
+      "value": "Puntuación Rareza",
+      "_context": "Label for rarity score value. Max length: 20 chars."
+    },
+    "pointsByBodyPart": {
+      "value": "Puntos por Parte del Cuerpo:",
+      "_context": "Subheader for body part breakdown. Max length: 35 chars."
+    },
+    "rarityGuide": {
+      "value": "Guía de Rareza:",
+      "_context": "Header for rarity explanation. Max length: 20 chars."
+    },
+    "rarityGuide1": {
+      "value": "Puro (0 o 4 dominantes): 2 pts por color",
+      "_context": "Rarity calculation explanation. Max length: 60 chars."
+    },
+    "rarityGuide2": {
+      "value": "Casi Puro (1 o 3): 1 pt por color",
+      "_context": "Rarity calculation explanation. Max length: 60 chars."
+    },
+    "rarityGuide3": {
+      "value": "Mixto (2 dominantes): 0 pts",
+      "_context": "Rarity calculation explanation. Max length: 60 chars."
+    },
+    "rarityGuide4": {
+      "value": "Degradado: +4 pts (¡muy raro!)",
+      "_context": "Rarity calculation explanation. Max length: 60 chars."
+    },
+    "beautyAnalysisTitle": {
+      "value": "Análisis de Belleza",
+      "_context": "Section header in lab results. Max length: 30 chars."
+    },
+    "beautyScore": {
+      "value": "Puntuación Belleza",
+      "_context": "Label for beauty score value. Max length: 20 chars."
+    },
+    "bodyPartColors": {
+      "value": "Colores del Cuerpo:",
+      "_context": "Subheader for color listing. Max length: 30 chars."
+    },
+    "beautyContribution": {
+      "value": "Contribución de Belleza por Parte:",
+      "_context": "Subheader for contribution breakdown. Max length: 40 chars."
+    },
+    "beautyTraits": {
+      "value": "Rasgos de Belleza:",
+      "_context": "Subheader for trait list. Max length: 25 chars."
+    },
+    "beautyGuide": {
+      "value": "Guía de Belleza:",
+      "_context": "Header for beauty explanation. Max length: 20 chars."
+    },
+    "beautyGuide1": {
+      "value": "Degradados de diferentes colores: +10 pts",
+      "_context": "Beauty calculation explanation. Max length: 60 chars."
+    },
+    "beautyGuide2": {
+      "value": "Cada color sólido hermoso: +3 pts",
+      "_context": "Beauty calculation explanation. Max length: 60 chars."
+    },
+    "beautyGuide3": {
+      "value": "Diversidad de colores (3+): +15 pts",
+      "_context": "Beauty calculation explanation. Max length: 60 chars."
+    },
+    "beautyGuide4": {
+      "value": "Colores complementarios: +18 pts",
+      "_context": "Beauty calculation explanation. Max length: 60 chars."
+    },
+    "beautyGuide5": {
+      "value": "Colores contrastantes: +12 pts",
+      "_context": "Beauty calculation explanation. Max length: 60 chars."
+    },
+    "beautyGuide6": {
+      "value": "Colores diferentes: +5 pts",
+      "_context": "Beauty calculation explanation. Max length: 60 chars."
+    },
+    "beautyGuide7": {
+      "value": "Colores similares: -3 pts penalización",
+      "_context": "Beauty calculation explanation. Max length: 60 chars."
+    },
+    "dnaSequence": {
+      "value": "Secuencia de ADN",
+      "_context": "Section header for genetic code. Max length: 25 chars."
+    },
+    "compactGenotype": {
+      "value": "Genotipo Compacto",
+      "_context": "Subtitle for DNA format. Max length: 30 chars."
+    },
+    "format": {
+      "value": "Formato:",
+      "_context": "Header for format explanation. Max length: 15 chars."
+    },
+    "gradient": {
+      "value": "Degradado",
+      "_context": "Label for gradient gene. Max length: 15 chars."
+    },
+    "result": {
+      "value": "Resultado",
+      "_context": "Label for resulting color. Max length: 15 chars."
+    },
+    "solid": {
+      "value": "Sólido",
+      "_context": "Solid color type (not gradient). Max length: 15 chars."
+    },
+    "red": {
+      "value": "Rojo",
+      "_context": "Red color channel. Max length: 10 chars."
+    },
+    "green": {
+      "value": "Verde",
+      "_context": "Green color channel. Max length: 10 chars."
+    },
+    "blue": {
+      "value": "Azul",
+      "_context": "Blue color channel. Max length: 10 chars."
+    }
+  },
+
+  "gallery": {
+    "title": {
+      "value": "Galería de Loros",
+      "_context": "Gallery tab header. Max length: 30 chars."
+    },
+    "subtitle": {
+      "value": "Explora loros seleccionados y tus creaciones personalizadas",
+      "_context": "Gallery description. Max length: 70 chars."
+    },
+    "loading": {
+      "value": "Cargando galería...",
+      "_context": "Loading state message. Max length: 30 chars."
+    },
+    "curatedCollection": {
+      "value": "Colección Seleccionada",
+      "_context": "Section header for curated parrots. Max length: 30 chars."
+    },
+    "curatedDesc": {
+      "value": "Loros hermosos diseñados con armonía de rueda de color RYB",
+      "_context": "Curated section description. Max length: 70 chars."
+    },
+    "myCreations": {
+      "value": "Mis Creaciones",
+      "_context": "Section header for custom parrots. Max length: 25 chars."
+    },
+    "myCreationsDesc": {
+      "value": "Loros personalizados que diseñaste en el Lab de Color",
+      "_context": "Custom section description. Max length: 70 chars."
+    },
+    "noCustomParrots": {
+      "value": "¡No hay loros personalizados aún!",
+      "_context": "Empty state for custom parrots. Max length: 40 chars."
+    },
+    "visitColorLab": {
+      "value": "Visita el Lab de Color para crear tu primer loro personalizado",
+      "_context": "Prompt to create custom parrot. Max length: 70 chars."
+    }
+  },
+
+  "colorLab": {
+    "title": {
+      "value": "Lab de Color - Editor de Genes",
+      "_context": "Color lab header. Max length: 35 chars."
+    },
+    "subtitle": {
+      "value": "Crea loros personalizados controlando genes individuales",
+      "_context": "Color lab description. Max length: 70 chars."
+    },
+    "parrotName": {
+      "value": "Nombre del loro...",
+      "_context": "Placeholder for name input. Max length: 30 chars."
+    },
+    "saveToGallery": {
+      "value": "Guardar en Galería",
+      "_context": "Button to save custom parrot. Max length: 25 chars."
+    },
+    "randomize": {
+      "value": "Aleatorio",
+      "_context": "Button to randomize genes. Max length: 15 chars."
+    },
+    "reset": {
+      "value": "Reiniciar",
+      "_context": "Button to reset genes. Max length: 10 chars."
+    },
+    "geneEditor": {
+      "value": "Editor de Genes",
+      "_context": "Panel header. Max length: 20 chars."
+    },
+    "redChannel": {
+      "value": "Canal Rojo",
+      "_context": "Red gene section header. Max length: 20 chars."
+    },
+    "greenChannel": {
+      "value": "Canal Verde",
+      "_context": "Green gene section header. Max length: 20 chars."
+    },
+    "blueChannel": {
+      "value": "Canal Azul",
+      "_context": "Blue gene section header. Max length: 20 chars."
+    },
+    "all": {
+      "value": "Todos",
+      "_context": "Button to activate all genes. Max length: 8 chars."
+    },
+    "none": {
+      "value": "Ninguno",
+      "_context": "Button to deactivate all genes. Max length: 8 chars."
+    },
+    "enabled": {
+      "value": "Activado",
+      "_context": "Gradient enabled status. Max length: 15 chars."
+    },
+    "disabled": {
+      "value": "Desactivado",
+      "_context": "Gradient disabled status. Max length: 15 chars."
+    },
+    "resultingColor": {
+      "value": "Color Resultante",
+      "_context": "Label for color preview swatch. Max length: 25 chars."
+    },
+    "livePreview": {
+      "value": "Vista Previa",
+      "_context": "Preview panel header. Max length: 20 chars."
+    },
+    "activeGenes": {
+      "value": "Genes Activos",
+      "_context": "Stat label for active gene count. Max length: 20 chars."
+    }
+  },
+
+  "toasts": {
+    "breedSuccess": {
+      "title": "¡Cría exitosa!",
+      "message": "¡4 polluelos nacidos!{examInfo} {total} esperando en el Lab de Cría.",
+      "_context": "Success notification after breeding. {examInfo} and {total} are replaced with values."
+    },
+    "breedNotEnoughCoins": {
+      "title": "¡No hay suficientes monedas!",
+      "message": "La cría cuesta {cost} monedas. Tienes {current}.",
+      "_context": "Error when insufficient coins for breeding. {cost} and {current} are numbers."
+    },
+    "examAutoInfo": {
+      "value": "{count} examinados (-{totalCost} monedas).",
+      "_context": "Part of breed success: auto-exam info. {count} and {totalCost} are numbers."
+    },
+    "examAutoNeedCoins": {
+      "value": "Auto-exam: Necesitas {cost} monedas por polluelo.",
+      "_context": "Part of breed success: insufficient coins for auto-exam. {cost} is number."
+    },
+    "parrotJoined": {
+      "title": "¡{name} se unió a tu colección!",
+      "message": "{rarity} • Gen {generation} • -{price} monedas",
+      "_context": "Success when buying parrot. {name}, {rarity}, {generation}, {price} are replaced."
+    },
+    "parrotSold": {
+      "title": "{name} vendido",
+      "message": "+{value} monedas",
+      "_context": "Success when selling parrot. {name} and {value} are replaced."
+    },
+    "parrotLocked": {
+      "title": "{name} está bloqueado",
+      "message": "Desbloquea el loro primero para venderlo",
+      "_context": "Error when trying to sell locked parrot. {name} is replaced."
+    },
+    "examComplete": {
+      "title": "Análisis de laboratorio completo",
+      "message": "{name} examinado • -{cost} monedas",
+      "_context": "Success after examining parrot. {name} and {cost} are replaced."
+    },
+    "examNotEnoughCoins": {
+      "title": "¡No hay suficientes monedas!",
+      "message": "El examen de laboratorio cuesta {cost} monedas. Tienes {current}.",
+      "_context": "Error when insufficient coins for examination. {cost} and {current} are numbers."
+    },
+    "mutationsEnabled": {
+      "title": "Mutaciones Activadas",
+      "message": "La cría puede introducir nuevos genes",
+      "_context": "Info when mutations toggled on."
+    },
+    "mutationsDisabled": {
+      "title": "Mutaciones Desactivadas",
+      "message": "La cría preservará genes puros",
+      "_context": "Info when mutations toggled off."
+    },
+    "autoExamEnabled": {
+      "title": "Auto-Exam Activado",
+      "message": "Las crías nuevas serán examinadas automáticamente si tienes monedas suficientes",
+      "_context": "Info when auto-examine toggled on."
+    },
+    "autoExamDisabled": {
+      "title": "Auto-Exam Desactivado",
+      "message": "Debes examinar las crías manualmente",
+      "_context": "Info when auto-examine toggled off."
+    },
+    "noParrotSelected": {
+      "title": "No hay loro seleccionado",
+      "message": "Ve a colección primero",
+      "_context": "Warning when trying to enter contest without selection."
+    },
+    "contestRequirements": {
+      "title": "No cumple los requisitos",
+      "message": "{rule}",
+      "_context": "Error when parrot doesn't meet contest rules. {rule} is replaced."
+    },
+    "contestNotEnoughCoins": {
+      "title": "No hay suficientes monedas",
+      "message": "Necesitas {cost} monedas",
+      "_context": "Error when insufficient coins for contest. {cost} is number."
+    },
+    "coinsReceived": {
+      "title": "¡Monedas recibidas!",
+      "message": "+{amount} monedas",
+      "_context": "Success when claiming coin reward. {amount} is number."
+    },
+    "rareParrotReceived": {
+      "title": "¡Loro raro recibido!",
+      "message": "{name} añadido a tu colección",
+      "_context": "Success when claiming parrot reward. {name} is replaced."
+    },
+    "rareParrotError": {
+      "title": "Error",
+      "message": "No se pudo crear el loro raro",
+      "_context": "Error when parrot reward fails to generate."
+    },
+    "offspringMoved": {
+      "title": "¡Crías movidas!",
+      "message": "{count} crías movidas a colección • +{examCount} examinadas",
+      "_context": "Success when moving offspring. {count} and {examCount} are numbers."
+    },
+    "offspringSold": {
+      "title": "¡Crías vendidas!",
+      "message": "{count} crías vendidas por {coins} monedas (70% del valor)",
+      "_context": "Success when selling offspring. {count} and {coins} are numbers."
+    },
+    "offspringDismissed": {
+      "title": "Crías descartadas",
+      "message": "{count} crías eliminadas del Lab de Cría",
+      "_context": "Info when dismissing offspring. {count} is number."
+    },
+    "noNotifications": {
+      "value": "No hay notificaciones aún",
+      "_context": "Empty state for notification history. Max length: 30 chars."
+    },
+    "clearNotificationsConfirm": {
+      "value": "¿Borrar todas las notificaciones?",
+      "_context": "Confirmation prompt for clearing notifications. Max length: 40 chars."
+    }
+  },
+
+  "actions": {
+    "examine": {
+      "value": "Examinar",
+      "_context": "Button to examine parrot genes. Max length: 15 chars."
+    },
+    "free": {
+      "value": "Liberar",
+      "_context": "Button to release parrot. Max length: 10 chars."
+    },
+    "lock": {
+      "value": "Bloquear",
+      "_context": "Button to lock/unlock parrot. Max length: 10 chars."
+    },
+    "breedLeft": {
+      "value": "Criar (I)",
+      "_context": "Button to add to left breeding slot. Max length: 15 chars."
+    },
+    "breedRight": {
+      "value": "Criar (D)",
+      "_context": "Button to add to right breeding slot. Max length: 15 chars."
+    },
+    "moveToCollection": {
+      "value": "Mover a Colección",
+      "_context": "Button to move offspring to main collection. Max length: 30 chars."
+    },
+    "sellAllOffspring": {
+      "value": "Vender Todas las Crías",
+      "_context": "Button to sell all offspring at once. Max length: 30 chars."
+    },
+    "dismissOffspring": {
+      "value": "Descartar Todas",
+      "_context": "Button to dismiss all offspring. Max length: 20 chars."
+    }
+  },
+
+  "time": {
+    "justNow": {
+      "value": "Justo ahora",
+      "_context": "Relative time: less than 1 minute ago. Max length: 15 chars."
+    },
+    "minutesAgo": {
+      "value": "hace {n}m",
+      "_context": "Relative time: minutes ago. {n} is number. Max length: 15 chars."
+    },
+    "hoursAgo": {
+      "value": "hace {n}h",
+      "_context": "Relative time: hours ago. {n} is number. Max length: 15 chars."
+    },
+    "daysAgo": {
+      "value": "hace {n}d",
+      "_context": "Relative time: days ago. {n} is number. Max length: 15 chars."
+    }
+  },
+
+  "messages": {
+    "newGameConfirm": {
+      "value": "¿Comenzar un juego nuevo? ¡Esto borrará tu progreso actual!",
+      "_context": "Confirmation prompt for new game. Max length: 80 chars."
+    }
+  }
+}
