@@ -7,6 +7,7 @@ import * as GameState from '../core/gameState.js';
 import { Parrot } from '../core/parrot.js';
 import { showToast } from './notifications.js';
 import { CONTEST_TIERS, RARE_CONTEST_PARROTS } from './constants.js';
+import { t } from './i18n.js';
 
 /**
  * Render contests tab with all tiers
@@ -21,15 +22,15 @@ export function renderContestsTab() {
 
     if (!parrot) {
         html += '<div style="text-align: center; padding: 40px; color: #999;">';
-        html += '<h3>Select a parrot from your collection to enter contests!</h3>';
-        html += '<button class="btn" onclick="window.switchTabHandler(\'collection\')">Go to Collection</button>';
+        html += `<h3>${t('contests.selectParrotPrompt')}</h3>`;
+        html += `<button class="btn" onclick="window.switchTabHandler('collection')">${t('contests.goToCollection')}</button>`;
         html += '</div>';
         contestsTab.innerHTML = html;
         return;
     }
 
-    html += `<h3>🏆 Beauty Contests for ${parrot.name}</h3>`;
-    html += '<p style="color: #666; margin-bottom: 20px;">Compete to win coins and badges. Beat each tier to unlock the next!</p>';
+    html += `<h3>🏆 ${t('contests.header', { name: parrot.name })}</h3>`;
+    html += `<p style="color: #666; margin-bottom: 20px;">${t('contests.description')}</p>`;
 
     const contestProgress = GameState.getContestProgress();
     const coins = GameState.getCoins();
@@ -50,20 +51,23 @@ export function renderContestsTab() {
 
         if (tier.specialRules) {
             html += '<div style="background: #fff3cd; padding: 10px; border-radius: 6px; margin-bottom: 10px;">';
-            html += `<strong>Rule:</strong> ${tier.specialRules.description}`;
+            html += `<strong>${t('contests.rule')}:</strong> ${tier.specialRules.description}`;
             html += '</div>';
         }
 
         html += '<div style="display: flex; gap: 20px; font-size: 0.9em; color: #666; flex-wrap: wrap;">';
-        html += `<span>💰 Entry: ${tier.entryCost}</span>`;
+        html += `<span>💰 ${t('contests.entry')}: ${tier.entryCost}</span>`;
         html += `<span>🥇 ${tier.rewards[1].coins} | 🥈 ${tier.rewards[2].coins} | 🥉 ${tier.rewards[3].coins}</span>`;
         html += '</div>';
 
         if (hasCompleted) {
             const result = contestProgress[selectedParrotId][index];
-            const suffix = result.placed === 1 ? 'st' : result.placed === 2 ? 'nd' : result.placed === 3 ? 'rd' : 'th';
+            const placementText = result.placed === 1 ? t('contests.place1st') :
+                                 result.placed === 2 ? t('contests.place2nd') :
+                                 result.placed === 3 ? t('contests.place3rd') :
+                                 t('contests.placeTh', { n: result.placed });
             html += '<div style="margin-top: 10px; padding: 10px; background: white; border-radius: 6px;">';
-            html += `<strong>Completed:</strong> ${result.badge} ${result.placed}${suffix} place • ${result.coins} coins`;
+            html += `<strong>${t('contests.completed')}:</strong> ${result.badge} ${placementText} • ${result.coins} ${t('common.coins').toLowerCase()}`;
             html += '</div>';
         }
 
@@ -71,12 +75,12 @@ export function renderContestsTab() {
 
         html += '<div style="min-width: 150px; text-align: right;">';
         if (!isUnlocked && !hasCompleted) {
-            html += '<button class="btn" disabled style="opacity: 0.5;">🔒 Locked</button>';
+            html += `<button class="btn" disabled style="opacity: 0.5;">🔒 ${t('contests.locked')}</button>`;
         } else if (hasCompleted) {
-            html += '<button class="btn" disabled style="opacity: 0.5; background: #28a745; color: white;">✅ Complete</button>';
+            html += `<button class="btn" disabled style="opacity: 0.5; background: #28a745; color: white;">✅ ${t('contests.complete')}</button>`;
         } else {
             html += `<button class="btn btn-contest" onclick="window.enterContestHandler(${index})" style="background: #667eea; color: white;" ${coins < tier.entryCost ? 'disabled' : ''}>`;
-            html += `${coins < tier.entryCost ? '❌ Need ' + tier.entryCost : '🎯 Enter (' + tier.entryCost + '💰)'}`;
+            html += `${coins < tier.entryCost ? '❌ ' + t('contests.needCoins', { cost: tier.entryCost }) : '🎯 ' + t('contests.enter') + ' (' + tier.entryCost + '💰)'}`;
             html += '</button>';
         }
         html += '</div>';
@@ -103,18 +107,18 @@ export async function enterContest(tierIndex, saveGameFn, updateStatsFn, checkAc
     const parrot = parrots.find(p => p.id === selectedParrotId);
 
     if (!parrot) {
-        showToast('No parrot selected', 'Go to collection first', 'warning');
+        showToast(t('toasts.noParrotSelected.title'), t('toasts.noParrotSelected.message'), 'warning');
         return;
     }
 
     if (tier.specialRules && !tier.specialRules.validator(parrot)) {
-        showToast('Does not meet requirements', tier.specialRules.description, 'error');
+        showToast(t('toasts.contestRequirements.title'), t('toasts.contestRequirements.message', { rule: tier.specialRules.description }), 'error');
         return;
     }
 
     const coins = GameState.getCoins();
     if (coins < tier.entryCost) {
-        showToast('Not enough coins', `Need ${tier.entryCost} coins`, 'error');
+        showToast(t('toasts.contestNotEnoughCoins.title'), t('toasts.contestNotEnoughCoins.message', { cost: tier.entryCost }), 'error');
         return;
     }
 
@@ -209,13 +213,16 @@ export function showContestResults(tier, tierIndex, competitors, placement, coin
     const won = placement <= 3;
     const bgColor = won ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : '#f8f9fa';
     const textColor = won ? 'white' : '#333';
-    const placeSuffix = placement === 1 ? 'st' : placement === 2 ? 'nd' : placement === 3 ? 'rd' : 'th';
+    const placementText = placement === 1 ? t('contests.place1st') :
+                         placement === 2 ? t('contests.place2nd') :
+                         placement === 3 ? t('contests.place3rd') :
+                         t('contests.placeTh', { n: placement });
 
     let html = `<h2 style="text-align: center; margin-bottom: 20px;">${tier.name}</h2>`;
 
     html += `<div style="text-align: center; padding: 30px; background: ${bgColor}; border-radius: 12px; margin-bottom: 20px; color: ${textColor};">`;
     html += `<h1 style="margin: 0 0 10px 0; font-size: 3em;">${won ? badge : '😔'}</h1>`;
-    html += `<h3 style="margin: 0 0 5px 0;">${playerParrot.name} placed ${placement}${placeSuffix}!</h3>`;
+    html += `<h3 style="margin: 0 0 5px 0;">${t('contests.placed', { name: playerParrot.name, placement: placementText })}</h3>`;
     html += '</div>';
 
     // Show reward choice for top 3
@@ -225,39 +232,39 @@ export function showContestResults(tier, tierIndex, competitors, placement, coin
             const tempRareParrot = createRareParrot(tierIndex, placement);
             const parrotSellValue = tempRareParrot ? calculateParrotSellValue(tempRareParrot) : 0;
 
-            html += '<h3 style="text-align: center; margin: 20px 0;">Choose Your Reward</h3>';
+            html += `<h3 style="text-align: center; margin: 20px 0;">${t('contests.chooseReward')}</h3>`;
             html += '<div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 20px;">';
 
             // Coins option
             html += '<div style="flex: 1; max-width: 300px; border: 2px solid #4caf50; border-radius: 12px; padding: 20px; background: white; text-align: center;">';
-            html += '<h4 style="margin: 0 0 10px 0; color: #4caf50;">💰 Take Coins</h4>';
-            html += `<p style="font-size: 2em; margin: 10px 0; font-weight: bold;">${coinsWon} coins</p>`;
-            html += '<p style="color: #666; font-size: 0.9em;">Safe choice - immediate value</p>';
-            html += `<button class="btn" style="background: #4caf50; color: white; width: 100%;" onclick="window.takeCoinsRewardHandler(${tierIndex}, ${placement}, ${coinsWon})">Take Coins</button>`;
+            html += `<h4 style="margin: 0 0 10px 0; color: #4caf50;">💰 ${t('contests.takeCoinsBtn')}</h4>`;
+            html += `<p style="font-size: 2em; margin: 10px 0; font-weight: bold;">${coinsWon} ${t('common.coins').toLowerCase()}</p>`;
+            html += `<p style="color: #666; font-size: 0.9em;">${t('contests.safeChoice')}</p>`;
+            html += `<button class="btn" style="background: #4caf50; color: white; width: 100%;" onclick="window.takeCoinsRewardHandler(${tierIndex}, ${placement}, ${coinsWon})">${t('contests.takeCoinsBtn')}</button>`;
             html += '</div>';
 
             // Parrot option
             html += '<div style="flex: 1; max-width: 300px; border: 2px solid #9c27b0; border-radius: 12px; padding: 20px; background: white; text-align: center;">';
-            html += `<h4 style="margin: 0 0 10px 0; color: #9c27b0;">🦜 Take ${rareTemplate.name}</h4>`;
+            html += `<h4 style="margin: 0 0 10px 0; color: #9c27b0;">🦜 ${t('contests.takeParrotName', { name: rareTemplate.name })}</h4>`;
             html += `<p style="font-size: 1.2em; margin: 10px 0; font-weight: bold; color: #9c27b0;">${rareTemplate.description}</p>`;
             if (tempRareParrot) {
                 const beauty = tempRareParrot.calculateBeauty();
-                html += `<p style="margin: 5px 0;"><strong>Beauty:</strong> ${beauty.score} pts</p>`;
+                html += `<p style="margin: 5px 0;"><strong>${t('beauty.score')}:</strong> ${beauty.score} pts</p>`;
             }
-            html += `<p style="color: #666; font-size: 0.9em;">Sell value: ~${parrotSellValue} coins</p>`;
-            html += `<p style="color: #e91e63; font-size: 0.85em; font-weight: 600;">Unique parrot with special genes!</p>`;
-            html += `<button class="btn" style="background: #9c27b0; color: white; width: 100%;" onclick="window.takeParrotRewardHandler(${tierIndex}, ${placement})">Take Parrot</button>`;
+            html += `<p style="color: #666; font-size: 0.9em;">${t('contests.sellValue', { value: parrotSellValue })}</p>`;
+            html += `<p style="color: #e91e63; font-size: 0.85em; font-weight: 600;">${t('contests.uniqueParrot')}</p>`;
+            html += `<button class="btn" style="background: #9c27b0; color: white; width: 100%;" onclick="window.takeParrotRewardHandler(${tierIndex}, ${placement})">${t('contests.takeParrotBtn')}</button>`;
             html += '</div>';
 
             html += '</div>';
         } else {
-            html += `<p style="text-align: center; font-size: 1.5em; margin: 10px 0;">Won ${coinsWon} coins!</p>`;
+            html += `<p style="text-align: center; font-size: 1.5em; margin: 10px 0;">${t('contests.wonCoins', { coins: coinsWon })}</p>`;
         }
     } else {
-        html += '<p style="text-align: center; margin: 10px 0;">Better luck next time!</p>';
+        html += `<p style="text-align: center; margin: 10px 0;">${t('contests.betterLuck')}</p>`;
     }
 
-    html += '<h4 style="margin: 20px 0 10px 0;">Final Rankings</h4>';
+    html += `<h4 style="margin: 20px 0 10px 0;">${t('contests.finalRankings')}</h4>`;
     html += '<div style="background: #f8f9fa; border-radius: 12px; padding: 15px;">';
 
     competitors.forEach((comp, index) => {
@@ -268,7 +275,7 @@ export function showContestResults(tier, tierIndex, competitors, placement, coin
         html += `<div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; margin-bottom: 8px; background: ${isPlayer ? '#e3f2fd' : 'white'}; border-radius: 8px; border: ${isPlayer ? '2px solid #2196f3' : '1px solid #ddd'};">`;
         html += '<div style="display: flex; align-items: center; gap: 10px;">';
         html += `<span style="font-size: 1.2em; min-width: 40px;">${placeBadge}</span>`;
-        html += `<strong style="color: ${isPlayer ? '#2196f3' : '#333'};">${comp.parrot.name}${isPlayer ? ' (You)' : ''}</strong>`;
+        html += `<strong style="color: ${isPlayer ? '#2196f3' : '#333'};">${comp.parrot.name}${isPlayer ? t('contests.playerYou') : ''}</strong>`;
         html += '</div>';
         html += '<div style="text-align: right;">';
         html += `<span style="font-weight: 600; color: #667eea;">${comp.beauty.score} pts</span>`;
@@ -280,7 +287,7 @@ export function showContestResults(tier, tierIndex, competitors, placement, coin
 
     if (!won) {
         html += '<div style="text-align: center; margin-top: 20px;">';
-        html += '<button class="btn" onclick="window.closeContestModalHandler()">Close</button>';
+        html += `<button class="btn" onclick="window.closeContestModalHandler()">${t('common.close')}</button>`;
         html += '</div>';
     }
 
@@ -346,7 +353,7 @@ export function takeCoinsReward(tierIndex, placement, coinsAmount, saveGameFn, u
     if (saveGameFn) saveGameFn();
     if (checkAchievementsFn) checkAchievementsFn(saveGameFn);
 
-    showToast('Coins received!', `+${coinsAmount} coins`, 'success');
+    showToast(t('toasts.coinsReceived.title'), t('toasts.coinsReceived.message', { amount: coinsAmount }), 'success');
     closeContestModal();
     renderContestsTab();
 }
@@ -363,7 +370,7 @@ export function takeParrotReward(tierIndex, placement, saveGameFn, updateStatsFn
     const rareParrot = createRareParrot(tierIndex, placement);
 
     if (!rareParrot) {
-        showToast('Error', 'Failed to create rare parrot', 'error');
+        showToast(t('toasts.rareParrotError.title'), t('toasts.rareParrotError.message'), 'error');
         return;
     }
 
@@ -372,7 +379,7 @@ export function takeParrotReward(tierIndex, placement, saveGameFn, updateStatsFn
     if (saveGameFn) saveGameFn();
     if (checkAchievementsFn) checkAchievementsFn(saveGameFn);
 
-    showToast('Rare parrot received!', `${rareParrot.name} added to your collection`, 'success');
+    showToast(t('toasts.rareParrotReceived.title'), t('toasts.rareParrotReceived.message', { name: rareParrot.name }), 'success');
     closeContestModal();
     renderContestsTab();
 }

@@ -445,6 +445,54 @@
     "rule": {
       "value": "Règle",
       "_context": "Label for special contest rules. Max length: 10 chars."
+    },
+    "placed": {
+      "value": "{name} a fini {placement} !",
+      "_context": "Result message showing parrot placement. {name} is parrot name, {placement} is '1st place', '2nd place', etc. Max length: 60 chars."
+    },
+    "chooseReward": {
+      "value": "Choisis ta Récompense",
+      "_context": "Header for reward selection screen. Max length: 30 chars."
+    },
+    "takeCoinsBtn": {
+      "value": "Prendre Pièces",
+      "_context": "Button to take coins reward. Max length: 15 chars."
+    },
+    "safeChoice": {
+      "value": "Choix sûr - valeur immédiate",
+      "_context": "Description for coins reward. Max length: 50 chars."
+    },
+    "takeParrotName": {
+      "value": "Prendre {name}",
+      "_context": "Header for parrot reward option. {name} is parrot name. Max length: 40 chars."
+    },
+    "sellValue": {
+      "value": "Valeur de vente : ~{value} pièces",
+      "_context": "Shows parrot sell value. {value} is number. Max length: 40 chars."
+    },
+    "uniqueParrot": {
+      "value": "Perroquet unique avec gènes spéciaux !",
+      "_context": "Description for rare parrot reward. Max length: 50 chars."
+    },
+    "takeParrotBtn": {
+      "value": "Prendre Oiseau",
+      "_context": "Button to take parrot reward. Max length: 15 chars."
+    },
+    "wonCoins": {
+      "value": "Gagné {coins} pièces !",
+      "_context": "Message for non-reward tiers. {coins} is amount. Max length: 30 chars."
+    },
+    "betterLuck": {
+      "value": "Meilleure chance la prochaine fois !",
+      "_context": "Message when player doesn't place top 3. Max length: 40 chars."
+    },
+    "finalRankings": {
+      "value": "Classement Final",
+      "_context": "Header for results table. Max length: 25 chars."
+    },
+    "playerYou": {
+      "value": " (Toi)",
+      "_context": "Suffix to show player's entry. Max length: 10 chars."
     }
   },
 

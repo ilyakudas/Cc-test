@@ -445,6 +445,54 @@
     "rule": {
       "value": "Правило",
       "_context": "Label for special contest rules. Max length: 10 chars."
+    },
+    "placed": {
+      "value": "{name} занял(а) {placement}!",
+      "_context": "Result message showing parrot placement. {name} is parrot name, {placement} is '1st place', '2nd place', etc. Max length: 60 chars."
+    },
+    "chooseReward": {
+      "value": "Выбери Награду",
+      "_context": "Header for reward selection screen. Max length: 30 chars."
+    },
+    "takeCoinsBtn": {
+      "value": "Взять Монеты",
+      "_context": "Button to take coins reward. Max length: 15 chars."
+    },
+    "safeChoice": {
+      "value": "Безопасный выбор - мгновенная ценность",
+      "_context": "Description for coins reward. Max length: 50 chars."
+    },
+    "takeParrotName": {
+      "value": "Взять {name}",
+      "_context": "Header for parrot reward option. {name} is parrot name. Max length: 40 chars."
+    },
+    "sellValue": {
+      "value": "Цена продажи: ~{value} монет",
+      "_context": "Shows parrot sell value. {value} is number. Max length: 40 chars."
+    },
+    "uniqueParrot": {
+      "value": "Уникальный попугай с особыми генами!",
+      "_context": "Description for rare parrot reward. Max length: 50 chars."
+    },
+    "takeParrotBtn": {
+      "value": "Взять Попугая",
+      "_context": "Button to take parrot reward. Max length: 15 chars."
+    },
+    "wonCoins": {
+      "value": "Выиграл(а) {coins} монет!",
+      "_context": "Message for non-reward tiers. {coins} is amount. Max length: 30 chars."
+    },
+    "betterLuck": {
+      "value": "В следующий раз повезёт больше!",
+      "_context": "Message when player doesn't place top 3. Max length: 40 chars."
+    },
+    "finalRankings": {
+      "value": "Итоговый Рейтинг",
+      "_context": "Header for results table. Max length: 25 chars."
+    },
+    "playerYou": {
+      "value": " (Ты)",
+      "_context": "Suffix to show player's entry. Max length: 10 chars."
     }
   },
 

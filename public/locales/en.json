@@ -445,6 +445,54 @@
     "rule": {
       "value": "Rule",
       "_context": "Label for special contest rules. Max length: 10 chars."
+    },
+    "placed": {
+      "value": "{name} placed {placement}!",
+      "_context": "Result message showing parrot placement. {name} is parrot name, {placement} is '1st place', '2nd place', etc. Max length: 60 chars."
+    },
+    "chooseReward": {
+      "value": "Choose Your Reward",
+      "_context": "Header for reward selection screen. Max length: 30 chars."
+    },
+    "takeCoinsBtn": {
+      "value": "Take Coins",
+      "_context": "Button to take coins reward. Max length: 15 chars."
+    },
+    "safeChoice": {
+      "value": "Safe choice - immediate value",
+      "_context": "Description for coins reward. Max length: 50 chars."
+    },
+    "takeParrotName": {
+      "value": "Take {name}",
+      "_context": "Header for parrot reward option. {name} is parrot name. Max length: 40 chars."
+    },
+    "sellValue": {
+      "value": "Sell value: ~{value} coins",
+      "_context": "Shows parrot sell value. {value} is number. Max length: 40 chars."
+    },
+    "uniqueParrot": {
+      "value": "Unique parrot with special genes!",
+      "_context": "Description for rare parrot reward. Max length: 50 chars."
+    },
+    "takeParrotBtn": {
+      "value": "Take Parrot",
+      "_context": "Button to take parrot reward. Max length: 15 chars."
+    },
+    "wonCoins": {
+      "value": "Won {coins} coins!",
+      "_context": "Message for non-reward tiers. {coins} is amount. Max length: 30 chars."
+    },
+    "betterLuck": {
+      "value": "Better luck next time!",
+      "_context": "Message when player doesn't place top 3. Max length: 40 chars."
+    },
+    "finalRankings": {
+      "value": "Final Rankings",
+      "_context": "Header for results table. Max length: 25 chars."
+    },
+    "playerYou": {
+      "value": " (You)",
+      "_context": "Suffix to show player's entry. Max length: 10 chars."
     }
   },
 
