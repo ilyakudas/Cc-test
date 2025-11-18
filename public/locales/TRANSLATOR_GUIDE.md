@@ -13,8 +13,9 @@ Welcome, translator! This guide will help you create high-quality translations f
 7. [Abbreviations](#abbreviations)
 8. [Tone & Style](#tone--style)
 9. [Game Terminology](#game-terminology)
-10. [Common Pitfalls](#common-pitfalls)
-11. [Language-Specific Guides](#language-specific-guides)
+10. [Parrot Names](#parrot-names)
+11. [Common Pitfalls](#common-pitfalls)
+12. [Language-Specific Guides](#language-specific-guides)
 
 ---
 
@@ -265,6 +266,72 @@ Keep these **technical and consistent**:
 - **Modal**: Popup window
 - **Button**: Clickable action
 - **Badge**: Visual indicator icon
+
+## Parrot Names
+
+### How Names Work
+
+**IMPORTANT**: Parrot names are **NOT translated** in the JSON files. Instead, each language has its own **name pool** with culturally appropriate names.
+
+### Name Pool System
+
+Names are stored in language-specific files:
+
+```
+public/locales/names/
+├── names.en.json    # 52 English names (Aurora, Blaze, Crystal...)
+├── names.es.json    # 52 Spanish names (Aurora, Llama, Cristal...)
+├── names.fr.json    # 52 French names (Aurore, Flamme, Cristal...)
+├── names.uk.json    # 52 Ukrainian names (Зоря, Вогонь, Кришталь...)
+└── names.ru.json    # 52 Russian names (Заря, Пламя, Кристалл...)
+```
+
+### Why Not Direct Translation?
+
+**Direct translation doesn't work** for parrot names:
+
+```
+❌ BAD: Translate literally
+"Aurora" → "Аврора" (sounds foreign in Ukrainian)
+"Blaze" → "Блейз" (sounds English in Russian)
+
+✓ GOOD: Use culturally appropriate names
+"Aurora" → "Зоря" (Ukrainian for "Star")
+"Blaze" → "Вогонь" (Ukrainian for "Fire")
+```
+
+### Name Selection Guidelines
+
+When creating names for your language:
+
+1. **Theme**: Color, light, nature, and celestial themes
+2. **Length**: 3-15 characters (short enough for UI)
+3. **Cultural fit**: Names that feel natural in your language
+4. **Uniqueness**: Each name should be distinct
+5. **Pronunciation**: Easy to say in your language
+
+**Examples by category:**
+
+- **Colors**: Azure, Crimson, Indigo → Блакить, Багрянець, Індиго
+- **Light**: Starlight, Dawn, Twilight → Зірка, Світанок, Сутінки
+- **Nature**: Breeze, Thunder, Frost → Вітерець, Грім, Іній
+- **Mystical**: Phoenix, Nova, Oracle → Фенікс, Нова, Віщун
+
+### How to Create Name Pool
+
+See detailed guidelines in [`names/README.md`](names/README.md).
+
+**Key points:**
+
+- Don't mechanically translate English names
+- Use names that sound natural in your language
+- Mix literal translations with poetic alternatives
+- Maintain thematic consistency (color/light/nature)
+- Test that names fit in the UI
+
+### For Translators
+
+**You don't need to translate parrot names in the JSON files.** The name system is separate. If you want to contribute names for your language, see the name pool files in `public/locales/names/`.
 
 ## Common Pitfalls
 
