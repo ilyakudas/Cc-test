@@ -2538,127 +2538,43 @@ header h1 {
 /* Gene Pool Dashboard */
 .gene-pool-dashboard {
     background: #f7fafc;
-    border-radius: 12px;
-    padding: 24px;
-    margin-bottom: 30px;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
     border: 2px solid #e2e8f0;
 }
 
 .gene-pool-dashboard h4 {
-    margin-top: 0;
-    margin-bottom: 20px;
-    font-size: 1.3em;
+    margin: 0 0 8px 0;
+    font-size: 1em;
     color: #2d3748;
+    font-weight: 600;
 }
 
-.gene-pool-empty {
-    text-align: center;
-    padding: 40px 20px;
-    background: white;
-    border-radius: 8px;
-}
+/* Removed large empty state - using compact inline message instead */
 
-.gene-pool-empty .empty-icon {
-    font-size: 4em;
-    margin-bottom: 16px;
-}
-
-.gene-pool-empty h3 {
-    color: #2d3748;
-    margin-bottom: 12px;
-}
-
-.gene-pool-empty ul {
-    list-style: none;
-    padding: 0;
-}
-
-.gene-pool-empty li {
-    padding: 8px 0;
-    color: #4a5568;
-}
-
-.gene-pool-empty li::before {
-    content: "✓ ";
-    color: #48bb78;
-    font-weight: bold;
-    margin-right: 8px;
-}
-
-/* Pool Stats Grid */
-.gene-pool-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
-    margin-bottom: 20px;
-}
-
-.pool-stat-card {
-    background: white;
-    border-radius: 8px;
-    padding: 20px;
-    text-align: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s;
-}
-
-.pool-stat-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.pool-stat-card .stat-icon {
-    font-size: 2em;
+/* Pool Stats - Compact Display */
+.gene-pool-stats-compact {
     margin-bottom: 8px;
 }
 
-.pool-stat-card .stat-label {
+.pool-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
     font-size: 0.9em;
-    color: #718096;
-    margin-bottom: 8px;
+    color: #4a5568;
+    line-height: 1.5;
 }
 
-.pool-stat-card .stat-value {
-    font-size: 1.5em;
-    font-weight: bold;
-    margin-bottom: 4px;
-}
-
-.pool-stat-card .stat-value.excellent {
-    color: #48bb78;
-}
-
-.pool-stat-card .stat-value.good {
-    color: #4299e1;
-}
-
-.pool-stat-card .stat-value.poor {
-    color: #f56565;
-}
-
-.pool-stat-card .stat-value.high {
-    color: #48bb78;
-}
-
-.pool-stat-card .stat-value.medium {
-    color: #ed8936;
-}
-
-.pool-stat-card .stat-value.low {
-    color: #f56565;
-}
-
-.pool-stat-card .stat-detail {
-    font-size: 0.85em;
-    color: #a0aec0;
-}
-
-.pool-info-box {
-    background: #edf2f7;
-    border-left: 4px solid #4299e1;
-    padding: 12px 16px;
-    border-radius: 4px;
+.pool-summary strong {
     color: #2d3748;
+}
+
+.stat-divider {
+    color: #cbd5e0;
+    margin: 0 4px;
 }
 
 /* Wild Mate Parrots Section */

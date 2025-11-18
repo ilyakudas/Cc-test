@@ -53,19 +53,8 @@ export async function renderWildMateTab() {
 function renderGenePoolDashboard(stats) {
     if (!stats.exists) {
         return `
-            <div class="gene-pool-empty">
-                <div class="empty-icon">🌱</div>
-                <h3>Wild Gene Pool is Empty</h3>
-                <p>Release some parrots to start building the wild population!</p>
-                <p style="margin-top: 16px;">
-                    <strong>How it works:</strong>
-                </p>
-                <ul style="text-align: left; margin: 12px auto; max-width: 400px;">
-                    <li>Release parrots to earn 🌿 Conservation Credits</li>
-                    <li>Their genes strengthen the wild gene pool</li>
-                    <li>Use credits to find mates from the wild population</li>
-                    <li>Better parrots = better credits & better pool quality</li>
-                </ul>
+            <div class="pool-summary" style="color: #718096; font-style: italic;">
+                No parrots released yet. Release parrots to build the gene pool and earn 🌿 credits!
             </div>
         `;
     }
@@ -74,47 +63,16 @@ function renderGenePoolDashboard(stats) {
     const diversityClass = stats.diversityPercent >= 60 ? 'high' : stats.diversityPercent >= 30 ? 'medium' : 'low';
 
     return `
-        <div class="gene-pool-stats">
-            <div class="pool-stat-card">
-                <div class="stat-icon">⭐</div>
-                <div class="stat-label">Pool Quality</div>
-                <div class="stat-value ${qualityClass}">
-                    ${'⭐'.repeat(stats.qualityStars)}
-                </div>
-                <div class="stat-detail">${(stats.quality * 100).toFixed(0)}%</div>
+        <div class="gene-pool-stats-compact">
+            <div class="pool-summary">
+                <strong>Pool:</strong> ${'⭐'.repeat(stats.qualityStars)} ${(stats.quality * 100).toFixed(0)}%
+                <span class="stat-divider">•</span>
+                <strong>Diversity:</strong> ${stats.diversityPercent}%
+                <span class="stat-divider">•</span>
+                <strong>Released:</strong> ${stats.releasesCount} parrots
+                <span class="stat-divider">•</span>
+                <strong>Credits:</strong> ${GameState.getConservationCredits()} 🌿
             </div>
-
-            <div class="pool-stat-card">
-                <div class="stat-icon">🧬</div>
-                <div class="stat-label">Diversity</div>
-                <div class="stat-value ${diversityClass}">
-                    ${stats.diversityPercent}%
-                </div>
-                <div class="stat-detail">${diversityClass.toUpperCase()}</div>
-            </div>
-
-            <div class="pool-stat-card">
-                <div class="stat-icon">🦜</div>
-                <div class="stat-label">Total Releases</div>
-                <div class="stat-value">
-                    ${stats.releasesCount}
-                </div>
-                <div class="stat-detail">parrots</div>
-            </div>
-
-            <div class="pool-stat-card">
-                <div class="stat-icon">🌿</div>
-                <div class="stat-label">Your Credits</div>
-                <div class="stat-value">
-                    ${GameState.getConservationCredits()}
-                </div>
-                <div class="stat-detail">credits</div>
-            </div>
-        </div>
-
-        <div class="pool-info-box">
-            <strong>💡 Tip:</strong> Higher quality and diversity means better wild mates!
-            Release diverse parrots to improve the gene pool.
         </div>
     `;
 }
