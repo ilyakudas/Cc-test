@@ -521,6 +521,46 @@ window.addEventListener('load', async () => {
         if (tab5Labels[0]) tab5Labels[0].textContent = I18n.t('tabs.colorLab');
     }
 
+    // Translate panel titles and hints
+    const panelTitle = document.getElementById('panelTitle');
+    if (panelTitle) {
+        panelTitle.textContent = I18n.t('panel.yourParrots');
+    }
+
+    const panelHint = document.querySelector('.panel h2 span[style*="color: #999"]');
+    if (panelHint) {
+        panelHint.textContent = I18n.t('panel.selectTwoToBreed');
+    }
+
+    // Translate preview panel
+    const previewTitle = document.querySelector('.preview-section h3');
+    if (previewTitle) {
+        previewTitle.textContent = I18n.t('panel.selectedParrot');
+    }
+
+    const emptyPreview = document.querySelector('.empty-preview');
+    if (emptyPreview) {
+        emptyPreview.textContent = I18n.t('panel.clickToView');
+    }
+
+    // Translate breeding button
+    const breedButton = document.getElementById('breedButtonLarge');
+    if (breedButton) {
+        const BREEDING_COST = 50; // Match constant from constants.js
+        breedButton.innerHTML = `💕 ${I18n.t('breeding.breedButton')} (${I18n.t('breeding.breedCost', { cost: BREEDING_COST })})`;
+    }
+
+    // Translate notification panel
+    const notificationHeader = document.querySelector('.notification-history-header h3');
+    if (notificationHeader) {
+        notificationHeader.textContent = I18n.t('common.notifications');
+    }
+
+    const clearAllBtn = document.querySelector('.notification-history-header button');
+    if (clearAllBtn) {
+        clearAllBtn.textContent = I18n.t('common.clearAll');
+    }
+
     if (loaded) {
         // Game loaded from save
         console.log('Game loaded - Store has', GameState.getStoreParrots().length, 'parrots');

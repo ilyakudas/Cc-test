@@ -5,16 +5,17 @@
 
 import * as GameState from '../core/gameState.js';
 import { generateParrotSVG } from '../lib/svg.js';
+import { t } from '../lib/i18n.js';
 
 /**
  * Rarity configuration for display
  */
 const RARITY_CONFIG = {
-    'common': { color: '#9e9e9e', label: 'Common' },
-    'uncommon': { color: '#4caf50', label: 'Uncommon' },
-    'rare': { color: '#2196f3', label: 'Rare' },
-    'epic': { color: '#9c27b0', label: 'Epic' },
-    'legendary': { color: '#ff9800', label: 'Legendary' }
+    'common': { color: '#9e9e9e', labelKey: 'rarity.common' },
+    'uncommon': { color: '#4caf50', labelKey: 'rarity.uncommon' },
+    'rare': { color: '#2196f3', labelKey: 'rarity.rare' },
+    'epic': { color: '#9c27b0', labelKey: 'rarity.epic' },
+    'legendary': { color: '#ff9800', labelKey: 'rarity.legendary' }
 };
 
 /**
@@ -72,25 +73,25 @@ export async function createParrotCard(parrot, isStore) {
 
     // Extract colors for all body parts
     const bodyParts = ['wings', 'special_wing', 'body', 'head', 'tail', 'accents'];
-    const partLabels = {
-        'wings': 'Wings',
-        'special_wing': 'Special Wing',
-        'body': 'Body',
-        'head': 'Head',
-        'tail': 'Tail',
-        'accents': 'Accents'
+    const partLabelKeys = {
+        'wings': 'bodyParts.wings',
+        'special_wing': 'bodyParts.specialWing',
+        'body': 'bodyParts.body',
+        'head': 'bodyParts.head',
+        'tail': 'bodyParts.tail',
+        'accents': 'bodyParts.accents'
     };
 
     let colorPalette = '<div class="color-palette">';
     bodyParts.forEach(partName => {
         const colorData = parrot.calculateBodyPartColor(partName);
-        const label = partLabels[partName];
+        const label = t(partLabelKeys[partName]);
 
         if (colorData.isGradient) {
             // For gradients, create animated gradient square with border
             colorPalette += `
                 <div class="color-square gradient-square"
-                     title="${label}: Gradient"
+                     title="${label}: ${t('laboratory.gradient')}"
                      style="--start-color: ${colorData.startColor}; --end-color: ${colorData.endColor};">
                 </div>
             `;
@@ -143,9 +144,9 @@ export async function createParrotCard(parrot, isStore) {
         <div class="parrot-mini">${svg}</div>
         ${colorPalette}
         <div class="parrot-name">${parrot.name}</div>
-        <div class="parrot-gen">Gen ${parrot.generation}</div>
-        <div class="rarity-badge" style="background: ${rarityInfo.color};">${rarityInfo.label}</div>
-        <div class="beauty-badge" style="background: ${beautyColor}; color: white; font-size: 0.8em; padding: 2px 6px; border-radius: 4px; margin-top: 4px;">Beauty: ${beautyScore}</div>
+        <div class="parrot-gen">${t('common.generation')} ${parrot.generation}</div>
+        <div class="rarity-badge" style="background: ${rarityInfo.color};">${t(rarityInfo.labelKey)}</div>
+        <div class="beauty-badge" style="background: ${beautyColor}; color: white; font-size: 0.8em; padding: 2px 6px; border-radius: 4px; margin-top: 4px;">${t('beauty.score')}: ${beautyScore}</div>
         ${trophyIndicator}
     `;
 
