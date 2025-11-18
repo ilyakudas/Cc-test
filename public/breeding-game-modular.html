@@ -299,7 +299,10 @@
                                                     <div class="gallery-parrot-theme" x-text="parrot.galleryTheme"></div>
                                                     <div class="gallery-parrot-beauty">
                                                         <span>✨</span>
-                                                        <span x-text="$t('beauty.label') + ': ' + parrot.calculateBeauty().score"></span>
+                                                        <span x-text="$t('beauty.label') + ': ' + parrot.calculateBeauty().score + ' / ' + parrot.calculateBeautyColorWheel().score"></span>
+                                                    </div>
+                                                    <div class="gallery-parrot-harmony" style="font-size: 0.85em; color: #9c27b0; margin-top: 4px;" x-show="parrot.calculateBeautyColorWheel().harmony && parrot.calculateBeautyColorWheel().harmony !== 'none'">
+                                                        <span x-text="'🎨 ' + (parrot.calculateBeautyColorWheel().harmony || '').replace(/-/g, ' ')"></span>
                                                     </div>
                                                 </div>
                                                 <div class="gallery-card-actions">
@@ -334,7 +337,10 @@
                                                         <div class="gallery-parrot-name" x-text="parrot.name"></div>
                                                         <div class="gallery-parrot-beauty">
                                                             <span>✨</span>
-                                                            <span x-text="$t('beauty.label') + ': ' + parrot.calculateBeauty().score"></span>
+                                                            <span x-text="$t('beauty.label') + ': ' + parrot.calculateBeauty().score + ' / ' + parrot.calculateBeautyColorWheel().score"></span>
+                                                        </div>
+                                                        <div class="gallery-parrot-harmony" style="font-size: 0.85em; color: #9c27b0; margin-top: 4px;" x-show="parrot.calculateBeautyColorWheel().harmony && parrot.calculateBeautyColorWheel().harmony !== 'none'">
+                                                            <span x-text="'🎨 ' + (parrot.calculateBeautyColorWheel().harmony || '').replace(/-/g, ' ')"></span>
                                                         </div>
                                                     </div>
                                                     <div class="gallery-card-actions">
