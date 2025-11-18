@@ -7,6 +7,7 @@
 let currentLang = 'en';
 let translations = {};
 let fallbackTranslations = {};
+let translationsReady = false;
 
 // Supported languages
 const SUPPORTED_LANGUAGES = ['en', 'es', 'fr', 'ru', 'uk'];
@@ -51,6 +52,7 @@ export async function loadTranslations(lang) {
             }
         }
 
+        translationsReady = true;
         console.log(`i18n: Loaded translations for '${lang}'`);
         return true;
     } catch (error) {
@@ -62,6 +64,7 @@ export async function loadTranslations(lang) {
             translations = await response.json();
             fallbackTranslations = translations;
             currentLang = 'en';
+            translationsReady = true;
             return true;
         } catch (fallbackError) {
             console.error('i18n: Failed to load English fallback!', fallbackError);
@@ -150,6 +153,14 @@ function replacePlaceholders(text, params) {
  */
 export function getCurrentLanguage() {
     return currentLang;
+}
+
+/**
+ * Check if translations are loaded and ready
+ * @returns {boolean} True if translations are ready
+ */
+export function isReady() {
+    return translationsReady && Object.keys(translations).length > 0;
 }
 
 /**

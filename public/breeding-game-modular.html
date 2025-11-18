@@ -622,7 +622,7 @@
             Alpine.magic('t', () => {
                 return (key, params = {}) => {
                     // Access the i18n module from window (set in main.js)
-                    if (window.i18n && window.i18n.t) {
+                    if (window.i18n && window.i18n.isReady && window.i18n.isReady() && window.i18n.t) {
                         return window.i18n.t(key, params);
                     }
                     // Fallback if i18n not loaded yet
@@ -634,10 +634,10 @@
         });
     </script>
 
-    <!-- Prevent Alpine from auto-starting until i18n is ready -->
+    <!-- Prevent Alpine from auto-starting - MUST be before Alpine script -->
     <script>
-        // Defer Alpine initialization
         window.deferLoadingAlpine = callback => {
+            console.log('Alpine defer callback received');
             window.startAlpine = callback;
         };
     </script>
@@ -647,5 +647,6 @@
 
     <!-- Main application module -->
     <script type="module" src="js/main.js"></script>
+
 </body>
 </html>
