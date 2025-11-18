@@ -134,6 +134,14 @@ export function loadGame() {
 
         // Restore parrots
         const restoredParrots = gameStateData.parrots.map(p => {
+            // Migration: Add performance genes to old parrots if missing
+            if (!p.genes.agility) {
+                p.genes.agility = [true, true, false, false];       // Default: medium (2/4)
+                p.genes.intelligence = [true, true, false, false];  // Default: medium (2/4)
+                p.genes.stamina = [true, true, false, false];       // Default: medium (2/4)
+                p.genes.speed = [true, true, false, false];         // Default: medium (2/4)
+                p.genes.fertility = [true, true, false, false];     // Default: medium (2/4)
+            }
             const parrot = new Parrot(p.name, p.genes, p.generation, p.id);
             if (p.isRare) {
                 parrot.isRare = p.isRare;
@@ -149,6 +157,14 @@ export function loadGame() {
 
         // Restore store parrots
         const restoredStoreParrots = (gameStateData.storeParrots || []).map(p => {
+            // Migration: Add performance genes to old parrots if missing
+            if (!p.genes.agility) {
+                p.genes.agility = [true, true, false, false];       // Default: medium (2/4)
+                p.genes.intelligence = [true, true, false, false];  // Default: medium (2/4)
+                p.genes.stamina = [true, true, false, false];       // Default: medium (2/4)
+                p.genes.speed = [true, true, false, false];         // Default: medium (2/4)
+                p.genes.fertility = [true, true, false, false];     // Default: medium (2/4)
+            }
             const parrot = new Parrot(p.name, p.genes, p.generation, p.id);
             if (p.isRare) {
                 parrot.isRare = p.isRare;
@@ -164,6 +180,14 @@ export function loadGame() {
 
         // Restore recent offspring
         const restoredOffspring = (gameStateData.recentOffspring || []).map(p => {
+            // Migration: Add performance genes to old parrots if missing
+            if (!p.genes.agility) {
+                p.genes.agility = [true, true, false, false];       // Default: medium (2/4)
+                p.genes.intelligence = [true, true, false, false];  // Default: medium (2/4)
+                p.genes.stamina = [true, true, false, false];       // Default: medium (2/4)
+                p.genes.speed = [true, true, false, false];         // Default: medium (2/4)
+                p.genes.fertility = [true, true, false, false];     // Default: medium (2/4)
+            }
             const parrot = new Parrot(p.name, p.genes, p.generation, p.id);
             if (p.isRare) {
                 parrot.isRare = p.isRare;

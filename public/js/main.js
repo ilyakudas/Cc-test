@@ -57,7 +57,13 @@ async function initGame() {
             green: [false, false, true, true],
             blue: [true, true, false, false],
             gradient: false
-        }
+        },
+        // Performance genes
+        agility: [true, true, false, true],       // 3/4 = high
+        intelligence: [true, false, true, false],  // 2/4 = medium
+        stamina: [true, true, true, false],        // 3/4 = high
+        speed: [false, true, false, true],         // 2/4 = medium
+        fertility: [true, true, false, false]      // 2/4 = medium
     }, 1, 0);
 
     GameState.addParrot(twilight);
@@ -100,7 +106,13 @@ async function initGame() {
             green: [false, false, false, false],
             blue: [true, true, true, true],
             gradient: false
-        }
+        },
+        // Performance genes
+        agility: [true, true, true, false],        // 3/4 = high
+        intelligence: [true, true, true, true],    // 4/4 = high
+        stamina: [false, true, false, true],       // 2/4 = medium
+        speed: [true, true, true, false],          // 3/4 = high
+        fertility: [true, false, true, true]       // 3/4 = high
     }, 1, 1);
 
     GameState.incrementParrotIdCounter();
