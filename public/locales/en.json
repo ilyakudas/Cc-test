@@ -375,6 +375,14 @@
       "value": "Beauty",
       "_context": "Label for beauty score. Max length: 15 chars."
     },
+    "label": {
+      "value": "Beauty",
+      "_context": "Label for beauty score display. Max length: 15 chars."
+    },
+    "gradient": {
+      "value": "Gradient",
+      "_context": "Label for gradient toggle in color lab. Max length: 15 chars."
+    },
     "traits": {
       "value": "Has Gradients",
       "_context": "Label shown when parrot has gradient traits. Max length: 15 chars."
