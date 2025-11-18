@@ -60,16 +60,18 @@ export async function createParrotCard(parrot, isStore) {
 
     const rarityInfo = RARITY_CONFIG[rarity];
 
-    // Calculate beauty score for display
-    const beauty = parrot.calculateBeauty();
-    const beautyScore = beauty.score;
+    // Calculate both beauty scores for display
+    const beautyClassic = parrot.calculateBeauty();
+    const beautyHarmony = parrot.calculateBeautyColorWheel();
+    const beautyScoreClassic = beautyClassic.score;
+    const beautyScoreHarmony = beautyHarmony.score;
 
-    // Beauty score color coding (cool to warm spectrum)
+    // Beauty score color coding based on classic score (cool to warm spectrum)
     let beautyColor = '#607d8b'; // Low: Blue-gray (cold)
-    if (beautyScore >= 180) beautyColor = '#e91e63'; // Exceptional: Hot pink
-    else if (beautyScore >= 130) beautyColor = '#ff5722'; // High: Deep orange
-    else if (beautyScore >= 80) beautyColor = '#ffc107'; // Medium: Amber
-    else if (beautyScore >= 40) beautyColor = '#00bcd4'; // Medium-low: Cyan
+    if (beautyScoreClassic >= 180) beautyColor = '#e91e63'; // Exceptional: Hot pink
+    else if (beautyScoreClassic >= 130) beautyColor = '#ff5722'; // High: Deep orange
+    else if (beautyScoreClassic >= 80) beautyColor = '#ffc107'; // Medium: Amber
+    else if (beautyScoreClassic >= 40) beautyColor = '#00bcd4'; // Medium-low: Cyan
 
     // Extract colors for all body parts
     const bodyParts = ['wings', 'special_wing', 'body', 'head', 'tail', 'accents'];
@@ -162,7 +164,7 @@ export async function createParrotCard(parrot, isStore) {
         <div class="parrot-name">${parrot.name}</div>
         <div class="parrot-gen">${t('common.generation')} ${parrot.generation}</div>
         <div class="rarity-badge" style="background: ${rarityInfo.color};">${t(rarityInfo.labelKey)}</div>
-        <div class="beauty-badge" style="background: ${beautyColor}; color: white; font-size: 0.8em; padding: 2px 6px; border-radius: 4px; margin-top: 4px;">${t('beauty.score')}: ${beautyScore}</div>
+        <div class="beauty-badge" style="background: ${beautyColor}; color: white; font-size: 0.8em; padding: 2px 6px; border-radius: 4px; margin-top: 4px;" title="Classic: ${beautyScoreClassic} | Harmony: ${beautyScoreHarmony} (${beautyHarmony.harmony || 'none'})">${beautyScoreClassic} / ${beautyScoreHarmony}</div>
         ${trophyIndicator}
     `;
 

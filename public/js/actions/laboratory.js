@@ -147,7 +147,7 @@ export async function openLaboratory(parrotId) {
 
     html += `</div>`;
 
-    // Beauty Analysis Section
+    // Beauty Analysis Section - Classic System
     const beautyData = parrot.calculateBeauty();
     const beautyPercent = (beautyData.score / beautyData.maxScore) * 100;
     let beautyColor = '#9e9e9e';
@@ -167,7 +167,7 @@ export async function openLaboratory(parrotId) {
     }
 
     html += `<div class="body-part-genes" style="background: linear-gradient(135deg, ${beautyColor}22, ${beautyColor}11); border-color: ${beautyColor};">`;
-    html += `<h4>🌸 ${t('laboratory.beautyAnalysisTitle')} <span class="rarity-badge" style="background: ${beautyColor}; margin-left: 10px;">${beautyLabel}</span></h4>`;
+    html += `<h4>🌸 ${t('laboratory.beautyAnalysisTitle')} - Classic <span class="rarity-badge" style="background: ${beautyColor}; margin-left: 10px;">${beautyLabel}</span></h4>`;
     html += `<div class="gene-row">`;
     html += `<div class="gene-label">${t('laboratory.beautyScore')}</div>`;
     html += `<div style="font-weight: bold; color: ${beautyColor};">${beautyData.score} / ${beautyData.maxScore} points (${beautyPercent.toFixed(1)}%)</div>`;
@@ -223,6 +223,112 @@ export async function openLaboratory(parrotId) {
     html += `• ${t('laboratory.beautyGuide5')}<br>`;
     html += `• ${t('laboratory.beautyGuide6')}<br>`;
     html += `• ${t('laboratory.beautyGuide7')}`;
+    html += `</div>`;
+
+    html += `</div>`;
+
+    // Beauty Analysis Section - Color Wheel (RYB) System
+    const beautyHarmony = parrot.calculateBeautyColorWheel();
+    const harmonyPercent = (beautyHarmony.score / beautyHarmony.maxScore) * 100;
+    let harmonyColor = '#9e9e9e';
+    let harmonyLabel = 'Plain';
+    if (harmonyPercent >= 70) {
+        harmonyColor = '#9c27b0';
+        harmonyLabel = 'Stunning';
+    } else if (harmonyPercent >= 50) {
+        harmonyColor = '#673ab7';
+        harmonyLabel = 'Beautiful';
+    } else if (harmonyPercent >= 30) {
+        harmonyColor = '#7e57c2';
+        harmonyLabel = 'Pretty';
+    } else if (harmonyPercent >= 15) {
+        harmonyColor = '#9575cd';
+        harmonyLabel = 'Decent';
+    }
+
+    html += `<div class="body-part-genes" style="background: linear-gradient(135deg, ${harmonyColor}22, ${harmonyColor}11); border-color: ${harmonyColor};">`;
+    html += `<h4>🎨 Beauty Analysis - Color Wheel (RYB) <span class="rarity-badge" style="background: ${harmonyColor}; margin-left: 10px;">${harmonyLabel}</span></h4>`;
+    html += `<div class="gene-row">`;
+    html += `<div class="gene-label">Beauty Score</div>`;
+    html += `<div style="font-weight: bold; color: ${harmonyColor};">${beautyHarmony.score} / ${beautyHarmony.maxScore} points (${harmonyPercent.toFixed(1)}%)</div>`;
+    html += `</div>`;
+
+    // Harmony type
+    if (beautyHarmony.harmony && beautyHarmony.harmony !== 'none') {
+        html += `<div class="gene-row">`;
+        html += `<div class="gene-label">Harmony Type</div>`;
+        html += `<div style="font-weight: bold; color: ${harmonyColor}; text-transform: capitalize;">${beautyHarmony.harmony.replace(/-/g, ' ')}</div>`;
+        html += `</div>`;
+    }
+
+    // Breakdown
+    if (beautyHarmony.breakdown) {
+        html += `<div style="margin-top: 10px; font-size: 0.9em;">`;
+        html += `<div style="font-weight: 600; margin-bottom: 5px; color: #666;">Score Breakdown</div>`;
+
+        if (beautyHarmony.breakdown.individualColors > 0) {
+            html += `<div style="display: flex; justify-content: space-between; margin-bottom: 3px;">`;
+            html += `<span>Individual Colors</span>`;
+            html += `<span style="color: ${harmonyColor}; font-weight: 600;">+${beautyHarmony.breakdown.individualColors} pts</span>`;
+            html += `</div>`;
+        }
+
+        if (beautyHarmony.breakdown.harmonyBonus > 0) {
+            html += `<div style="display: flex; justify-content: space-between; margin-bottom: 3px;">`;
+            html += `<span>Harmony Bonus</span>`;
+            html += `<span style="color: ${harmonyColor}; font-weight: 600;">+${beautyHarmony.breakdown.harmonyBonus} pts</span>`;
+            html += `</div>`;
+        }
+
+        if (beautyHarmony.breakdown.gradientBonus > 0) {
+            html += `<div style="display: flex; justify-content: space-between; margin-bottom: 3px;">`;
+            html += `<span>Gradient Bonus</span>`;
+            html += `<span style="color: ${harmonyColor}; font-weight: 600;">+${beautyHarmony.breakdown.gradientBonus} pts</span>`;
+            html += `</div>`;
+        }
+
+        if (beautyHarmony.breakdown.saturationBonus > 0) {
+            html += `<div style="display: flex; justify-content: space-between; margin-bottom: 3px;">`;
+            html += `<span>Saturation Coherence</span>`;
+            html += `<span style="color: ${harmonyColor}; font-weight: 600;">+${beautyHarmony.breakdown.saturationBonus} pts</span>`;
+            html += `</div>`;
+        }
+
+        if (beautyHarmony.breakdown.valueBonus > 0) {
+            html += `<div style="display: flex; justify-content: space-between; margin-bottom: 3px;">`;
+            html += `<span>Value Contrast</span>`;
+            html += `<span style="color: ${harmonyColor}; font-weight: 600;">+${beautyHarmony.breakdown.valueBonus} pts</span>`;
+            html += `</div>`;
+        }
+
+        if (beautyHarmony.breakdown.pureColorBonus > 0) {
+            html += `<div style="display: flex; justify-content: space-between; margin-bottom: 3px;">`;
+            html += `<span>Pure Color Bonus</span>`;
+            html += `<span style="color: ${harmonyColor}; font-weight: 600;">+${beautyHarmony.breakdown.pureColorBonus} pts</span>`;
+            html += `</div>`;
+        }
+
+        html += `</div>`;
+    }
+
+    // Harmony traits
+    if (beautyHarmony.traits.length > 0) {
+        html += `<div style="margin-top: 10px; font-size: 0.9em;">`;
+        html += `<div style="font-weight: 600; margin-bottom: 5px; color: #666;">Beauty Traits</div>`;
+        for (const trait of beautyHarmony.traits.slice(0, 8)) { // Show first 8 traits
+            const isPositive = trait.includes('+');
+            const icon = isPositive ? '✨' : '⚪';
+            html += `<div style="margin-bottom: 3px;">${icon} ${trait}</div>`;
+        }
+        html += `</div>`;
+    }
+
+    html += `<div style="margin-top: 15px; padding: 10px; background: #f3e5f5; border-radius: 8px; font-size: 0.85em;">`;
+    html += `<strong>Color Wheel System</strong><br>`;
+    html += `• Uses traditional RYB (Red-Yellow-Blue) artist's color wheel<br>`;
+    html += `• Detects color harmonies: complementary, triadic, analogous, etc.<br>`;
+    html += `• Rewards cohesive color schemes and artistic balance<br>`;
+    html += `• Scores: Individual colors + Harmony + Gradients + Coherence`;
     html += `</div>`;
 
     html += `</div>`;

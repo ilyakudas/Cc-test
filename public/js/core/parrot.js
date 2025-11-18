@@ -10,6 +10,7 @@ import {
     PARROT_GENERATION_VALUE,
     RARITY_VALUE_MULTIPLIERS
 } from '../lib/economy.js';
+import * as ColorWheel from '../lib/colorWheel.js';
 
 /**
  * Parrot class with RGB Genetics v2.2 + Performance Genes
@@ -464,6 +465,137 @@ export class Parrot {
             traits: beautyTraits,
             bodyPartColors,
             partContributions
+        };
+    }
+
+    // Calculate beauty using Color Wheel (RYB) system
+    calculateBeautyColorWheel() {
+        const bodyParts = ['wings', 'special_wing', 'body', 'head', 'tail', 'accents'];
+        const colorData = [];
+        let beautyScore = 0;
+        const beautyTraits = [];
+
+        // Step 1: Extract HSV data for all body parts
+        for (const part of bodyParts) {
+            const colorInfo = this.calculateBodyPartColor(part);
+
+            if (colorInfo.isGradient) {
+                // Parse gradient colors
+                const startMatch = colorInfo.startColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+                const endMatch = colorInfo.endColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+
+                if (startMatch && endMatch) {
+                    const startHSV = ColorWheel.rgbToRYBWheel(+startMatch[1], +startMatch[2], +startMatch[3]);
+                    const endHSV = ColorWheel.rgbToRYBWheel(+endMatch[1], +endMatch[2], +endMatch[3]);
+
+                    const startClass = ColorWheel.classifyColor(startHSV.hue, startHSV.saturation, startHSV.value);
+                    const endClass = ColorWheel.classifyColor(endHSV.hue, endHSV.saturation, endHSV.value);
+
+                    // Use average for main color data
+                    const avgHue = (startHSV.hue + endHSV.hue) / 2;
+                    const avgSat = (startHSV.saturation + endHSV.saturation) / 2;
+                    const avgValue = (startHSV.value + endHSV.value) / 2;
+                    const avgClass = ColorWheel.classifyColor(avgHue, avgSat, avgValue);
+
+                    colorData.push({
+                        part,
+                        hue: avgHue,
+                        saturation: avgSat,
+                        value: avgValue,
+                        name: avgClass.name,
+                        category: avgClass.category,
+                        beautyValue: avgClass.beautyValue,
+                        isGradient: true,
+                        gradientStart: { ...startHSV, classification: startClass },
+                        gradientEnd: { ...endHSV, classification: endClass }
+                    });
+                }
+            } else {
+                // Parse solid color
+                const match = colorInfo.color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+                if (match) {
+                    const hsv = ColorWheel.rgbToRYBWheel(+match[1], +match[2], +match[3]);
+                    const classification = ColorWheel.classifyColor(hsv.hue, hsv.saturation, hsv.value);
+
+                    colorData.push({
+                        part,
+                        hue: hsv.hue,
+                        saturation: hsv.saturation,
+                        value: hsv.value,
+                        name: classification.name,
+                        category: classification.category,
+                        beautyValue: classification.beautyValue,
+                        isGradient: false
+                    });
+                }
+            }
+        }
+
+        // Step 2: Score individual colors
+        for (const color of colorData) {
+            beautyScore += color.beautyValue;
+            if (color.beautyValue > 0) {
+                beautyTraits.push(`${color.category} ${color.name}: ${color.part} (+${color.beautyValue})`);
+            }
+        }
+
+        // Step 3: Detect and score harmony
+        const harmony = ColorWheel.detectHarmony(colorData);
+        beautyScore += harmony.score;
+        beautyTraits.push(...harmony.traits);
+
+        // Step 4: Score gradients
+        let gradientBonus = 0;
+        for (const color of colorData.filter(c => c.isGradient)) {
+            const gradientScore = ColorWheel.scoreGradient(
+                color.gradientStart,
+                color.gradientEnd,
+                color.part
+            );
+            gradientBonus += gradientScore.score;
+            beautyTraits.push(...gradientScore.traits);
+        }
+        beautyScore += gradientBonus;
+
+        // Step 5: Saturation coherence
+        const saturations = colorData.map(c => c.saturation);
+        const satScore = ColorWheel.scoreSaturationCoherence(saturations);
+        beautyScore += satScore.score;
+        beautyTraits.push(...satScore.traits);
+
+        // Step 6: Value contrast
+        const values = colorData.map(c => c.value);
+        const valueScore = ColorWheel.scoreValueContrast(values);
+        beautyScore += valueScore.score;
+        beautyTraits.push(...valueScore.traits);
+
+        // Step 7: Pure color bonus
+        let pureBonus = 0;
+        for (const color of colorData) {
+            if (color.saturation > 0.7 && color.value > 0.7) {
+                pureBonus += 8;
+                beautyTraits.push(`Vivid color: ${color.part} (+8)`);
+            }
+        }
+        beautyScore += pureBonus;
+
+        // Step 8: Ensure non-negative
+        beautyScore = Math.max(0, beautyScore);
+
+        return {
+            score: beautyScore,
+            maxScore: 300,
+            traits: beautyTraits,
+            harmony: harmony.type,
+            colorData,
+            breakdown: {
+                individualColors: colorData.reduce((sum, c) => sum + c.beautyValue, 0),
+                harmonyBonus: harmony.score,
+                gradientBonus: gradientBonus,
+                saturationBonus: satScore.score,
+                valueBonus: valueScore.score,
+                pureColorBonus: pureBonus
+            }
         };
     }
 
