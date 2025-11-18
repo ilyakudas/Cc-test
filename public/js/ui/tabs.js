@@ -31,6 +31,7 @@ export function switchTab(tab, event, renderContestsFn) {
     document.getElementById('contestsTab').style.display = 'none';
     document.getElementById('galleryTab').style.display = 'none';
     document.getElementById('colorLabTab').style.display = 'none';
+    document.getElementById('wildMateTab').style.display = 'none';
 
     if (tab === 'collection') {
         document.getElementById('collectionTab').style.display = 'grid';
@@ -58,6 +59,14 @@ export function switchTab(tab, event, renderContestsFn) {
         document.getElementById('colorLabTab').style.display = 'block';
         document.getElementById('panelTitle').textContent = t('colorLab.title');
         return; // Don't call updateUI for color lab tab (handled by Alpine.js)
+    } else if (tab === 'wildmate') {
+        document.getElementById('wildMateTab').style.display = 'block';
+        document.getElementById('panelTitle').textContent = '🌿 Wild Mate Finding';
+        // Import and render wild mate tab
+        import('./wildMate.js').then(module => {
+            module.renderWildMateTab();
+        });
+        return; // Don't call updateUI for wild mate tab
     }
 
     GameState.setSelectedParrotId(null);

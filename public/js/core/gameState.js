@@ -47,6 +47,11 @@ export let usedNames = new Set();
 export let notificationHistory = [];
 export let toastIdCounter = 0;
 
+// Wild Mate System state
+export let conservationCredits = 0;
+export let wildGenePool = null; // Will be initialized on first use
+export let releaseHistory = []; // Track released parrots for analytics
+
 // Setters for state updates
 export function setParrots(newParrots) {
     parrots = newParrots;
@@ -387,6 +392,43 @@ export function getNotificationHistory() {
     return notificationHistory;
 }
 
+// Wild Mate System getters/setters
+export function getConservationCredits() {
+    return conservationCredits;
+}
+
+export function setConservationCredits(amount) {
+    conservationCredits = amount;
+}
+
+export function addConservationCredits(amount) {
+    conservationCredits += amount;
+}
+
+export function subtractConservationCredits(amount) {
+    conservationCredits -= amount;
+}
+
+export function getWildGenePool() {
+    return wildGenePool;
+}
+
+export function setWildGenePool(pool) {
+    wildGenePool = pool;
+}
+
+export function getReleaseHistory() {
+    return releaseHistory;
+}
+
+export function setReleaseHistory(history) {
+    releaseHistory = history;
+}
+
+export function addReleaseRecord(record) {
+    releaseHistory.push(record);
+}
+
 // Reset entire game state
 export function resetGameState() {
     parrots = [];
@@ -413,4 +455,7 @@ export function resetGameState() {
     usedNames = new Set();
     notificationHistory = [];
     toastIdCounter = 0;
+    conservationCredits = 0;
+    wildGenePool = null;
+    releaseHistory = [];
 }
