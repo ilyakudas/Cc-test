@@ -1,6 +1,6 @@
 /**
  * ChromaWing Breeding Simulator - Mutations Module
- * Mutation display functionality
+ * Mutation and settings display functionality
  */
 
 import * as GameState from '../core/gameState.js';
@@ -18,6 +18,25 @@ export function updateMutationDisplay() {
         statusEl.textContent = t('common.on');
         statusEl.style.color = '#4caf50';
         iconEl.textContent = '🧪';
+    } else {
+        statusEl.textContent = t('common.off');
+        statusEl.style.color = '#dc3545';
+        iconEl.textContent = '🔒';
+    }
+}
+
+/**
+ * Update auto-examine display in stats bar
+ */
+export function updateAutoExamDisplay() {
+    const statusEl = document.getElementById('autoExamineStatus');
+    const iconEl = document.getElementById('autoExamineIcon');
+    const autoExamEnabled = GameState.getAutoExamineEnabled();
+
+    if (autoExamEnabled) {
+        statusEl.textContent = t('common.on');
+        statusEl.style.color = '#4caf50';
+        iconEl.textContent = '🔬';
     } else {
         statusEl.textContent = t('common.off');
         statusEl.style.color = '#dc3545';
