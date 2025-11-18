@@ -8,6 +8,7 @@ import { generateParrotSVG } from '../lib/svg.js';
 import { showToast } from '../lib/notifications.js';
 import * as UI from '../ui.js';
 import { t } from '../lib/i18n.js';
+import { EXAMINATION_COST } from '../lib/economy.js';
 
 /**
  * Open laboratory modal for parrot examination
@@ -25,7 +26,6 @@ export async function openLaboratory(parrotId) {
     // Check if parrot has been examined before
     const examinedParrots = GameState.getExaminedParrots();
     const hasBeenExamined = examinedParrots.has(parrotId);
-    const examCost = 100;
     const coins = GameState.getCoins();
 
     if (!hasBeenExamined) {
@@ -36,10 +36,10 @@ export async function openLaboratory(parrotId) {
             <p style="color: #666; margin-bottom: 20px;">${t('common.generation')} ${parrot.generation}</p>
 
             <div style="text-align: center; margin: 20px 0;">
-                <button class="btn btn-lab" onclick="window.performExaminationHandler(${parrotId})" ${coins < examCost ? 'disabled' : ''} style="font-size: 1.1em; padding: 15px 30px; width: 100%; max-width: 400px;">
-                    ${coins < examCost ? '❌ ' + t('laboratory.notEnoughCoins') : '💰 ' + t('laboratory.payAndExamine', { cost: examCost })}
+                <button class="btn btn-lab" onclick="window.performExaminationHandler(${parrotId})" ${coins < EXAMINATION_COST ? 'disabled' : ''} style="font-size: 1.1em; padding: 15px 30px; width: 100%; max-width: 400px;">
+                    ${coins < EXAMINATION_COST ? '❌ ' + t('laboratory.notEnoughCoins') : '💰 ' + t('laboratory.payAndExamine', { cost: EXAMINATION_COST })}
                 </button>
-                ${coins < examCost ? `<p style="color: #dc3545; margin-top: 10px;">${t('laboratory.needMoreCoins', { amount: examCost - coins })}</p>` : ''}
+                ${coins < EXAMINATION_COST ? `<p style="color: #dc3545; margin-top: 10px;">${t('laboratory.needMoreCoins', { amount: EXAMINATION_COST - coins })}</p>` : ''}
             </div>
 
             <div style="text-align: center; margin: 20px 0;">
@@ -56,7 +56,7 @@ export async function openLaboratory(parrotId) {
                     <li>${t('laboratory.beautyAssessment')}</li>
                     <li>${t('laboratory.rgbValues')}</li>
                 </ul>
-                <p style="margin: 10px 0 0 0; font-weight: bold; color: #1976d2;">💰 ${t('laboratory.oneTimeCost', { cost: examCost })}</p>
+                <p style="margin: 10px 0 0 0; font-weight: bold; color: #1976d2;">💰 ${t('laboratory.oneTimeCost', { cost: EXAMINATION_COST })}</p>
             </div>
         `;
         modal.classList.add('active');
@@ -368,19 +368,18 @@ export async function performExamination(parrotId, saveGameFn) {
     }
 
     // Check if player has enough coins
-    const EXAM_COST = 100;
     const coins = GameState.getCoins();
-    if (coins < EXAM_COST) {
+    if (coins < EXAMINATION_COST) {
         showToast(
             t('toasts.examNotEnoughCoins.title'),
-            t('toasts.examNotEnoughCoins.message', { cost: EXAM_COST, current: coins }),
+            t('toasts.examNotEnoughCoins.message', { cost: EXAMINATION_COST, current: coins }),
             'error',
             3000
         );
         return;
     }
 
-    GameState.addCoins(-EXAM_COST);
+    GameState.addCoins(-EXAMINATION_COST);
     GameState.addExaminedParrot(parrotId);
     await UI.updateStats();
     await UI.renderParrotGrid(); // Refresh cards to show examined badge immediately
@@ -389,7 +388,7 @@ export async function performExamination(parrotId, saveGameFn) {
     // Show info toast
     showToast(
         t('toasts.examComplete.title'),
-        t('toasts.examComplete.message', { name: parrot.name, cost: EXAM_COST }),
+        t('toasts.examComplete.message', { name: parrot.name, cost: EXAMINATION_COST }),
         'info'
     );
 
