@@ -1,0 +1,700 @@
+{
+  "_meta": {
+    "language": "English (Original)",
+    "code": "original",
+    "version": "1.0.0",
+    "translator_notes": "This file contains the EXACT original hardcoded English strings from before localization. Use this as the source of truth for translation accuracy."
+  },
+
+  "common": {
+    "coins": {
+      "value": "Coins"
+    },
+    "parrots": {
+      "value": "Parrots"
+    },
+    "generation": {
+      "value": "Generation"
+    },
+    "mutations": {
+      "value": "Mutations"
+    },
+    "autoExam": {
+      "value": "Auto-Exam"
+    },
+    "on": {
+      "value": "ON"
+    },
+    "off": {
+      "value": "OFF"
+    },
+    "buy": {
+      "value": "Buy"
+    },
+    "sell": {
+      "value": "Sell"
+    },
+    "locked": {
+      "value": "Locked"
+    },
+    "delete": {
+      "value": "Delete"
+    },
+    "clone": {
+      "value": "Clone"
+    },
+    "close": {
+      "value": "Close"
+    },
+    "clearAll": {
+      "value": "Clear All"
+    },
+    "notifications": {
+      "value": "Notifications"
+    }
+  },
+
+  "splash": {
+    "title": {
+      "value": "ChromaWing"
+    },
+    "subtitle": {
+      "value": "A Genetics Breeding Game"
+    },
+    "description1": {
+      "value": "Breed beautiful parrots and explore the fascinating world of genetics."
+    },
+    "description2": {
+      "value": "Create unique color combinations, compete in contests, and discover rare mutations!"
+    },
+    "startPlaying": {
+      "value": "Start Playing"
+    },
+    "newGame": {
+      "value": "New Game"
+    },
+    "feature1": {
+      "value": "78 Genes Per Parrot"
+    },
+    "feature2": {
+      "value": "Vibrant Color Genetics"
+    },
+    "feature3": {
+      "value": "Multiple Contest Types"
+    }
+  },
+
+  "languageSelector": {
+    "label": {
+      "value": "Select Language"
+    },
+    "english": {
+      "value": "English"
+    },
+    "spanish": {
+      "value": "Español"
+    },
+    "french": {
+      "value": "Français"
+    },
+    "russian": {
+      "value": "Русский"
+    },
+    "ukrainian": {
+      "value": "Українська"
+    }
+  },
+
+  "tabs": {
+    "collection": {
+      "value": "Collection"
+    },
+    "store": {
+      "value": "Store"
+    },
+    "breeding": {
+      "value": "Breeding"
+    },
+    "contests": {
+      "value": "Contests"
+    },
+    "gallery": {
+      "value": "Gallery"
+    },
+    "colorLab": {
+      "value": "Color Lab"
+    }
+  },
+
+  "panel": {
+    "yourParrots": {
+      "value": "Your Parrots"
+    },
+    "selectTwoToBreed": {
+      "value": "Select 2 to breed"
+    },
+    "selectedParrot": {
+      "value": "Selected Parrot"
+    },
+    "clickToView": {
+      "value": "Click a parrot to view details"
+    }
+  },
+
+  "breeding": {
+    "selectParents": {
+      "value": "Select Parents"
+    },
+    "leftParent": {
+      "value": "Left Parent"
+    },
+    "rightParent": {
+      "value": "Right Parent"
+    },
+    "empty": {
+      "value": "Empty"
+    },
+    "breedButton": {
+      "value": "Breed Parrots"
+    },
+    "breedCost": {
+      "value": "Cost: {cost} coins"
+    },
+    "compatibility": {
+      "value": "Genetic Compatibility"
+    },
+    "predictions": {
+      "value": "Offspring Predictions"
+    },
+    "beautyRange": {
+      "value": "Beauty Range"
+    },
+    "averageBeauty": {
+      "value": "Average Beauty"
+    },
+    "diversity": {
+      "value": "Diversity"
+    },
+    "regeneratePredictions": {
+      "value": "Regenerate Predictions"
+    },
+    "generating": {
+      "value": "Generating..."
+    },
+    "generatingPredictions": {
+      "value": "Generating predictions..."
+    },
+    "predictionHint": {
+      "value": "Hover over predictions to see beauty scores. Click regenerate for new possibilities."
+    },
+    "recentOffspring": {
+      "value": "Recent Offspring"
+    },
+    "breedToSeeOffspring": {
+      "value": "Breed parrots to see your offspring here!"
+    }
+  },
+
+  "bodyParts": {
+    "wings": {
+      "value": "Wings"
+    },
+    "specialWing": {
+      "value": "Special Wing"
+    },
+    "body": {
+      "value": "Body"
+    },
+    "head": {
+      "value": "Head"
+    },
+    "tail": {
+      "value": "Tail"
+    },
+    "accents": {
+      "value": "Accents"
+    }
+  },
+
+  "rarity": {
+    "common": {
+      "value": "Common"
+    },
+    "uncommon": {
+      "value": "Uncommon"
+    },
+    "rare": {
+      "value": "Rare"
+    },
+    "epic": {
+      "value": "Epic"
+    },
+    "legendary": {
+      "value": "Legendary"
+    }
+  },
+
+  "beauty": {
+    "plain": {
+      "value": "Plain"
+    },
+    "decent": {
+      "value": "Decent"
+    },
+    "pretty": {
+      "value": "Pretty"
+    },
+    "beautiful": {
+      "value": "Beautiful"
+    },
+    "stunning": {
+      "value": "Stunning"
+    },
+    "score": {
+      "value": "Beauty"
+    },
+    "traits": {
+      "value": "Has Gradients"
+    }
+  },
+
+  "contests": {
+    "header": {
+      "value": "Beauty Contests for {name}"
+    },
+    "description": {
+      "value": "Compete to win coins and badges. Beat each tier to unlock the next!"
+    },
+    "selectParrotPrompt": {
+      "value": "Select a parrot from your collection to enter contests!"
+    },
+    "goToCollection": {
+      "value": "Go to Collection"
+    },
+    "entry": {
+      "value": "Entry"
+    },
+    "completed": {
+      "value": "Completed"
+    },
+    "complete": {
+      "value": "Complete"
+    },
+    "locked": {
+      "value": "Locked"
+    },
+    "enter": {
+      "value": "Enter"
+    },
+    "needCoins": {
+      "value": "Need {cost}"
+    },
+    "place1st": {
+      "value": "1st place"
+    },
+    "place2nd": {
+      "value": "2nd place"
+    },
+    "place3rd": {
+      "value": "3rd place"
+    },
+    "placeTh": {
+      "value": "{n}th place"
+    },
+    "tier1Name": {
+      "value": "Beginner Beauty Show"
+    },
+    "tier1Desc": {
+      "value": "A friendly local competition for budding beauties"
+    },
+    "tier2Name": {
+      "value": "Rainbow Showcase"
+    },
+    "tier2Desc": {
+      "value": "Celebrate diversity with colorful plumage"
+    },
+    "tier2Rule": {
+      "value": "Must have at least 3 different beautiful colors"
+    },
+    "tier3Name": {
+      "value": "Gradient Masters"
+    },
+    "tier3Desc": {
+      "value": "Where smooth transitions steal the show"
+    },
+    "tier3Rule": {
+      "value": "Must have at least 2 beautiful gradients"
+    },
+    "tier4Name": {
+      "value": "Contrast Championship"
+    },
+    "tier4Desc": {
+      "value": "Bold opposites make stunning statements"
+    },
+    "tier4Rule": {
+      "value": "Must have at least one complementary color pair"
+    },
+    "tier5Name": {
+      "value": "Elite Grand Prix"
+    },
+    "tier5Desc": {
+      "value": "The ultimate test of chromatic perfection"
+    },
+    "tier5Rule": {
+      "value": "Must have gradients AND complementary colors"
+    },
+    "rule": {
+      "value": "Rule"
+    }
+  },
+
+  "laboratory": {
+    "title": {
+      "value": "Laboratory Analysis"
+    },
+    "payAndExamine": {
+      "value": "Pay {cost} Coins & Examine"
+    },
+    "notEnoughCoins": {
+      "value": "Not Enough Coins"
+    },
+    "needMoreCoins": {
+      "value": "You need {amount} more coins"
+    },
+    "analysisIncludes": {
+      "value": "Analysis Includes:"
+    },
+    "geneBreakdown": {
+      "value": "78 Gene Breakdown (6 body parts × 13 genes)"
+    },
+    "rarityAnalysis": {
+      "value": "Rarity Analysis with detailed scoring"
+    },
+    "beautyAssessment": {
+      "value": "Beauty Assessment with color harmony"
+    },
+    "rgbValues": {
+      "value": "RGB values for each body part"
+    },
+    "oneTimeCost": {
+      "value": "One-time cost: {cost} coins per parrot"
+    },
+    "rarityAnalysisTitle": {
+      "value": "Rarity Analysis"
+    },
+    "rarityScore": {
+      "value": "Rarity Score"
+    },
+    "pointsByBodyPart": {
+      "value": "Points by Body Part:"
+    },
+    "rarityGuide": {
+      "value": "Rarity Guide:"
+    },
+    "rarityGuide1": {
+      "value": "Pure (0 or 4 dominant): 2 pts per color"
+    },
+    "rarityGuide2": {
+      "value": "Nearly Pure (1 or 3): 1 pt per color"
+    },
+    "rarityGuide3": {
+      "value": "Mixed (2 dominant): 0 pts"
+    },
+    "rarityGuide4": {
+      "value": "Gradient: +4 pts (very rare!)"
+    },
+    "beautyAnalysisTitle": {
+      "value": "Beauty Analysis"
+    },
+    "beautyScore": {
+      "value": "Beauty Score"
+    },
+    "bodyPartColors": {
+      "value": "Body Part Colors:"
+    },
+    "beautyContribution": {
+      "value": "Beauty Contribution by Part:"
+    },
+    "beautyTraits": {
+      "value": "Beauty Traits:"
+    },
+    "beautyGuide": {
+      "value": "Beauty Guide:"
+    },
+    "beautyGuide1": {
+      "value": "Different color gradients: +10 pts"
+    },
+    "beautyGuide2": {
+      "value": "Each beautiful solid color: +3 pts"
+    },
+    "beautyGuide3": {
+      "value": "Color diversity (3+ colors): +15 pts"
+    },
+    "beautyGuide4": {
+      "value": "Complementary colors: +18 pts"
+    },
+    "beautyGuide5": {
+      "value": "Contrasting colors: +12 pts"
+    },
+    "beautyGuide6": {
+      "value": "Different colors: +5 pts"
+    },
+    "beautyGuide7": {
+      "value": "Similar colors: -3 pts penalty"
+    },
+    "dnaSequence": {
+      "value": "DNA Sequence"
+    },
+    "compactGenotype": {
+      "value": "Compact Genotype"
+    },
+    "format": {
+      "value": "Format:"
+    },
+    "gradient": {
+      "value": "Gradient"
+    },
+    "result": {
+      "value": "Result"
+    },
+    "solid": {
+      "value": "Solid"
+    },
+    "red": {
+      "value": "Red"
+    },
+    "green": {
+      "value": "Green"
+    },
+    "blue": {
+      "value": "Blue"
+    }
+  },
+
+  "gallery": {
+    "title": {
+      "value": "Parrot Gallery"
+    },
+    "subtitle": {
+      "value": "Explore curated parrots and your custom creations"
+    },
+    "loading": {
+      "value": "Loading gallery..."
+    },
+    "curatedCollection": {
+      "value": "Curated Collection"
+    },
+    "curatedDesc": {
+      "value": "Beautiful parrots designed with RYB color wheel harmony"
+    },
+    "myCreations": {
+      "value": "My Creations"
+    },
+    "myCreationsDesc": {
+      "value": "Custom parrots you've designed in the Color Lab"
+    },
+    "noCustomParrots": {
+      "value": "No custom parrots yet!"
+    },
+    "visitColorLab": {
+      "value": "Visit the Color Lab to create your first custom parrot"
+    }
+  },
+
+  "colorLab": {
+    "title": {
+      "value": "Color Lab - Gene Editor"
+    },
+    "subtitle": {
+      "value": "Create custom parrots by controlling individual genes"
+    },
+    "parrotName": {
+      "value": "Parrot name..."
+    },
+    "saveToGallery": {
+      "value": "Save to Gallery"
+    },
+    "randomize": {
+      "value": "Randomize"
+    },
+    "reset": {
+      "value": "Reset"
+    },
+    "geneEditor": {
+      "value": "Gene Editor"
+    },
+    "redChannel": {
+      "value": "Red Channel"
+    },
+    "greenChannel": {
+      "value": "Green Channel"
+    },
+    "blueChannel": {
+      "value": "Blue Channel"
+    },
+    "all": {
+      "value": "All"
+    },
+    "none": {
+      "value": "None"
+    },
+    "enabled": {
+      "value": "Enabled"
+    },
+    "disabled": {
+      "value": "Disabled"
+    },
+    "resultingColor": {
+      "value": "Resulting Color"
+    },
+    "livePreview": {
+      "value": "Live Preview"
+    },
+    "activeGenes": {
+      "value": "Active Genes"
+    }
+  },
+
+  "toasts": {
+    "breedSuccess": {
+      "title": "Breeding successful!",
+      "message": "4 new chicks born!{examInfo} {total} total waiting in Breeding Lab."
+    },
+    "breedNotEnoughCoins": {
+      "title": "Not enough coins!",
+      "message": "Breeding costs {cost} coins. You have {current}."
+    },
+    "examAutoInfo": {
+      "value": "{count} examined (-{totalCost} coins)."
+    },
+    "examAutoNeedCoins": {
+      "value": "Auto-exam: Need {cost} coins per chick."
+    },
+    "parrotJoined": {
+      "title": "{name} joined your collection!",
+      "message": "{rarity} • Gen {generation} • -{price} coins"
+    },
+    "parrotSold": {
+      "title": "{name} sold",
+      "message": "+{value} coins"
+    },
+    "parrotLocked": {
+      "title": "{name} is locked",
+      "message": "Unlock the parrot first to sell it"
+    },
+    "examComplete": {
+      "title": "Laboratory analysis complete",
+      "message": "{name} examined • -{cost} coins"
+    },
+    "examNotEnoughCoins": {
+      "title": "Not enough coins!",
+      "message": "Laboratory examination costs {cost} coins. You have {current}."
+    },
+    "mutationsEnabled": {
+      "title": "Mutations Enabled",
+      "message": "Breeding can introduce new genes"
+    },
+    "mutationsDisabled": {
+      "title": "Mutations Disabled",
+      "message": "Breeding will preserve pure genes"
+    },
+    "autoExamEnabled": {
+      "title": "Auto-Examine Enabled",
+      "message": "New offspring will be automatically examined if you have enough coins"
+    },
+    "autoExamDisabled": {
+      "title": "Auto-Examine Disabled",
+      "message": "You must manually examine offspring"
+    },
+    "noParrotSelected": {
+      "title": "No parrot selected",
+      "message": "Go to collection first"
+    },
+    "contestRequirements": {
+      "title": "Does not meet requirements",
+      "message": "{rule}"
+    },
+    "contestNotEnoughCoins": {
+      "title": "Not enough coins",
+      "message": "Need {cost} coins"
+    },
+    "coinsReceived": {
+      "title": "Coins received!",
+      "message": "+{amount} coins"
+    },
+    "rareParrotReceived": {
+      "title": "Rare parrot received!",
+      "message": "{name} added to your collection"
+    },
+    "rareParrotError": {
+      "title": "Error",
+      "message": "Failed to create rare parrot"
+    },
+    "offspringMoved": {
+      "title": "Offspring moved!",
+      "message": "{count} offspring moved to collection • +{examCount} examined"
+    },
+    "offspringSold": {
+      "title": "Offspring sold!",
+      "message": "{count} offspring sold for {coins} coins (70% value)"
+    },
+    "offspringDismissed": {
+      "title": "Offspring dismissed",
+      "message": "{count} offspring removed from breeding lab"
+    },
+    "noNotifications": {
+      "value": "No notifications yet"
+    },
+    "clearNotificationsConfirm": {
+      "value": "Clear all notifications?"
+    }
+  },
+
+  "actions": {
+    "examine": {
+      "value": "Examine"
+    },
+    "free": {
+      "value": "Free"
+    },
+    "lock": {
+      "value": "Lock"
+    },
+    "breedLeft": {
+      "value": "Breed on Left"
+    },
+    "breedRight": {
+      "value": "Breed on Right"
+    },
+    "moveToCollection": {
+      "value": "Use \"Move All to Collection\" to enable breeding and contests"
+    },
+    "sellAllOffspring": {
+      "value": "Sell All Offspring"
+    },
+    "dismissOffspring": {
+      "value": "Dismiss All"
+    }
+  },
+
+  "time": {
+    "justNow": {
+      "value": "Just now"
+    },
+    "minutesAgo": {
+      "value": "{n}m ago"
+    },
+    "hoursAgo": {
+      "value": "{n}h ago"
+    },
+    "daysAgo": {
+      "value": "{n}d ago"
+    }
+  },
+
+  "messages": {
+    "newGameConfirm": {
+      "value": "Start a new game? This will erase your current progress!"
+    }
+  }
+}
