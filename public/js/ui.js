@@ -32,5 +32,5 @@ export { renderParrotGrid } from './ui/parrotGrid.js';
 // Preview panel
 export { updatePreview } from './ui/preview.js';
 
-// Mutation display
-export { updateMutationDisplay } from './ui/mutations.js';
+// Mutation and settings display
+export { updateMutationDisplay, updateAutoExamDisplay } from './ui/mutations.js';

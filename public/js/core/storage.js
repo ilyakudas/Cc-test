@@ -6,7 +6,6 @@
 import { Parrot } from './parrot.js';
 import { CONTEST_TIERS } from '../lib/constants.js';
 import * as GameState from './gameState.js';
-import { t } from '../lib/i18n.js';
 
 /**
  * Save current game state to localStorage (migrated from cookies due to size limits)
@@ -185,20 +184,7 @@ export function loadGame() {
         GameState.setAutoExamineEnabled(gameStateData.autoExamineEnabled !== undefined ? gameStateData.autoExamineEnabled : false);
         GameState.setLanguage(gameStateData.language || 'en');
 
-        // Update auto-examine UI
-        const autoExamineStatusEl = document.getElementById('autoExamineStatus');
-        const autoExamineIconEl = document.getElementById('autoExamineIcon');
-        if (autoExamineStatusEl && autoExamineIconEl) {
-            if (GameState.getAutoExamineEnabled()) {
-                autoExamineStatusEl.textContent = t('common.on');
-                autoExamineStatusEl.style.color = '#4caf50';
-                autoExamineIconEl.textContent = '🔬';
-            } else {
-                autoExamineStatusEl.textContent = t('common.off');
-                autoExamineStatusEl.style.color = '#dc3545';
-                autoExamineIconEl.textContent = '🔒';
-            }
-        }
+        // Note: Auto-examine and mutation UI will be updated by main.js after translations load
 
         // Restore contest tier unlock status
         if (gameStateData.contestProgress) {

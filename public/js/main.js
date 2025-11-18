@@ -308,8 +308,9 @@ async function newGame() {
     // Reset all game state
     GameState.resetGameState();
 
-    // Update mutation display
+    // Update mutation and auto-exam displays
     UI.updateMutationDisplay();
+    UI.updateAutoExamDisplay();
 
     // Reset contest tiers
     CONTEST_TIERS.forEach((tier, index) => {
@@ -400,19 +401,27 @@ console.log('v1.3.1 - main.js loaded');
 // ===== INITIALIZATION =====
 
 window.addEventListener('load', async () => {
-    // Initialize i18n system first
-    let savedLang = null;
+    // STEP 1: Load English translations first (needed for loadGame to work)
+    console.log('i18n: Loading default English translations...');
+    await I18n.loadTranslations('en');
 
-    // Try to load saved game to get language preference
+    // Make i18n available globally immediately (needed for Alpine.js)
+    window.i18n = I18n;
+
+    // STEP 2: Try to load saved game to get language preference
+    let savedLang = null;
     const loaded = loadGame();
 
     if (loaded) {
         savedLang = GameState.getLanguage();
     }
 
-    // Load translations (use saved language or auto-detect)
+    // STEP 3: Load translations for user's preferred language (if different from English)
     const langToLoad = savedLang || I18n.detectLanguage();
-    await I18n.loadTranslations(langToLoad);
+    if (langToLoad !== 'en') {
+        console.log(`i18n: Loading ${langToLoad} translations...`);
+        await I18n.loadTranslations(langToLoad);
+    }
 
     // Store the detected/loaded language
     if (!savedLang) {
@@ -565,6 +574,10 @@ window.addEventListener('load', async () => {
         // Game loaded from save
         console.log('Game loaded - Store has', GameState.getStoreParrots().length, 'parrots');
 
+        // Update mutation and auto-exam displays with correct translations
+        UI.updateMutationDisplay();
+        UI.updateAutoExamDisplay();
+
         // Only generate store if it's empty (for old saves without store data)
         if (GameState.getStoreParrots().length === 0) {
             console.log('Store is empty, generating new store parrots');
@@ -576,7 +589,4 @@ window.addEventListener('load', async () => {
         // New game
         await initGame();
     }
-
-    // Make i18n available globally for use in HTML onclick handlers
-    window.i18n = I18n;
 });
