@@ -66,12 +66,14 @@ export async function createParrotCard(parrot, isStore) {
     const beautyScoreClassic = beautyClassic.score;
     const beautyScoreHarmony = beautyHarmony.score;
 
-    // Beauty score color coding based on classic score (cool to warm spectrum)
-    let beautyColor = '#607d8b'; // Low: Blue-gray (cold)
-    if (beautyScoreClassic >= 180) beautyColor = '#e91e63'; // Exceptional: Hot pink
-    else if (beautyScoreClassic >= 130) beautyColor = '#ff5722'; // High: Deep orange
-    else if (beautyScoreClassic >= 80) beautyColor = '#ffc107'; // Medium: Amber
-    else if (beautyScoreClassic >= 40) beautyColor = '#00bcd4'; // Medium-low: Cyan
+    // Beauty score color coding based on harmony score (0-300 scale)
+    // Using purple/magenta spectrum to indicate Color Wheel system
+    let beautyColor = '#78909c'; // Low: Cool gray (0-59)
+    if (beautyScoreHarmony >= 270) beautyColor = '#e91e63'; // Exceptional: Hot pink/magenta (90%+)
+    else if (beautyScoreHarmony >= 210) beautyColor = '#9c27b0'; // Very high: Deep purple (70%+)
+    else if (beautyScoreHarmony >= 150) beautyColor = '#673ab7'; // High: Indigo (50%+)
+    else if (beautyScoreHarmony >= 90) beautyColor = '#3f51b5'; // Medium: Blue (30%+)
+    else if (beautyScoreHarmony >= 60) beautyColor = '#00bcd4'; // Medium-low: Cyan (20%+)
 
     // Extract colors for all body parts
     const bodyParts = ['wings', 'special_wing', 'body', 'head', 'tail', 'accents'];
