@@ -297,9 +297,10 @@
 
         <div class="info-box">
             <strong>🎯 How RYB works:</strong> Each body part has 25 genes (6 red, 6 yellow, 6 blue, 5 pattern).
-            RYB (Red-Yellow-Blue) is the traditional artist's color wheel used in painting.
-            Click gene buttons to toggle between dominant (colored) and recessive (white).
-            <br><strong>Color Mixing Examples:</strong> Red + Yellow = Orange, Yellow + Blue = Green, Red + Blue = Purple
+            RYB (Red-Yellow-Blue) uses the traditional artist's color wheel with <strong>subtractive mixing</strong> (like paints).
+            Click gene buttons to toggle between dominant (pigment) and recessive (no pigment).
+            <br><strong>Key Principle:</strong> No genes = White • All genes = Black • Equal genes = Grey
+            <br><strong>Color Mixing:</strong> Red + Yellow = Orange, Yellow + Blue = Green, Red + Blue = Purple
             <br><strong>Complementary Pairs:</strong> Red ↔ Green, Yellow ↔ Purple, Blue ↔ Orange (traditional art theory!)
             <br><strong>Patterns:</strong> P1-P3 create 8 pattern types. P4-P5 create 4 animation types: Still, Color Shift, Slide, Shimmer.
         </div>
@@ -364,16 +365,20 @@
                 <li><strong>Blue ↔ Orange:</strong> Cool vs warm harmony</li>
             </ul>
 
-            <p style="margin-top: 20px;"><strong>How Genes Work:</strong></p>
+            <p style="margin-top: 20px;"><strong>How Genes Work (Subtractive Mixing):</strong></p>
             <p style="margin: 10px 0; line-height: 1.6;">
                 Each body part has 6 genes for each color channel (Red, Yellow, Blue).
-                The COUNT of dominant alleles determines color intensity (0-6 dominant = 0%-100% color).
+                The COUNT of dominant alleles determines pigment intensity (0-6 dominant = 0%-100% pigment).
+                <strong>Important:</strong> This uses subtractive mixing like real paints!
             </p>
-            <ul style="margin: 10px 0 10px 20px; line-line-height: 1.8;">
-                <li><strong>Example:</strong> RRRRRR yyyyyy bbbbbb = Pure red (100% red, 0% yellow, 0% blue)</li>
-                <li><strong>Example:</strong> RRRRRR YYYYYY bbbbbb = Orange (100% red + 100% yellow)</li>
-                <li><strong>Example:</strong> rrrrrr YYYYYY BBBBBB = Green (100% yellow + 100% blue)</li>
-                <li><strong>Example:</strong> RRRrrr YYYrrr BBBrrr = Light gray (50% red + 50% yellow + 50% blue)</li>
+            <ul style="margin: 10px 0 10px 20px; line-height: 1.8;">
+                <li><strong>rrrrrr yyyyyy bbbbbb = White</strong> (no pigment, paper shows through)</li>
+                <li><strong>RRRRRR yyyyyy bbbbbb = Red</strong> (100% red pigment only)</li>
+                <li><strong>RRRRRR YYYYYY bbbbbb = Orange</strong> (red + yellow pigments mix)</li>
+                <li><strong>rrrrrr YYYYYY BBBBBB = Green</strong> (yellow + blue pigments mix)</li>
+                <li><strong>RRRRRR yyyyyy BBBBBB = Purple</strong> (red + blue pigments mix)</li>
+                <li><strong>RRRrrr YYYrrr BBBrrr = Grey</strong> (equal amounts of all pigments = 50% grey)</li>
+                <li><strong>RRRRRR YYYYYY BBBBBB = Black</strong> (all pigments mixed = dark/black)</li>
             </ul>
 
             <p style="margin-top: 20px;"><strong>8 Pattern Types (controlled by genes P1, P2, P3):</strong></p>
@@ -441,56 +446,59 @@
             }
         }
 
-        // RYB to RGB conversion
-        // Based on paint mixing model - converts artist's color wheel to display RGB
+        // RYB to RGB conversion - Subtractive Color Mixing Model
+        // Based on how pigments/paints mix in the real world:
+        // - No pigment (0,0,0) = White (paper shows through)
+        // - All pigments (255,255,255) = Black (all light absorbed)
+        // - Equal amounts = Grey
         function rybToRgb(r, y, b) {
             // Normalize inputs to 0-1 range
             const rn = r / 255;
             const yn = y / 255;
             const bn = b / 255;
 
-            // RYB to RGB conversion using subtractive color mixing approximation
-            // This is a simplified model based on traditional paint mixing
-
-            // Start with white
+            // Start with white (no pigment = white paper)
             let red = 1.0;
             let green = 1.0;
             let blue = 1.0;
 
-            // Subtract based on RYB values (subtractive mixing)
-            // Red pigment absorbs green and blue
-            green -= rn;
-            blue -= rn;
+            // Subtractive color mixing:
+            // Each pigment absorbs certain wavelengths of light
 
-            // Yellow pigment absorbs blue
-            blue -= yn;
+            // Red pigment absorbs green and blue light
+            green *= (1.0 - rn);
+            blue *= (1.0 - rn);
 
-            // Blue pigment absorbs red and green
-            red -= bn;
-            green -= bn * 0.5; // Blue absorbs less green to allow for proper purple/green mixing
+            // Yellow pigment absorbs blue light (yellow = red + green in additive)
+            blue *= (1.0 - yn);
 
-            // Adjust for color mixing behavior
-            // When red and yellow mix, we get orange
-            if (rn > 0 && yn > 0) {
-                const orange = Math.min(rn, yn);
-                red = Math.min(1.0, red + orange * 0.5);
-                green = Math.min(1.0, green + orange * 0.3);
+            // Blue pigment absorbs red and green light
+            red *= (1.0 - bn);
+            green *= (1.0 - bn);
+
+            // Secondary color adjustments for more realistic mixing:
+
+            // Red + Yellow = Orange (preserve some red-orange hue)
+            if (rn > 0 && yn > 0 && bn < 0.1) {
+                const orangeness = Math.min(rn, yn);
+                red = Math.min(1.0, red + orangeness * 0.4);
+                green = Math.min(1.0, green + orangeness * 0.25);
             }
 
-            // When yellow and blue mix, we get green
-            if (yn > 0 && bn > 0) {
-                const greenMix = Math.min(yn, bn);
-                green = Math.min(1.0, green + greenMix * 0.8);
+            // Yellow + Blue = Green (enhance green)
+            if (yn > 0 && bn > 0 && rn < 0.1) {
+                const greenness = Math.min(yn, bn);
+                green = Math.min(1.0, green + greenness * 0.6);
             }
 
-            // When red and blue mix, we get purple
-            if (rn > 0 && bn > 0) {
-                const purple = Math.min(rn, bn);
-                red = Math.min(1.0, red + purple * 0.5);
-                blue = Math.min(1.0, blue + purple * 0.5);
+            // Red + Blue = Purple (enhance purple hue)
+            if (rn > 0 && bn > 0 && yn < 0.1) {
+                const purpleness = Math.min(rn, bn);
+                red = Math.min(1.0, red + purpleness * 0.3);
+                blue = Math.min(1.0, blue + purpleness * 0.3);
             }
 
-            // Clamp values to valid range
+            // Clamp values to valid range [0, 1]
             red = Math.max(0, Math.min(1, red));
             green = Math.max(0, Math.min(1, green));
             blue = Math.max(0, Math.min(1, blue));
