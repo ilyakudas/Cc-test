@@ -457,45 +457,61 @@
             const yn = y / 255;
             const bn = b / 255;
 
-            // Start with white (no pigment = white paper)
-            let red = 1.0;
-            let green = 1.0;
-            let blue = 1.0;
+            // Use a balanced subtractive mixing model
+            // Each pigment independently affects specific RGB channels
 
-            // Subtractive color mixing:
-            // Each pigment absorbs certain wavelengths of light
+            // Calculate base grey level from total pigment amount
+            // This ensures equal RYB amounts produce neutral grey
+            const totalPigment = (rn + yn + bn) / 3;
+            const baseValue = 1.0 - totalPigment;
 
-            // Red pigment absorbs green and blue light
-            green *= (1.0 - rn);
-            blue *= (1.0 - rn);
+            // Start with grey base
+            let red = baseValue;
+            let green = baseValue;
+            let blue = baseValue;
 
-            // Yellow pigment absorbs blue light (yellow = red + green in additive)
-            blue *= (1.0 - yn);
+            // Now add color shifts based on pigment deviations from average
+            // If more red than average: reduce green and blue
+            const redShift = rn - totalPigment;
+            const yellowShift = yn - totalPigment;
+            const blueShift = bn - totalPigment;
 
-            // Blue pigment absorbs red and green light
-            red *= (1.0 - bn);
-            green *= (1.0 - bn);
+            // Red pigment absorbs green and blue (shifts toward red)
+            green -= redShift * 0.7;
+            blue -= redShift * 0.7;
 
-            // Secondary color adjustments for more realistic mixing:
+            // Yellow pigment absorbs blue (shifts toward yellow = red+green)
+            blue -= yellowShift * 0.7;
+            // Yellow also adds a bit of red and green
+            red += yellowShift * 0.3;
+            green += yellowShift * 0.3;
 
-            // Red + Yellow = Orange (preserve some red-orange hue)
-            if (rn > 0 && yn > 0 && bn < 0.1) {
-                const orangeness = Math.min(rn, yn);
-                red = Math.min(1.0, red + orangeness * 0.4);
-                green = Math.min(1.0, green + orangeness * 0.25);
+            // Blue pigment absorbs red (shifts toward blue)
+            red -= blueShift * 0.7;
+            // Blue also reduces green slightly
+            green -= blueShift * 0.3;
+
+            // Secondary color enhancements for more vibrant mixing
+            // Only apply when one or two primaries dominate
+
+            // Red + Yellow = Orange (when both high, blue low)
+            if (rn > 0.3 && yn > 0.3 && bn < 0.3) {
+                const orangeness = Math.min(rn, yn) - bn;
+                red += orangeness * 0.3;
+                green += orangeness * 0.2;
             }
 
-            // Yellow + Blue = Green (enhance green)
-            if (yn > 0 && bn > 0 && rn < 0.1) {
-                const greenness = Math.min(yn, bn);
-                green = Math.min(1.0, green + greenness * 0.6);
+            // Yellow + Blue = Green (when both high, red low)
+            if (yn > 0.3 && bn > 0.3 && rn < 0.3) {
+                const greenness = Math.min(yn, bn) - rn;
+                green += greenness * 0.4;
             }
 
-            // Red + Blue = Purple (enhance purple hue)
-            if (rn > 0 && bn > 0 && yn < 0.1) {
-                const purpleness = Math.min(rn, bn);
-                red = Math.min(1.0, red + purpleness * 0.3);
-                blue = Math.min(1.0, blue + purpleness * 0.3);
+            // Red + Blue = Purple (when both high, yellow low)
+            if (rn > 0.3 && bn > 0.3 && yn < 0.3) {
+                const purpleness = Math.min(rn, bn) - yn;
+                red += purpleness * 0.25;
+                blue += purpleness * 0.25;
             }
 
             // Clamp values to valid range [0, 1]
