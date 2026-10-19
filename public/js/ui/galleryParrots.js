@@ -263,7 +263,8 @@ function createGenesFromRgb(rgb) {
 function galleryParrotName(source) {
     const emoji = source.emoji ?? source.galleryEmoji;
     const nameKey = source.nameKey ?? source.galleryNameKey;
-    return `${emoji} ${i18n.t(nameKey)}`;
+    // Before translations load, fall back to the key (the template translates later)
+    return `${emoji} ${i18n.isReady() ? i18n.t(nameKey) : nameKey}`;
 }
 
 /**

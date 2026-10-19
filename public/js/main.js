@@ -117,6 +117,10 @@ async function initGame() {
 
     GameState.incrementParrotIdCounter();
 
+    // Reserve the starter names so random parrots don't repeat them
+    GameState.addUsedName(twilight.name);
+    GameState.addUsedName(prism.name);
+
     await generateStore(prism);
     await UI.updateUI();
 }
@@ -286,8 +290,9 @@ async function generateStore(prismParrot = null) {
                 genes = createParrotWithPurity('random');
             }
 
+            // Name it only once accepted: every getRandomName() call uses up a name
             const testParrot = new Parrot(
-                getRandomName(),
+                '',
                 genes,
                 1,
                 GameState.getParrotIdCounter()
@@ -296,6 +301,7 @@ async function generateStore(prismParrot = null) {
 
             if (actualRarity === targetRarity || attempts >= maxAttempts) {
                 parrot = testParrot;
+                parrot.name = getRandomName();
                 GameState.incrementParrotIdCounter();
                 break;
             }

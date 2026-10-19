@@ -64,8 +64,9 @@ export function buyParrot(parrotId, saveGameFn, checkAchievementsFn) {
             genes = createParrotWithPurity('random');
         }
 
+        // Name it only once accepted: every getRandomName() call uses up a name
         const testParrot = new Parrot(
-            getRandomName(),
+            '',
             genes,
             1,
             GameState.getAndIncrementParrotIdCounter()
@@ -75,6 +76,7 @@ export function buyParrot(parrotId, saveGameFn, checkAchievementsFn) {
         // Accept if rarity matches or we're on last attempt
         if (actualRarity === oldRarity || attempts >= maxAttempts) {
             newParrot = testParrot;
+            newParrot.name = getRandomName();
         }
     }
 
