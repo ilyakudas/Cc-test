@@ -65,6 +65,10 @@
     "notifications": {
       "value": "Сповіщення",
       "_context": "Notification history panel header. Max length: 25 chars."
+    },
+    "credits": {
+      "value": "Кредити",
+      "_context": "Conservation credits currency. Displayed in header stats. Max length: 15 chars."
     }
   },
   "splash": {
@@ -155,6 +159,10 @@
     "colorLab": {
       "value": "Колір-Лаб",
       "_context": "Tab name for gene editor. Max length: 15 chars."
+    },
+    "wildMate": {
+      "value": "Дика природа",
+      "_context": "Tab name for the Wild Mate system (releasing parrots and finding wild mates). Max length: 15 chars."
     }
   },
   "panel": {
@@ -857,6 +865,151 @@
     "activeGenes": {
       "value": "Активні гени",
       "_context": "Stat label for active gene count. Max length: 20 chars."
+    }
+  },
+  "wildMate": {
+    "panelTitle": {
+      "value": "Пошук дикої пари",
+      "_context": "Panel title for the Wild Mate tab. Max length: 30 chars."
+    },
+    "creditsTooltip": {
+      "value": "Кредити охорони природи — даються за випуск папуг на волю",
+      "_context": "Tooltip on the Conservation Credits stat badge."
+    },
+    "poolStatus": {
+      "value": "Стан дикого генофонду",
+      "_context": "Heading of the gene pool dashboard. Max length: 35 chars."
+    },
+    "poolEmpty": {
+      "value": "Ти ще не відпустив жодної папуги. Відпускай папуг на волю, щоб поповнити генофонд і заробити кредити 🌿!",
+      "_context": "Shown when no parrots have been released yet. Keep the 🌿 emoji."
+    },
+    "statPool": {
+      "value": "Генофонд",
+      "_context": "Dashboard label for gene pool quality. Max length: 12 chars."
+    },
+    "statDiversity": {
+      "value": "Різноманіття",
+      "_context": "Dashboard label for gene pool diversity. Max length: 15 chars."
+    },
+    "statReleased": {
+      "value": "Відпущено",
+      "_context": "Dashboard label for number of released parrots. Max length: 15 chars."
+    },
+    "releasedCount": {
+      "value": "{count} шт.",
+      "_context": "Number of released parrots on the dashboard. {count} is a number."
+    },
+    "noParrots": {
+      "value": "У твоїй колекції немає папуг",
+      "_context": "Empty state when the collection has no parrots."
+    },
+    "selectParrotHint": {
+      "value": "Вибери папугу, щоб побачити доступні дії",
+      "_context": "Hint shown when no parrot is selected."
+    },
+    "lockedCannotRelease": {
+      "value": "Заблокована — не можна відпустити",
+      "_context": "Disabled button label for a locked parrot. Max length: 30 chars."
+    },
+    "unlockToRelease": {
+      "value": "Розблокуй папугу, щоб її відпустити",
+      "_context": "Tooltip on the disabled release button."
+    },
+    "releaseToWild": {
+      "value": "Відпустити на волю",
+      "_context": "Button to release the parrot into the wild gene pool. Max length: 25 chars."
+    },
+    "mateAlreadyFound": {
+      "value": "Дику пару вже знайдено",
+      "_context": "Disabled button label when the parrot already found a wild mate. Max length: 30 chars."
+    },
+    "mateAlreadyFoundTooltip": {
+      "value": "Ця папуга вже знайшла дику пару",
+      "_context": "Tooltip on the disabled find-mate button."
+    },
+    "findMatePoolEmpty": {
+      "value": "Знайти пару (генофонд порожній)",
+      "_context": "Disabled find-mate button when the gene pool is empty. Max length: 35 chars."
+    },
+    "findMatePoolEmptyTooltip": {
+      "value": "Спочатку відпусти папуг, щоб поповнити генофонд",
+      "_context": "Tooltip on the disabled find-mate button."
+    },
+    "findMate": {
+      "value": "Знайти дику пару ({cost} 🌿)",
+      "_context": "Button to search for a wild mate. {cost} is a number of credits. Max length: 35 chars."
+    },
+    "findMateTooltip": {
+      "value": "Шукати дику пару ({cost} 🌿)",
+      "_context": "Tooltip on the find-mate button. {cost} is a number of credits."
+    },
+    "needCredits": {
+      "value": "Потрібно {cost} 🌿 кредитів",
+      "_context": "Tooltip when the player cannot afford the search. {cost} is a number."
+    },
+    "matesFoundTitle": {
+      "value": "Дикі пари знайдено!",
+      "_context": "Heading of the mate selection modal. Max length: 30 chars."
+    },
+    "matesFoundSubtitle": {
+      "value": "Знайдено пар для {name}: {count}",
+      "_context": "Subtitle of the mate selection modal. {count} is a number, {name} is the parrot name."
+    },
+    "cancelRefund": {
+      "value": "Скасувати (повернення 50%)",
+      "_context": "Button to cancel the search with a half refund. Max length: 30 chars."
+    },
+    "selectMate": {
+      "value": "Вибрати цю пару",
+      "_context": "Button under each mate card in the modal. Max length: 25 chars."
+    },
+    "toasts": {
+      "parrotNotFound": {
+        "title": "Помилка",
+        "message": "Папугу не знайдено",
+        "_context": "Error when the parrot no longer exists."
+      },
+      "releaseLocked": {
+        "title": "{name} заблокована",
+        "message": "Розблокуй папугу, перш ніж відпускати її на волю",
+        "_context": "Error when trying to release a locked parrot. {name} is replaced."
+      },
+      "released": {
+        "title": "{name} на волі!",
+        "message": "Отримано {credits} 🌿 кредитів охорони природи. Гени цієї папуги ({rarity}) зміцнять дику популяцію.",
+        "_context": "Success after releasing a parrot. {name}, {credits} and {rarity} (translated rarity) are replaced."
+      },
+      "alreadyFoundMate": {
+        "title": "{name} вже знайшла пару",
+        "message": "Кожна папуга може знайти лише ОДНУ дику пару за все життя",
+        "_context": "Error when the parrot already found its one wild mate. {name} is replaced."
+      },
+      "poolEmpty": {
+        "title": "Дикий генофонд порожній",
+        "message": "Спочатку відпусти кількох папуг на волю, щоб поповнити генофонд",
+        "_context": "Error when searching with an empty gene pool."
+      },
+      "notEnoughCredits": {
+        "title": "Недостатньо кредитів",
+        "message": "Потрібно {cost} 🌿, а в тебе лише {credits} 🌿. Відпускай більше папуг, щоб заробити кредити.",
+        "_context": "Error when the player cannot afford the search. {cost} and {credits} are numbers."
+      },
+      "matesFound": {
+        "title": "{name} знайшла дикі пари!",
+        "message": "Знайдено пар: {count}. Якість генофонду: {stars}",
+        "_context": "Success after a mate search. {name}, {count} and {stars} (star emojis) are replaced."
+      },
+      "offspringBorn": {
+        "title": "{name} народилася від дикої пари!",
+        "message": "{parent} × {mate} = {rarity} папуга!",
+        "_context": "Success after breeding with a wild mate. {name}, {parent}, {mate} and {rarity} (translated rarity) are replaced."
+      },
+      "searchCancelled": {
+        "title": "Пошук скасовано",
+        "message": "Повернено {refund} 🌿 кредитів охорони природи (50%)",
+        "_context": "Info after cancelling a mate search. {refund} is a number."
+      }
     }
   },
   "toasts": {

@@ -280,8 +280,6 @@ All state lives in `core/gameState.js`:
 
 ## Version
 
-**Current**: v1.3.3 (single source of truth: `VERSION` in `public/breeding-game-modular.html`)
-
-Localization, the Wild Mate system and the RYB color explorer are live on `main` but have not had a version bump yet.
+**Current**: v1.4.0 (single source of truth: `VERSION` in `public/breeding-game-modular.html`)
 
 **See**: `parrot-genetics-game/docs/changelog/CHANGELOG.md`

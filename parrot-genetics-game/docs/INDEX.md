@@ -48,8 +48,8 @@
 
 **"What changed?"**
 - [Changelog Summary](changelog/CHANGELOG.md) - All versions at a glance
-- [v1.0 Details](changelog/v1.0.md) - Initial feature set
-- [v1.1 Details](changelog/v1.1.md) - Refactoring and Alpine.js integration
+- [v1.0 Details](changelog/CHANGELOG.md#v10---initial-release) - Initial feature set
+- [v1.1 Details](changelog/CHANGELOG.md#v11---architecture-improvements) - Refactoring and Alpine.js integration
 
 ## 📁 All Documentation by Category
 
@@ -94,8 +94,8 @@
 | Document | Description |
 |----------|-------------|
 | [Summary](changelog/CHANGELOG.md) | All versions overview |
-| [v1.0](changelog/v1.0.md) | Initial feature set |
-| [v1.1](changelog/v1.1.md) | Architecture improvements |
+| [v1.0](changelog/CHANGELOG.md#v10---initial-release) | Initial feature set |
+| [v1.1](changelog/CHANGELOG.md#v11---architecture-improvements) | Architecture improvements |
 
 ### Design Documents (Planning)
 | Document | Description |
@@ -117,7 +117,7 @@ A: Read [Contest System](CONTESTS_SYSTEM.md) → [Adding Features Guide](guides/
 A: Read [Genetics System](systems/GENETICS.md)
 
 **Q: What UI improvements have been made?**
-A: Read [v1.0 Changelog](changelog/v1.0.md) and [v1.1 Changelog](changelog/v1.1.md)
+A: Read the [Changelog](changelog/CHANGELOG.md), which covers every version from v1.0 on
 
 **Q: How do I set up for development?**
 A: Read [Setup Guide](guides/SETUP.md)

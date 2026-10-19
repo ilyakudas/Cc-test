@@ -61,7 +61,7 @@ export function switchTab(tab, event, renderContestsFn) {
         return; // Don't call updateUI for color lab tab (handled by Alpine.js)
     } else if (tab === 'wildmate') {
         document.getElementById('wildMateTab').style.display = 'block';
-        document.getElementById('panelTitle').textContent = '🌿 Wild Mate Finding';
+        document.getElementById('panelTitle').textContent = '🌿 ' + t('wildMate.panelTitle');
         // Import and render wild mate tab
         import('./wildMate.js').then(module => {
             module.renderWildMateTab();

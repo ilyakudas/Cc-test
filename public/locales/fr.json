@@ -65,6 +65,10 @@
     "notifications": {
       "value": "Notifications",
       "_context": "Notification history panel header. Max length: 25 chars."
+    },
+    "credits": {
+      "value": "Crédits",
+      "_context": "Conservation credits currency. Displayed in header stats. Max length: 15 chars."
     }
   },
   "splash": {
@@ -155,6 +159,10 @@
     "colorLab": {
       "value": "Labo Couleur",
       "_context": "Tab name for gene editor. Max length: 15 chars."
+    },
+    "wildMate": {
+      "value": "Vie sauvage",
+      "_context": "Tab name for the Wild Mate system (releasing parrots and finding wild mates). Max length: 15 chars."
     }
   },
   "panel": {
@@ -857,6 +865,151 @@
     "activeGenes": {
       "value": "Gènes Actifs",
       "_context": "Stat label for active gene count. Max length: 20 chars."
+    }
+  },
+  "wildMate": {
+    "panelTitle": {
+      "value": "Recherche de partenaire sauvage",
+      "_context": "Panel title for the Wild Mate tab. Max length: 30 chars."
+    },
+    "creditsTooltip": {
+      "value": "Crédits de conservation : gagnés en libérant des perroquets",
+      "_context": "Tooltip on the Conservation Credits stat badge."
+    },
+    "poolStatus": {
+      "value": "État du pool génétique sauvage",
+      "_context": "Heading of the gene pool dashboard. Max length: 35 chars."
+    },
+    "poolEmpty": {
+      "value": "Aucun perroquet libéré pour l'instant. Libère des perroquets pour constituer le pool génétique et gagner des crédits 🌿 !",
+      "_context": "Shown when no parrots have been released yet. Keep the 🌿 emoji."
+    },
+    "statPool": {
+      "value": "Pool",
+      "_context": "Dashboard label for gene pool quality. Max length: 12 chars."
+    },
+    "statDiversity": {
+      "value": "Diversité",
+      "_context": "Dashboard label for gene pool diversity. Max length: 15 chars."
+    },
+    "statReleased": {
+      "value": "Libérés",
+      "_context": "Dashboard label for number of released parrots. Max length: 15 chars."
+    },
+    "releasedCount": {
+      "value": "{count} perroquets",
+      "_context": "Number of released parrots on the dashboard. {count} is a number."
+    },
+    "noParrots": {
+      "value": "Aucun perroquet dans ta collection",
+      "_context": "Empty state when the collection has no parrots."
+    },
+    "selectParrotHint": {
+      "value": "Sélectionne un perroquet pour voir les actions disponibles",
+      "_context": "Hint shown when no parrot is selected."
+    },
+    "lockedCannotRelease": {
+      "value": "Verrouillé : impossible de libérer",
+      "_context": "Disabled button label for a locked parrot. Max length: 30 chars."
+    },
+    "unlockToRelease": {
+      "value": "Déverrouille le perroquet pour le libérer",
+      "_context": "Tooltip on the disabled release button."
+    },
+    "releaseToWild": {
+      "value": "Libérer dans la nature",
+      "_context": "Button to release the parrot into the wild gene pool. Max length: 25 chars."
+    },
+    "mateAlreadyFound": {
+      "value": "Partenaire déjà trouvé",
+      "_context": "Disabled button label when the parrot already found a wild mate. Max length: 30 chars."
+    },
+    "mateAlreadyFoundTooltip": {
+      "value": "Ce perroquet a déjà trouvé un partenaire sauvage",
+      "_context": "Tooltip on the disabled find-mate button."
+    },
+    "findMatePoolEmpty": {
+      "value": "Chercher un partenaire (pool vide)",
+      "_context": "Disabled find-mate button when the gene pool is empty. Max length: 35 chars."
+    },
+    "findMatePoolEmptyTooltip": {
+      "value": "Libère d'abord des perroquets pour constituer le pool génétique",
+      "_context": "Tooltip on the disabled find-mate button."
+    },
+    "findMate": {
+      "value": "Chercher un partenaire ({cost} 🌿)",
+      "_context": "Button to search for a wild mate. {cost} is a number of credits. Max length: 35 chars."
+    },
+    "findMateTooltip": {
+      "value": "Rechercher un partenaire sauvage ({cost} 🌿)",
+      "_context": "Tooltip on the find-mate button. {cost} is a number of credits."
+    },
+    "needCredits": {
+      "value": "Il te faut {cost} crédits 🌿",
+      "_context": "Tooltip when the player cannot afford the search. {cost} is a number."
+    },
+    "matesFoundTitle": {
+      "value": "Partenaires sauvages trouvés !",
+      "_context": "Heading of the mate selection modal. Max length: 30 chars."
+    },
+    "matesFoundSubtitle": {
+      "value": "{count} partenaires potentiels trouvés pour {name}",
+      "_context": "Subtitle of the mate selection modal. {count} is a number, {name} is the parrot name."
+    },
+    "cancelRefund": {
+      "value": "Annuler (remboursement 50 %)",
+      "_context": "Button to cancel the search with a half refund. Max length: 30 chars."
+    },
+    "selectMate": {
+      "value": "Choisir ce partenaire",
+      "_context": "Button under each mate card in the modal. Max length: 25 chars."
+    },
+    "toasts": {
+      "parrotNotFound": {
+        "title": "Erreur",
+        "message": "Perroquet introuvable",
+        "_context": "Error when the parrot no longer exists."
+      },
+      "releaseLocked": {
+        "title": "{name} est verrouillé",
+        "message": "Déverrouille ce perroquet avant de le libérer dans la nature",
+        "_context": "Error when trying to release a locked parrot. {name} is replaced."
+      },
+      "released": {
+        "title": "{name} est libre !",
+        "message": "Tu gagnes {credits} crédits de conservation 🌿. Les gènes de ce perroquet {rarity} renforceront la population sauvage.",
+        "_context": "Success after releasing a parrot. {name}, {credits} and {rarity} (translated rarity) are replaced."
+      },
+      "alreadyFoundMate": {
+        "title": "{name} a déjà un partenaire",
+        "message": "Chaque perroquet ne peut trouver qu'UN seul partenaire sauvage dans sa vie",
+        "_context": "Error when the parrot already found its one wild mate. {name} is replaced."
+      },
+      "poolEmpty": {
+        "title": "Pool génétique vide",
+        "message": "Libère d'abord quelques perroquets pour constituer le pool génétique",
+        "_context": "Error when searching with an empty gene pool."
+      },
+      "notEnoughCredits": {
+        "title": "Crédits insuffisants",
+        "message": "Il te faut {cost} 🌿 mais tu n'as que {credits} 🌿. Libère plus de perroquets pour gagner des crédits.",
+        "_context": "Error when the player cannot afford the search. {cost} and {credits} are numbers."
+      },
+      "matesFound": {
+        "title": "{name} a trouvé des partenaires !",
+        "message": "{count} partenaires potentiels trouvés. Qualité du pool : {stars}",
+        "_context": "Success after a mate search. {name}, {count} and {stars} (star emojis) are replaced."
+      },
+      "offspringBorn": {
+        "title": "{name} est né d'un partenaire sauvage !",
+        "message": "{parent} × {mate} = perroquet {rarity} !",
+        "_context": "Success after breeding with a wild mate. {name}, {parent}, {mate} and {rarity} (translated rarity) are replaced."
+      },
+      "searchCancelled": {
+        "title": "Recherche annulée",
+        "message": "{refund} crédits de conservation 🌿 remboursés (50 %)",
+        "_context": "Info after cancelling a mate search. {refund} is a number."
+      }
     }
   },
   "toasts": {

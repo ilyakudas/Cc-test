@@ -36,8 +36,8 @@ export function releaseParrot(parrotId, saveGameFn) {
 
     if (!parrot) {
         showToast(
-            'Error',
-            'Parrot not found',
+            t('wildMate.toasts.parrotNotFound.title'),
+            t('wildMate.toasts.parrotNotFound.message'),
             'error'
         );
         return;
@@ -46,8 +46,8 @@ export function releaseParrot(parrotId, saveGameFn) {
     // Check if parrot is locked
     if (GameState.isParrotLocked(parrotId)) {
         showToast(
-            `${parrot.name} is Locked`,
-            'Unlock this parrot before releasing it to the wild',
+            t('wildMate.toasts.releaseLocked.title', { name: parrot.name }),
+            t('wildMate.toasts.releaseLocked.message'),
             'error',
             3000
         );
@@ -98,8 +98,8 @@ export function releaseParrot(parrotId, saveGameFn) {
     // Show success toast
     const rarity = parrot.calculateRarity();
     showToast(
-        `${parrot.name} Released to the Wild!`,
-        `Earned ${creditsEarned} 🌿 Conservation Credits. The ${rarity} parrot's genes will strengthen the wild population.`,
+        t('wildMate.toasts.released.title', { name: parrot.name }),
+        t('wildMate.toasts.released.message', { credits: creditsEarned, rarity: t(`rarity.${rarity}`) }),
         'success',
         5000
     );
@@ -134,15 +134,15 @@ export function startWildMateSearch(parrotId, saveGameFn) {
     const parrot = parrots.find(p => p.id === parrotId);
 
     if (!parrot) {
-        showToast('Error', 'Parrot not found', 'error');
+        showToast(t('wildMate.toasts.parrotNotFound.title'), t('wildMate.toasts.parrotNotFound.message'), 'error');
         return null;
     }
 
     // Check if parrot has already found a wild mate
     if (parrot.hasFoundWildMate) {
         showToast(
-            `${parrot.name} Already Found a Mate`,
-            'Each parrot can only find ONE wild mate in their lifetime',
+            t('wildMate.toasts.alreadyFoundMate.title', { name: parrot.name }),
+            t('wildMate.toasts.alreadyFoundMate.message'),
             'error',
             4000
         );
@@ -153,8 +153,8 @@ export function startWildMateSearch(parrotId, saveGameFn) {
     const genePool = GameState.getWildGenePool();
     if (!genePool) {
         showToast(
-            'Wild Gene Pool Empty',
-            'Release some parrots to the wild first to build the gene pool',
+            t('wildMate.toasts.poolEmpty.title'),
+            t('wildMate.toasts.poolEmpty.message'),
             'error',
             4000
         );
@@ -167,8 +167,8 @@ export function startWildMateSearch(parrotId, saveGameFn) {
 
     if (credits < cost) {
         showToast(
-            'Not Enough Conservation Credits',
-            `Need ${cost} 🌿 but only have ${credits} 🌿. Release more parrots to earn credits.`,
+            t('wildMate.toasts.notEnoughCredits.title'),
+            t('wildMate.toasts.notEnoughCredits.message', { cost, credits }),
             'error',
             4000
         );
@@ -199,8 +199,8 @@ export function startWildMateSearch(parrotId, saveGameFn) {
     const poolQuality = calculatePoolQuality(genePool);
     const qualityStars = Math.floor(poolQuality * 5);
     showToast(
-        `${parrot.name} Found Wild Mates!`,
-        `${mateParrots.length} potential mates found. Pool quality: ${'⭐'.repeat(qualityStars)}`,
+        t('wildMate.toasts.matesFound.title', { name: parrot.name }),
+        t('wildMate.toasts.matesFound.message', { count: mateParrots.length, stars: '⭐'.repeat(qualityStars) }),
         'success',
         4000
     );
@@ -223,7 +223,7 @@ export function selectWildMate(searchingParrotId, selectedMate, saveGameFn) {
     const searchingParrot = parrots.find(p => p.id === searchingParrotId);
 
     if (!searchingParrot) {
-        showToast('Error', 'Parrot not found', 'error');
+        showToast(t('wildMate.toasts.parrotNotFound.title'), t('wildMate.toasts.parrotNotFound.message'), 'error');
         return;
     }
 
@@ -251,8 +251,8 @@ export function selectWildMate(searchingParrotId, selectedMate, saveGameFn) {
     // Show success toast
     const rarity = offspring.calculateRarity();
     showToast(
-        `${offspring.name} Born from Wild Mating!`,
-        `${searchingParrot.name} × ${selectedMate.name} = ${rarity} offspring!`,
+        t('wildMate.toasts.offspringBorn.title', { name: offspring.name }),
+        t('wildMate.toasts.offspringBorn.message', { parent: searchingParrot.name, mate: selectedMate.name, rarity: t(`rarity.${rarity}`) }),
         'success',
         5000
     );
@@ -273,8 +273,8 @@ export function cancelWildMateSearch(cost, saveGameFn) {
     if (saveGameFn) saveGameFn();
 
     showToast(
-        'Search Cancelled',
-        `Refunded ${refund} 🌿 Conservation Credits (50%)`,
+        t('wildMate.toasts.searchCancelled.title'),
+        t('wildMate.toasts.searchCancelled.message', { refund }),
         'info',
         3000
     );

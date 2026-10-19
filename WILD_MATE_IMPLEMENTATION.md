@@ -5,7 +5,7 @@
 This document describes the implementation of the Wild Mate Finding System for ChromaWing, based on the design specification in `parrot-genetics-game/design/WILD_MATE_SYSTEM.md`.
 
 **Status**: Backend (Phase 1) ✅ and UI (Phase 2) ✅ shipped on `main` (Nov 2025)
-**Open items**: Wild Mate text is English-only (no locale keys yet), and the testing checklist below has not been run formally. Phase 3 ideas are listed under Future Enhancements.
+**Open items**: The testing checklist below has not been run formally. Phase 3 ideas are listed under Future Enhancements.
 
 > **Note**: The Phase 2 section below is the original UI plan. What actually shipped is summarized in "What Phase 2 Shipped", and it differs in places (for example, standard parrot cards instead of custom mate cards).
 
@@ -261,8 +261,9 @@ getGenePoolStats()
 - **CSS** in `public/breeding-game.css`, with height limits and scrolling for the tab
 - **Save migration**: starter parrots and old saves get default performance genes
 
+- **Translations** (v1.4.0): all Wild Mate text uses `t()` with keys under `wildMate.*` (plus `tabs.wildMate` and `common.credits`) in all five locales
+
 Not done in Phase 2:
-- **Translations**: tab label, credits badge, dashboard, action menu and toasts are hardcoded English. `public/locales/*.json` has no `wildMate` keys yet.
 - **Detailed mate view**: still a TODO in `main.js`.
 
 ### Original UI Plan
@@ -516,9 +517,9 @@ Once UI is integrated, test these scenarios:
 ✅ UI components created (`ui/wildMate.js`)
 ✅ Event handlers wired up (`main.js`)
 ✅ CSS styles added (`breeding-game.css`)
+✅ Translation strings added for all five languages (v1.4.0)
 
 ### Still Open:
-- ⏳ Translation strings not added (Wild Mate UI is English-only)
 - ⏳ Testing checklist above not formally run
 - ⏳ Detailed mate view (TODO in `main.js`)
 
@@ -568,7 +569,7 @@ public/js/
 ### Before Deploying Phase 2:
 - ✅ UI components implemented
 - ✅ CSS styles added
-- ⏳ Translations complete (all languages)
+- ✅ Translations complete (all languages)
 - ⏳ Manual testing performed
 - ⏳ Browser compatibility tested
 - ⏳ Mobile responsiveness verified
@@ -578,7 +579,7 @@ public/js/
 ## 📝 Summary
 
 **Phase 1 (Backend) Status**: ✅ **COMPLETE**
-**Phase 2 (UI) Status**: ✅ **COMPLETE** (English-only)
+**Phase 2 (UI) Status**: ✅ **COMPLETE**
 
 All core systems are implemented and functional:
 - Performance genes (98 genes per parrot)
@@ -588,7 +589,7 @@ All core systems are implemented and functional:
 - Mate generation algorithms
 - Persistence and storage
 
-**Next Steps**: Add Wild Mate translation keys for all five languages, run the testing checklist, and pick from the Phase 3 enhancements.
+**Next Steps**: Run the testing checklist and pick from the Phase 3 enhancements.
 
 The system is designed to be:
 - **Educational**: Teaches genetics through gameplay

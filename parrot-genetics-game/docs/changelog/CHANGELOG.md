@@ -8,28 +8,30 @@
 
 | Version | Date | Summary | Details |
 |---------|------|---------|---------|
-| Unreleased | Nov 2025 | Localization (5 languages), Wild Mate system, RYB color explorer | See below |
+| v1.4 | Nov 2025 - Oct 2026 | Localization (5 languages), Wild Mate system, RYB color explorer | See below |
 | v1.3 | Nov 2025 | Splash-screen version, mobile responsive layout | See below |
 | v1.2 | Nov 2025 | Card color palettes, Gallery, Color Lab | See below |
-| v1.1 | Nov 2025 | Architecture refactoring, Alpine.js integration | [v1.1 Details](v1.1.md) |
-| v1.0 | Nov 2025 | Initial feature set with UI improvements | [v1.0 Details](v1.0.md) |
+| v1.1 | Nov 2025 | Architecture refactoring, Alpine.js integration | [v1.1 Details](#v11---architecture-improvements) |
+| v1.0 | Nov 2025 | Initial feature set with UI improvements | [v1.0 Details](#v10---initial-release) |
 
-**Current in-game version**: `v1.3.3` (set by `VERSION` in `public/breeding-game-modular.html`). The Unreleased changes are live on `main` but have not had a version bump yet.
+**Current in-game version**: `v1.4.0` (set by `VERSION` in `public/breeding-game-modular.html`).
 
 ## Quick Reference
 
-### Unreleased - Localization & Wild Mate
+### v1.4 - Localization & Wild Mate
 **Focus**: Reaching more players and adding a conservation loop
 
 **Key Changes**:
 - Localization system (`lib/i18n.js`) with English, Spanish, French, Russian and Ukrainian, a flag-based language selector on the splash screen, and a reactive Alpine `i18n` store (see `LOCALIZATION_IMPLEMENTATION.md` and `public/locales/TRANSLATION_GUIDE.md`)
-- Wild Mate system: release parrots to a wild gene pool for conservation credits, then search the pool for a wild mate. Adds performance genes (agility, stamina, speed, etc.) and migrates old saves. Its UI text is English-only for now (see `WILD_MATE_IMPLEMENTATION.md`)
+- Wild Mate system: release parrots to a wild gene pool for conservation credits, then search the pool for a wild mate. Adds performance genes (agility, stamina, speed, etc.) and migrates old saves (see `WILD_MATE_IMPLEMENTATION.md`)
 - Costs and coin values moved into a central economy module (`lib/economy.js`)
 - Predictions panel converted to a reactive Alpine.js component
 - RYB color wheel beauty design doc (`docs/BEAUTY_SYSTEM_COLOR_WHEEL.md`). It drives the Gallery showcase but not the beauty score yet
 - Standalone RYB color explorer page (`public/ryb-color-explorer.html`)
+- Wild Mate tab, credits badge, dashboard, modal and toasts translated into all five languages; missing `beauty.label` / `beauty.gradient` translations added
+- Fixed changelog links that pointed to `v1.0.md` / `v1.1.md`, which never existed
 
-**Status**: Live on `main`, no version bump yet
+**Status**: Current version (v1.4.0)
 
 ### v1.3 - Splash Version & Mobile
 **Focus**: Release hygiene and phone-sized screens
@@ -39,7 +41,7 @@
 - Mobile responsive layout: icon-only tabs and action buttons on portrait screens, smaller breeding slots with directional indicators, hidden Selected Parrot panel on portrait (v1.3.1)
 - iPhone spacing fixes and smaller color squares and cards on mobile (v1.3.1 - v1.3.3)
 
-**Status**: Current version (v1.3.3)
+**Status**: Superseded by v1.4
 
 ### v1.2 - Color Exploration
 **Focus**: Seeing and experimenting with color
@@ -113,7 +115,7 @@
 ## Version History
 
 ### 2025-11 (later)
-- Unreleased: Localization, Wild Mate system, RYB color explorer
+- v1.4.0: Localization, Wild Mate system, RYB color explorer, Wild Mate translations
 - v1.3.3: Smaller color squares and card width on mobile
 - v1.3.1: Mobile responsive layout, iPhone color palette spacing fixes
 - v1.3.0: Version on splash screen
