@@ -5,6 +5,7 @@
 
 import { Parrot } from '../core/parrot.js';
 import { generateParrotSVG } from '../lib/svg.js';
+import * as i18n from '../lib/i18n.js';
 
 /**
  * RYB Color Wheel - Artist's traditional color wheel
@@ -33,12 +34,14 @@ const RYB_COLOR_WHEEL = {
 /**
  * Gallery parrot definitions with RYB-based color schemes
  * Each parrot has a theme name based on their color palette
+ * Names and themes use i18n translation keys
  */
 const GALLERY_PARROTS = [
     {
         id: 'gallery-sunset',
-        name: '🌅 Sunset Serenade',
-        theme: 'Warm sunset gradient',
+        emoji: '🌅',
+        nameKey: 'galleryParrots.sunsetSerenade',
+        themeKey: 'galleryParrots.sunsetSerenadeTheme',
         colors: {
             wings: 'orange',
             special_wing: 'vermilion',
@@ -51,8 +54,9 @@ const GALLERY_PARROTS = [
     },
     {
         id: 'gallery-ocean',
-        name: '🌊 Ocean Depths',
-        theme: 'Cool ocean blues',
+        emoji: '🌊',
+        nameKey: 'galleryParrots.oceanDepths',
+        themeKey: 'galleryParrots.oceanDepthsTheme',
         colors: {
             wings: 'teal',
             special_wing: 'blue',
@@ -65,8 +69,9 @@ const GALLERY_PARROTS = [
     },
     {
         id: 'gallery-forest',
-        name: '🌲 Forest Canopy',
-        theme: 'Lush forest greens',
+        emoji: '🌲',
+        nameKey: 'galleryParrots.forestCanopy',
+        themeKey: 'galleryParrots.forestCanopyTheme',
         colors: {
             wings: 'chartreuse',
             special_wing: 'green',
@@ -79,8 +84,9 @@ const GALLERY_PARROTS = [
     },
     {
         id: 'gallery-royal',
-        name: '👑 Royal Majesty',
-        theme: 'Regal purples and violets',
+        emoji: '👑',
+        nameKey: 'galleryParrots.royalMajesty',
+        themeKey: 'galleryParrots.royalMajestyTheme',
         colors: {
             wings: 'violet',
             special_wing: 'indigo',
@@ -93,8 +99,9 @@ const GALLERY_PARROTS = [
     },
     {
         id: 'gallery-fire',
-        name: '🔥 Phoenix Flame',
-        theme: 'Fiery reds and oranges',
+        emoji: '🔥',
+        nameKey: 'galleryParrots.phoenixFlame',
+        themeKey: 'galleryParrots.phoenixFlameTheme',
         colors: {
             wings: 'red',
             special_wing: 'vermilion',
@@ -107,8 +114,9 @@ const GALLERY_PARROTS = [
     },
     {
         id: 'gallery-sunshine',
-        name: '☀️ Golden Sunshine',
-        theme: 'Bright yellows and golds',
+        emoji: '☀️',
+        nameKey: 'galleryParrots.goldenSunshine',
+        themeKey: 'galleryParrots.goldenSunshineTheme',
         colors: {
             wings: 'yellow',
             special_wing: 'amber',
@@ -121,8 +129,9 @@ const GALLERY_PARROTS = [
     },
     {
         id: 'gallery-twilight',
-        name: '🌆 Twilight Dreams',
-        theme: 'Magical purple-orange contrast',
+        emoji: '🌆',
+        nameKey: 'galleryParrots.twilightDreams',
+        themeKey: 'galleryParrots.twilightDreamsTheme',
         colors: {
             wings: 'violet',
             special_wing: 'magenta',
@@ -135,8 +144,9 @@ const GALLERY_PARROTS = [
     },
     {
         id: 'gallery-spring',
-        name: '🌸 Spring Blossom',
-        theme: 'Soft magenta and chartreuse',
+        emoji: '🌸',
+        nameKey: 'galleryParrots.springBlossom',
+        themeKey: 'galleryParrots.springBlossomTheme',
         colors: {
             wings: 'magenta',
             special_wing: 'vermilion',
@@ -149,8 +159,9 @@ const GALLERY_PARROTS = [
     },
     {
         id: 'gallery-aurora',
-        name: '✨ Aurora Borealis',
-        theme: 'Northern lights spectrum',
+        emoji: '✨',
+        nameKey: 'galleryParrots.auroraBorealis',
+        themeKey: 'galleryParrots.auroraBorealisTheme',
         colors: {
             wings: 'teal',
             special_wing: 'green',
@@ -163,8 +174,9 @@ const GALLERY_PARROTS = [
     },
     {
         id: 'gallery-ruby',
-        name: '💎 Ruby Radiance',
-        theme: 'Deep crimson reds',
+        emoji: '💎',
+        nameKey: 'galleryParrots.rubyRadiance',
+        themeKey: 'galleryParrots.rubyRadianceTheme',
         colors: {
             wings: 'red',
             special_wing: 'vermilion',
@@ -177,8 +189,9 @@ const GALLERY_PARROTS = [
     },
     {
         id: 'gallery-emerald',
-        name: '💚 Emerald Garden',
-        theme: 'Rich emerald greens',
+        emoji: '💚',
+        nameKey: 'galleryParrots.emeraldGarden',
+        themeKey: 'galleryParrots.emeraldGardenTheme',
         colors: {
             wings: 'green',
             special_wing: 'teal',
@@ -191,8 +204,9 @@ const GALLERY_PARROTS = [
     },
     {
         id: 'gallery-sapphire',
-        name: '💙 Sapphire Sky',
-        theme: 'Deep sapphire blues',
+        emoji: '💙',
+        nameKey: 'galleryParrots.sapphireSky',
+        themeKey: 'galleryParrots.sapphireSkyTheme',
         colors: {
             wings: 'blue',
             special_wing: 'indigo',
@@ -243,6 +257,17 @@ function createGenesFromRgb(rgb) {
 }
 
 /**
+ * Translated display name of a gallery parrot (emoji + name)
+ * @param {Object} source - Gallery definition or parrot with emoji and name key
+ */
+function galleryParrotName(source) {
+    const emoji = source.emoji ?? source.galleryEmoji;
+    const nameKey = source.nameKey ?? source.galleryNameKey;
+    // Before translations load, fall back to the key (the template translates later)
+    return `${emoji} ${i18n.isReady() ? i18n.t(nameKey) : nameKey}`;
+}
+
+/**
  * Generate gallery parrot from definition
  */
 function createGalleryParrot(definition) {
@@ -264,10 +289,12 @@ function createGalleryParrot(definition) {
         }
     });
 
-    // Create parrot with these genes
-    // Constructor signature: (name, genes, generation = 1, id = null)
-    const parrot = new Parrot(definition.name, genes, 1, definition.id);
-    parrot.galleryTheme = definition.theme;
+    // Keep the translation keys: this runs before translations finish loading,
+    // so the gallery template translates name and theme at display time
+    const parrot = new Parrot(galleryParrotName(definition), genes, 1, definition.id);
+    parrot.galleryEmoji = definition.emoji;
+    parrot.galleryNameKey = definition.nameKey;
+    parrot.galleryThemeKey = definition.themeKey;
 
     return parrot;
 }
@@ -386,7 +413,7 @@ export function createGalleryComponent() {
                 console.log('[GALLERY] Dispatching load-parrot event');
                 const event = new CustomEvent('load-parrot', {
                     detail: {
-                        name: parrot.name,
+                        name: parrot.galleryNameKey ? galleryParrotName(parrot) : parrot.name,
                         genes: parrot.genes
                     }
                 });

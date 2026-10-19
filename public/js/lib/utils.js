@@ -3,14 +3,19 @@
  * General utility and helper functions
  */
 
-import { PARROT_NAMES } from './constants.js';
 import { getUsedNames, addUsedName, clearUsedNames } from '../core/gameState.js';
+import { getNamePool } from './i18n.js';
+import { PARROT_NAMES as DEFAULT_PARROT_NAMES } from './constants.js';
 
 /**
  * Get a random unused parrot name
+ * Uses language-specific name pool from i18n system
  * @returns {string} A random parrot name
  */
 export function getRandomName() {
+    const namePool = getNamePool();
+    // Name files not loaded (offline, failed fetch, tests): use the built-in English list
+    const PARROT_NAMES = namePool.length > 0 ? namePool : DEFAULT_PARROT_NAMES;
     const usedNames = getUsedNames();
     const availableNames = PARROT_NAMES.filter(name => !usedNames.has(name));
 

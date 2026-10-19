@@ -20,6 +20,18 @@
 3. **Edge case testing**: What happens in unusual situations?
 4. **Persistence testing**: Does it survive page reload?
 
+## Automated Tests
+
+Run from the repository root with Node.js (no dependencies to install):
+
+```bash
+npm test                 # all suites
+npm run test:genetics    # genetics only
+npm run test:gameloop    # game loop only
+```
+
+The tests in `test/` import the real game modules from `public/js/` (genetics, parrot, game state, economy constants) with browser APIs mocked, so they run without a browser in well under a second. They cover allele inheritance, Mendelian ratios, mutations, performance-gene inheritance, color/beauty/value ranges, and simulated breed/sell/examine loops. They do **not** cover UI, contests, Wild Mate, i18n or save/load: use the manual checklist below for those.
+
 ## Manual Testing Checklist
 
 ### Core Game Loop
