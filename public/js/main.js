@@ -471,7 +471,7 @@ window.changeLanguageHandler = (langCode) => {
 
 // Alpine component registration is handled in breeding-game-modular.html
 // Component is exported from ui/breedingSlots.js and registered via alpine:init event
-console.log('v1.3.1 - main.js loaded');
+console.log(`${window.CHROMAWING_VERSION || 'unknown'} - main.js loaded`);
 
 // ===== INITIALIZATION =====
 
@@ -594,6 +594,13 @@ window.addEventListener('load', async () => {
         if (autoExamLabel) autoExamLabel.textContent = I18n.t('common.autoExam');
     }
 
+    // Conservation Credits
+    const creditsLabel = document.getElementById('creditsLabel');
+    if (creditsLabel) {
+        creditsLabel.textContent = I18n.t('common.credits');
+        creditsLabel.closest('.stat-badge').title = I18n.t('wildMate.creditsTooltip');
+    }
+
     // Translate tab labels
     const tabs = document.querySelectorAll('.tab');
     if (tabs.length >= 6) {
@@ -614,6 +621,10 @@ window.addEventListener('load', async () => {
 
         const tab5Labels = tabs[5].querySelectorAll('.tab-label');
         if (tab5Labels[0]) tab5Labels[0].textContent = I18n.t('tabs.colorLab');
+    }
+    if (tabs.length >= 7) {
+        const tab6Labels = tabs[6].querySelectorAll('.tab-label');
+        if (tab6Labels[0]) tab6Labels[0].textContent = I18n.t('tabs.wildMate');
     }
 
     // Translate panel titles and hints

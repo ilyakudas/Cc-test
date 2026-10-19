@@ -65,6 +65,10 @@
     "notifications": {
       "value": "Notificaciones",
       "_context": "Notification history panel header. Max length: 25 chars."
+    },
+    "credits": {
+      "value": "Créditos",
+      "_context": "Conservation credits currency. Displayed in header stats. Max length: 15 chars."
     }
   },
   "splash": {
@@ -155,6 +159,10 @@
     "colorLab": {
       "value": "Lab de Color",
       "_context": "Tab name for gene editor. Max length: 15 chars."
+    },
+    "wildMate": {
+      "value": "Vida salvaje",
+      "_context": "Tab name for the Wild Mate system (releasing parrots and finding wild mates). Max length: 15 chars."
     }
   },
   "panel": {
@@ -365,6 +373,14 @@
     "score": {
       "value": "Belleza",
       "_context": "Label for beauty score. Max length: 15 chars."
+    },
+    "label": {
+      "value": "Belleza",
+      "_context": "Label for beauty score display. Max length: 15 chars."
+    },
+    "gradient": {
+      "value": "Degradado",
+      "_context": "Label for gradient toggle in color lab. Max length: 15 chars."
     },
     "traits": {
       "value": "Tiene degradados",
@@ -849,6 +865,151 @@
     "activeGenes": {
       "value": "Genes Activos",
       "_context": "Stat label for active gene count. Max length: 20 chars."
+    }
+  },
+  "wildMate": {
+    "panelTitle": {
+      "value": "Búsqueda de pareja salvaje",
+      "_context": "Panel title for the Wild Mate tab. Max length: 30 chars."
+    },
+    "creditsTooltip": {
+      "value": "Créditos de conservación: se ganan liberando loros",
+      "_context": "Tooltip on the Conservation Credits stat badge."
+    },
+    "poolStatus": {
+      "value": "Estado del acervo genético salvaje",
+      "_context": "Heading of the gene pool dashboard. Max length: 35 chars."
+    },
+    "poolEmpty": {
+      "value": "Aún no has liberado ningún loro. ¡Libera loros para formar el acervo genético y ganar créditos 🌿!",
+      "_context": "Shown when no parrots have been released yet. Keep the 🌿 emoji."
+    },
+    "statPool": {
+      "value": "Acervo",
+      "_context": "Dashboard label for gene pool quality. Max length: 12 chars."
+    },
+    "statDiversity": {
+      "value": "Diversidad",
+      "_context": "Dashboard label for gene pool diversity. Max length: 15 chars."
+    },
+    "statReleased": {
+      "value": "Liberados",
+      "_context": "Dashboard label for number of released parrots. Max length: 15 chars."
+    },
+    "releasedCount": {
+      "value": "{count} loros",
+      "_context": "Number of released parrots on the dashboard. {count} is a number."
+    },
+    "noParrots": {
+      "value": "No tienes loros en tu colección",
+      "_context": "Empty state when the collection has no parrots."
+    },
+    "selectParrotHint": {
+      "value": "Selecciona un loro para ver las acciones disponibles",
+      "_context": "Hint shown when no parrot is selected."
+    },
+    "lockedCannotRelease": {
+      "value": "Bloqueado: no se puede liberar",
+      "_context": "Disabled button label for a locked parrot. Max length: 30 chars."
+    },
+    "unlockToRelease": {
+      "value": "Desbloquea el loro para liberarlo",
+      "_context": "Tooltip on the disabled release button."
+    },
+    "releaseToWild": {
+      "value": "Liberar en la naturaleza",
+      "_context": "Button to release the parrot into the wild gene pool. Max length: 25 chars."
+    },
+    "mateAlreadyFound": {
+      "value": "Ya encontró pareja salvaje",
+      "_context": "Disabled button label when the parrot already found a wild mate. Max length: 30 chars."
+    },
+    "mateAlreadyFoundTooltip": {
+      "value": "Este loro ya encontró una pareja salvaje",
+      "_context": "Tooltip on the disabled find-mate button."
+    },
+    "findMatePoolEmpty": {
+      "value": "Buscar pareja (acervo vacío)",
+      "_context": "Disabled find-mate button when the gene pool is empty. Max length: 35 chars."
+    },
+    "findMatePoolEmptyTooltip": {
+      "value": "Primero libera loros para formar el acervo genético",
+      "_context": "Tooltip on the disabled find-mate button."
+    },
+    "findMate": {
+      "value": "Buscar pareja salvaje ({cost} 🌿)",
+      "_context": "Button to search for a wild mate. {cost} is a number of credits. Max length: 35 chars."
+    },
+    "findMateTooltip": {
+      "value": "Buscar una pareja salvaje ({cost} 🌿)",
+      "_context": "Tooltip on the find-mate button. {cost} is a number of credits."
+    },
+    "needCredits": {
+      "value": "Necesitas {cost} créditos 🌿",
+      "_context": "Tooltip when the player cannot afford the search. {cost} is a number."
+    },
+    "matesFoundTitle": {
+      "value": "¡Parejas salvajes encontradas!",
+      "_context": "Heading of the mate selection modal. Max length: 30 chars."
+    },
+    "matesFoundSubtitle": {
+      "value": "Se encontraron {count} posibles parejas para {name}",
+      "_context": "Subtitle of the mate selection modal. {count} is a number, {name} is the parrot name."
+    },
+    "cancelRefund": {
+      "value": "Cancelar (reembolso 50%)",
+      "_context": "Button to cancel the search with a half refund. Max length: 30 chars."
+    },
+    "selectMate": {
+      "value": "Elegir esta pareja",
+      "_context": "Button under each mate card in the modal. Max length: 25 chars."
+    },
+    "toasts": {
+      "parrotNotFound": {
+        "title": "Error",
+        "message": "Loro no encontrado",
+        "_context": "Error when the parrot no longer exists."
+      },
+      "releaseLocked": {
+        "title": "{name} está bloqueado",
+        "message": "Desbloquea este loro antes de liberarlo en la naturaleza",
+        "_context": "Error when trying to release a locked parrot. {name} is replaced."
+      },
+      "released": {
+        "title": "¡{name} vuelve a la naturaleza!",
+        "message": "Ganaste {credits} créditos de conservación 🌿. Los genes de este loro {rarity} fortalecerán la población salvaje.",
+        "_context": "Success after releasing a parrot. {name}, {credits} and {rarity} (translated rarity) are replaced."
+      },
+      "alreadyFoundMate": {
+        "title": "{name} ya encontró pareja",
+        "message": "Cada loro solo puede encontrar UNA pareja salvaje en su vida",
+        "_context": "Error when the parrot already found its one wild mate. {name} is replaced."
+      },
+      "poolEmpty": {
+        "title": "Acervo genético vacío",
+        "message": "Primero libera algunos loros para formar el acervo genético",
+        "_context": "Error when searching with an empty gene pool."
+      },
+      "notEnoughCredits": {
+        "title": "Créditos insuficientes",
+        "message": "Necesitas {cost} 🌿 pero solo tienes {credits} 🌿. Libera más loros para ganar créditos.",
+        "_context": "Error when the player cannot afford the search. {cost} and {credits} are numbers."
+      },
+      "matesFound": {
+        "title": "¡{name} encontró parejas salvajes!",
+        "message": "{count} posibles parejas encontradas. Calidad del acervo: {stars}",
+        "_context": "Success after a mate search. {name}, {count} and {stars} (star emojis) are replaced."
+      },
+      "offspringBorn": {
+        "title": "¡{name} nació de una pareja salvaje!",
+        "message": "¡{parent} × {mate} = loro {rarity}!",
+        "_context": "Success after breeding with a wild mate. {name}, {parent}, {mate} and {rarity} (translated rarity) are replaced."
+      },
+      "searchCancelled": {
+        "title": "Búsqueda cancelada",
+        "message": "Se reembolsaron {refund} créditos de conservación 🌿 (50%)",
+        "_context": "Info after cancelling a mate search. {refund} is a number."
+      }
     }
   },
   "toasts": {

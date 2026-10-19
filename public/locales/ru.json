@@ -65,6 +65,10 @@
     "notifications": {
       "value": "Уведомления",
       "_context": "Notification history panel header. Max length: 25 chars."
+    },
+    "credits": {
+      "value": "Кредиты",
+      "_context": "Conservation credits currency. Displayed in header stats. Max length: 15 chars."
     }
   },
   "splash": {
@@ -155,6 +159,10 @@
     "colorLab": {
       "value": "Цветолаб",
       "_context": "Tab name for gene editor. Max length: 15 chars."
+    },
+    "wildMate": {
+      "value": "Дикая природа",
+      "_context": "Tab name for the Wild Mate system (releasing parrots and finding wild mates). Max length: 15 chars."
     }
   },
   "panel": {
@@ -365,6 +373,14 @@
     "score": {
       "value": "Красота",
       "_context": "Label for beauty score. Max length: 15 chars."
+    },
+    "label": {
+      "value": "Красота",
+      "_context": "Label for beauty score display. Max length: 15 chars."
+    },
+    "gradient": {
+      "value": "Градиент",
+      "_context": "Label for gradient toggle in color lab. Max length: 15 chars."
     },
     "traits": {
       "value": "Есть градиенты",
@@ -849,6 +865,151 @@
     "activeGenes": {
       "value": "Активных генов",
       "_context": "Stat label for active gene count. Max length: 20 chars."
+    }
+  },
+  "wildMate": {
+    "panelTitle": {
+      "value": "Поиск дикой пары",
+      "_context": "Panel title for the Wild Mate tab. Max length: 30 chars."
+    },
+    "creditsTooltip": {
+      "value": "Кредиты охраны природы — даются за выпуск попугаев на волю",
+      "_context": "Tooltip on the Conservation Credits stat badge."
+    },
+    "poolStatus": {
+      "value": "Состояние дикого генофонда",
+      "_context": "Heading of the gene pool dashboard. Max length: 35 chars."
+    },
+    "poolEmpty": {
+      "value": "Ты ещё не отпустил ни одного попугая. Отпускай попугаев на волю, чтобы пополнить генофонд и заработать кредиты 🌿!",
+      "_context": "Shown when no parrots have been released yet. Keep the 🌿 emoji."
+    },
+    "statPool": {
+      "value": "Генофонд",
+      "_context": "Dashboard label for gene pool quality. Max length: 12 chars."
+    },
+    "statDiversity": {
+      "value": "Разнообразие",
+      "_context": "Dashboard label for gene pool diversity. Max length: 15 chars."
+    },
+    "statReleased": {
+      "value": "Отпущено",
+      "_context": "Dashboard label for number of released parrots. Max length: 15 chars."
+    },
+    "releasedCount": {
+      "value": "{count} шт.",
+      "_context": "Number of released parrots on the dashboard. {count} is a number."
+    },
+    "noParrots": {
+      "value": "В твоей коллекции нет попугаев",
+      "_context": "Empty state when the collection has no parrots."
+    },
+    "selectParrotHint": {
+      "value": "Выбери попугая, чтобы увидеть доступные действия",
+      "_context": "Hint shown when no parrot is selected."
+    },
+    "lockedCannotRelease": {
+      "value": "Закреплён — нельзя отпустить",
+      "_context": "Disabled button label for a locked parrot. Max length: 30 chars."
+    },
+    "unlockToRelease": {
+      "value": "Открепи попугая, чтобы отпустить его",
+      "_context": "Tooltip on the disabled release button."
+    },
+    "releaseToWild": {
+      "value": "Отпустить на волю",
+      "_context": "Button to release the parrot into the wild gene pool. Max length: 25 chars."
+    },
+    "mateAlreadyFound": {
+      "value": "Дикая пара уже найдена",
+      "_context": "Disabled button label when the parrot already found a wild mate. Max length: 30 chars."
+    },
+    "mateAlreadyFoundTooltip": {
+      "value": "Этот попугай уже нашёл дикую пару",
+      "_context": "Tooltip on the disabled find-mate button."
+    },
+    "findMatePoolEmpty": {
+      "value": "Найти пару (генофонд пуст)",
+      "_context": "Disabled find-mate button when the gene pool is empty. Max length: 35 chars."
+    },
+    "findMatePoolEmptyTooltip": {
+      "value": "Сначала отпусти попугаев, чтобы пополнить генофонд",
+      "_context": "Tooltip on the disabled find-mate button."
+    },
+    "findMate": {
+      "value": "Найти дикую пару ({cost} 🌿)",
+      "_context": "Button to search for a wild mate. {cost} is a number of credits. Max length: 35 chars."
+    },
+    "findMateTooltip": {
+      "value": "Искать дикую пару ({cost} 🌿)",
+      "_context": "Tooltip on the find-mate button. {cost} is a number of credits."
+    },
+    "needCredits": {
+      "value": "Нужно {cost} 🌿 кредитов",
+      "_context": "Tooltip when the player cannot afford the search. {cost} is a number."
+    },
+    "matesFoundTitle": {
+      "value": "Дикие пары найдены!",
+      "_context": "Heading of the mate selection modal. Max length: 30 chars."
+    },
+    "matesFoundSubtitle": {
+      "value": "Найдено пар для {name}: {count}",
+      "_context": "Subtitle of the mate selection modal. {count} is a number, {name} is the parrot name."
+    },
+    "cancelRefund": {
+      "value": "Отмена (возврат 50%)",
+      "_context": "Button to cancel the search with a half refund. Max length: 30 chars."
+    },
+    "selectMate": {
+      "value": "Выбрать эту пару",
+      "_context": "Button under each mate card in the modal. Max length: 25 chars."
+    },
+    "toasts": {
+      "parrotNotFound": {
+        "title": "Ошибка",
+        "message": "Попугай не найден",
+        "_context": "Error when the parrot no longer exists."
+      },
+      "releaseLocked": {
+        "title": "{name} закреплён",
+        "message": "Открепи попугая, прежде чем отпускать его на волю",
+        "_context": "Error when trying to release a locked parrot. {name} is replaced."
+      },
+      "released": {
+        "title": "{name} на воле!",
+        "message": "Получено {credits} 🌿 кредитов охраны природы. Гены этого попугая ({rarity}) укрепят дикую популяцию.",
+        "_context": "Success after releasing a parrot. {name}, {credits} and {rarity} (translated rarity) are replaced."
+      },
+      "alreadyFoundMate": {
+        "title": "{name} уже нашёл пару",
+        "message": "Каждый попугай может найти только ОДНУ дикую пару за всю жизнь",
+        "_context": "Error when the parrot already found its one wild mate. {name} is replaced."
+      },
+      "poolEmpty": {
+        "title": "Дикий генофонд пуст",
+        "message": "Сначала отпусти несколько попугаев на волю, чтобы пополнить генофонд",
+        "_context": "Error when searching with an empty gene pool."
+      },
+      "notEnoughCredits": {
+        "title": "Недостаточно кредитов",
+        "message": "Нужно {cost} 🌿, а у тебя только {credits} 🌿. Отпускай больше попугаев, чтобы заработать кредиты.",
+        "_context": "Error when the player cannot afford the search. {cost} and {credits} are numbers."
+      },
+      "matesFound": {
+        "title": "{name} нашёл дикие пары!",
+        "message": "Найдено пар: {count}. Качество генофонда: {stars}",
+        "_context": "Success after a mate search. {name}, {count} and {stars} (star emojis) are replaced."
+      },
+      "offspringBorn": {
+        "title": "{name} родился от дикой пары!",
+        "message": "{parent} × {mate} = {rarity} птенец!",
+        "_context": "Success after breeding with a wild mate. {name}, {parent}, {mate} and {rarity} (translated rarity) are replaced."
+      },
+      "searchCancelled": {
+        "title": "Поиск отменён",
+        "message": "Возвращено {refund} 🌿 кредитов охраны природы (50%)",
+        "_context": "Info after cancelling a mate search. {refund} is a number."
+      }
     }
   },
   "toasts": {

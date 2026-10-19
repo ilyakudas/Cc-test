@@ -7,6 +7,7 @@ import * as GameState from '../core/gameState.js';
 import { Parrot } from '../core/parrot.js';
 import { generateParrotSVG } from '../lib/svg.js';
 import { getGenePoolStats, calculateSearchCost } from '../actions/wildMate.js';
+import { t } from '../lib/i18n.js';
 import {
     calculatePoolQuality,
     calculatePoolDiversity,
@@ -26,7 +27,7 @@ export async function renderWildMateTab() {
         <div class="wild-mate-container">
             <!-- Gene Pool Dashboard -->
             <div class="gene-pool-dashboard">
-                <h4>📊 Wild Gene Pool Status</h4>
+                <h4>📊 ${t('wildMate.poolStatus')}</h4>
                 ${renderGenePoolDashboard(stats)}
             </div>
 
@@ -54,7 +55,7 @@ function renderGenePoolDashboard(stats) {
     if (!stats.exists) {
         return `
             <div class="pool-summary" style="color: #718096; font-style: italic;">
-                No parrots released yet. Release parrots to build the gene pool and earn 🌿 credits!
+                ${t('wildMate.poolEmpty')}
             </div>
         `;
     }
@@ -65,13 +66,13 @@ function renderGenePoolDashboard(stats) {
     return `
         <div class="gene-pool-stats-compact">
             <div class="pool-summary">
-                <strong>Pool:</strong> ${'⭐'.repeat(stats.qualityStars)} ${(stats.quality * 100).toFixed(0)}%
+                <strong>${t('wildMate.statPool')}:</strong> ${'⭐'.repeat(stats.qualityStars)} ${(stats.quality * 100).toFixed(0)}%
                 <span class="stat-divider">•</span>
-                <strong>Diversity:</strong> ${stats.diversityPercent}%
+                <strong>${t('wildMate.statDiversity')}:</strong> ${stats.diversityPercent}%
                 <span class="stat-divider">•</span>
-                <strong>Released:</strong> ${stats.releasesCount} parrots
+                <strong>${t('wildMate.statReleased')}:</strong> ${t('wildMate.releasedCount', { count: stats.releasesCount })}
                 <span class="stat-divider">•</span>
-                <strong>Credits:</strong> ${GameState.getConservationCredits()} 🌿
+                <strong>${t('common.credits')}:</strong> ${GameState.getConservationCredits()} 🌿
             </div>
         </div>
     `;
@@ -87,7 +88,7 @@ async function renderWildMateParrotGrid() {
     const parrots = GameState.getParrots();
 
     if (parrots.length === 0) {
-        grid.innerHTML = '<div class="empty-state"><p>No parrots in your collection</p></div>';
+        grid.innerHTML = `<div class="empty-state"><p>${t('wildMate.noParrots')}</p></div>`;
         return;
     }
 
@@ -113,7 +114,7 @@ export function updateWildMateActions() {
 
     const selectedParrotId = GameState.getSelectedParrotId();
     if (!selectedParrotId) {
-        actionsDiv.innerHTML = '<p style="color: #666; text-align: center; padding: 12px;">Select a parrot to see available actions</p>';
+        actionsDiv.innerHTML = `<p style="color: #666; text-align: center; padding: 12px;">${t('wildMate.selectParrotHint')}</p>`;
         return;
     }
 
@@ -138,14 +139,14 @@ export function updateWildMateActions() {
     // Release button
     if (isLocked) {
         html += `
-            <button class="btn" disabled title="Unlock parrot to release">
-                🔒 Locked - Cannot Release
+            <button class="btn" disabled title="${t('wildMate.unlockToRelease')}">
+                🔒 ${t('wildMate.lockedCannotRelease')}
             </button>
         `;
     } else {
         html += `
             <button class="btn btn-free" onclick="releaseParrotHandler(${parrot.id})">
-                🌿 Release to Wild
+                🌿 ${t('wildMate.releaseToWild')}
             </button>
         `;
     }
@@ -153,14 +154,14 @@ export function updateWildMateActions() {
     // Find mate button
     if (hasFoundMate) {
         html += `
-            <button class="btn" disabled title="This parrot has already found a wild mate">
-                ✓ Wild Mate Already Found
+            <button class="btn" disabled title="${t('wildMate.mateAlreadyFoundTooltip')}">
+                ✓ ${t('wildMate.mateAlreadyFound')}
             </button>
         `;
     } else if (!stats.exists) {
         html += `
-            <button class="btn" disabled title="Release parrots first to build gene pool">
-                🔍 Find Wild Mate (Pool Empty)
+            <button class="btn" disabled title="${t('wildMate.findMatePoolEmptyTooltip')}">
+                🔍 ${t('wildMate.findMatePoolEmpty')}
             </button>
         `;
     } else {
@@ -169,8 +170,8 @@ export function updateWildMateActions() {
             <button class="btn btn-breed"
                     onclick="findWildMateHandler(${parrot.id})"
                     ${canAfford ? '' : 'disabled'}
-                    title="${canAfford ? `Search for wild mate (${searchCost} 🌿)` : `Need ${searchCost} 🌿 credits`}">
-                🔍 Find Wild Mate (${searchCost} 🌿)
+                    title="${canAfford ? t('wildMate.findMateTooltip', { cost: searchCost }) : t('wildMate.needCredits', { cost: searchCost })}">
+                🔍 ${t('wildMate.findMate', { cost: searchCost })}
             </button>
         `;
     }
@@ -199,12 +200,12 @@ export async function showMateSelectionModal(searchingParrot, mates, searchCost)
     modalContent.innerHTML = `
         <span class="modal-close" onclick="closeMateModalHandler()">&times;</span>
         <div class="mate-selection-container">
-            <h2>🔍 Wild Mates Found!</h2>
-            <p>Found ${mates.length} potential mates for <strong>${searchingParrot.name}</strong></p>
+            <h2>🔍 ${t('wildMate.matesFoundTitle')}</h2>
+            <p>${t('wildMate.matesFoundSubtitle', { count: mates.length, name: `<strong>${searchingParrot.name}</strong>` })}</p>
             <div class="mate-options-grid parrot-grid"></div>
             <div class="mate-modal-actions">
                 <button class="btn btn-cancel" onclick="cancelMateSearchHandler(${searchCost})">
-                    ✖ Cancel (Refund 50%)
+                    ✖ ${t('wildMate.cancelRefund')}
                 </button>
             </div>
         </div>
@@ -227,7 +228,7 @@ export async function showMateSelectionModal(searchingParrot, mates, searchCost)
         selectButton.className = 'btn btn-primary';
         selectButton.style.width = '100%';
         selectButton.style.marginTop = '8px';
-        selectButton.textContent = '✓ Select This Mate';
+        selectButton.textContent = '✓ ' + t('wildMate.selectMate');
         selectButton.onclick = () => window.selectMateHandler(searchingParrot.id, i);
 
         const cardWrapper = document.createElement('div');
