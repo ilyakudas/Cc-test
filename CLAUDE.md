@@ -214,6 +214,8 @@ All state lives in `core/gameState.js`:
 
 ### Testing Checklist
 
+**Automated**: `npm test` (genetics and game-loop tests in `test/`, runs in Node, no install needed)
+
 **Core loop**:
 - Buy parrot → works
 - Breed parrots → offspring appear
@@ -280,6 +282,6 @@ All state lives in `core/gameState.js`:
 
 ## Version
 
-**Current**: v1.4.0 (single source of truth: `VERSION` in `public/breeding-game-modular.html`)
+**Current**: v1.5.0 (single source of truth: `VERSION` in `public/breeding-game-modular.html`)
 
 **See**: `parrot-genetics-game/docs/changelog/CHANGELOG.md`

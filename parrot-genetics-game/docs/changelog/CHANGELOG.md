@@ -8,15 +8,29 @@
 
 | Version | Date | Summary | Details |
 |---------|------|---------|---------|
+| v1.5 | Oct 2026 | Translated parrot names, automated tests, RYB explorer color mixing | See below |
 | v1.4 | Nov 2025 - Oct 2026 | Localization (5 languages), Wild Mate system, RYB color explorer | See below |
 | v1.3 | Nov 2025 | Splash-screen version, mobile responsive layout | See below |
 | v1.2 | Nov 2025 | Card color palettes, Gallery, Color Lab | See below |
 | v1.1 | Nov 2025 | Architecture refactoring, Alpine.js integration | [v1.1 Details](#v11---architecture-improvements) |
 | v1.0 | Nov 2025 | Initial feature set with UI improvements | [v1.0 Details](#v10---initial-release) |
 
-**Current in-game version**: `v1.4.0` (set by `VERSION` in `public/breeding-game-modular.html`).
+**Current in-game version**: `v1.5.0` (set by `VERSION` in `public/breeding-game-modular.html`).
 
 ## Quick Reference
+
+### v1.5 - Names in Every Language & Automated Tests
+**Focus**: Finishing localization and adding a safety net
+
+**Key Changes**:
+- Random parrot names (store, offspring, wild mates) come from a name list per language (`public/locales/names/`)
+- The 12 Gallery parrots and 15 contest reward parrots have translated names and descriptions
+- Store parrots no longer repeat names, and random parrots no longer reuse the starter names
+- Automated tests: `npm test` runs genetics and game-loop tests against the real modules (`test/`)
+- RYB color explorer: Gossett-Chen paint-mixing model and a clickable grid of all 343 color combinations
+- PR preview deploys are opt-in (add the `preview` label)
+
+**Status**: Current version (v1.5.0)
 
 ### v1.4 - Localization & Wild Mate
 **Focus**: Reaching more players and adding a conservation loop
@@ -31,7 +45,7 @@
 - Wild Mate tab, credits badge, dashboard, modal and toasts translated into all five languages; missing `beauty.label` / `beauty.gradient` translations added
 - Fixed changelog links that pointed to `v1.0.md` / `v1.1.md`, which never existed
 
-**Status**: Current version (v1.4.0)
+**Status**: Superseded by v1.5
 
 ### v1.3 - Splash Version & Mobile
 **Focus**: Release hygiene and phone-sized screens
@@ -113,6 +127,9 @@
 - User-generated content
 
 ## Version History
+
+### 2026-10
+- v1.5.0: Translated parrot names, automated tests, RYB explorer color mixing, opt-in PR previews
 
 ### 2025-11 (later)
 - v1.4.0: Localization, Wild Mate system, RYB color explorer, Wild Mate translations
