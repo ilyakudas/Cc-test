@@ -8,10 +8,48 @@
 
 | Version | Date | Summary | Details |
 |---------|------|---------|---------|
-| v1.1 | Nov 2024 | Architecture refactoring, Alpine.js integration | [v1.1 Details](v1.1.md) |
-| v1.0 | Nov 2024 | Initial feature set with UI improvements | [v1.0 Details](v1.0.md) |
+| Unreleased | Nov 2025 | Localization (5 languages), Wild Mate system, RYB color explorer | See below |
+| v1.3 | Nov 2025 | Splash-screen version, mobile responsive layout | See below |
+| v1.2 | Nov 2025 | Card color palettes, Gallery, Color Lab | See below |
+| v1.1 | Nov 2025 | Architecture refactoring, Alpine.js integration | [v1.1 Details](v1.1.md) |
+| v1.0 | Nov 2025 | Initial feature set with UI improvements | [v1.0 Details](v1.0.md) |
+
+**Current in-game version**: `v1.3.3` (set by `VERSION` in `public/breeding-game-modular.html`). The Unreleased changes are live on `main` but have not had a version bump yet.
 
 ## Quick Reference
+
+### Unreleased - Localization & Wild Mate
+**Focus**: Reaching more players and adding a conservation loop
+
+**Key Changes**:
+- Localization system (`lib/i18n.js`) with English, Spanish, French, Russian and Ukrainian, a flag-based language selector on the splash screen, and a reactive Alpine `i18n` store (see `LOCALIZATION_IMPLEMENTATION.md` and `public/locales/TRANSLATION_GUIDE.md`)
+- Wild Mate system: release parrots to a wild gene pool for conservation credits, then search the pool for a wild mate. Adds performance genes (agility, stamina, speed, etc.) and migrates old saves. Its UI text is English-only for now (see `WILD_MATE_IMPLEMENTATION.md`)
+- Costs and coin values moved into a central economy module (`lib/economy.js`)
+- Predictions panel converted to a reactive Alpine.js component
+- RYB color wheel beauty design doc (`docs/BEAUTY_SYSTEM_COLOR_WHEEL.md`). It drives the Gallery showcase but not the beauty score yet
+- Standalone RYB color explorer page (`public/ryb-color-explorer.html`)
+
+**Status**: Live on `main`, no version bump yet
+
+### v1.3 - Splash Version & Mobile
+**Focus**: Release hygiene and phone-sized screens
+
+**Key Changes**:
+- Version moved to the splash screen with a single source of truth (`VERSION` constant) (v1.3.0)
+- Mobile responsive layout: icon-only tabs and action buttons on portrait screens, smaller breeding slots with directional indicators, hidden Selected Parrot panel on portrait (v1.3.1)
+- iPhone spacing fixes and smaller color squares and cards on mobile (v1.3.1 - v1.3.3)
+
+**Status**: Current version (v1.3.3)
+
+### v1.2 - Color Exploration
+**Focus**: Seeing and experimenting with color
+
+**Key Changes**:
+- Color palette on parrot cards showing each body part's color (v1.2.0)
+- Gallery tab with showcase parrots built on the RYB color wheel (v1.2.1)
+- Color Lab gene editor with gradient visualization in the resulting color (v1.2.1)
+
+**Status**: Superseded by v1.3
 
 ### v1.1 - Architecture Improvements
 **Focus**: Code organization and reactive UI
@@ -23,7 +61,7 @@
 - localStorage migration from cookies
 - Improved performance and maintainability
 
-**Status**: Current version
+**Status**: Superseded by v1.2
 
 ### v1.0 - Initial Release
 **Focus**: Core features and UI polish
@@ -74,7 +112,15 @@
 
 ## Version History
 
-### 2024-11
+### 2025-11 (later)
+- Unreleased: Localization, Wild Mate system, RYB color explorer
+- v1.3.3: Smaller color squares and card width on mobile
+- v1.3.1: Mobile responsive layout, iPhone color palette spacing fixes
+- v1.3.0: Version on splash screen
+- v1.2.1: Gallery tab and Color Lab gene editor
+- v1.2.0: Color palette on parrot cards
+
+### 2025-11 (earlier)
 - v1.1.1: Minor fixes and documentation
 - v1.1.0: Major refactoring to modular architecture
 - v1.0.5: Heart button fixes

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/claude-code) when working 
 
 ## Project Overview
 
-**ChromaWing** - A genetics-based parrot breeding simulation game built with vanilla JavaScript, Alpine.js, and SVG rendering. Players breed parrots with RGB color genetics, compete in beauty contests, and explore Mendelian inheritance through gameplay.
+**ChromaWing** - A genetics-based parrot breeding simulation game built with vanilla JavaScript, Alpine.js, and SVG rendering. Players breed parrots with RGB color genetics, compete in beauty contests, release parrots to a wild gene pool (Wild Mate system), and explore Mendelian inheritance through gameplay. The UI is available in English, Spanish, French, Russian and Ukrainian.
 
 **Live Site**: https://cc-test-e3ccf.web.app
 
@@ -53,6 +53,12 @@ Auto-deploys on push to `main` branch via GitHub Actions.
 - OFFSPRING.md - Managing bred parrots
 - VISUAL_INDICATORS.md - Badges and animations
 - SPLASH_SCREEN.md - Welcome experience
+- COLOR_LAB.md - Gene editor and color experiments
+- GALLERY.md - RYB color wheel showcase parrots
+
+**Root-level implementation docs**:
+- `WILD_MATE_IMPLEMENTATION.md` - Wild Mate system (gene pool, conservation credits, performance genes)
+- `LOCALIZATION_IMPLEMENTATION.md` - i18n system; translator guides live in `public/locales/`
 
 **System Documentation**: `parrot-genetics-game/docs/systems/`
 - GENETICS.md - Breeding mechanics
@@ -75,7 +81,9 @@ public/js/
 │   └── storage.js        # localStorage save/load
 ├── actions/               # User actions (breeding, buying, selling, etc.)
 ├── ui/                    # UI rendering (cards, grids, stats, tabs, etc.)
-└── lib/                   # Utilities (notifications, SVG, constants, etc.)
+└── lib/                   # Utilities (notifications, SVG, constants, i18n, economy, wildMate, etc.)
+
+public/locales/            # Translation files (en, es, fr, ru, uk) + translator guides
 ```
 
 ### Key Patterns
@@ -144,6 +152,12 @@ All state lives in `core/gameState.js`:
 - Import and use gameState functions
 - Never modify state variables directly
 - Call save after meaningful changes
+
+### Localization
+
+- Module: `lib/i18n.js`; strings in `public/locales/<lang>.json` (`en.json` is the source of truth)
+- Each key is `{ "value": ..., "_context": ... }`; templates use Alpine's `$t('section.key')`
+- When adding a key to `en.json`, add it to `es`, `fr`, `ru` and `uk` too (missing keys fall back to English)
 
 ### SVG Rendering
 
@@ -242,6 +256,7 @@ All state lives in `core/gameState.js`:
 - **Reactive UI**: Alpine.js v3.13.3 (lightweight, 15KB)
 - **Graphics**: SVG manipulation
 - **Storage**: localStorage
+- **Localization**: JSON locale files + `lib/i18n.js`
 - **Hosting**: Firebase Hosting (static)
 - **Deployment**: GitHub Actions (auto on main push)
 
@@ -265,6 +280,8 @@ All state lives in `core/gameState.js`:
 
 ## Version
 
-**Current**: v1.1.1
+**Current**: v1.3.3 (single source of truth: `VERSION` in `public/breeding-game-modular.html`)
+
+Localization, the Wild Mate system and the RYB color explorer are live on `main` but have not had a version bump yet.
 
 **See**: `parrot-genetics-game/docs/changelog/CHANGELOG.md`
