@@ -257,6 +257,16 @@ function createGenesFromRgb(rgb) {
 }
 
 /**
+ * Translated display name of a gallery parrot (emoji + name)
+ * @param {Object} source - Gallery definition or parrot with emoji and name key
+ */
+function galleryParrotName(source) {
+    const emoji = source.emoji ?? source.galleryEmoji;
+    const nameKey = source.nameKey ?? source.galleryNameKey;
+    return `${emoji} ${i18n.t(nameKey)}`;
+}
+
+/**
  * Generate gallery parrot from definition
  */
 function createGalleryParrot(definition) {
@@ -278,14 +288,12 @@ function createGalleryParrot(definition) {
         }
     });
 
-    // Translate name and theme using i18n
-    const translatedName = `${definition.emoji} ${i18n.t(definition.nameKey)}`;
-    const translatedTheme = i18n.t(definition.themeKey);
-
-    // Create parrot with these genes
-    // Constructor signature: (name, genes, generation = 1, id = null)
-    const parrot = new Parrot(translatedName, genes, 1, definition.id);
-    parrot.galleryTheme = translatedTheme;
+    // Keep the translation keys: this runs before translations finish loading,
+    // so the gallery template translates name and theme at display time
+    const parrot = new Parrot(galleryParrotName(definition), genes, 1, definition.id);
+    parrot.galleryEmoji = definition.emoji;
+    parrot.galleryNameKey = definition.nameKey;
+    parrot.galleryThemeKey = definition.themeKey;
 
     return parrot;
 }
@@ -404,7 +412,7 @@ export function createGalleryComponent() {
                 console.log('[GALLERY] Dispatching load-parrot event');
                 const event = new CustomEvent('load-parrot', {
                     detail: {
-                        name: parrot.name,
+                        name: parrot.galleryNameKey ? galleryParrotName(parrot) : parrot.name,
                         genes: parrot.genes
                     }
                 });

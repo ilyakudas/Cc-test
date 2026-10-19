@@ -295,8 +295,8 @@
                                             <div class="gallery-card">
                                                 <div class="gallery-parrot-display" x-html="await getParrotSVG(parrot)"></div>
                                                 <div class="gallery-card-info">
-                                                    <div class="gallery-parrot-name" x-text="parrot.name"></div>
-                                                    <div class="gallery-parrot-theme" x-text="parrot.galleryTheme"></div>
+                                                    <div class="gallery-parrot-name" x-text="parrot.galleryEmoji + ' ' + $t(parrot.galleryNameKey)"></div>
+                                                    <div class="gallery-parrot-theme" x-text="$t(parrot.galleryThemeKey)"></div>
                                                     <div class="gallery-parrot-beauty">
                                                         <span>✨</span>
                                                         <span x-text="$t('beauty.label') + ': ' + parrot.calculateBeauty().score"></span>

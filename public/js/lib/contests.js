@@ -245,8 +245,8 @@ export function showContestResults(tier, tierIndex, competitors, placement, coin
 
             // Parrot option
             html += '<div style="flex: 1; max-width: 300px; border: 2px solid #9c27b0; border-radius: 12px; padding: 20px; background: white; text-align: center;">';
-            html += `<h4 style="margin: 0 0 10px 0; color: #9c27b0;">🦜 ${t('contests.takeParrotName', { name: rareTemplate.name })}</h4>`;
-            html += `<p style="font-size: 1.2em; margin: 10px 0; font-weight: bold; color: #9c27b0;">${rareTemplate.description}</p>`;
+            html += `<h4 style="margin: 0 0 10px 0; color: #9c27b0;">🦜 ${t('contests.takeParrotName', { name: t(rareTemplate.nameKey) })}</h4>`;
+            html += `<p style="font-size: 1.2em; margin: 10px 0; font-weight: bold; color: #9c27b0;">${t(rareTemplate.descKey)}</p>`;
             if (tempRareParrot) {
                 const beauty = tempRareParrot.calculateBeauty();
                 html += `<p style="margin: 5px 0;"><strong>${t('beauty.score')}:</strong> ${beauty.score} pts</p>`;
