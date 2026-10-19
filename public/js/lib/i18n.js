@@ -8,6 +8,8 @@ let currentLang = 'en';
 let translations = {};
 let fallbackTranslations = {};
 let translationsReady = false;
+let currentNames = [];
+let fallbackNames = [];
 
 // Supported languages
 const SUPPORTED_LANGUAGES = ['en', 'es', 'fr', 'ru', 'uk'];
@@ -40,6 +42,22 @@ export async function loadTranslations(lang) {
         translations = await response.json();
         currentLang = lang;
 
+        // Load language-specific names
+        try {
+            const namesResponse = await fetch(`/locales/names/names.${lang}.json`);
+            if (namesResponse.ok) {
+                const namesData = await namesResponse.json();
+                currentNames = namesData.names || [];
+                console.log(`i18n: Loaded ${currentNames.length} names for '${lang}'`);
+            } else {
+                console.warn(`i18n: Failed to load names for '${lang}', using English names`);
+                await loadFallbackNames();
+            }
+        } catch (nameError) {
+            console.warn(`i18n: Error loading names for '${lang}', using English names`);
+            await loadFallbackNames();
+        }
+
         // Also load English as fallback if not already English
         if (lang !== 'en' && Object.keys(fallbackTranslations).length === 0) {
             try {
@@ -65,11 +83,30 @@ export async function loadTranslations(lang) {
             fallbackTranslations = translations;
             currentLang = 'en';
             translationsReady = true;
+            await loadFallbackNames();
             return true;
         } catch (fallbackError) {
             console.error('i18n: Failed to load English fallback!', fallbackError);
             return false;
         }
+    }
+}
+
+/**
+ * Load fallback (English) names
+ * @private
+ */
+async function loadFallbackNames() {
+    try {
+        const namesResponse = await fetch('/locales/names/names.en.json');
+        if (namesResponse.ok) {
+            const namesData = await namesResponse.json();
+            // Replace the pool: names from a previously loaded language must not linger
+            currentNames = namesData.names || [];
+            fallbackNames = currentNames;
+        }
+    } catch (error) {
+        console.warn('Failed to load fallback names');
     }
 }
 
@@ -178,4 +215,12 @@ export function getSupportedLanguages() {
  */
 export function isLanguageSupported(lang) {
     return SUPPORTED_LANGUAGES.includes(lang);
+}
+
+/**
+ * Get current language-specific name pool
+ * @returns {Array<string>} Array of names in current language
+ */
+export function getNamePool() {
+    return currentNames.length > 0 ? [...currentNames] : [...fallbackNames];
 }
