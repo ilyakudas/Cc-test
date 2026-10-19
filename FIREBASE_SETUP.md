@@ -51,8 +51,8 @@ Replace `your-firebase-project-id` with your actual Firebase Project ID in these
 
 ## How It Works
 
-- **On Push to main/master**: Automatically deploys to your live Firebase Hosting site
-- **On Pull Request**: Creates a preview deployment so you can test changes before merging
+- **On Push to main/master**: Automatically deploys to your live Firebase Hosting site (only when `public/`, `firebase.json` or `.firebaserc` change; docs-only changes don't deploy)
+- **On Pull Request**: Opt-in. Add the `preview` label to a PR to create a preview deployment; while the label stays on, later pushes update it. PRs without the label never deploy.
 
 ## Local Testing (Optional)
 

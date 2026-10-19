@@ -28,7 +28,7 @@ Access: `http://localhost:XXXX/public/breeding-game-modular.html`
 ```bash
 firebase deploy
 ```
-Auto-deploys on push to `main` branch via GitHub Actions.
+Auto-deploys on push to `main` branch via GitHub Actions (only when `public/`, `firebase.json` or `.firebaserc` change). PR preview deploys are opt-in: add the `preview` label to the PR.
 
 ## Documentation Structure
 

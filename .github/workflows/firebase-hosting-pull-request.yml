@@ -1,7 +1,10 @@
 name: Deploy to Firebase Hosting on PR
 
+# Preview deploys are opt-in: add the "preview" label to a PR to deploy it.
+# While the label stays on, later pushes to that PR update the preview.
 on:
   pull_request:
+    types: [opened, synchronize, reopened, labeled]
     paths:
       - 'public/**'
       - 'firebase.json'
@@ -10,7 +13,10 @@ on:
 
 jobs:
   build_and_preview:
-    if: '${{ github.event.pull_request.head.repo.full_name == github.repository }}'
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      contains(github.event.pull_request.labels.*.name, 'preview') &&
+      (github.event.action != 'labeled' || github.event.label.name == 'preview')
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
