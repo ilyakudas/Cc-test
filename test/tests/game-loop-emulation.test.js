@@ -9,6 +9,7 @@ import { Parrot } from '../../public/js/core/parrot.js';
 import { breedParrotGenes } from '../../public/js/core/genetics.js';
 import { createParrotWithPurity, getRandomName } from '../../public/js/lib/utils.js';
 import * as GameState from '../../public/js/core/gameState.js';
+import { INITIAL_COINS, BREEDING_COST, EXAMINATION_COST } from '../../public/js/lib/economy.js';
 
 // Initialize mocks
 initializeMocks();
@@ -18,7 +19,7 @@ initializeMocks();
  */
 function initializeGame() {
     GameState.resetGameState();
-    GameState.setCoins(500);
+    GameState.setCoins(INITIAL_COINS);
     GameState.setMutationsEnabled(true);
     GameState.setMutationRate(0.05);
 
@@ -39,7 +40,6 @@ function initializeGame() {
  * Helper: Simulate breeding two parrots
  */
 function simulateBreeding(parent1, parent2) {
-    const BREEDING_COST = 50;
     const coins = GameState.getCoins();
 
     if (coins < BREEDING_COST) {
@@ -83,10 +83,9 @@ function simulateSelling(parrot) {
  * Helper: Simulate examining a parrot
  */
 function simulateExamine(parrot) {
-    const EXAM_COST = 100;
     const coins = GameState.getCoins();
 
-    if (coins < EXAM_COST) {
+    if (coins < EXAMINATION_COST) {
         throw new Error('Not enough coins to examine');
     }
 
@@ -94,7 +93,7 @@ function simulateExamine(parrot) {
         throw new Error('Parrot already examined');
     }
 
-    GameState.subtractCoins(EXAM_COST);
+    GameState.subtractCoins(EXAMINATION_COST);
     GameState.addExaminedParrot(parrot.id);
 
     return parrot.calculateBeauty();
@@ -110,7 +109,7 @@ async function testBasicBreedingCycle() {
     const offspring = simulateBreeding(parrot1, parrot2);
 
     assertEqual(offspring.length, 4, 'Should produce 4 offspring');
-    assertEqual(GameState.getCoins(), initialCoins - 50, 'Should deduct 50 coins');
+    assertEqual(GameState.getCoins(), initialCoins - BREEDING_COST, 'Should deduct breeding cost');
 
     // All offspring should be valid parrots
     for (const child of offspring) {
@@ -134,7 +133,7 @@ async function testMultipleBreedingCycles() {
     }
 
     assertEqual(allOffspring.length, 20, 'Should produce 20 offspring total');
-    assertEqual(GameState.getCoins(), 500 - (50 * 5), 'Should deduct 250 coins');
+    assertEqual(GameState.getCoins(), INITIAL_COINS - (BREEDING_COST * 5), 'Should deduct 5 breeding costs');
 }
 
 /**
@@ -169,7 +168,7 @@ async function testExaminingParrots() {
     // Examine first offspring
     const beauty = simulateExamine(offspring[0]);
 
-    assertEqual(GameState.getCoins(), initialCoins - 100, 'Should deduct 100 coins');
+    assertEqual(GameState.getCoins(), initialCoins - EXAMINATION_COST, 'Should deduct examination cost');
     assert(beauty.score >= 0, 'Beauty score should be non-negative');
     assert(GameState.hasExaminedParrot(offspring[0].id), 'Parrot should be marked examined');
 
@@ -194,15 +193,14 @@ async function testAutoExamine() {
     const coinsAfterBreeding = GameState.getCoins();
 
     // Simulate auto-examine
-    const EXAM_COST = 100;
-    const maxExaminations = Math.min(offspring.length, Math.floor(coinsAfterBreeding / EXAM_COST));
+    const maxExaminations = Math.min(offspring.length, Math.floor(coinsAfterBreeding / EXAMINATION_COST));
 
     for (let i = 0; i < maxExaminations; i++) {
-        GameState.subtractCoins(EXAM_COST);
+        GameState.subtractCoins(EXAMINATION_COST);
         GameState.addExaminedParrot(offspring[i].id);
     }
 
-    assertEqual(GameState.getCoins(), coinsAfterBreeding - (maxExaminations * EXAM_COST), 'Should deduct exam costs');
+    assertEqual(GameState.getCoins(), coinsAfterBreeding - (maxExaminations * EXAMINATION_COST), 'Should deduct exam costs');
     assert(maxExaminations >= 1, 'Should examine at least 1 parrot');
 }
 
@@ -300,7 +298,7 @@ async function test100TurnGameplaySimulation() {
         }
 
         // Strategy: Breed if we can afford it
-        if (coins >= 50) {
+        if (coins >= BREEDING_COST) {
             const parent1 = parrots[0];
             const parent2 = parrots[1];
             const offspring = simulateBreeding(parent1, parent2);

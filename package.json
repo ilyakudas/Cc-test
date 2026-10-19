@@ -1,6 +1,6 @@
 {
   "name": "chromawing-parrot-game",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "ChromaWing - Genetics-based parrot breeding simulation game",
   "type": "module",
   "scripts": {

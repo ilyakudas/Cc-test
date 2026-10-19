@@ -155,6 +155,48 @@ async function testFullParrotBreeding() {
 }
 
 /**
+ * Test: Performance genes are inherited per allele position
+ */
+async function testPerformanceGeneInheritance() {
+    GameState.setMutationsEnabled(false);
+
+    const traits = ['agility', 'intelligence', 'stamina', 'speed', 'fertility'];
+    const parent1Genes = randomGenes();
+    const parent2Genes = randomGenes();
+    for (const trait of traits) {
+        parent1Genes[trait] = [true, true, false, false];
+        parent2Genes[trait] = [true, false, true, false];
+    }
+
+    for (let i = 0; i < 200; i++) {
+        const childGenes = breedParrotGenes(parent1Genes, parent2Genes);
+        for (const trait of traits) {
+            const alleles = childGenes[trait];
+            assert(Array.isArray(alleles) && alleles.length === 4, `${trait} should have 4 alleles`);
+            // Without mutations each allele comes from one parent at the same position
+            assertEqual(alleles[0], true, `${trait}[0] is true in both parents`);
+            assertEqual(alleles[3], false, `${trait}[3] is false in both parents`);
+        }
+    }
+
+    // Parents from old saves have no performance genes: child gets the defaults
+    const legacy1 = randomGenes();
+    const legacy2 = randomGenes();
+    traits.forEach(trait => { delete legacy1[trait]; delete legacy2[trait]; });
+    const legacyChild = breedParrotGenes(legacy1, legacy2);
+    for (const trait of traits) {
+        assertEqual(JSON.stringify(legacyChild[trait]), JSON.stringify([true, true, false, false]),
+            `${trait} should fall back to default alleles`);
+    }
+
+    const stats = new Parrot('PerfTest', legacyChild, 2, 0).getPerformanceStats();
+    for (const trait of traits) {
+        assertEqual(stats[trait].level, 2, `${trait} level should count true alleles`);
+        assert(typeof stats[trait].category === 'string', `${trait} should have a category`);
+    }
+}
+
+/**
  * Test: Color calculation produces valid RGB
  */
 async function testColorCalculation() {
@@ -291,6 +333,7 @@ export async function runGeneticsTests() {
         { name: 'Mendelian inheritance works correctly', fn: testMendelianInheritance },
         { name: 'Mutations work correctly', fn: testMutations },
         { name: 'Full parrot breeding works', fn: testFullParrotBreeding },
+        { name: 'Performance genes are inherited correctly', fn: testPerformanceGeneInheritance },
         { name: 'Color calculation produces valid RGB', fn: testColorCalculation },
         { name: 'Beauty calculation is consistent', fn: testBeautyCalculation },
         { name: 'Value calculation is reasonable', fn: testValueCalculation },
